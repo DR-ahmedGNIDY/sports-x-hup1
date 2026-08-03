@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend-web-static",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["frontend/serve_web_build.js"],
+      "port": 5173,
+      "autoPort": true
+    }
+  ]
+}
