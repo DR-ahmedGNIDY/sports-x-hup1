@@ -100,11 +100,7 @@ class _TopBar extends StatelessWidget {
           IconButton(
             tooltip: 'Toggle dark mode',
             onPressed: onToggleTheme,
-            icon: Icon(
-              themeMode == ThemeMode.dark
-                  ? Icons.light_mode_outlined
-                  : Icons.dark_mode_outlined,
-            ),
+            icon: Icon(themeModeToggleIcon(themeMode)),
           ),
         ],
       ),

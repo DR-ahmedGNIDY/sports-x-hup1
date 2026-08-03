@@ -16,3 +16,8 @@ class ThemeModeController extends Notifier<ThemeMode> {
 final themeModeProvider = NotifierProvider<ThemeModeController, ThemeMode>(
   ThemeModeController.new,
 );
+
+/// Shared so Desktop and Mobile presentation trees don't each re-derive the
+/// same icon-for-mode decision independently.
+IconData themeModeToggleIcon(ThemeMode mode) =>
+    mode == ThemeMode.dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined;

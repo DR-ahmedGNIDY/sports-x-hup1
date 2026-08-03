@@ -29,11 +29,7 @@ class _HomePageMobileState extends ConsumerState<HomePageMobile> {
           IconButton(
             tooltip: 'Toggle dark mode',
             onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
-            icon: Icon(
-              themeMode == ThemeMode.dark
-                  ? Icons.light_mode_outlined
-                  : Icons.dark_mode_outlined,
-            ),
+            icon: Icon(themeModeToggleIcon(themeMode)),
           ),
         ],
       ),
