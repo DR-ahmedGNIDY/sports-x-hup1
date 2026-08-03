@@ -39,9 +39,28 @@ class _DashboardPageMobileState extends ConsumerState<DashboardPageMobile> {
           ),
         ],
       ),
-      body: Center(
-        child: Text('$roleLabel Dashboard — coming in a later phase'),
-      ),
+      body: user?.role == UserRole.player
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('$roleLabel Dashboard'),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    onPressed: () => context.go('/player/preview'),
+                    icon: const Icon(Icons.badge_outlined),
+                    label: const Text('My Profile'),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: () => context.go('/player/edit'),
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const Text('Edit Profile'),
+                  ),
+                ],
+              ),
+            )
+          : Center(child: Text('$roleLabel Dashboard — coming in a later phase')),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) {

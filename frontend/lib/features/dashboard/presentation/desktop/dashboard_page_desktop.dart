@@ -20,7 +20,7 @@ class DashboardPageDesktop extends ConsumerWidget {
     return Scaffold(
       body: Row(
         children: [
-          _Sidebar(colorScheme: colorScheme),
+          _Sidebar(colorScheme: colorScheme, isPlayer: user?.role == UserRole.player),
           Expanded(
             child: Column(
               children: [
@@ -66,9 +66,10 @@ class DashboardPageDesktop extends ConsumerWidget {
 }
 
 class _Sidebar extends StatelessWidget {
-  const _Sidebar({required this.colorScheme});
+  const _Sidebar({required this.colorScheme, required this.isPlayer});
 
   final ColorScheme colorScheme;
+  final bool isPlayer;
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +93,18 @@ class _Sidebar extends StatelessWidget {
             selected: true,
             onTap: () {},
           ),
+          if (isPlayer) ...[
+            ListTile(
+              leading: const Icon(Icons.badge_outlined),
+              title: const Text('My Profile'),
+              onTap: () => context.go('/player/preview'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Edit Profile'),
+              onTap: () => context.go('/player/edit'),
+            ),
+          ],
           ListTile(
             leading: const Icon(Icons.settings_outlined),
             title: const Text('Account Settings'),

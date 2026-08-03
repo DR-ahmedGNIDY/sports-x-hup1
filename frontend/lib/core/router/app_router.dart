@@ -8,11 +8,20 @@ import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/reset_password_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/player/presentation/edit_profile_page.dart';
+import '../../features/player/presentation/my_profile_preview_page.dart';
+import '../../features/player/presentation/public_player_profile_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/splash/presentation/splash_page.dart';
 import 'go_router_refresh_notifier.dart';
 
+// Guest-only auth pages — an authenticated user is bounced away from these.
 const _publicRoutes = {'/login', '/register', '/forgot-password', '/reset-password'};
+
+/// Public player profiles are shareable URLs: reachable with or without a
+/// session, so unlike [_publicRoutes] they never trigger the "authenticated
+/// users get bounced to /dashboard" redirect.
+bool _isPublicPlayerProfile(String path) => path.startsWith('/players/');
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -21,6 +30,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final session = ref.read(sessionControllerProvider);
       final path = state.matchedLocation;
+
+      // Public player profiles are shareable, session-independent deep
+      // links — checked before the splash gate below, so a cold load
+      // renders the profile directly instead of being forced through '/'
+      // and losing the requested path once restore() resolves.
+      if (_isPublicPlayerProfile(path)) return null;
 
       // Force every cold load through splash first, so it can call
       // SessionController.restore() before any protected/public route
@@ -52,6 +67,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
       GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
+      GoRoute(
+        path: '/player/edit',
+        builder: (context, state) => const EditProfilePage(),
+      ),
+      GoRoute(
+        path: '/player/preview',
+        builder: (context, state) => const MyProfilePreviewPage(),
+      ),
+      GoRoute(
+        path: '/players/:id',
+        builder: (context, state) =>
+            PublicPlayerProfilePage(playerId: state.pathParameters['id']!),
+      ),
     ],
   );
 });

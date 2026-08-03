@@ -55,6 +55,29 @@ class ApiClient {
     ),
   );
 
+  Future<http.Response> delete(String path, {Map<String, String>? headers}) =>
+      _send(() => _client.delete(resolve(path), headers: headers));
+
+  /// Multipart upload (a single file field plus optional string fields).
+  /// Used for Cloudinary media uploads — the only endpoint that isn't JSON.
+  Future<http.Response> postMultipart(
+    String path, {
+    required List<int> fileBytes,
+    required String filename,
+    required String fileField,
+    Map<String, String>? fields,
+    Map<String, String>? headers,
+  }) => _send(() async {
+    final request = http.MultipartRequest('POST', resolve(path));
+    if (headers != null) request.headers.addAll(headers);
+    if (fields != null) request.fields.addAll(fields);
+    request.files.add(
+      http.MultipartFile.fromBytes(fileField, fileBytes, filename: filename),
+    );
+    final streamed = await _client.send(request);
+    return http.Response.fromStream(streamed);
+  });
+
   Future<http.Response> _send(Future<http.Response> Function() request) async {
     try {
       return await request();
