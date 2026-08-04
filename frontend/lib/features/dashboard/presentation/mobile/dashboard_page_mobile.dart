@@ -21,7 +21,11 @@ class _DashboardPageMobileState extends ConsumerState<DashboardPageMobile> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final user = ref.watch(sessionControllerProvider).user;
-    final roleLabel = user?.role == UserRole.club ? 'Club' : 'Player';
+    final roleLabel = switch (user?.role) {
+      UserRole.club => 'Club',
+      UserRole.admin => 'Admin',
+      _ => 'Player',
+    };
 
     return Scaffold(
       appBar: AppBar(
@@ -109,6 +113,18 @@ class _DashboardBody extends StatelessWidget {
               icon: const Icon(Icons.shield_outlined),
               label: const Text('My Club'),
             ),
+          ],
+        ),
+      );
+    }
+    if (role == UserRole.admin) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Admin Dashboard'),
+            const SizedBox(height: 8),
+            const Text('Admin tooling is available on Desktop.'),
           ],
         ),
       );

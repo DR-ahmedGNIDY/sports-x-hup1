@@ -8,7 +8,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument, UserRole } from './schemas/user.schema';
+import {
+  User,
+  UserDocument,
+  UserRole,
+  UserStatus,
+} from './schemas/user.schema';
 
 const PASSWORD_SALT_ROUNDS = 10;
 
@@ -36,6 +41,10 @@ export class UsersService {
 
   findByEmail(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email: email.toLowerCase() });
+  }
+
+  findById(id: string): Promise<UserDocument | null> {
+    return this.userModel.findById(id);
   }
 
   async findByIdOrThrow(id: string): Promise<UserDocument> {
@@ -81,5 +90,21 @@ export class UsersService {
 
   async setPasswordHash(id: string, passwordHash: string): Promise<void> {
     await this.userModel.updateOne({ _id: id }, { passwordHash });
+  }
+
+  findAll(): Promise<UserDocument[]> {
+    return this.userModel.find().sort({ createdAt: -1 });
+  }
+
+  async updateStatus(id: string, status: UserStatus): Promise<UserDocument> {
+    const user = await this.findByIdOrThrow(id);
+    user.status = status;
+    await user.save();
+    return user;
+  }
+
+  async deleteById(id: string): Promise<void> {
+    await this.findByIdOrThrow(id);
+    await this.userModel.deleteOne({ _id: id });
   }
 }

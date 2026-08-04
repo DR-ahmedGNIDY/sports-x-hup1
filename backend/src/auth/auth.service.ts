@@ -11,7 +11,7 @@ import { randomBytes, createHmac } from 'node:crypto';
 import { Model } from 'mongoose';
 import { UsersService } from '../users/users.service';
 import { toPublicUser } from '../users/users.mapper';
-import { UserRole } from '../users/schemas/user.schema';
+import { UserRole, UserStatus } from '../users/schemas/user.schema';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { MailService } from './mail/mail.service';
@@ -74,6 +74,9 @@ export class AuthService {
     if (!user || !matches) {
       throw new UnauthorizedException('Invalid email or password.');
     }
+    if (user.status !== UserStatus.ACTIVE) {
+      throw new UnauthorizedException('This account has been suspended.');
+    }
     return this.issueTokens(user.id, user.email, user.role, user);
   }
 
@@ -91,6 +94,9 @@ export class AuthService {
       stored.userId.toString(),
     );
     await this.refreshTokenModel.deleteOne({ _id: stored._id }); // rotate on use
+    if (user.status !== UserStatus.ACTIVE) {
+      throw new UnauthorizedException('This account has been suspended.');
+    }
     return this.issueTokens(user.id, user.email, user.role, user);
   }
 

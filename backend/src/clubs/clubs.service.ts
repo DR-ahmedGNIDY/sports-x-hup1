@@ -69,4 +69,23 @@ export class ClubsService {
     await profile.save();
     return profile;
   }
+
+  // Admin (Phase 4).
+  findAllForAdmin(): Promise<ClubProfileDocument[]> {
+    return this.clubProfileModel.find().sort({ createdAt: -1 });
+  }
+
+  async deleteProfileAndLogo(id: string): Promise<void> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Club not found.');
+    }
+    const profile = await this.clubProfileModel.findById(id);
+    if (!profile) {
+      throw new NotFoundException('Club not found.');
+    }
+    if (profile.logo) {
+      await this.cloudinary.deleteAsset(profile.logo.publicId, 'image');
+    }
+    await this.clubProfileModel.deleteOne({ _id: id });
+  }
 }

@@ -79,6 +79,26 @@ describe('AuthService', () => {
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
+  it('rejects login for a suspended account, even with the correct password', async () => {
+    fakeUsersService.findByEmail.mockResolvedValueOnce({
+      id: 'user-1',
+      _id: 'user-1',
+      email: 'player@example.com',
+      passwordHash,
+      role: UserRole.PLAYER,
+      status: UserStatus.SUSPENDED,
+      createdAt: new Date(),
+    });
+
+    await expect(
+      service.login({
+        email: 'player@example.com',
+        password: 'correct-password',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(fakeRefreshTokenModel.create).not.toHaveBeenCalled();
+  });
+
   it('issues an access token and a stored, hashed refresh token on successful login', async () => {
     const result = await service.login({
       email: 'player@example.com',

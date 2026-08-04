@@ -1,6 +1,7 @@
 enum UserRole {
   player('PLAYER'),
-  club('CLUB');
+  club('CLUB'),
+  admin('ADMIN');
 
   const UserRole(this.wireValue);
 
@@ -9,6 +10,7 @@ enum UserRole {
   static UserRole fromWire(String value) => switch (value) {
     'PLAYER' => UserRole.player,
     'CLUB' => UserRole.club,
+    'ADMIN' => UserRole.admin,
     _ => throw ArgumentError('Unknown role: $value'),
   };
 }

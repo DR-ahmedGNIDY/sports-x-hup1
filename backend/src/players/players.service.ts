@@ -123,6 +123,27 @@ export class PlayersService {
     });
   }
 
+  // Admin (Phase 4) — every profile regardless of visibility.
+  findAllForAdmin(): Promise<PlayerProfileDocument[]> {
+    return this.playerProfileModel.find().sort({ createdAt: -1 });
+  }
+
+  async deleteProfileAndMedia(id: string): Promise<void> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Player not found.');
+    }
+    const profile = await this.playerProfileModel.findById(id);
+    if (!profile) {
+      throw new NotFoundException('Player not found.');
+    }
+    await Promise.all(
+      profile.media.map((item) =>
+        this.cloudinary.deleteAsset(item.publicId, resourceTypeFor(item.type)),
+      ),
+    );
+    await this.playerProfileModel.deleteOne({ _id: id });
+  }
+
   async updateProfile(
     userId: string,
     dto: UpdatePlayerProfileDto,

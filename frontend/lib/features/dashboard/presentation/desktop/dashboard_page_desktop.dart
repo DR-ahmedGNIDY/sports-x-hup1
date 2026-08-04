@@ -15,7 +15,11 @@ class DashboardPageDesktop extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final themeMode = ref.watch(themeModeProvider);
     final user = ref.watch(sessionControllerProvider).user;
-    final roleLabel = user?.role == UserRole.club ? 'Club' : 'Player';
+    final roleLabel = switch (user?.role) {
+      UserRole.club => 'Club',
+      UserRole.admin => 'Admin',
+      _ => 'Player',
+    };
 
     return Scaffold(
       body: Row(
@@ -103,6 +107,18 @@ class _Sidebar extends StatelessWidget {
               leading: const Icon(Icons.edit_outlined),
               title: const Text('Edit Profile'),
               onTap: () => context.go('/player/edit'),
+            ),
+          ],
+          if (role == UserRole.admin) ...[
+            ListTile(
+              leading: const Icon(Icons.people_outline),
+              title: const Text('Admin — Users'),
+              onTap: () => context.go('/admin/users'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.groups_outlined),
+              title: const Text('Admin — Players & Clubs'),
+              onTap: () => context.go('/admin/players-clubs'),
             ),
           ],
           if (role == UserRole.club) ...[

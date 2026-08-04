@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/presentation/admin_players_clubs_page.dart';
+import '../../features/admin/presentation/admin_users_page.dart';
 import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/application/session_state.dart';
+import '../../features/auth/domain/entities/user_role.dart';
 import '../../features/auth/presentation/forgot_password_page.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
@@ -26,6 +29,8 @@ const _publicRoutes = {'/login', '/register', '/forgot-password', '/reset-passwo
 /// session, so unlike [_publicRoutes] they never trigger the "authenticated
 /// users get bounced to /dashboard" redirect.
 bool _isPublicPlayerProfile(String path) => path.startsWith('/players/');
+
+bool _isAdminRoute(String path) => path.startsWith('/admin/');
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -54,6 +59,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       if (!isAuthenticated && !isPublicRoute) return '/login';
       if (isAuthenticated && (path == '/' || isPublicRoute)) return '/dashboard';
+
+      // Admin tooling is only for ADMIN accounts — everyone else gets
+      // bounced back to their own dashboard, same as a Player hitting a
+      // Club-only route would be if one existed.
+      if (_isAdminRoute(path) && session.user?.role != UserRole.admin) {
+        return '/dashboard';
+      }
       return null;
     },
     routes: [
@@ -96,6 +108,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/saved-players',
         builder: (context, state) => const SavedPlayersPage(),
+      ),
+      GoRoute(path: '/admin/users', builder: (context, state) => const AdminUsersPage()),
+      GoRoute(
+        path: '/admin/players-clubs',
+        builder: (context, state) => const AdminPlayersClubsPage(),
       ),
     ],
   );

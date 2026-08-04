@@ -12,7 +12,8 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "jest",
-    "seed": "ts-node -T src/database/seed.ts"
+    "seed": "ts-node -T src/database/seed.ts",
+    "seed:admin": "ts-node -T src/database/seed-admin.ts"
   },
   "jest": {
     "moduleFileExtensions": [
