@@ -16,6 +16,14 @@ import {
 } from './schemas/user.schema';
 
 const PASSWORD_SALT_ROUNDS = 10;
+const ADMIN_LIST_PAGE_SIZE = 20;
+
+export interface PaginatedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+}
 
 @Injectable()
 export class UsersService {
@@ -92,8 +100,16 @@ export class UsersService {
     await this.userModel.updateOne({ _id: id }, { passwordHash });
   }
 
-  findAll(): Promise<UserDocument[]> {
-    return this.userModel.find().sort({ createdAt: -1 });
+  async findAll(page = 1): Promise<PaginatedResult<UserDocument>> {
+    const [items, total] = await Promise.all([
+      this.userModel
+        .find()
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * ADMIN_LIST_PAGE_SIZE)
+        .limit(ADMIN_LIST_PAGE_SIZE),
+      this.userModel.countDocuments(),
+    ]);
+    return { items, page, pageSize: ADMIN_LIST_PAGE_SIZE, total };
   }
 
   async updateStatus(id: string, status: UserStatus): Promise<UserDocument> {

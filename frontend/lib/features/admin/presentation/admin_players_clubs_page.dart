@@ -76,41 +76,60 @@ class _PlayersTab extends ConsumerWidget {
     final playersAsync = ref.watch(adminPlayersControllerProvider);
 
     return playersAsync.when(
-      data: (players) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: SingleChildScrollView(
-          child: DataTable(
-            columns: const [
-              DataColumn(label: Text('Name')),
-              DataColumn(label: Text('Sport')),
-              DataColumn(label: Text('Position')),
-              DataColumn(label: Text('Visibility')),
-              DataColumn(label: Text('Actions')),
-            ],
-            rows: players
-                .map(
-                  (player) => DataRow(
-                    cells: [
-                      DataCell(
-                        Text(player.fullName.isEmpty ? 'Unnamed' : player.fullName),
-                      ),
-                      DataCell(Text(player.sport ?? '')),
-                      DataCell(Text(player.position ?? '')),
-                      DataCell(Text(player.visibility ?? '')),
-                      DataCell(
-                        IconButton(
-                          tooltip: 'Remove profile',
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => _confirmDelete(context, ref, player),
+      data: (players) {
+        if (players.isEmpty) {
+          return const Center(child: Text('No player profiles found.'));
+        }
+        final hasMore = ref.watch(adminPlayersControllerProvider.notifier).hasMore;
+        return Padding(
+          padding: const EdgeInsets.all(24),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Name')),
+                    DataColumn(label: Text('Sport')),
+                    DataColumn(label: Text('Position')),
+                    DataColumn(label: Text('Visibility')),
+                    DataColumn(label: Text('Actions')),
+                  ],
+                  rows: players
+                      .map(
+                        (player) => DataRow(
+                          cells: [
+                            DataCell(
+                              Text(player.fullName.isEmpty ? 'Unnamed' : player.fullName),
+                            ),
+                            DataCell(Text(player.sport ?? '')),
+                            DataCell(Text(player.position ?? '')),
+                            DataCell(Text(player.visibility ?? '')),
+                            DataCell(
+                              IconButton(
+                                tooltip: 'Remove profile',
+                                icon: const Icon(Icons.delete_outline),
+                                onPressed: () => _confirmDelete(context, ref, player),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      )
+                      .toList(),
+                ),
+                if (hasMore)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: OutlinedButton(
+                      onPressed: () =>
+                          ref.read(adminPlayersControllerProvider.notifier).loadMore(),
+                      child: const Text('Load more'),
+                    ),
                   ),
-                )
-                .toList(),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Center(child: Text('$error')),
     );
@@ -156,37 +175,58 @@ class _ClubsTab extends ConsumerWidget {
     final clubsAsync = ref.watch(adminClubsControllerProvider);
 
     return clubsAsync.when(
-      data: (clubs) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: SingleChildScrollView(
-          child: DataTable(
-            columns: const [
-              DataColumn(label: Text('Name')),
-              DataColumn(label: Text('Country')),
-              DataColumn(label: Text('City')),
-              DataColumn(label: Text('Actions')),
-            ],
-            rows: clubs
-                .map(
-                  (club) => DataRow(
-                    cells: [
-                      DataCell(Text(club.name?.isNotEmpty == true ? club.name! : 'Unnamed')),
-                      DataCell(Text(club.country ?? '')),
-                      DataCell(Text(club.city ?? '')),
-                      DataCell(
-                        IconButton(
-                          tooltip: 'Remove profile',
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => _confirmDelete(context, ref, club),
+      data: (clubs) {
+        if (clubs.isEmpty) {
+          return const Center(child: Text('No club profiles found.'));
+        }
+        final hasMore = ref.watch(adminClubsControllerProvider.notifier).hasMore;
+        return Padding(
+          padding: const EdgeInsets.all(24),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Name')),
+                    DataColumn(label: Text('Country')),
+                    DataColumn(label: Text('City')),
+                    DataColumn(label: Text('Actions')),
+                  ],
+                  rows: clubs
+                      .map(
+                        (club) => DataRow(
+                          cells: [
+                            DataCell(
+                              Text(club.name?.isNotEmpty == true ? club.name! : 'Unnamed'),
+                            ),
+                            DataCell(Text(club.country ?? '')),
+                            DataCell(Text(club.city ?? '')),
+                            DataCell(
+                              IconButton(
+                                tooltip: 'Remove profile',
+                                icon: const Icon(Icons.delete_outline),
+                                onPressed: () => _confirmDelete(context, ref, club),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      )
+                      .toList(),
+                ),
+                if (hasMore)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: OutlinedButton(
+                      onPressed: () =>
+                          ref.read(adminClubsControllerProvider.notifier).loadMore(),
+                      child: const Text('Load more'),
+                    ),
                   ),
-                )
-                .toList(),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Center(child: Text('$error')),
     );

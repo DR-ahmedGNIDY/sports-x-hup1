@@ -19,6 +19,7 @@ import {
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { mediaUploadOptions } from '../common/upload.config';
 import { UserRole } from '../users/schemas/user.schema';
 import {
   CreateAchievementDto,
@@ -87,7 +88,7 @@ export class PlayersController {
   @Post('me/media')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.PLAYER)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', mediaUploadOptions))
   async addMedia(
     @CurrentUser() user: JwtPayload,
     @UploadedFile() file: Express.Multer.File,

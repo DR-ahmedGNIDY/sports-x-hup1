@@ -17,6 +17,7 @@ import {
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { imageUploadOptions } from '../common/upload.config';
 import { UserRole } from '../users/schemas/user.schema';
 import { ClubsService } from './clubs.service';
 import { UpdateClubProfileDto } from './dto/update-club-profile.dto';
@@ -48,7 +49,7 @@ export class ClubsController {
   @Post('me/logo')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.CLUB)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', imageUploadOptions))
   async uploadLogo(
     @CurrentUser() user: JwtPayload,
     @UploadedFile() file: Express.Multer.File,

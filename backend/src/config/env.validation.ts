@@ -26,4 +26,17 @@ export const envValidationSchema = Joi.object({
   CLOUDINARY_CLOUD_NAME: Joi.string().allow('').default(''),
   CLOUDINARY_API_KEY: Joi.string().allow('').default(''),
   CLOUDINARY_API_SECRET: Joi.string().allow('').default(''),
+
+  // Comma-separated list of allowed frontend origins (e.g.
+  // "https://app.sportxhub.com,https://sportxhub.com"). Optional locally —
+  // an empty value falls back to allowing any origin, which is fine for
+  // local development but must never happen in production, so it's
+  // required whenever NODE_ENV=production.
+  CORS_ORIGINS: Joi.string()
+    .allow('')
+    .default('')
+    .when('NODE_ENV', {
+      is: 'production',
+      then: Joi.string().min(1).required(),
+    }),
 });

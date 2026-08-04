@@ -4,9 +4,24 @@ import '../data/repositories/admin_repository_impl.dart';
 import '../domain/entities/admin_player_summary.dart';
 
 class AdminPlayersController extends AsyncNotifier<List<AdminPlayerSummary>> {
+  int _page = 1;
+  bool hasMore = false;
+
   @override
-  Future<List<AdminPlayerSummary>> build() {
-    return ref.read(adminRepositoryProvider).getPlayers();
+  Future<List<AdminPlayerSummary>> build() async {
+    _page = 1;
+    final result = await ref.read(adminRepositoryProvider).getPlayers(page: _page);
+    hasMore = result.hasMore;
+    return result.items;
+  }
+
+  Future<void> loadMore() async {
+    if (!hasMore || state.isLoading) return;
+    final nextPage = _page + 1;
+    final result = await ref.read(adminRepositoryProvider).getPlayers(page: nextPage);
+    _page = nextPage;
+    hasMore = result.hasMore;
+    state = AsyncData([...state.value ?? const [], ...result.items]);
   }
 
   Future<void> deletePlayer(String playerId) async {

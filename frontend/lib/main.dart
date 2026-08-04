@@ -8,6 +8,7 @@ import 'core/storage/session_storage.dart';
 import 'core/storage/session_storage_provider.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_provider.dart';
+import 'features/auth/application/session_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,11 +25,28 @@ Future<void> main() async {
   );
 }
 
-class SportXHubApp extends ConsumerWidget {
+class SportXHubApp extends ConsumerStatefulWidget {
   const SportXHubApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SportXHubApp> createState() => _SportXHubAppState();
+}
+
+class _SportXHubAppState extends ConsumerState<SportXHubApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Triggered once here (app root), not just from SplashPage, so a cold
+    // load that lands directly on a route Splash never mounts for — e.g. a
+    // shared /players/:id link, which is intentionally exempt from the
+    // splash redirect — still restores the session. Without this, a Club
+    // opening a shared profile link in a fresh tab would never see its
+    // Save/Contact actions despite holding a valid stored token.
+    Future.microtask(() => ref.read(sessionControllerProvider.notifier).restore());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final router = ref.watch(appRouterProvider);
 

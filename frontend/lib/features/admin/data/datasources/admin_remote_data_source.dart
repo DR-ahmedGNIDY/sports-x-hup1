@@ -15,10 +15,13 @@ class AdminRemoteDataSource {
     'Authorization': 'Bearer $accessToken',
   };
 
-  Future<List<dynamic>> getUsers(String accessToken) async {
-    final response = await _client.get('/admin/users', headers: _bearer(accessToken));
+  Future<Map<String, dynamic>> getUsers(String accessToken, {int page = 1}) async {
+    final response = await _client.get(
+      '/admin/users?page=$page',
+      headers: _bearer(accessToken),
+    );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
-    return jsonDecode(response.body) as List<dynamic>;
+    return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
   Future<void> setUserStatus(String accessToken, String userId, String status) async {
@@ -38,10 +41,13 @@ class AdminRemoteDataSource {
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
   }
 
-  Future<List<dynamic>> getPlayers(String accessToken) async {
-    final response = await _client.get('/admin/players', headers: _bearer(accessToken));
+  Future<Map<String, dynamic>> getPlayers(String accessToken, {int page = 1}) async {
+    final response = await _client.get(
+      '/admin/players?page=$page',
+      headers: _bearer(accessToken),
+    );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
-    return jsonDecode(response.body) as List<dynamic>;
+    return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
   Future<void> deletePlayer(String accessToken, String playerId) async {
@@ -52,10 +58,13 @@ class AdminRemoteDataSource {
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
   }
 
-  Future<List<dynamic>> getClubs(String accessToken) async {
-    final response = await _client.get('/admin/clubs', headers: _bearer(accessToken));
+  Future<Map<String, dynamic>> getClubs(String accessToken, {int page = 1}) async {
+    final response = await _client.get(
+      '/admin/clubs?page=$page',
+      headers: _bearer(accessToken),
+    );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
-    return jsonDecode(response.body) as List<dynamic>;
+    return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
   Future<void> deleteClub(String accessToken, String clubId) async {

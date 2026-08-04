@@ -12,6 +12,15 @@ import {
   ClubProfileDocument,
 } from './schemas/club-profile.schema';
 
+const ADMIN_LIST_PAGE_SIZE = 20;
+
+export interface ClubPaginatedResult {
+  items: ClubProfileDocument[];
+  page: number;
+  pageSize: number;
+  total: number;
+}
+
 @Injectable()
 export class ClubsService {
   constructor(
@@ -70,9 +79,18 @@ export class ClubsService {
     return profile;
   }
 
-  // Admin (Phase 4).
-  findAllForAdmin(): Promise<ClubProfileDocument[]> {
-    return this.clubProfileModel.find().sort({ createdAt: -1 });
+  // Admin (Phase 4) — paginated so this can't attempt to load the full
+  // collection at launch scale.
+  async findAllForAdmin(page = 1): Promise<ClubPaginatedResult> {
+    const [items, total] = await Promise.all([
+      this.clubProfileModel
+        .find()
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * ADMIN_LIST_PAGE_SIZE)
+        .limit(ADMIN_LIST_PAGE_SIZE),
+      this.clubProfileModel.countDocuments(),
+    ]);
+    return { items, page, pageSize: ADMIN_LIST_PAGE_SIZE, total };
   }
 
   async deleteProfileAndLogo(id: string): Promise<void> {

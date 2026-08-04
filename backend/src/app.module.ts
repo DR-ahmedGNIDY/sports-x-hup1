@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { envValidationSchema } from './config/env.validation';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './auth/auth.module';
@@ -27,6 +29,10 @@ import { AdminModule } from './admin/admin.module';
         retryDelay: 2000,
       }),
     }),
+    // API-wide default; auth's most sensitive endpoints (login, register,
+    // refresh, forgot-password) additionally apply a much stricter
+    // @Throttle() override — see auth.controller.ts.
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
     HealthModule,
     UsersModule,
     AuthModule,
@@ -37,5 +43,6 @@ import { AdminModule } from './admin/admin.module';
     SavedPlayersModule,
     AdminModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

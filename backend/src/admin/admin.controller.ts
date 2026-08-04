@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -17,6 +18,7 @@ import { toOwnerView } from '../players/players.mapper';
 import { toPublicUser } from '../users/users.mapper';
 import { UsersService } from '../users/users.service';
 import { UserRole } from '../users/schemas/user.schema';
+import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 
 // Thin — every handler just calls into Users/Players/Clubs and reuses
@@ -33,9 +35,9 @@ export class AdminController {
   ) {}
 
   @Get('users')
-  async listUsers() {
-    const users = await this.usersService.findAll();
-    return users.map(toPublicUser);
+  async listUsers(@Query() query: PaginationQueryDto) {
+    const result = await this.usersService.findAll(query.page ?? 1);
+    return { ...result, items: result.items.map(toPublicUser) };
   }
 
   @Patch('users/:id/status')
@@ -54,9 +56,9 @@ export class AdminController {
   }
 
   @Get('players')
-  async listPlayers() {
-    const profiles = await this.playersService.findAllForAdmin();
-    return profiles.map(toOwnerView);
+  async listPlayers(@Query() query: PaginationQueryDto) {
+    const result = await this.playersService.findAllForAdmin(query.page ?? 1);
+    return { ...result, items: result.items.map(toOwnerView) };
   }
 
   @Delete('players/:id')
@@ -66,9 +68,9 @@ export class AdminController {
   }
 
   @Get('clubs')
-  async listClubs() {
-    const profiles = await this.clubsService.findAllForAdmin();
-    return profiles.map(toClubView);
+  async listClubs(@Query() query: PaginationQueryDto) {
+    const result = await this.clubsService.findAllForAdmin(query.page ?? 1);
+    return { ...result, items: result.items.map(toClubView) };
   }
 
   @Delete('clubs/:id')

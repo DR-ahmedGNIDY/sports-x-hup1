@@ -23,9 +23,9 @@ class AdminRepositoryImpl implements AdminRepository {
       runAuthorized(_ref, _storage, call);
 
   @override
-  Future<List<AdminUser>> getUsers() => _authorized((token) async {
-    final json = await _remote.getUsers(token);
-    return json.map((e) => AdminUserModel.fromJson(e as Map<String, dynamic>)).toList();
+  Future<AdminPage<AdminUser>> getUsers({int page = 1}) => _authorized((token) async {
+    final json = await _remote.getUsers(token, page: page);
+    return _toPage(json, AdminUserModel.fromJson);
   });
 
   @override
@@ -37,28 +37,41 @@ class AdminRepositoryImpl implements AdminRepository {
       _authorized((token) => _remote.deleteUser(token, userId));
 
   @override
-  Future<List<AdminPlayerSummary>> getPlayers() => _authorized((token) async {
-    final json = await _remote.getPlayers(token);
-    return json
-        .map((e) => AdminPlayerSummaryModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-  });
+  Future<AdminPage<AdminPlayerSummary>> getPlayers({int page = 1}) =>
+      _authorized((token) async {
+        final json = await _remote.getPlayers(token, page: page);
+        return _toPage(json, AdminPlayerSummaryModel.fromJson);
+      });
 
   @override
   Future<void> deletePlayer(String playerId) =>
       _authorized((token) => _remote.deletePlayer(token, playerId));
 
   @override
-  Future<List<AdminClubSummary>> getClubs() => _authorized((token) async {
-    final json = await _remote.getClubs(token);
-    return json
-        .map((e) => AdminClubSummaryModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-  });
+  Future<AdminPage<AdminClubSummary>> getClubs({int page = 1}) =>
+      _authorized((token) async {
+        final json = await _remote.getClubs(token, page: page);
+        return _toPage(json, AdminClubSummaryModel.fromJson);
+      });
 
   @override
   Future<void> deleteClub(String clubId) =>
       _authorized((token) => _remote.deleteClub(token, clubId));
+
+  /// Decodes the `{items, page, pageSize, total}` envelope every admin list
+  /// endpoint returns into an [AdminPage].
+  AdminPage<T> _toPage<T>(
+    Map<String, dynamic> json,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    final items = (json['items'] as List<dynamic>)
+        .map((e) => fromJson(e as Map<String, dynamic>))
+        .toList();
+    final page = json['page'] as int;
+    final pageSize = json['pageSize'] as int;
+    final total = json['total'] as int;
+    return (items: items, hasMore: page * pageSize < total);
+  }
 }
 
 final adminRepositoryProvider = Provider<AdminRepository>(
