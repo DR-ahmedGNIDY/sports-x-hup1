@@ -63,6 +63,10 @@ abstract class PlayerRepository {
 
   Future<PlayerProfile> getPublicProfile(String id);
 
+  /// Simple Contact (Phase 3) — CLUB-only, 404s if the caller isn't a Club
+  /// or the player isn't public.
+  Future<ContactDetails> getContact(String id);
+
   Future<List<LookupOption>> getSports();
 
   Future<List<LookupOption>> getCountries();

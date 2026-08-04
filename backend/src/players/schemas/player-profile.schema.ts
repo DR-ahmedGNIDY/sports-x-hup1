@@ -89,7 +89,11 @@ export class PlayerProfile {
   @Prop({ trim: true })
   lastName?: string;
 
-  @Prop()
+  // Indexed: Age (minAge/maxAge) is one of Phase 3's 7 search filters,
+  // resolved as a range query against this field, and it isn't covered
+  // by the compound index below — without this, an age-only search would
+  // force a full collection scan.
+  @Prop({ index: true })
   dateOfBirth?: Date;
 
   @Prop({ trim: true })

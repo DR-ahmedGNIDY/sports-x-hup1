@@ -39,28 +39,7 @@ class _DashboardPageMobileState extends ConsumerState<DashboardPageMobile> {
           ),
         ],
       ),
-      body: user?.role == UserRole.player
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('$roleLabel Dashboard'),
-                  const SizedBox(height: 16),
-                  FilledButton.icon(
-                    onPressed: () => context.go('/player/preview'),
-                    icon: const Icon(Icons.badge_outlined),
-                    label: const Text('My Profile'),
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton.icon(
-                    onPressed: () => context.go('/player/edit'),
-                    icon: const Icon(Icons.edit_outlined),
-                    label: const Text('Edit Profile'),
-                  ),
-                ],
-              ),
-            )
-          : Center(child: Text('$roleLabel Dashboard — coming in a later phase')),
+      body: _DashboardBody(role: user?.role, roleLabel: roleLabel),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) {
@@ -73,5 +52,67 @@ class _DashboardPageMobileState extends ConsumerState<DashboardPageMobile> {
         ],
       ),
     );
+  }
+}
+
+class _DashboardBody extends StatelessWidget {
+  const _DashboardBody({required this.role, required this.roleLabel});
+
+  final UserRole? role;
+  final String roleLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    if (role == UserRole.player) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('$roleLabel Dashboard'),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () => context.go('/player/preview'),
+              icon: const Icon(Icons.badge_outlined),
+              label: const Text('My Profile'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/player/edit'),
+              icon: const Icon(Icons.edit_outlined),
+              label: const Text('Edit Profile'),
+            ),
+          ],
+        ),
+      );
+    }
+    if (role == UserRole.club) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('$roleLabel Dashboard'),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () => context.go('/search'),
+              icon: const Icon(Icons.search_outlined),
+              label: const Text('Search Players'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/saved-players'),
+              icon: const Icon(Icons.bookmark_outline),
+              label: const Text('Saved Players'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/club/preview'),
+              icon: const Icon(Icons.shield_outlined),
+              label: const Text('My Club'),
+            ),
+          ],
+        ),
+      );
+    }
+    return Center(child: Text('$roleLabel Dashboard — coming in a later phase'));
   }
 }

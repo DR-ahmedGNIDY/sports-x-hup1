@@ -20,7 +20,7 @@ class DashboardPageDesktop extends ConsumerWidget {
     return Scaffold(
       body: Row(
         children: [
-          _Sidebar(colorScheme: colorScheme, isPlayer: user?.role == UserRole.player),
+          _Sidebar(colorScheme: colorScheme, role: user?.role),
           Expanded(
             child: Column(
               children: [
@@ -66,10 +66,10 @@ class DashboardPageDesktop extends ConsumerWidget {
 }
 
 class _Sidebar extends StatelessWidget {
-  const _Sidebar({required this.colorScheme, required this.isPlayer});
+  const _Sidebar({required this.colorScheme, required this.role});
 
   final ColorScheme colorScheme;
-  final bool isPlayer;
+  final UserRole? role;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class _Sidebar extends StatelessWidget {
             selected: true,
             onTap: () {},
           ),
-          if (isPlayer) ...[
+          if (role == UserRole.player) ...[
             ListTile(
               leading: const Icon(Icons.badge_outlined),
               title: const Text('My Profile'),
@@ -103,6 +103,28 @@ class _Sidebar extends StatelessWidget {
               leading: const Icon(Icons.edit_outlined),
               title: const Text('Edit Profile'),
               onTap: () => context.go('/player/edit'),
+            ),
+          ],
+          if (role == UserRole.club) ...[
+            ListTile(
+              leading: const Icon(Icons.shield_outlined),
+              title: const Text('My Club'),
+              onTap: () => context.go('/club/preview'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Edit Club Profile'),
+              onTap: () => context.go('/club/edit'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.search_outlined),
+              title: const Text('Search Players'),
+              onTap: () => context.go('/search'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.bookmark_outline),
+              title: const Text('Saved Players'),
+              onTap: () => context.go('/saved-players'),
             ),
           ],
           ListTile(

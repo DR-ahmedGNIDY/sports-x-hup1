@@ -1,15 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/errors/app_exception.dart';
+import '../../../../core/network/authorized_request.dart';
 import '../../../../core/storage/session_storage.dart';
 import '../../../../core/storage/session_storage_provider.dart';
-import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/contact_details.dart';
 import '../../domain/entities/lookup_option.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_profile.dart';
 import '../../domain/repositories/player_repository.dart';
 import '../datasources/player_remote_data_source.dart';
+import '../models/contact_details_model.dart';
 import '../models/lookup_option_model.dart';
 import '../models/player_profile_model.dart';
 
@@ -20,22 +20,8 @@ class PlayerRepositoryImpl implements PlayerRepository {
   final SessionStorage _storage;
   final Ref _ref;
 
-  /// Runs [call] with the current access token; on a 401 it forces one
-  /// refresh attempt (via AuthRepository.restoreSession, which already
-  /// owns the refresh-token flow) and retries once.
-  Future<T> _authorized<T>(Future<T> Function(String accessToken) call) async {
-    final token = _storage.accessToken;
-    if (token == null) throw const AppException('You are not signed in.');
-    try {
-      return await call(token);
-    } on AppException catch (e) {
-      if (e.statusCode != 401) rethrow;
-      await _ref.read(authRepositoryProvider).restoreSession();
-      final refreshed = _storage.accessToken;
-      if (refreshed == null) rethrow;
-      return call(refreshed);
-    }
-  }
+  Future<T> _authorized<T>(Future<T> Function(String accessToken) call) =>
+      runAuthorized(_ref, _storage, call);
 
   Map<String, dynamic>? _contactToJson(ContactDetails? contact) {
     if (contact == null) return null;
@@ -193,6 +179,12 @@ class PlayerRepositoryImpl implements PlayerRepository {
     final json = await _remote.getPublicProfile(id);
     return PlayerProfileModel.fromJson(json);
   }
+
+  @override
+  Future<ContactDetails> getContact(String id) => _authorized((token) async {
+    final json = await _remote.getContact(token, id);
+    return ContactDetailsModel.fromJson(json);
+  });
 
   @override
   Future<List<LookupOption>> getSports() async {

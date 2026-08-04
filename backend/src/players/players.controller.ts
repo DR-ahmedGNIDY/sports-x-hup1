@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -15,11 +16,15 @@ import {
   CurrentUser,
   JwtPayload,
 } from '../auth/decorators/current-user.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { UserRole } from '../users/schemas/user.schema';
 import {
   CreateAchievementDto,
   UpdateAchievementDto,
 } from './dto/achievement.dto';
+import { SearchPlayersDto } from './dto/search-players.dto';
 import {
   CreateSocialLinkDto,
   UpdateSocialLinkDto,
@@ -27,22 +32,39 @@ import {
 import { UpdatePlayerProfileDto } from './dto/update-player-profile.dto';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 import { UploadMediaDto } from './dto/upload-media.dto';
-import { toOwnerView, toPublicView } from './players.mapper';
+import {
+  toOwnerView,
+  toPublicView,
+  toSearchResultView,
+} from './players.mapper';
 import { PlayersService } from './players.service';
 
 @Controller('players')
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
+  @Get()
+  async search(@Query() dto: SearchPlayersDto) {
+    const result = await this.playersService.search(dto);
+    return {
+      items: result.items.map(toSearchResultView),
+      page: result.page,
+      pageSize: result.pageSize,
+      total: result.total,
+    };
+  }
+
   @Get('me')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async me(@CurrentUser() user: JwtPayload) {
     const profile = await this.playersService.getOrCreateForUser(user.sub);
     return toOwnerView(profile);
   }
 
   @Patch('me')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async updateMe(
     @CurrentUser() user: JwtPayload,
     @Body() dto: UpdatePlayerProfileDto,
@@ -52,7 +74,8 @@ export class PlayersController {
   }
 
   @Patch('me/visibility')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async updateVisibility(
     @CurrentUser() user: JwtPayload,
     @Body() dto: UpdateVisibilityDto,
@@ -62,7 +85,8 @@ export class PlayersController {
   }
 
   @Post('me/media')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   @UseInterceptors(FileInterceptor('file'))
   async addMedia(
     @CurrentUser() user: JwtPayload,
@@ -79,14 +103,16 @@ export class PlayersController {
   }
 
   @Delete('me/media/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async removeMedia(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
     const profile = await this.playersService.removeMedia(user.sub, id);
     return toOwnerView(profile);
   }
 
   @Post('me/achievements')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async addAchievement(
     @CurrentUser() user: JwtPayload,
     @Body() dto: CreateAchievementDto,
@@ -96,7 +122,8 @@ export class PlayersController {
   }
 
   @Patch('me/achievements/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async updateAchievement(
     @CurrentUser() user: JwtPayload,
     @Param('id') id: string,
@@ -111,7 +138,8 @@ export class PlayersController {
   }
 
   @Delete('me/achievements/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async removeAchievement(
     @CurrentUser() user: JwtPayload,
     @Param('id') id: string,
@@ -121,7 +149,8 @@ export class PlayersController {
   }
 
   @Post('me/social-links')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async addSocialLink(
     @CurrentUser() user: JwtPayload,
     @Body() dto: CreateSocialLinkDto,
@@ -131,7 +160,8 @@ export class PlayersController {
   }
 
   @Patch('me/social-links/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async updateSocialLink(
     @CurrentUser() user: JwtPayload,
     @Param('id') id: string,
@@ -146,13 +176,22 @@ export class PlayersController {
   }
 
   @Delete('me/social-links/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
   async removeSocialLink(
     @CurrentUser() user: JwtPayload,
     @Param('id') id: string,
   ) {
     const profile = await this.playersService.removeSocialLink(user.sub, id);
     return toOwnerView(profile);
+  }
+
+  @Get(':id/contact')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.CLUB)
+  async contact(@Param('id') id: string) {
+    const profile = await this.playersService.findPublicByIdOrThrow(id);
+    return profile.contact;
   }
 
   @Get(':id')

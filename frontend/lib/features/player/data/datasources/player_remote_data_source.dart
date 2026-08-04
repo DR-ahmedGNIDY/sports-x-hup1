@@ -162,6 +162,16 @@ class PlayerRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
+  /// Simple Contact (Phase 3) — CLUB-only, returns phone/email/WhatsApp.
+  Future<Map<String, dynamic>> getContact(String accessToken, String id) async {
+    final response = await _client.get(
+      '/players/$id/contact',
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
   Future<List<dynamic>> getSports() async {
     final response = await _client.get('/sports');
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);

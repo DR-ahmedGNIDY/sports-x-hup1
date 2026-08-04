@@ -17,6 +17,7 @@ import {
   CreateSocialLinkDto,
   UpdateSocialLinkDto,
 } from './dto/social-link.dto';
+import { SearchPlayersDto } from './dto/search-players.dto';
 import { UpdatePlayerProfileDto } from './dto/update-player-profile.dto';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
 import {
@@ -28,6 +29,23 @@ import {
 
 function resourceTypeFor(type: MediaType): CloudinaryResourceType {
   return type === MediaType.VIDEO ? 'video' : 'image';
+}
+
+const SEARCH_PAGE_SIZE = 20;
+
+// A minimum date of birth (i.e. maxAge) excludes anyone born before it;
+// a maximum date of birth (i.e. minAge) excludes anyone born after it.
+function dateOfBirthAtLeastAge(age: number): Date {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() - age);
+  return date;
+}
+
+export interface PlayerSearchResult {
+  items: PlayerProfileDocument[];
+  page: number;
+  pageSize: number;
+  total: number;
 }
 
 @Injectable()
@@ -55,6 +73,54 @@ export class PlayersService {
       throw new NotFoundException('Player not found.');
     }
     return profile;
+  }
+
+  async search(dto: SearchPlayersDto): Promise<PlayerSearchResult> {
+    const filter: Record<string, unknown> = {
+      visibility: ProfileVisibility.PUBLIC,
+    };
+    if (dto.country) filter.country = dto.country;
+    if (dto.position) filter.position = dto.position;
+    if (dto.sport) filter.sport = dto.sport;
+    if (dto.preferredFoot) filter.preferredFoot = dto.preferredFoot;
+    if (dto.weight !== undefined) filter.weight = dto.weight;
+
+    if (dto.minHeight !== undefined || dto.maxHeight !== undefined) {
+      filter.height = {
+        ...(dto.minHeight !== undefined && { $gte: dto.minHeight }),
+        ...(dto.maxHeight !== undefined && { $lte: dto.maxHeight }),
+      };
+    }
+
+    // minAge=20 → born on/before (today - 20y); maxAge=25 → born on/after (today - 25y).
+    if (dto.minAge !== undefined || dto.maxAge !== undefined) {
+      filter.dateOfBirth = {
+        ...(dto.minAge !== undefined && {
+          $lte: dateOfBirthAtLeastAge(dto.minAge),
+        }),
+        ...(dto.maxAge !== undefined && {
+          $gte: dateOfBirthAtLeastAge(dto.maxAge),
+        }),
+      };
+    }
+
+    const page = dto.page ?? 1;
+    const [items, total] = await Promise.all([
+      this.playerProfileModel
+        .find(filter)
+        .skip((page - 1) * SEARCH_PAGE_SIZE)
+        .limit(SEARCH_PAGE_SIZE),
+      this.playerProfileModel.countDocuments(filter),
+    ]);
+
+    return { items, page, pageSize: SEARCH_PAGE_SIZE, total };
+  }
+
+  findManyPublicByIds(ids: string[]): Promise<PlayerProfileDocument[]> {
+    return this.playerProfileModel.find({
+      _id: { $in: ids },
+      visibility: ProfileVisibility.PUBLIC,
+    });
   }
 
   async updateProfile(

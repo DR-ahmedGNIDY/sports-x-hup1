@@ -7,10 +7,14 @@ import '../../features/auth/presentation/forgot_password_page.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/reset_password_page.dart';
+import '../../features/club/presentation/edit_club_profile_page.dart';
+import '../../features/club/presentation/my_club_profile_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/player/presentation/edit_profile_page.dart';
 import '../../features/player/presentation/my_profile_preview_page.dart';
 import '../../features/player/presentation/public_player_profile_page.dart';
+import '../../features/saved_players/presentation/saved_players_page.dart';
+import '../../features/search/presentation/search_players_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/splash/presentation/splash_page.dart';
 import 'go_router_refresh_notifier.dart';
@@ -79,6 +83,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/players/:id',
         builder: (context, state) =>
             PublicPlayerProfilePage(playerId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/club/edit',
+        builder: (context, state) => const EditClubProfilePage(),
+      ),
+      GoRoute(
+        path: '/club/preview',
+        builder: (context, state) => const MyClubProfilePage(),
+      ),
+      GoRoute(path: '/search', builder: (context, state) => const SearchPlayersPage()),
+      GoRoute(
+        path: '/saved-players',
+        builder: (context, state) => const SavedPlayersPage(),
       ),
     ],
   );

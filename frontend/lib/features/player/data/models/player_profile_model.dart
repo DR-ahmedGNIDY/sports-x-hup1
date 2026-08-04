@@ -1,9 +1,9 @@
 import '../../domain/entities/achievement.dart';
-import '../../domain/entities/contact_details.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_media.dart';
 import '../../domain/entities/player_profile.dart';
 import '../../domain/entities/social_link.dart';
+import 'contact_details_model.dart';
 
 extension PlayerProfileModel on PlayerProfile {
   static PlayerProfile fromJson(Map<String, dynamic> json) {
@@ -25,7 +25,7 @@ extension PlayerProfileModel on PlayerProfile {
       currentStatus: json['currentStatus'] as String?,
       currentClub: json['currentClub'] as String?,
       bio: json['bio'] as String?,
-      contact: _contactFromJson(json['contact'] as Map<String, dynamic>?),
+      contact: ContactDetailsModel.fromJson(json['contact'] as Map<String, dynamic>?),
       visibility: json['visibility'] != null
           ? ProfileVisibility.fromWire(json['visibility'] as String)
           : ProfileVisibility.private,
@@ -40,15 +40,6 @@ extension PlayerProfileModel on PlayerProfile {
           .toList()),
     );
   }
-}
-
-ContactDetails _contactFromJson(Map<String, dynamic>? json) {
-  if (json == null) return const ContactDetails();
-  return ContactDetails(
-    phone: json['phone'] as String?,
-    email: json['email'] as String?,
-    whatsapp: json['whatsapp'] as String?,
-  );
 }
 
 PlayerMedia _mediaFromJson(Map<String, dynamic> json) {

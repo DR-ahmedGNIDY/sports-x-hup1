@@ -1,4 +1,19 @@
-import { PlayerProfileDocument } from './schemas/player-profile.schema';
+import {
+  MediaType,
+  PlayerProfileDocument,
+} from './schemas/player-profile.schema';
+
+function ageFromDateOfBirth(dateOfBirth?: Date): number | undefined {
+  if (!dateOfBirth) return undefined;
+  const diffMs = Date.now() - dateOfBirth.getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.25));
+}
+
+function profilePhotoUrl(profile: PlayerProfileDocument): string | undefined {
+  return profile.media.find(
+    (item) => item.type === MediaType.PHOTO && item.isProfilePhoto,
+  )?.secureUrl;
+}
 
 function baseView(profile: PlayerProfileDocument) {
   return {
@@ -45,4 +60,24 @@ export function toOwnerView(profile: PlayerProfileDocument) {
 // this endpoint must not hand them to anonymous scrapers in the meantime.
 export function toPublicView(profile: PlayerProfileDocument) {
   return baseView(profile);
+}
+
+// Lean shape for player search results and the Saved Players list — a
+// results grid/card list doesn't need the full achievements/social-links
+// payload per row, just enough to identify and evaluate the player at a
+// glance.
+export function toSearchResultView(profile: PlayerProfileDocument) {
+  return {
+    id: profile._id.toString(),
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    age: ageFromDateOfBirth(profile.dateOfBirth),
+    country: profile.country,
+    sport: profile.sport,
+    position: profile.position,
+    preferredFoot: profile.preferredFoot,
+    height: profile.height,
+    weight: profile.weight,
+    profilePhotoUrl: profilePhotoUrl(profile),
+  };
 }

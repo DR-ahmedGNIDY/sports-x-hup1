@@ -1,0 +1,77 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../player/presentation/shared/player_search_result_card.dart';
+import '../../application/search_controller.dart';
+import '../shared/player_search_filters_form.dart';
+import '../shared/search_pagination.dart';
+
+class SearchPlayersPageDesktop extends ConsumerWidget {
+  const SearchPlayersPageDesktop({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final resultsAsync = ref.watch(searchControllerProvider);
+    final controller = ref.read(searchControllerProvider.notifier);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Search Players'),
+        leading: BackButton(onPressed: () => context.go('/dashboard')),
+      ),
+      body: Row(
+        children: [
+          Container(
+            width: 280,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: PlayerSearchFiltersForm(
+                initialFilters: controller.filters,
+                onApply: controller.applyFilters,
+              ),
+            ),
+          ),
+          Expanded(
+            child: resultsAsync.when(
+              data: (page) => page.items.isEmpty
+                  ? const Center(child: Text('No players match these filters.'))
+                  : Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 360,
+                                    mainAxisExtent: 96,
+                                    crossAxisSpacing: 12,
+                                    mainAxisSpacing: 12,
+                                  ),
+                              itemCount: page.items.length,
+                              itemBuilder: (context, index) =>
+                                  PlayerSearchResultCard(player: page.items[index]),
+                            ),
+                          ),
+                          if (page.total > page.pageSize) ...[
+                            const SizedBox(height: 12),
+                            SearchPagination(page: page, controller: controller),
+                          ],
+                        ],
+                      ),
+                    ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Center(child: Text('$error')),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
