@@ -12,7 +12,7 @@ import {
   ClubProfileDocument,
 } from './schemas/club-profile.schema';
 
-const ADMIN_LIST_PAGE_SIZE = 20;
+const CLUB_LIST_PAGE_SIZE = 20;
 
 export interface ClubPaginatedResult {
   items: ClubProfileDocument[];
@@ -35,6 +35,28 @@ export class ClubsService {
       profile = await this.clubProfileModel.create({ userId });
     }
     return profile;
+  }
+
+  // Public (Phase 5) — Public Clubs listing. Club profiles have no private
+  // fields to gate (see clubs.mapper.ts), so unlike player search this
+  // doesn't need a visibility filter; it's the same "all clubs" shape the
+  // Admin list already uses, just reachable without auth and without the
+  // Admin-only concerns.
+  async findAllPublic(
+    page = 1,
+    country?: string,
+  ): Promise<ClubPaginatedResult> {
+    const filter: Record<string, unknown> = {};
+    if (country) filter.country = country;
+    const [items, total] = await Promise.all([
+      this.clubProfileModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * CLUB_LIST_PAGE_SIZE)
+        .limit(CLUB_LIST_PAGE_SIZE),
+      this.clubProfileModel.countDocuments(filter),
+    ]);
+    return { items, page, pageSize: CLUB_LIST_PAGE_SIZE, total };
   }
 
   async findByIdOrThrow(id: string): Promise<ClubProfileDocument> {
@@ -86,11 +108,11 @@ export class ClubsService {
       this.clubProfileModel
         .find()
         .sort({ createdAt: -1 })
-        .skip((page - 1) * ADMIN_LIST_PAGE_SIZE)
-        .limit(ADMIN_LIST_PAGE_SIZE),
+        .skip((page - 1) * CLUB_LIST_PAGE_SIZE)
+        .limit(CLUB_LIST_PAGE_SIZE),
       this.clubProfileModel.countDocuments(),
     ]);
-    return { items, page, pageSize: ADMIN_LIST_PAGE_SIZE, total };
+    return { items, page, pageSize: CLUB_LIST_PAGE_SIZE, total };
   }
 
   async deleteProfileAndLogo(id: string): Promise<void> {

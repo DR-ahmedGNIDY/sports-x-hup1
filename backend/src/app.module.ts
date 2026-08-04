@@ -13,6 +13,7 @@ import { PlayersModule } from './players/players.module';
 import { ClubsModule } from './clubs/clubs.module';
 import { SavedPlayersModule } from './saved-players/saved-players.module';
 import { AdminModule } from './admin/admin.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { AdminModule } from './admin/admin.module';
     ClubsModule,
     SavedPlayersModule,
     AdminModule,
+    ContactModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

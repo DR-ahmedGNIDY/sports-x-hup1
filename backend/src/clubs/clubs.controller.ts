@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -20,12 +21,24 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { imageUploadOptions } from '../common/upload.config';
 import { UserRole } from '../users/schemas/user.schema';
 import { ClubsService } from './clubs.service';
+import { ListClubsDto } from './dto/list-clubs.dto';
 import { UpdateClubProfileDto } from './dto/update-club-profile.dto';
 import { toClubView } from './clubs.mapper';
 
 @Controller('clubs')
 export class ClubsController {
   constructor(private readonly clubsService: ClubsService) {}
+
+  // Public Clubs listing (Phase 5) — GET /clubs (no trailing segment), so
+  // it never collides with GET /clubs/me or GET /clubs/:id below.
+  @Get()
+  async findAllPublic(@Query() query: ListClubsDto) {
+    const result = await this.clubsService.findAllPublic(
+      query.page ?? 1,
+      query.country,
+    );
+    return { ...result, items: result.items.map(toClubView) };
+  }
 
   @Get('me')
   @UseGuards(JwtAuthGuard, RolesGuard)

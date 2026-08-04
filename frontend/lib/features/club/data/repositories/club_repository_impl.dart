@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/authorized_request.dart';
 import '../../../../core/storage/session_storage.dart';
 import '../../../../core/storage/session_storage_provider.dart';
+import '../../domain/entities/club_list_page.dart';
 import '../../domain/entities/club_profile.dart';
 import '../../domain/repositories/club_repository.dart';
 import '../datasources/club_remote_data_source.dart';
@@ -17,6 +18,26 @@ class ClubRepositoryImpl implements ClubRepository {
 
   Future<T> _authorized<T>(Future<T> Function(String accessToken) call) =>
       runAuthorized(_ref, _storage, call);
+
+  @override
+  Future<ClubListPage> listClubs({int page = 1, String? country}) async {
+    final json = await _remote.listClubs(page: page, country: country);
+    final items = (json['items'] as List<dynamic>)
+        .map((e) => ClubProfileModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+    return ClubListPage(
+      items: items,
+      page: json['page'] as int,
+      pageSize: json['pageSize'] as int,
+      total: json['total'] as int,
+    );
+  }
+
+  @override
+  Future<ClubProfile> getById(String id) async {
+    final json = await _remote.getById(id);
+    return ClubProfileModel.fromJson(json);
+  }
 
   @override
   Future<ClubProfile> getMyProfile() => _authorized((token) async {

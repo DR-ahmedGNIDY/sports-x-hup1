@@ -1,0 +1,13 @@
+# Placeholder — replace the domain below at deploy time to match index.html's
+# canonical tag and this file's own reference to sitemap.xml.
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /player/edit
+Disallow: /club/edit
+Disallow: /saved-players
+Disallow: /search
+Disallow: /admin/
+
+Sitemap: https://sportxhub.com/sitemap.xml

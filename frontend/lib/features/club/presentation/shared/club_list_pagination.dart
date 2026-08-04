@@ -1,0 +1,30 @@
+import 'package:flutter/material.dart';
+
+import '../../application/public_clubs_controller.dart';
+import '../../domain/entities/club_list_page.dart';
+
+class ClubListPagination extends StatelessWidget {
+  const ClubListPagination({super.key, required this.page, required this.controller});
+
+  final ClubListPage page;
+  final PublicClubsController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final lastPage = ((page.total - 1) / page.pageSize).floor() + 1;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: page.page > 1 ? () => controller.loadPage(page.page - 1) : null,
+          icon: const Icon(Icons.chevron_left),
+        ),
+        Text('Page ${page.page} of $lastPage'),
+        IconButton(
+          onPressed: page.hasNextPage ? () => controller.loadPage(page.page + 1) : null,
+          icon: const Icon(Icons.chevron_right),
+        ),
+      ],
+    );
+  }
+}

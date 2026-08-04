@@ -3,12 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../auth/application/session_controller.dart';
+import '../../../auth/domain/entities/user_role.dart';
 import '../../../saved_players/application/saved_players_controller.dart';
 import '../../../saved_players/presentation/shared/save_toggle_feedback.dart';
 import '../../domain/entities/player_search_result.dart';
 
-/// A single player row/card in Search Players results and the Saved
-/// Players list — shared by both Desktop and Mobile layouts of each.
+/// A single player row/card in Search Players results (both the
+/// authenticated Club tool at /search and the public listing at /players)
+/// and the Saved Players list — shared by both Desktop and Mobile layouts
+/// of each.
 class PlayerSearchResultCard extends ConsumerWidget {
   const PlayerSearchResultCard({super.key, required this.player});
 
@@ -16,6 +20,7 @@ class PlayerSearchResultCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isClub = ref.watch(sessionControllerProvider).user?.role == UserRole.club;
     final saved = ref.watch(
       savedPlayersControllerProvider.select(
         (state) => state.value?.any((p) => p.id == player.id) ?? false,
@@ -49,11 +54,13 @@ class PlayerSearchResultCard extends ConsumerWidget {
           [subtitle, details].where((v) => v.isNotEmpty).join('\n'),
         ),
         isThreeLine: subtitle.isNotEmpty && details.isNotEmpty,
-        trailing: IconButton(
-          tooltip: saved ? 'Remove from saved' : 'Save player',
-          icon: Icon(saved ? Icons.bookmark : Icons.bookmark_outline),
-          onPressed: () => toggleSavedPlayer(context, ref, saved: saved, player: player),
-        ),
+        trailing: isClub
+            ? IconButton(
+                tooltip: saved ? 'Remove from saved' : 'Save player',
+                icon: Icon(saved ? Icons.bookmark : Icons.bookmark_outline),
+                onPressed: () => toggleSavedPlayer(context, ref, saved: saved, player: player),
+              )
+            : null,
       ),
     );
   }

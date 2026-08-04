@@ -12,11 +12,18 @@ import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/reset_password_page.dart';
 import '../../features/club/presentation/edit_club_profile_page.dart';
 import '../../features/club/presentation/my_club_profile_page.dart';
+import '../../features/club/presentation/public_club_profile_page.dart';
+import '../../features/club/presentation/public_clubs_listing_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/marketing/presentation/about_page.dart';
+import '../../features/marketing/presentation/contact_page.dart';
+import '../../features/marketing/presentation/home_page.dart';
+import '../../features/marketing/presentation/pricing_page.dart';
 import '../../features/player/presentation/edit_profile_page.dart';
 import '../../features/player/presentation/my_profile_preview_page.dart';
 import '../../features/player/presentation/public_player_profile_page.dart';
 import '../../features/saved_players/presentation/saved_players_page.dart';
+import '../../features/search/presentation/public_players_listing_page.dart';
 import '../../features/search/presentation/search_players_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/splash/presentation/splash_page.dart';
@@ -25,10 +32,22 @@ import 'go_router_refresh_notifier.dart';
 // Guest-only auth pages — an authenticated user is bounced away from these.
 const _publicRoutes = {'/login', '/register', '/forgot-password', '/reset-password'};
 
-/// Public player profiles are shareable URLs: reachable with or without a
-/// session, so unlike [_publicRoutes] they never trigger the "authenticated
-/// users get bounced to /dashboard" redirect.
+// The public marketing site (Phase 5) — reachable with or without a
+// session, and never bounces an authenticated user away either: a logged-in
+// Club can still browse About/Pricing, same as anyone else.
+const _marketingRoutes = {'/home', '/about', '/pricing', '/contact', '/players', '/clubs'};
+
+/// Public player profiles and public club profiles are shareable URLs:
+/// reachable with or without a session, so unlike [_publicRoutes] they
+/// never trigger the "authenticated users get bounced to /dashboard"
+/// redirect.
 bool _isPublicPlayerProfile(String path) => path.startsWith('/players/');
+bool _isPublicClubProfile(String path) => path.startsWith('/clubs/');
+
+bool _isMarketingRoute(String path) =>
+    _marketingRoutes.contains(path) ||
+    _isPublicPlayerProfile(path) ||
+    _isPublicClubProfile(path);
 
 bool _isAdminRoute(String path) => path.startsWith('/admin/');
 
@@ -40,11 +59,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final session = ref.read(sessionControllerProvider);
       final path = state.matchedLocation;
 
-      // Public player profiles are shareable, session-independent deep
-      // links — checked before the splash gate below, so a cold load
-      // renders the profile directly instead of being forced through '/'
-      // and losing the requested path once restore() resolves.
-      if (_isPublicPlayerProfile(path)) return null;
+      // The public marketing site and public profile/listing deep links are
+      // session-independent — checked before the splash gate below, so a
+      // cold load renders the page directly instead of being forced through
+      // '/' and losing the requested path once restore() resolves.
+      if (_isMarketingRoute(path)) return null;
 
       // Force every cold load through splash first, so it can call
       // SessionController.restore() before any protected/public route
@@ -55,10 +74,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       }
 
       final isAuthenticated = session.status == SessionStatus.authenticated;
-      final isPublicRoute = _publicRoutes.contains(path);
 
+      // Root '/' is the technical splash/session-restore route, not a page
+      // in its own right — once restore() resolves, send the visitor
+      // straight to their dashboard or to the marketing home page.
+      if (path == '/') {
+        return isAuthenticated ? '/dashboard' : '/home';
+      }
+
+      final isPublicRoute = _publicRoutes.contains(path);
       if (!isAuthenticated && !isPublicRoute) return '/login';
-      if (isAuthenticated && (path == '/' || isPublicRoute)) return '/dashboard';
+      if (isAuthenticated && isPublicRoute) return '/dashboard';
 
       // Admin tooling is only for ADMIN accounts — everyone else gets
       // bounced back to their own dashboard, same as a Player hitting a
@@ -70,6 +96,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashPage()),
+      GoRoute(path: '/home', builder: (context, state) => const HomePage()),
+      GoRoute(path: '/about', builder: (context, state) => const AboutPage()),
+      GoRoute(path: '/pricing', builder: (context, state) => const PricingPage()),
+      GoRoute(path: '/contact', builder: (context, state) => const ContactPage()),
+      GoRoute(
+        path: '/players',
+        builder: (context, state) => const PublicPlayersListingPage(),
+      ),
+      GoRoute(
+        path: '/clubs',
+        builder: (context, state) => const PublicClubsListingPage(),
+      ),
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(path: '/register', builder: (context, state) => const RegisterPage()),
       GoRoute(
@@ -103,6 +141,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/club/preview',
         builder: (context, state) => const MyClubProfilePage(),
+      ),
+      GoRoute(
+        path: '/clubs/:id',
+        builder: (context, state) =>
+            PublicClubProfilePage(clubId: state.pathParameters['id']!),
       ),
       GoRoute(path: '/search', builder: (context, state) => const SearchPlayersPage()),
       GoRoute(
