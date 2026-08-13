@@ -351,6 +351,8 @@
   "skillsSectionTitle": "Skills",
   "traitsTitle": "Traits",
   "traitsCaption": "Grows as you upload more videos in each skill — liked videos count extra.",
+  "traitsFootballOnlyMessage": "Traits are only available for Football players right now.",
+  "setSportFirstMessage": "Set your sport on your profile to see this.",
   "videosEmptyState": "No videos yet in this category.",
   "videoDeleteTitle": "Delete video?",
   "videoDeleteContent": "This cannot be undone.",

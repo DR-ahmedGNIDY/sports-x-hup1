@@ -270,23 +270,72 @@ class _UserIdentity extends ConsumerWidget {
   }
 }
 
+class _MobileNavDestination {
+  const _MobileNavDestination({required this.icon, required this.label, required this.route});
+
+  final IconData icon;
+  final String label;
+  final String route;
+}
+
 class _MobileShell extends ConsumerWidget {
   const _MobileShell({required this.currentPath, required this.child});
 
   final String currentPath;
   final Widget child;
 
-  int _indexFor(String path) {
-    if (path.startsWith('/community')) return 1;
-    if (path == '/settings') return 2;
-    return 0;
+  // A Player gets two extra tabs (Skills, Traits) next to Home — everyone
+  // else keeps the original three.
+  List<_MobileNavDestination> _destinationsFor(AppLocalizations l10n, UserRole? role) {
+    final home = _MobileNavDestination(
+      icon: Icons.home_outlined,
+      label: l10n.marketingNavHome,
+      route: '/dashboard',
+    );
+    final community = _MobileNavDestination(
+      icon: Icons.groups_2_outlined,
+      label: l10n.communityNavLabel,
+      route: '/community',
+    );
+    final settings = _MobileNavDestination(
+      icon: Icons.settings_outlined,
+      label: l10n.dashboardNavSettings,
+      route: '/settings',
+    );
+    if (role != UserRole.player) {
+      return [home, community, settings];
+    }
+    return [
+      home,
+      _MobileNavDestination(
+        icon: Icons.sports_soccer_outlined,
+        label: l10n.skillsSectionTitle,
+        route: '/player/skills',
+      ),
+      _MobileNavDestination(
+        icon: Icons.insights_outlined,
+        label: l10n.traitsTitle,
+        route: '/player/traits',
+      ),
+      community,
+      settings,
+    ];
+  }
+
+  int _indexFor(List<_MobileNavDestination> destinations, String path) {
+    final index = destinations.indexWhere(
+      (d) => d.route != '/dashboard' && path.startsWith(d.route),
+    );
+    return index == -1 ? 0 : index;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final l10n = AppLocalizations.of(context)!;
-    final selectedIndex = _indexFor(currentPath);
+    final role = ref.watch(sessionControllerProvider).user?.role;
+    final destinations = _destinationsFor(l10n, role);
+    final selectedIndex = _indexFor(destinations, currentPath);
 
     return Scaffold(
       appBar: AppBar(
@@ -308,21 +357,9 @@ class _MobileShell extends ConsumerWidget {
       body: child,
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
-        onDestinationSelected: (index) {
-          if (index == 0) context.go('/dashboard');
-          if (index == 1) context.go('/community');
-          if (index == 2) context.go('/settings');
-        },
+        onDestinationSelected: (index) => context.go(destinations[index].route),
         destinations: [
-          NavigationDestination(icon: const Icon(Icons.home_outlined), label: l10n.marketingNavHome),
-          NavigationDestination(
-            icon: const Icon(Icons.groups_2_outlined),
-            label: l10n.communityNavLabel,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            label: l10n.dashboardNavSettings,
-          ),
+          for (final d in destinations) NavigationDestination(icon: Icon(d.icon), label: d.label),
         ],
       ),
     );

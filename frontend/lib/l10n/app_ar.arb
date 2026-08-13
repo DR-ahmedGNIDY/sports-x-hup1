@@ -351,6 +351,8 @@
   "skillsSectionTitle": "المهارات",
   "traitsTitle": "السمات",
   "traitsCaption": "بتزيد كل ما ترفع فيديوهات أكتر في المهارة دي — والفيديوهات اللي بتاخد لايكات أكتر بتزيد أسرع.",
+  "traitsFootballOnlyMessage": "السمات متاحة حاليًا للاعبين كرة القدم بس.",
+  "setSportFirstMessage": "حدّد رياضتك في بروفايلك عشان تقدر تشوف الصفحة دي.",
   "videosEmptyState": "لا توجد فيديوهات بعد في هذه الفئة.",
   "videoDeleteTitle": "حذف الفيديو؟",
   "videoDeleteContent": "لا يمكن التراجع عن هذا الإجراء.",

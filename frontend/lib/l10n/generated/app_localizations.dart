@@ -1880,6 +1880,18 @@ abstract class AppLocalizations {
   /// **'بتزيد كل ما ترفع فيديوهات أكتر في المهارة دي — والفيديوهات اللي بتاخد لايكات أكتر بتزيد أسرع.'**
   String get traitsCaption;
 
+  /// No description provided for @traitsFootballOnlyMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'السمات متاحة حاليًا للاعبين كرة القدم بس.'**
+  String get traitsFootballOnlyMessage;
+
+  /// No description provided for @setSportFirstMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدّد رياضتك في بروفايلك عشان تقدر تشوف الصفحة دي.'**
+  String get setSportFirstMessage;
+
   /// No description provided for @videosEmptyState.
   ///
   /// In ar, this message translates to:

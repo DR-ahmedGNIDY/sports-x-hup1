@@ -24,6 +24,8 @@ import '../../features/marketing/presentation/home_page.dart';
 import '../../features/marketing/presentation/pricing_page.dart';
 import '../../features/player/presentation/edit_profile_page.dart';
 import '../../features/player/presentation/my_profile_preview_page.dart';
+import '../../features/player/presentation/my_skills_page.dart';
+import '../../features/player/presentation/my_traits_page.dart';
 import '../../features/player/presentation/public_player_profile_page.dart';
 import '../../features/saved_players/presentation/saved_players_page.dart';
 import '../../features/search/presentation/public_players_listing_page.dart';
@@ -57,6 +59,12 @@ bool _isAdminRoute(String path) => path.startsWith('/admin/');
 
 bool _isClubRoute(String path) => path.startsWith('/club/players');
 
+// Where an authenticated session lands after splash/login, or gets bounced
+// back to when it hits a route it doesn't own — a Player's home is their
+// own profile, everyone else's is the dashboard.
+String _landingRoute(SessionState session) =>
+    session.user?.role == UserRole.player ? '/player/preview' : '/dashboard';
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
@@ -85,24 +93,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // in its own right — once restore() resolves, send the visitor
       // straight to their dashboard or to the marketing home page.
       if (path == '/') {
-        return isAuthenticated ? '/dashboard' : '/home';
+        return isAuthenticated ? _landingRoute(session) : '/home';
       }
 
       final isPublicRoute = _publicRoutes.contains(path);
       if (!isAuthenticated && !isPublicRoute) return '/login';
-      if (isAuthenticated && isPublicRoute) return '/dashboard';
+      if (isAuthenticated && isPublicRoute) return _landingRoute(session);
 
       // Admin tooling is only for ADMIN accounts — everyone else gets
-      // bounced back to their own dashboard, same as a Player hitting a
+      // bounced back to their own landing route, same as a Player hitting a
       // Club-only route would be if one existed.
       if (_isAdminRoute(path) && session.user?.role != UserRole.admin) {
-        return '/dashboard';
+        return _landingRoute(session);
       }
 
       // Adding/managing players directly is a Club-only tool, same
       // enforcement shape as the admin check above.
       if (_isClubRoute(path) && session.user?.role != UserRole.club) {
-        return '/dashboard';
+        return _landingRoute(session);
       }
       return null;
     },
@@ -157,6 +165,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/player/preview',
             builder: (context, state) => const MyProfilePreviewPage(),
+          ),
+          GoRoute(
+            path: '/player/skills',
+            builder: (context, state) => const MySkillsPage(),
+          ),
+          GoRoute(
+            path: '/player/traits',
+            builder: (context, state) => const MyTraitsPage(),
           ),
           GoRoute(
             path: '/club/edit',

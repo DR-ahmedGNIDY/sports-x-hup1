@@ -956,6 +956,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Grows as you upload more videos in each skill — liked videos count extra.';
 
   @override
+  String get traitsFootballOnlyMessage =>
+      'Traits are only available for Football players right now.';
+
+  @override
+  String get setSportFirstMessage =>
+      'Set your sport on your profile to see this.';
+
+  @override
   String get videosEmptyState => 'No videos yet in this category.';
 
   @override

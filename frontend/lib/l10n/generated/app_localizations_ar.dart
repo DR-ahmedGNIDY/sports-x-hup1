@@ -944,6 +944,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'بتزيد كل ما ترفع فيديوهات أكتر في المهارة دي — والفيديوهات اللي بتاخد لايكات أكتر بتزيد أسرع.';
 
   @override
+  String get traitsFootballOnlyMessage =>
+      'السمات متاحة حاليًا للاعبين كرة القدم بس.';
+
+  @override
+  String get setSportFirstMessage =>
+      'حدّد رياضتك في بروفايلك عشان تقدر تشوف الصفحة دي.';
+
+  @override
   String get videosEmptyState => 'لا توجد فيديوهات بعد في هذه الفئة.';
 
   @override
