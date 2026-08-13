@@ -14,7 +14,7 @@ COPY . .
 # container startup (docker-entrypoint.sh), so the API base URL can change
 # without rebuilding the Flutter app.
 RUN cp .env.example .env
-RUN flutter build web --release
+RUN flutter build web --release --source-maps
 
 # Stage 2 — serve the static build with nginx.
 FROM nginx:alpine
