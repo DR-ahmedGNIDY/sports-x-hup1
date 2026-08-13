@@ -30,14 +30,19 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   flutter_riverpod: ^2.6.1
   go_router: ^17.3.0
   flutter_dotenv: ^6.0.1
   http: ^1.6.0
+  http_parser: ^4.1.2
   shared_preferences: ^2.5.5
-  file_picker: ^8.1.6
+  file_picker: ^11.0.3
   url_launcher: ^6.3.1
+  intl: any
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +73,7 @@ flutter_launcher_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -77,6 +83,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/logo.png
+    - assets/videos/panar1.mp4
+    - assets/videos/panar22.mp4
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

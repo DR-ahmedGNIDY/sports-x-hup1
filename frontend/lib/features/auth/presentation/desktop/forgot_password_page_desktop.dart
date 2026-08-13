@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/app_exception.dart';
-import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../shared/auth_error_banner.dart';
+import '../shared/auth_panel_seam.dart';
+import '../shared/auth_video_panel.dart';
 
 class ForgotPasswordPageDesktop extends ConsumerStatefulWidget {
   const ForgotPasswordPageDesktop({super.key});
@@ -46,58 +48,72 @@ class _ForgotPasswordPageDesktopState extends ConsumerState<ForgotPasswordPageDe
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 380),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Center(child: AppLogo(height: 72)),
-              const SizedBox(height: 24),
-              Text('Reset your password', style: Theme.of(context).textTheme.displayLarge),
-              const SizedBox(height: 12),
-              if (_sent)
-                const Text(
-                  'If an account exists for that email, a reset link has been sent. '
-                  'In development, check the backend console log for the link.',
-                )
-              else
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AuthErrorBanner(message: _error),
-                      TextFormField(
-                        controller: _email,
-                        decoration: const InputDecoration(labelText: 'Email'),
-                        validator: (v) =>
-                            (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loading ? null : _submit,
-                        child: _loading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Text('Send reset link'),
-                      ),
-                    ],
+      body: Row(
+        children: [
+          const Expanded(
+            child: AuthVideoPanel(assetPath: 'assets/videos/panar22.mp4'),
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                const AuthPanelSeam(),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 380),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          l10n.authForgotPasswordTitle,
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                        const SizedBox(height: 12),
+                        if (_sent)
+                          Text(l10n.authForgotSentMessage)
+                        else
+                          Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                AuthErrorBanner(message: _error),
+                                TextFormField(
+                                  controller: _email,
+                                  decoration: InputDecoration(labelText: l10n.authEmailLabel),
+                                  validator: (v) => (v == null || !v.contains('@'))
+                                      ? l10n.authEmailValidation
+                                      : null,
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: _loading ? null : _submit,
+                                  child: _loading
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                        )
+                                      : Text(l10n.authSendResetLink),
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(height: 16),
+                        TextButton(
+                          onPressed: () => context.go('/login'),
+                          child: Text(l10n.authBackToLogin),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () => context.go('/login'),
-                child: const Text('Back to login'),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

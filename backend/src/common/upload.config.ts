@@ -40,6 +40,23 @@ export const imageUploadOptions: MulterOptions = {
   },
 };
 
+/** Multer options for an endpoint that only ever accepts a video (video upload). */
+export const videoUploadOptions: MulterOptions = {
+  limits: { fileSize: VIDEO_SIZE_LIMIT_BYTES },
+  fileFilter: (_req, file, callback) => {
+    if (!ALLOWED_VIDEO_MIME_TYPES.includes(file.mimetype)) {
+      callback(
+        new BadRequestException(
+          `Unsupported file type "${file.mimetype}". Allowed: ${ALLOWED_VIDEO_MIME_TYPES.join(', ')}.`,
+        ),
+        false,
+      );
+      return;
+    }
+    callback(null, true);
+  },
+};
+
 /**
  * Multer options for an endpoint that accepts either an image or a video
  * (player media) — the declared media `type` (PHOTO/VIDEO) is a separate

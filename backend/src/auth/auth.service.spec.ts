@@ -23,7 +23,7 @@ describe('AuthService', () => {
 
   let passwordHash: string;
   let fakeUsersService: {
-    findByEmail: jest.Mock;
+    findByEmailOrPhone: jest.Mock;
     findByIdOrThrow: jest.Mock;
     createPlayerOrClub: jest.Mock;
   };
@@ -47,7 +47,7 @@ describe('AuthService', () => {
     };
 
     fakeUsersService = {
-      findByEmail: jest.fn().mockResolvedValue(fakeUser),
+      findByEmailOrPhone: jest.fn().mockResolvedValue(fakeUser),
       findByIdOrThrow: jest.fn().mockResolvedValue(fakeUser),
       createPlayerOrClub: jest.fn().mockResolvedValue(fakeUser),
     };
@@ -65,22 +65,25 @@ describe('AuthService', () => {
   it('rejects login with the wrong password', async () => {
     await expect(
       service.login({
-        email: 'player@example.com',
+        identifier: 'player@example.com',
         password: 'wrong-password',
       }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
     expect(fakeRefreshTokenModel.create).not.toHaveBeenCalled();
   });
 
-  it('rejects login for an email that does not exist', async () => {
-    fakeUsersService.findByEmail.mockResolvedValueOnce(null);
+  it('rejects login for an identifier that does not exist', async () => {
+    fakeUsersService.findByEmailOrPhone.mockResolvedValueOnce(null);
     await expect(
-      service.login({ email: 'nobody@example.com', password: 'whatever123' }),
+      service.login({
+        identifier: 'nobody@example.com',
+        password: 'whatever123',
+      }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
   it('rejects login for a suspended account, even with the correct password', async () => {
-    fakeUsersService.findByEmail.mockResolvedValueOnce({
+    fakeUsersService.findByEmailOrPhone.mockResolvedValueOnce({
       id: 'user-1',
       _id: 'user-1',
       email: 'player@example.com',
@@ -92,7 +95,7 @@ describe('AuthService', () => {
 
     await expect(
       service.login({
-        email: 'player@example.com',
+        identifier: 'player@example.com',
         password: 'correct-password',
       }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
@@ -101,7 +104,7 @@ describe('AuthService', () => {
 
   it('issues an access token and a stored, hashed refresh token on successful login', async () => {
     const result = await service.login({
-      email: 'player@example.com',
+      identifier: 'player@example.com',
       password: 'correct-password',
     });
 

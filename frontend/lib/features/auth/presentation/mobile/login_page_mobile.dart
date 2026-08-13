@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/session_controller.dart';
 import '../../application/session_state.dart';
 import '../shared/auth_error_banner.dart';
@@ -17,12 +18,12 @@ class LoginPageMobile extends ConsumerStatefulWidget {
 
 class _LoginPageMobileState extends ConsumerState<LoginPageMobile> {
   final _formKey = GlobalKey<FormState>();
-  final _email = TextEditingController();
+  final _identifier = TextEditingController();
   final _password = TextEditingController();
 
   @override
   void dispose() {
-    _email.dispose();
+    _identifier.dispose();
     _password.dispose();
     super.dispose();
   }
@@ -31,13 +32,14 @@ class _LoginPageMobileState extends ConsumerState<LoginPageMobile> {
     if (!_formKey.currentState!.validate()) return;
     await ref
         .read(sessionControllerProvider.notifier)
-        .login(email: _email.text.trim(), password: _password.text);
+        .login(identifier: _identifier.text.trim(), password: _password.text);
   }
 
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(sessionControllerProvider);
     final isLoading = session.status == SessionStatus.authenticating;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
@@ -51,26 +53,27 @@ class _LoginPageMobileState extends ConsumerState<LoginPageMobile> {
                 const SizedBox(height: 32),
                 const Center(child: AppLogo(height: 64)),
                 const SizedBox(height: 32),
-                Text('Log in', style: Theme.of(context).textTheme.displayLarge),
+                Text(l10n.authLogIn, style: Theme.of(context).textTheme.displayLarge),
                 const SizedBox(height: 20),
                 AuthErrorBanner(message: session.errorMessage),
                 TextFormField(
-                  controller: _email,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (v) =>
-                      (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
+                  controller: _identifier,
+                  decoration: InputDecoration(labelText: l10n.authIdentifierLabel),
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? l10n.authIdentifierValidation
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 PasswordField(
                   controller: _password,
-                  validator: (v) => (v == null || v.isEmpty) ? 'Enter your password' : null,
+                  validator: (v) =>
+                      (v == null || v.isEmpty) ? l10n.authPasswordValidation : null,
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => context.go('/forgot-password'),
-                    child: const Text('Forgot password?'),
+                    child: Text(l10n.authForgotPassword),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -82,12 +85,12 @@ class _LoginPageMobileState extends ConsumerState<LoginPageMobile> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Log in'),
+                      : Text(l10n.authLogIn),
                 ),
                 const SizedBox(height: 24),
                 TextButton(
                   onPressed: () => context.go('/register'),
-                  child: const Text("Don't have an account? Register"),
+                  child: Text(l10n.authNoAccountRegisterMobile),
                 ),
               ],
             ),

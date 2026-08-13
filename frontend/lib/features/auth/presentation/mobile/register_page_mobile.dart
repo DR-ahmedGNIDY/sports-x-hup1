@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/session_controller.dart';
 import '../../application/session_state.dart';
 import '../../domain/entities/user_role.dart';
@@ -43,6 +44,7 @@ class _RegisterPageMobileState extends ConsumerState<RegisterPageMobile> {
   Widget build(BuildContext context) {
     final session = ref.watch(sessionControllerProvider);
     final isLoading = session.status == SessionStatus.authenticating;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +60,7 @@ class _RegisterPageMobileState extends ConsumerState<RegisterPageMobile> {
               children: [
                 const Center(child: AppLogo(height: 56)),
                 const SizedBox(height: 24),
-                Text('Create account', style: Theme.of(context).textTheme.displayLarge),
+                Text(l10n.authCreateAccountTitle, style: Theme.of(context).textTheme.displayLarge),
                 const SizedBox(height: 20),
                 AuthErrorBanner(message: session.errorMessage),
                 Center(
@@ -70,22 +72,22 @@ class _RegisterPageMobileState extends ConsumerState<RegisterPageMobile> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _email,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(labelText: l10n.authEmailLabel),
                   keyboardType: TextInputType.emailAddress,
                   validator: (v) =>
-                      (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
+                      (v == null || !v.contains('@')) ? l10n.authEmailValidation : null,
                 ),
                 const SizedBox(height: 16),
                 PasswordField(
                   controller: _password,
                   validator: (v) =>
-                      (v == null || v.length < 8) ? 'At least 8 characters' : null,
+                      (v == null || v.length < 8) ? l10n.authPasswordMinLength : null,
                 ),
                 const SizedBox(height: 16),
                 PasswordField(
                   controller: _confirmPassword,
-                  label: 'Confirm password',
-                  validator: (v) => v != _password.text ? 'Passwords do not match' : null,
+                  label: l10n.authConfirmPassword,
+                  validator: (v) => v != _password.text ? l10n.authPasswordMismatch : null,
                 ),
                 const SizedBox(height: 20),
                 FilledButton(
@@ -96,7 +98,7 @@ class _RegisterPageMobileState extends ConsumerState<RegisterPageMobile> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Create account'),
+                      : Text(l10n.authCreateAccountTitle),
                 ),
               ],
             ),

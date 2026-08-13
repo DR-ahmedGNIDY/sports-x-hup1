@@ -1,0 +1,4 @@
+# Shell scripts must keep LF endings regardless of the checkout platform —
+# a CRLF-converted docker-entrypoint.sh fails inside the Linux container
+# with "no such file or directory" (the shebang line doesn't parse).
+*.sh text eol=lf

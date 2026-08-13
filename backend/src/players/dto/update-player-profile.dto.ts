@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -14,10 +15,12 @@ import { ContactDetailsDto } from './contact-details.dto';
 export class UpdatePlayerProfileDto {
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   firstName?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   lastName?: string;
 
   @IsOptional()
@@ -26,14 +29,17 @@ export class UpdatePlayerProfileDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   nationality?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   country?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   city?: string;
 
   @IsOptional()
@@ -42,6 +48,7 @@ export class UpdatePlayerProfileDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   position?: string;
 
   @IsOptional()
@@ -60,14 +67,17 @@ export class UpdatePlayerProfileDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   currentStatus?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   currentClub?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(2000)
   bio?: string;
 
   @IsOptional()

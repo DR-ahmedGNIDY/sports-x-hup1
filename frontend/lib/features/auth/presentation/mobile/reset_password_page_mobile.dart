@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/app_exception.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../shared/auth_error_banner.dart';
 import '../shared/password_field.dart';
@@ -36,7 +37,7 @@ class _ResetPasswordPageMobileState extends ConsumerState<ResetPasswordPageMobil
     if (!_formKey.currentState!.validate()) return;
     final token = widget.token;
     if (token == null) {
-      setState(() => _error = 'This reset link is missing its token.');
+      setState(() => _error = AppLocalizations.of(context)!.authResetTokenMissing);
       return;
     }
     setState(() {
@@ -57,8 +58,9 @@ class _ResetPasswordPageMobileState extends ConsumerState<ResetPasswordPageMobil
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset password')),
+      appBar: AppBar(title: Text(l10n.authResetPasswordAppBarTitle)),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -66,11 +68,11 @@ class _ResetPasswordPageMobileState extends ConsumerState<ResetPasswordPageMobil
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text('Your password has been reset. You can log in now.'),
+                    Text(l10n.authResetDoneMessage),
                     const SizedBox(height: 16),
                     FilledButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Go to login'),
+                      child: Text(l10n.authGoToLogin),
                     ),
                   ],
                 )
@@ -82,16 +84,16 @@ class _ResetPasswordPageMobileState extends ConsumerState<ResetPasswordPageMobil
                       AuthErrorBanner(message: _error),
                       PasswordField(
                         controller: _password,
-                        label: 'New password',
+                        label: l10n.newPasswordLabel,
                         validator: (v) =>
-                            (v == null || v.length < 8) ? 'At least 8 characters' : null,
+                            (v == null || v.length < 8) ? l10n.authPasswordMinLength : null,
                       ),
                       const SizedBox(height: 16),
                       PasswordField(
                         controller: _confirmPassword,
-                        label: 'Confirm new password',
+                        label: l10n.confirmNewPasswordLabel,
                         validator: (v) =>
-                            v != _password.text ? 'Passwords do not match' : null,
+                            v != _password.text ? l10n.authPasswordMismatch : null,
                       ),
                       const SizedBox(height: 16),
                       FilledButton(
@@ -102,7 +104,7 @@ class _ResetPasswordPageMobileState extends ConsumerState<ResetPasswordPageMobil
                                 height: 20,
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
-                            : const Text('Reset password'),
+                            : Text(l10n.authResetPasswordButton),
                       ),
                     ],
                   ),

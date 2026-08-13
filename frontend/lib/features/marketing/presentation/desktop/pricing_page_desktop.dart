@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../shared/marketing_chrome.dart';
+import '../shared/marketing_header_band.dart';
 import '../shared/pricing_plans.dart';
 
 class PricingPageDesktop extends ConsumerWidget {
@@ -11,44 +13,57 @@ class PricingPageDesktop extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final plans = pricingPlans(l10n);
     return Scaffold(
       appBar: AppBar(
         title: const AppLogo(height: 28),
         actions: marketingDesktopNavActions(context, ref),
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1000),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 80),
-              child: Column(
-                children: [
-                  Text(
-                    'Pricing',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            MarketingHeaderBand(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1000),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 64, 32, 32),
+                    child: Column(
+                      children: [
+                        Text(
+                          l10n.pricingTitle,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(l10n.pricingSubtitle, style: Theme.of(context).textTheme.titleMedium),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Sport X Hub is free to join during launch.',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 48),
-                  Row(
+                ),
+              ),
+            ),
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1000),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(32, 48, 32, 80),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final plan in pricingPlans) ...[
+                      for (final plan in plans) ...[
                         Expanded(child: _PricingCard(plan: plan)),
-                        if (plan != pricingPlans.last) const SizedBox(width: 24),
+                        if (plan != plans.last) const SizedBox(width: 24),
                       ],
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -63,6 +78,7 @@ class _PricingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -92,7 +108,7 @@ class _PricingCard extends StatelessWidget {
             const SizedBox(height: 16),
             FilledButton(
               onPressed: () => context.go('/register'),
-              child: const Text('Get started'),
+              child: Text(l10n.homeGetStarted),
             ),
           ],
         ),

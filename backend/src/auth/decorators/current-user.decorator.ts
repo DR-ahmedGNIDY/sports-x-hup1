@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export interface JwtPayload {
   sub: string; // userId
-  email: string;
+  email?: string; // absent for club-created players, who log in by phone
   role: string;
 }
 

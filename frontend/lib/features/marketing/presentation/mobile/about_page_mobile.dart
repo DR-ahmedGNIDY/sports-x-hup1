@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/theme_mode_provider.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../shared/marketing_chrome.dart';
 
 class AboutPageMobile extends ConsumerWidget {
@@ -11,17 +11,11 @@ class AboutPageMobile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final themeMode = ref.watch(themeModeProvider);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: const AppLogo(height: 24),
-        actions: [
-          IconButton(
-            tooltip: 'Toggle dark mode',
-            onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
-            icon: Icon(themeModeToggleIcon(themeMode)),
-          ),
-        ],
+        actions: marketingMobileAppBarActions(context, ref),
       ),
       drawer: marketingMobileDrawer(context),
       body: SingleChildScrollView(
@@ -30,24 +24,21 @@ class AboutPageMobile extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'About Sport X Hub',
+              l10n.aboutTitle,
               style: Theme.of(
                 context,
               ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
-              'Sport X Hub is a professional sports talent marketplace connecting '
-              'Players and Clubs. A Player builds a credible profile, a Club finds '
-              'that player through search, and a Club contacts them directly.',
+              l10n.aboutBody1,
               style: Theme.of(
                 context,
               ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 12),
             Text(
-              'No noise, no middleman — just the fastest path from a real profile '
-              'to a real conversation.',
+              l10n.aboutBody2,
               style: Theme.of(
                 context,
               ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),

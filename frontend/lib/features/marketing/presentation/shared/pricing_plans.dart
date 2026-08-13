@@ -1,3 +1,5 @@
+import '../../../../l10n/generated/app_localizations.dart';
+
 /// Static content, not state — Pricing is roadmap-explicit "informational
 /// only, no billing integration," so this is just display data shared by
 /// the Desktop/Mobile pricing pages, not a shared widget/layout decision.
@@ -9,25 +11,26 @@ class PricingPlan {
   final List<String> features;
 }
 
-const pricingPlans = [
+/// A function, not a const list, because the copy is localized.
+List<PricingPlan> pricingPlans(AppLocalizations l10n) => [
   PricingPlan(
-    name: 'Player',
-    price: 'Free',
+    name: l10n.rolePlayer,
+    price: l10n.pricingFree,
     features: [
-      'Full player profile with photos & video',
-      'Achievements and social links',
-      'Public or private visibility',
-      'Direct contact from interested Clubs',
+      l10n.pricingPlayerFeature1,
+      l10n.pricingPlayerFeature2,
+      l10n.pricingPlayerFeature3,
+      l10n.pricingPlayerFeature4,
     ],
   ),
   PricingPlan(
-    name: 'Club',
-    price: 'Free',
+    name: l10n.roleClub,
+    price: l10n.pricingFree,
     features: [
-      'Search players by 7 filters',
-      'Save players to a shortlist',
-      'Direct WhatsApp / email / phone contact',
-      'Club profile page',
+      l10n.pricingClubFeature1,
+      l10n.pricingClubFeature2,
+      l10n.pricingClubFeature3,
+      l10n.pricingClubFeature4,
     ],
   ),
 ];

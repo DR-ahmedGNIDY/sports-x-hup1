@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/contact_controller.dart';
 
 /// Leaf form — same pattern as ChangePasswordForm/ChangeEmailForm in
@@ -44,6 +45,7 @@ class _ContactFormState extends ConsumerState<ContactForm> {
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(contactControllerProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Form(
       key: _formKey,
@@ -52,24 +54,24 @@ class _ContactFormState extends ConsumerState<ContactForm> {
         children: [
           TextFormField(
             controller: _name,
-            decoration: const InputDecoration(labelText: 'Name'),
-            validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+            decoration: InputDecoration(labelText: l10n.contactNameLabel),
+            validator: (v) => (v == null || v.trim().isEmpty) ? l10n.contactRequiredValidation : null,
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _email,
-            decoration: const InputDecoration(labelText: 'Email'),
+            decoration: InputDecoration(labelText: l10n.authEmailLabel),
             keyboardType: TextInputType.emailAddress,
             validator: (v) =>
-                (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
+                (v == null || !v.contains('@')) ? l10n.authEmailValidation : null,
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _message,
-            decoration: const InputDecoration(labelText: 'Message'),
+            decoration: InputDecoration(labelText: l10n.contactMessageLabel),
             minLines: 4,
             maxLines: 8,
-            validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+            validator: (v) => (v == null || v.trim().isEmpty) ? l10n.contactRequiredValidation : null,
           ),
           if (formState.errorMessage != null) ...[
             const SizedBox(height: 8),
@@ -77,9 +79,9 @@ class _ContactFormState extends ConsumerState<ContactForm> {
           ],
           if (formState.success) ...[
             const SizedBox(height: 8),
-            const Text(
-              'Thanks — we received your message and will get back to you soon.',
-              style: TextStyle(color: AppColors.success),
+            Text(
+              l10n.contactSuccessMessage,
+              style: const TextStyle(color: AppColors.success),
             ),
           ],
           const SizedBox(height: 16),
@@ -91,7 +93,7 @@ class _ContactFormState extends ConsumerState<ContactForm> {
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Send message'),
+                : Text(l10n.contactSendMessage),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/app_exception.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../shared/auth_error_banner.dart';
 
@@ -45,6 +46,7 @@ class _ForgotPasswordPageMobileState extends ConsumerState<ForgotPasswordPageMob
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(leading: BackButton(onPressed: () => context.go('/login'))),
       body: SafeArea(
@@ -53,13 +55,10 @@ class _ForgotPasswordPageMobileState extends ConsumerState<ForgotPasswordPageMob
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Reset your password', style: Theme.of(context).textTheme.displayLarge),
+              Text(l10n.authForgotPasswordTitle, style: Theme.of(context).textTheme.displayLarge),
               const SizedBox(height: 12),
               if (_sent)
-                const Text(
-                  'If an account exists for that email, a reset link has been sent. '
-                  'In development, check the backend console log for the link.',
-                )
+                Text(l10n.authForgotSentMessage)
               else
                 Form(
                   key: _formKey,
@@ -69,10 +68,10 @@ class _ForgotPasswordPageMobileState extends ConsumerState<ForgotPasswordPageMob
                       AuthErrorBanner(message: _error),
                       TextFormField(
                         controller: _email,
-                        decoration: const InputDecoration(labelText: 'Email'),
+                        decoration: InputDecoration(labelText: l10n.authEmailLabel),
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) =>
-                            (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
+                            (v == null || !v.contains('@')) ? l10n.authEmailValidation : null,
                       ),
                       const SizedBox(height: 16),
                       FilledButton(
@@ -83,7 +82,7 @@ class _ForgotPasswordPageMobileState extends ConsumerState<ForgotPasswordPageMob
                                 height: 20,
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
-                            : const Text('Send reset link'),
+                            : Text(l10n.authSendResetLink),
                       ),
                     ],
                   ),

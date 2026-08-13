@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/error_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../marketing/presentation/shared/marketing_chrome.dart';
 import '../../application/public_clubs_controller.dart';
 import '../shared/club_list_pagination.dart';
@@ -14,6 +16,7 @@ class PublicClubsListingPageDesktop extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final clubsAsync = ref.watch(publicClubsControllerProvider);
     final controller = ref.read(publicClubsControllerProvider.notifier);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +25,7 @@ class PublicClubsListingPageDesktop extends ConsumerWidget {
       ),
       body: clubsAsync.when(
         data: (page) => page.items.isEmpty
-            ? const Center(child: Text('No clubs to show yet.'))
+            ? Center(child: Text(l10n.clubsNoResults))
             : Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 800),
@@ -31,7 +34,7 @@ class PublicClubsListingPageDesktop extends ConsumerWidget {
                     child: Column(
                       children: [
                         Text(
-                          'Clubs on Sport X Hub',
+                          l10n.clubsListingTitle,
                           style: Theme.of(
                             context,
                           ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -55,7 +58,8 @@ class PublicClubsListingPageDesktop extends ConsumerWidget {
                 ),
               ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('$error')),
+        error: (error, _) =>
+            ErrorState(onRetry: () => ref.invalidate(publicClubsControllerProvider)),
       ),
     );
   }

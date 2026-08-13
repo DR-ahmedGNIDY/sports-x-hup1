@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
 import '../../application/player_contact_provider.dart';
@@ -22,6 +23,7 @@ class SimpleContactActions extends ConsumerWidget {
     if (!isClub) return const SizedBox.shrink();
 
     final contactAsync = ref.watch(playerContactProvider(playerId));
+    final l10n = AppLocalizations.of(context)!;
 
     return contactAsync.when(
       data: (contact) {
@@ -33,7 +35,7 @@ class SimpleContactActions extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Contact', style: Theme.of(context).textTheme.titleMedium),
+              Text(l10n.contactSectionTitle, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 12,
@@ -45,20 +47,20 @@ class SimpleContactActions extends ConsumerWidget {
                         Uri.parse('https://wa.me/${_digitsOnly(contact.whatsapp!)}'),
                       ),
                       icon: const Icon(Icons.chat_outlined),
-                      label: const Text('WhatsApp'),
+                      label: Text(l10n.contactWhatsappButton),
                     ),
                   if (contact.email != null)
                     OutlinedButton.icon(
                       onPressed: () =>
                           launchUrl(Uri.parse('mailto:${contact.email}')),
                       icon: const Icon(Icons.email_outlined),
-                      label: const Text('Email'),
+                      label: Text(l10n.contactEmailButton),
                     ),
                   if (contact.phone != null)
                     OutlinedButton.icon(
                       onPressed: () => launchUrl(Uri.parse('tel:${contact.phone}')),
                       icon: const Icon(Icons.phone_outlined),
-                      label: const Text('Call'),
+                      label: Text(l10n.contactCallButton),
                     ),
                 ],
               ),

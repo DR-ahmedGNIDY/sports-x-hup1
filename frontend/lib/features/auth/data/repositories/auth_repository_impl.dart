@@ -30,8 +30,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<AppUser> login({required String email, required String password}) async {
-    final json = await _remote.login(email: email, password: password);
+  Future<AppUser> login({required String identifier, required String password}) async {
+    final json = await _remote.login(identifier: identifier, password: password);
     return _persistAndReturnUser(json);
   }
 

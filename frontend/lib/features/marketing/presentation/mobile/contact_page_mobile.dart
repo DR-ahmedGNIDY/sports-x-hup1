@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/theme_mode_provider.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../shared/contact_form.dart';
 import '../shared/marketing_chrome.dart';
 
@@ -11,17 +11,11 @@ class ContactPageMobile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: const AppLogo(height: 24),
-        actions: [
-          IconButton(
-            tooltip: 'Toggle dark mode',
-            onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
-            icon: Icon(themeModeToggleIcon(themeMode)),
-          ),
-        ],
+        actions: marketingMobileAppBarActions(context, ref),
       ),
       drawer: marketingMobileDrawer(context),
       body: SingleChildScrollView(
@@ -30,16 +24,13 @@ class ContactPageMobile extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Contact us',
+              l10n.contactTitle,
               style: Theme.of(
                 context,
               ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Questions, feedback, or partnership inquiries — send us a message.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text(l10n.contactSubtitle, style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 24),
             const ContactForm(),
           ],

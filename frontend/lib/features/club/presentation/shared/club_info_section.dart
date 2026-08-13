@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../player/application/lookup_providers.dart';
 import '../../application/club_profile_controller.dart';
 
@@ -74,21 +75,22 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
   Widget build(BuildContext context) {
     _initFromProfile();
     final countries = ref.watch(countriesProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Club Information', style: Theme.of(context).textTheme.titleMedium),
+        Text(l10n.clubInfoTitle, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
         TextField(
           controller: _name,
-          decoration: const InputDecoration(labelText: 'Club name'),
+          decoration: InputDecoration(labelText: l10n.clubNameLabel),
         ),
         const SizedBox(height: 12),
         countries.when(
           data: (options) => DropdownButtonFormField<String>(
             initialValue: _country,
-            decoration: const InputDecoration(labelText: 'Country'),
+            decoration: InputDecoration(labelText: l10n.countryLabel),
             items: options
                 .map((o) => DropdownMenuItem(value: o.name, child: Text(o.name)))
                 .toList(),
@@ -100,26 +102,26 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
         const SizedBox(height: 12),
         TextField(
           controller: _city,
-          decoration: const InputDecoration(labelText: 'City'),
+          decoration: InputDecoration(labelText: l10n.cityLabel),
         ),
         const SizedBox(height: 12),
         TextField(
           controller: _description,
           maxLines: 4,
-          decoration: const InputDecoration(labelText: 'Description'),
+          decoration: InputDecoration(labelText: l10n.descriptionLabel),
         ),
         const SizedBox(height: 12),
         TextField(
           controller: _foundedYear,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(labelText: 'Founded year'),
+          decoration: InputDecoration(labelText: l10n.foundedYearLabel),
         ),
         const SizedBox(height: 12),
         TextField(
           controller: _level,
-          decoration: const InputDecoration(
-            labelText: 'Level',
-            hintText: 'Professional, Amateur, Academy…',
+          decoration: InputDecoration(
+            labelText: l10n.levelLabel,
+            hintText: l10n.levelHint,
           ),
         ),
         if (_error != null) ...[
@@ -137,7 +139,7 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Save'),
+                : Text(l10n.saveLabel),
           ),
         ),
       ],

@@ -2,25 +2,71 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import { Country, CountrySchema } from '../countries/schemas/country.schema';
 import { Sport, SportSchema } from '../sports/schemas/sport.schema';
+import {
+  SkillCategory,
+  SkillCategorySchema,
+} from '../sports/schemas/skill-category.schema';
 
 const SPORTS = [
   'Football',
   'Basketball',
-  'Tennis',
   'Volleyball',
   'Handball',
-  'Futsal',
-  'Rugby',
-  'Cricket',
-  'Baseball',
-  'Ice Hockey',
-  'Field Hockey',
-  'Table Tennis',
-  'Badminton',
-  'Boxing',
-  'Athletics',
   'Swimming',
+  'Gymnastics',
 ];
+
+const SKILL_CATEGORIES: Record<string, string[]> = {
+  Football: [
+    'Passing',
+    'Receiving',
+    'Shooting',
+    'Dribbling',
+    'Defending',
+    'Heading',
+    'Set Pieces',
+  ],
+  Basketball: [
+    'Passing',
+    'Receiving',
+    'Shooting',
+    'Dribbling',
+    'Defense',
+    'Rebounding',
+  ],
+  Volleyball: [
+    'Serving',
+    'Reception',
+    'Setting',
+    'Attacking',
+    'Blocking',
+    'Defense',
+  ],
+  Handball: [
+    'Passing',
+    'Receiving',
+    'Shooting',
+    'Dribbling',
+    'Defense',
+    'Goalkeeping',
+  ],
+  Swimming: [
+    'Freestyle',
+    'Backstroke',
+    'Breaststroke',
+    'Butterfly',
+    'Starts & Turns',
+    'Endurance',
+  ],
+  Gymnastics: [
+    'Floor Exercise',
+    'Vault',
+    'Balance Beam',
+    'Bars',
+    'Strength',
+    'Flexibility',
+  ],
+};
 
 const COUNTRIES: Array<{ name: string; code: string }> = [
   { name: 'Egypt', code: 'EG' },
@@ -53,10 +99,18 @@ async function seed() {
 
   const SportModel = mongoose.model(Sport.name, SportSchema);
   const CountryModel = mongoose.model(Country.name, CountrySchema);
+  const SkillCategoryModel = mongoose.model(
+    SkillCategory.name,
+    SkillCategorySchema,
+  );
 
   for (const name of SPORTS) {
     await SportModel.updateOne({ name }, { $set: { name } }, { upsert: true });
   }
+  // Sports reduction: drop any previously-seeded sport that's no longer in
+  // the roster (Tennis, Futsal, Rugby, Cricket, Baseball, Ice Hockey, Field
+  // Hockey, Table Tennis, Badminton, Boxing, Athletics).
+  await SportModel.deleteMany({ name: { $nin: SPORTS } });
 
   for (const country of COUNTRIES) {
     await CountryModel.updateOne(
@@ -66,9 +120,24 @@ async function seed() {
     );
   }
 
+  let categoryCount = 0;
+  for (const sport of SPORTS) {
+    const categories = SKILL_CATEGORIES[sport] ?? [];
+    for (const [index, name] of categories.entries()) {
+      await SkillCategoryModel.updateOne(
+        { sport, name },
+        { $set: { sport, name, order: index } },
+        { upsert: true },
+      );
+      categoryCount += 1;
+    }
+  }
+  // Keep skill categories consistent with the current sport roster.
+  await SkillCategoryModel.deleteMany({ sport: { $nin: SPORTS } });
+
   // eslint-disable-next-line no-console
   console.log(
-    `Seeded ${SPORTS.length} sports and ${COUNTRIES.length} countries.`,
+    `Seeded ${SPORTS.length} sports, ${categoryCount} skill categories and ${COUNTRIES.length} countries.`,
   );
   await mongoose.disconnect();
 }

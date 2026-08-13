@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../shared/marketing_chrome.dart';
+import '../shared/marketing_header_band.dart';
 
 class AboutPageDesktop extends ConsumerWidget {
   const AboutPageDesktop({super.key});
@@ -10,48 +12,59 @@ class AboutPageDesktop extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: const AppLogo(height: 28),
         actions: marketingDesktopNavActions(context, ref),
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 80),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'About Sport X Hub',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            MarketingHeaderBand(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 64, 32, 32),
+                    child: Text(
+                      l10n.aboutTitle,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Sport X Hub is a professional sports talent marketplace connecting '
-                    'Players and Clubs. Our platform exists to validate one loop: a Player '
-                    'builds a credible profile, a Club finds that player through search, '
-                    'and a Club contacts them directly.',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No noise, no middleman, no bloated feature set — just the fastest '
-                    'path from a real profile to a real conversation.',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(32, 0, 32, 80),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.aboutBody1,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.aboutBody2,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

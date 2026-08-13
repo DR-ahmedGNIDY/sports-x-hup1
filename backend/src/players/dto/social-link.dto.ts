@@ -1,7 +1,9 @@
-import { IsString, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl, MaxLength } from 'class-validator';
 
 export class CreateSocialLinkDto {
   @IsString()
+  @IsNotEmpty()
+  @MaxLength(200)
   platform: string;
 
   @IsUrl()

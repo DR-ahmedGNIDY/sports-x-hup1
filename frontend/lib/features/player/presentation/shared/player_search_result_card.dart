@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
 import '../../../saved_players/application/saved_players_controller.dart';
@@ -20,6 +21,7 @@ class PlayerSearchResultCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final isClub = ref.watch(sessionControllerProvider).user?.role == UserRole.club;
     final saved = ref.watch(
       savedPlayersControllerProvider.select(
@@ -49,14 +51,14 @@ class PlayerSearchResultCard extends ConsumerWidget {
               ? const Icon(Icons.person, color: AppColors.greyLight)
               : null,
         ),
-        title: Text(player.fullName.isEmpty ? 'Unnamed player' : player.fullName),
+        title: Text(player.fullName.isEmpty ? l10n.unnamedPlayer : player.fullName),
         subtitle: Text(
           [subtitle, details].where((v) => v.isNotEmpty).join('\n'),
         ),
         isThreeLine: subtitle.isNotEmpty && details.isNotEmpty,
         trailing: isClub
             ? IconButton(
-                tooltip: saved ? 'Remove from saved' : 'Save player',
+                tooltip: saved ? l10n.removeSavedTooltip : l10n.savePlayerTooltip,
                 icon: Icon(saved ? Icons.bookmark : Icons.bookmark_outline),
                 onPressed: () => toggleSavedPlayer(context, ref, saved: saved, player: player),
               )

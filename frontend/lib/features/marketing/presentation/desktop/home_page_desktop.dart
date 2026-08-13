@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../shared/hero_site_name.dart';
+import '../shared/hero_video_background.dart';
 import '../shared/marketing_chrome.dart';
 
 class HomePageDesktop extends ConsumerWidget {
@@ -10,7 +13,7 @@ class HomePageDesktop extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -18,91 +21,127 @@ class HomePageDesktop extends ConsumerWidget {
         actions: marketingDesktopNavActions(context, ref),
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1100),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 80),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Where players get discovered.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            HeroVideoBackground(
+              height: 760,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1100),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const HeroSiteName(),
+                        const SizedBox(height: 20),
+                        Text(
+                          l10n.homeHeroTitle,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.displaySmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.homeHeroSubtitle,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(color: Colors.white70),
+                        ),
+                        const SizedBox(height: 32),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FilledButton(
+                              onPressed: () => context.go('/register'),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 28,
+                                  vertical: 14,
+                                ),
+                                child: Text(
+                                  l10n.homeGetStarted,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            OutlinedButton(
+                              onPressed: () => context.go('/players'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                side: const BorderSide(color: Colors.white70),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                                child: Text(l10n.homeBrowsePlayers),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'A Player builds a credible profile. A Club finds that player '
-                    'through search. A Club contacts them directly — no middleman, '
-                    'no noise.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                  ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FilledButton(
-                        onPressed: () => context.go('/register'),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          child: Text('Get started'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      OutlinedButton(
-                        onPressed: () => context.go('/players'),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          child: Text('Browse players'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 80),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Expanded(
-                        child: _FeatureCard(
-                          icon: Icons.badge_outlined,
-                          title: 'Build a profile',
-                          body:
-                              'Personal info, sports stats, photos, video, achievements, '
-                              'and contact details — everything a Club needs to evaluate you.',
-                        ),
-                      ),
-                      SizedBox(width: 24),
-                      Expanded(
-                        child: _FeatureCard(
-                          icon: Icons.search_outlined,
-                          title: 'Get found',
-                          body:
-                              'Clubs search by country, age, position, height, weight, '
-                              'preferred foot, and sport — filtered to exactly who they need.',
-                        ),
-                      ),
-                      SizedBox(width: 24),
-                      Expanded(
-                        child: _FeatureCard(
-                          icon: Icons.chat_outlined,
-                          title: 'Get contacted',
-                          body:
-                              'WhatsApp, email, or phone — a Club reaches out directly, '
-                              'the moment they find the right fit.',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1100),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 80,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: _FeatureCard(
+                              icon: Icons.badge_outlined,
+                              title: l10n.homeFeatureBuildTitle,
+                              body: l10n.homeFeatureBuildBody,
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: _FeatureCard(
+                              icon: Icons.search_outlined,
+                              title: l10n.homeFeatureFoundTitle,
+                              body: l10n.homeFeatureFoundBody,
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: _FeatureCard(
+                              icon: Icons.chat_outlined,
+                              title: l10n.homeFeatureContactedTitle,
+                              body: l10n.homeFeatureContactedBody,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -110,7 +149,11 @@ class HomePageDesktop extends ConsumerWidget {
 }
 
 class _FeatureCard extends StatelessWidget {
-  const _FeatureCard({required this.icon, required this.title, required this.body});
+  const _FeatureCard({
+    required this.icon,
+    required this.title,
+    required this.body,
+  });
 
   final IconData icon;
   final String title;
@@ -131,9 +174,9 @@ class _FeatureCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               body,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

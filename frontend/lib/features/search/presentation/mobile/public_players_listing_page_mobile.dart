@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/locale/language_toggle_button.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/theme_mode_provider.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/empty_state_illustration.dart';
+import '../../../../core/widgets/error_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../marketing/presentation/shared/marketing_chrome.dart';
 import '../../../player/presentation/shared/player_search_result_card.dart';
 import '../../application/search_controller.dart';
@@ -44,27 +49,40 @@ class PublicPlayersListingPageMobile extends ConsumerWidget {
     final resultsAsync = ref.watch(searchControllerProvider);
     final controller = ref.read(searchControllerProvider.notifier);
     final themeMode = ref.watch(themeModeProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: const AppLogo(height: 24),
         actions: [
           IconButton(
-            tooltip: 'Filters',
+            tooltip: l10n.filtersTooltip,
             onPressed: () => _openFilterSheet(context, ref),
             icon: const Icon(Icons.filter_list),
           ),
           IconButton(
-            tooltip: 'Toggle dark mode',
+            tooltip: l10n.themeToggleTooltip,
             onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
             icon: Icon(themeModeToggleIcon(themeMode)),
           ),
+          const LanguageToggleButton(),
         ],
       ),
       drawer: marketingMobileDrawer(context),
       body: resultsAsync.when(
         data: (page) => page.items.isEmpty
-            ? const Center(child: Text('No players match these filters.'))
+            ? Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const EmptyStateIllustration(
+                      variant: EmptyStateVariant.noResults,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Text(l10n.playersNoResults),
+                  ],
+                ),
+              )
             : Column(
                 children: [
                   Expanded(
@@ -80,7 +98,7 @@ class PublicPlayersListingPageMobile extends ConsumerWidget {
                 ],
               ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('$error')),
+        error: (error, _) => ErrorState(onRetry: () => ref.invalidate(searchControllerProvider)),
       ),
     );
   }

@@ -1,4 +1,12 @@
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 // Upper bound is a sanity cap (not a hard business rule) — keeps obvious
 // garbage input like year 9999 out of the database.
@@ -6,6 +14,8 @@ const MAX_ACHIEVEMENT_YEAR = 2100;
 
 export class CreateAchievementDto {
   @IsString()
+  @IsNotEmpty()
+  @MaxLength(200)
   title: string;
 
   @IsInt()

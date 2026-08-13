@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
 import '../../../saved_players/application/saved_players_controller.dart';
@@ -28,8 +29,9 @@ class SavePlayerButton extends ConsumerWidget {
       ),
     );
 
+    final l10n = AppLocalizations.of(context)!;
     return IconButton(
-      tooltip: saved ? 'Remove from saved' : 'Save player',
+      tooltip: saved ? l10n.removeSavedTooltip : l10n.savePlayerTooltip,
       icon: Icon(saved ? Icons.bookmark : Icons.bookmark_outline),
       onPressed: () => toggleSavedPlayer(
         context,

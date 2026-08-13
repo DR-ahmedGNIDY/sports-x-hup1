@@ -14,6 +14,9 @@ import '../../features/club/presentation/edit_club_profile_page.dart';
 import '../../features/club/presentation/my_club_profile_page.dart';
 import '../../features/club/presentation/public_club_profile_page.dart';
 import '../../features/club/presentation/public_clubs_listing_page.dart';
+import '../../features/club_players/presentation/add_club_player_page.dart';
+import '../../features/club_players/presentation/club_players_page.dart';
+import '../../features/community/presentation/community_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/marketing/presentation/about_page.dart';
 import '../../features/marketing/presentation/contact_page.dart';
@@ -27,6 +30,7 @@ import '../../features/search/presentation/public_players_listing_page.dart';
 import '../../features/search/presentation/search_players_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/splash/presentation/splash_page.dart';
+import '../widgets/app_shell.dart';
 import 'go_router_refresh_notifier.dart';
 
 // Guest-only auth pages — an authenticated user is bounced away from these.
@@ -50,6 +54,8 @@ bool _isMarketingRoute(String path) =>
     _isPublicClubProfile(path);
 
 bool _isAdminRoute(String path) => path.startsWith('/admin/');
+
+bool _isClubRoute(String path) => path.startsWith('/club/players');
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -92,6 +98,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (_isAdminRoute(path) && session.user?.role != UserRole.admin) {
         return '/dashboard';
       }
+
+      // Adding/managing players directly is a Club-only tool, same
+      // enforcement shape as the admin check above.
+      if (_isClubRoute(path) && session.user?.role != UserRole.club) {
+        return '/dashboard';
+      }
       return null;
     },
     routes: [
@@ -119,43 +131,60 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             ResetPasswordPage(token: state.uri.queryParameters['token']),
       ),
-      GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
-      GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
-      GoRoute(
-        path: '/player/edit',
-        builder: (context, state) => const EditProfilePage(),
-      ),
-      GoRoute(
-        path: '/player/preview',
-        builder: (context, state) => const MyProfilePreviewPage(),
-      ),
       GoRoute(
         path: '/players/:id',
         builder: (context, state) =>
             PublicPlayerProfilePage(playerId: state.pathParameters['id']!),
       ),
       GoRoute(
-        path: '/club/edit',
-        builder: (context, state) => const EditClubProfilePage(),
-      ),
-      GoRoute(
-        path: '/club/preview',
-        builder: (context, state) => const MyClubProfilePage(),
-      ),
-      GoRoute(
         path: '/clubs/:id',
         builder: (context, state) =>
             PublicClubProfilePage(clubId: state.pathParameters['id']!),
       ),
-      GoRoute(path: '/search', builder: (context, state) => const SearchPlayersPage()),
-      GoRoute(
-        path: '/saved-players',
-        builder: (context, state) => const SavedPlayersPage(),
-      ),
-      GoRoute(path: '/admin/users', builder: (context, state) => const AdminUsersPage()),
-      GoRoute(
-        path: '/admin/players-clubs',
-        builder: (context, state) => const AdminPlayersClubsPage(),
+      // The 10 authenticated app routes share one persistent shell
+      // (sidebar/topbar on desktop, bottom-nav/topbar on mobile) so
+      // navigating between them never loses the app chrome.
+      ShellRoute(
+        builder: (context, state, child) => AppShell(child: child),
+        routes: [
+          GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
+          GoRoute(path: '/community', builder: (context, state) => const CommunityPage()),
+          GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
+          GoRoute(
+            path: '/player/edit',
+            builder: (context, state) => const EditProfilePage(),
+          ),
+          GoRoute(
+            path: '/player/preview',
+            builder: (context, state) => const MyProfilePreviewPage(),
+          ),
+          GoRoute(
+            path: '/club/edit',
+            builder: (context, state) => const EditClubProfilePage(),
+          ),
+          GoRoute(
+            path: '/club/preview',
+            builder: (context, state) => const MyClubProfilePage(),
+          ),
+          GoRoute(path: '/search', builder: (context, state) => const SearchPlayersPage()),
+          GoRoute(
+            path: '/saved-players',
+            builder: (context, state) => const SavedPlayersPage(),
+          ),
+          GoRoute(
+            path: '/club/players',
+            builder: (context, state) => const ClubPlayersPage(),
+          ),
+          GoRoute(
+            path: '/club/players/new',
+            builder: (context, state) => const AddClubPlayerPage(),
+          ),
+          GoRoute(path: '/admin/users', builder: (context, state) => const AdminUsersPage()),
+          GoRoute(
+            path: '/admin/players-clubs',
+            builder: (context, state) => const AdminPlayersClubsPage(),
+          ),
+        ],
       ),
     ],
   );

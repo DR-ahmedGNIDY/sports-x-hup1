@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/theme_mode_provider.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../shared/marketing_chrome.dart';
 import '../shared/pricing_plans.dart';
 
@@ -13,37 +13,32 @@ class PricingPageMobile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final themeMode = ref.watch(themeModeProvider);
+    final l10n = AppLocalizations.of(context)!;
+    final plans = pricingPlans(l10n);
     return Scaffold(
       appBar: AppBar(
         title: const AppLogo(height: 24),
-        actions: [
-          IconButton(
-            tooltip: 'Toggle dark mode',
-            onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
-            icon: Icon(themeModeToggleIcon(themeMode)),
-          ),
-        ],
+        actions: marketingMobileAppBarActions(context, ref),
       ),
       drawer: marketingMobileDrawer(context),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
         children: [
           Text(
-            'Pricing',
+            l10n.pricingTitle,
             style: Theme.of(
               context,
             ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
-            'Sport X Hub is free to join during launch.',
+            l10n.pricingSubtitle,
             style: Theme.of(
               context,
             ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 24),
-          for (final plan in pricingPlans) ...[
+          for (final plan in plans) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -72,7 +67,7 @@ class PricingPageMobile extends ConsumerWidget {
                     const SizedBox(height: 12),
                     FilledButton(
                       onPressed: () => context.go('/register'),
-                      child: const Text('Get started'),
+                      child: Text(l10n.homeGetStarted),
                     ),
                   ],
                 ),

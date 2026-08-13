@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 import '../../domain/entities/social_link.dart';
 
@@ -20,6 +21,7 @@ class SocialLinksSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final links =
         ref.watch(playerProfileControllerProvider).value?.socialLinks ?? const [];
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -27,16 +29,16 @@ class SocialLinksSection extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-              child: Text('Social Links', style: Theme.of(context).textTheme.titleMedium),
+              child: Text(l10n.socialLinksTitle, style: Theme.of(context).textTheme.titleMedium),
             ),
             IconButton(
-              tooltip: 'Add social link',
+              tooltip: l10n.addSocialLinkTooltip,
               icon: const Icon(Icons.add_circle_outline),
               onPressed: () => _openForm(context, ref),
             ),
           ],
         ),
-        if (links.isEmpty) const Text('No social links added yet.'),
+        if (links.isEmpty) Text(l10n.noSocialLinksYet),
         for (final link in links)
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -87,7 +89,7 @@ class _SocialLinkDialogState extends ConsumerState<_SocialLinkDialog> {
 
   Future<void> _save() async {
     if (_platform.text.trim().isEmpty || _url.text.trim().isEmpty) {
-      setState(() => _error = 'Enter a platform and a URL.');
+      setState(() => _error = AppLocalizations.of(context)!.socialLinkValidation);
       return;
     }
     setState(() {
@@ -118,23 +120,24 @@ class _SocialLinkDialogState extends ConsumerState<_SocialLinkDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(widget.existing != null ? 'Edit social link' : 'Add social link'),
+      title: Text(widget.existing != null ? l10n.editSocialLinkTitle : l10n.addSocialLinkTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _platform,
-            decoration: const InputDecoration(
-              labelText: 'Platform',
-              hintText: 'Instagram, YouTube, X…',
+            decoration: InputDecoration(
+              labelText: l10n.platformLabel,
+              hintText: l10n.platformHint,
             ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _url,
             keyboardType: TextInputType.url,
-            decoration: const InputDecoration(labelText: 'URL'),
+            decoration: InputDecoration(labelText: l10n.urlLabel),
           ),
           if (_error != null) ...[
             const SizedBox(height: 8),
@@ -145,11 +148,11 @@ class _SocialLinkDialogState extends ConsumerState<_SocialLinkDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelLabel),
         ),
         FilledButton(
           onPressed: _saving ? null : _save,
-          child: const Text('Save'),
+          child: Text(l10n.saveLabel),
         ),
       ],
     );

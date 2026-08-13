@@ -7,11 +7,13 @@ import '../../domain/entities/contact_details.dart';
 import '../../domain/entities/lookup_option.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_profile.dart';
+import '../../domain/entities/player_stats.dart';
 import '../../domain/repositories/player_repository.dart';
 import '../datasources/player_remote_data_source.dart';
 import '../models/contact_details_model.dart';
 import '../models/lookup_option_model.dart';
 import '../models/player_profile_model.dart';
+import '../models/player_stats_model.dart';
 
 class PlayerRepositoryImpl implements PlayerRepository {
   PlayerRepositoryImpl(this._remote, this._storage, this._ref);
@@ -37,6 +39,13 @@ class PlayerRepositoryImpl implements PlayerRepository {
       _authorized((token) async {
         final json = await _remote.getMyProfile(token);
         return PlayerProfileModel.fromJson(json);
+      });
+
+  @override
+  Future<PlayerStats> getMyStats() =>
+      _authorized((token) async {
+        final json = await _remote.getMyStats(token);
+        return PlayerStatsModel.fromJson(json);
       });
 
   @override

@@ -2,60 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/theme_mode_provider.dart';
-import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
+import '../shared/player_dashboard_content.dart';
 
-class DashboardPageMobile extends ConsumerStatefulWidget {
+/// Content-only — the top bar/bottom nav chrome that used to live here now
+/// lives in `AppShell` (mounted once by the `/dashboard` ShellRoute), so
+/// this widget is just the Player/Club/Admin dashboard body.
+class DashboardPageMobile extends ConsumerWidget {
   const DashboardPageMobile({super.key});
 
   @override
-  ConsumerState<DashboardPageMobile> createState() => _DashboardPageMobileState();
-}
-
-class _DashboardPageMobileState extends ConsumerState<DashboardPageMobile> {
-  int _selectedIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeModeProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(sessionControllerProvider).user;
+    final l10n = AppLocalizations.of(context)!;
     final roleLabel = switch (user?.role) {
-      UserRole.club => 'Club',
-      UserRole.admin => 'Admin',
-      _ => 'Player',
+      UserRole.club => l10n.roleClub,
+      UserRole.admin => l10n.dashboardRoleAdmin,
+      _ => l10n.rolePlayer,
     };
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const AppLogo(height: 28),
-        actions: [
-          IconButton(
-            tooltip: 'Toggle dark mode',
-            onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
-            icon: Icon(themeModeToggleIcon(themeMode)),
-          ),
-          IconButton(
-            tooltip: 'Log out',
-            onPressed: () => ref.read(sessionControllerProvider.notifier).logout(),
-            icon: const Icon(Icons.logout_outlined),
-          ),
-        ],
-      ),
-      body: _DashboardBody(role: user?.role, roleLabel: roleLabel),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() => _selectedIndex = index);
-          if (index == 1) context.go('/settings');
-        },
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.settings_outlined), label: 'Settings'),
-        ],
-      ),
-    );
+    return _DashboardBody(role: user?.role, roleLabel: roleLabel);
   }
 }
 
@@ -67,51 +34,39 @@ class _DashboardBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (role == UserRole.player) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('$roleLabel Dashboard'),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: () => context.go('/player/preview'),
-              icon: const Icon(Icons.badge_outlined),
-              label: const Text('My Profile'),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: () => context.go('/player/edit'),
-              icon: const Icon(Icons.edit_outlined),
-              label: const Text('Edit Profile'),
-            ),
-          ],
-        ),
-      );
+      return const PlayerDashboardContent(maxWidth: double.infinity);
     }
     if (role == UserRole.club) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('$roleLabel Dashboard'),
+            Text(l10n.dashboardTitleWithRole(roleLabel)),
             const SizedBox(height: 16),
             FilledButton.icon(
               onPressed: () => context.go('/search'),
               icon: const Icon(Icons.search_outlined),
-              label: const Text('Search Players'),
+              label: Text(l10n.dashboardSearchPlayers),
             ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: () => context.go('/saved-players'),
               icon: const Icon(Icons.bookmark_outline),
-              label: const Text('Saved Players'),
+              label: Text(l10n.dashboardSavedPlayers),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/club/players'),
+              icon: const Icon(Icons.groups_outlined),
+              label: const Text('لاعبو النادي'),
             ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: () => context.go('/club/preview'),
               icon: const Icon(Icons.shield_outlined),
-              label: const Text('My Club'),
+              label: Text(l10n.dashboardMyClub),
             ),
           ],
         ),
@@ -122,13 +77,13 @@ class _DashboardBody extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Admin Dashboard'),
+            Text(l10n.dashboardTitleWithRole(l10n.dashboardRoleAdmin)),
             const SizedBox(height: 8),
-            const Text('Admin tooling is available on Desktop.'),
+            Text(l10n.dashboardAdminMobileHint),
           ],
         ),
       );
     }
-    return Center(child: Text('$roleLabel Dashboard — coming in a later phase'));
+    return Center(child: Text(l10n.dashboardComingSoon(roleLabel)));
   }
 }

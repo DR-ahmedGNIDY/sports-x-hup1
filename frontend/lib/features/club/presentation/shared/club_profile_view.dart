@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/club_profile.dart';
 
 /// Read-only rendering of a [ClubProfile] — used by My Club Profile.
@@ -12,6 +13,7 @@ class ClubProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     final location = [
       profile.city,
       profile.country,
@@ -45,7 +47,7 @@ class ClubProfileView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    profile.name?.isNotEmpty == true ? profile.name! : 'Unnamed club',
+                    profile.name?.isNotEmpty == true ? profile.name! : l10n.unnamedClub,
                     style: textTheme.headlineSmall,
                   ),
                   if (location.isNotEmpty) Text(location, style: textTheme.bodyMedium),
@@ -56,7 +58,7 @@ class ClubProfileView extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         if (profile.description != null && profile.description!.isNotEmpty) ...[
-          Text('About', style: textTheme.titleMedium),
+          Text(l10n.sectionAboutTitle, style: textTheme.titleMedium),
           const SizedBox(height: 8),
           Text(profile.description!),
           const SizedBox(height: 24),
@@ -66,9 +68,9 @@ class ClubProfileView extends StatelessWidget {
           runSpacing: 8,
           children: [
             if (profile.foundedYear != null)
-              _Stat(label: 'Founded', value: '${profile.foundedYear}'),
+              _Stat(label: l10n.foundedStatLabel, value: '${profile.foundedYear}'),
             if (profile.level != null && profile.level!.isNotEmpty)
-              _Stat(label: 'Level', value: profile.level!),
+              _Stat(label: l10n.levelLabel, value: profile.level!),
           ],
         ),
       ],

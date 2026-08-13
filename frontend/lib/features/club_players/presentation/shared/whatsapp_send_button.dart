@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../core/errors/app_exception.dart';
+import '../../../club/application/club_profile_controller.dart';
+import '../../application/club_players_controller.dart';
+import '../../domain/entities/club_managed_player.dart';
+import '../../domain/entities/club_player_credentials.dart';
+
+String _digitsOnly(String value) => value.replaceAll(RegExp(r'[^0-9]'), '');
+
+String _credentialsMessage({
+  required String firstName,
+  required String clubName,
+  required ClubPlayerCredentials credentials,
+}) {
+  return 'مرحباً $firstName، تم إنشاء حسابك في سبورت اكس هب من قبل نادي $clubName.\n'
+      'اسم المستخدم: ${credentials.username}\n'
+      'كلمة المرور: ${credentials.password}\n'
+      'يرجى تسجيل الدخول وتغيير كلمة المرور من الإعدادات.';
+}
+
+Future<void> _openWhatsApp({
+  required String phone,
+  required String message,
+}) {
+  final uri = Uri.parse(
+    'https://wa.me/${_digitsOnly(phone)}?text=${Uri.encodeComponent(message)}',
+  );
+  return launchUrl(uri, mode: LaunchMode.externalApplication);
+}
+
+/// Right after a player is created, the create response already carries
+/// the one-time plaintext password — this opens WhatsApp with it directly,
+/// no extra request needed.
+class SendCredentialsWhatsAppButton extends ConsumerWidget {
+  const SendCredentialsWhatsAppButton({
+    super.key,
+    required this.firstName,
+    required this.credentials,
+  });
+
+  final String firstName;
+  final ClubPlayerCredentials credentials;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final clubName = ref.watch(clubProfileControllerProvider).value?.name ?? '';
+    return FilledButton.icon(
+      onPressed: () => _openWhatsApp(
+        phone: credentials.username,
+        message: _credentialsMessage(
+          firstName: firstName,
+          clubName: clubName,
+          credentials: credentials,
+        ),
+      ),
+      icon: const Icon(Icons.chat_outlined),
+      label: const Text('إرسال عبر واتساب'),
+    );
+  }
+}
+
+/// From the roster list, there's no plaintext password on hand (it was
+/// only ever returned once, at creation) — so this issues a fresh one
+/// first (invalidating the old one) and then opens WhatsApp with it.
+class ResendCredentialsWhatsAppButton extends ConsumerStatefulWidget {
+  const ResendCredentialsWhatsAppButton({super.key, required this.player});
+
+  final ClubManagedPlayer player;
+
+  @override
+  ConsumerState<ResendCredentialsWhatsAppButton> createState() =>
+      _ResendCredentialsWhatsAppButtonState();
+}
+
+class _ResendCredentialsWhatsAppButtonState
+    extends ConsumerState<ResendCredentialsWhatsAppButton> {
+  bool _sending = false;
+
+  Future<void> _resendAndSend() async {
+    setState(() => _sending = true);
+    try {
+      final credentials = await ref
+          .read(clubPlayersControllerProvider.notifier)
+          .resendCredentials(widget.player.userId);
+      if (!mounted) return;
+      final clubName = ref.read(clubProfileControllerProvider).value?.name ?? '';
+      await _openWhatsApp(
+        phone: credentials.username,
+        message: _credentialsMessage(
+          firstName: widget.player.profile.firstName ?? '',
+          clubName: clubName,
+          credentials: credentials,
+        ),
+      );
+    } on AppException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+    } finally {
+      if (mounted) setState(() => _sending = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: _sending ? null : _resendAndSend,
+      icon: _sending
+          ? const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.chat_outlined),
+      label: const Text('إرسال بيانات الدخول عبر واتساب'),
+    );
+  }
+}

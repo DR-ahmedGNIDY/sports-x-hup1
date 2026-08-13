@@ -15,6 +15,8 @@ import {
   IMAGE_SIZE_LIMIT_BYTES,
   VIDEO_SIZE_LIMIT_BYTES,
 } from '../common/upload.config';
+import { SavedPlayer } from '../saved-players/schemas/saved-player.schema';
+import { VideosService } from '../videos/videos.service';
 import {
   CreateAchievementDto,
   UpdateAchievementDto,
@@ -72,6 +74,11 @@ function validateMediaFile(type: MediaType, file: Express.Multer.File): void {
 const SEARCH_PAGE_SIZE = 20;
 const ADMIN_LIST_PAGE_SIZE = 20;
 
+// Caps unbounded growth of a profile's embedded arrays — each item lives
+// inside the PlayerProfile document itself (not a separate collection), so
+// without a ceiling a single profile could be grown without limit.
+const MAX_EMBEDDED_ARRAY_ITEMS = 30;
+
 // A minimum date of birth (i.e. maxAge) excludes anyone born before it;
 // a maximum date of birth (i.e. minAge) excludes anyone born after it.
 function dateOfBirthAtLeastAge(age: number): Date {
@@ -92,15 +99,25 @@ export class PlayersService {
   constructor(
     @InjectModel(PlayerProfile.name)
     private readonly playerProfileModel: Model<PlayerProfile>,
+    @InjectModel(SavedPlayer.name)
+    private readonly savedPlayerModel: Model<SavedPlayer>,
     private readonly cloudinary: CloudinaryService,
+    private readonly videosService: VideosService,
   ) {}
 
+  // Atomic upsert, not findOne-then-create: the Dashboard and Edit Profile
+  // pages both load on mount and each depend on a profile existing, so for
+  // a brand-new player two requests (e.g. GET /players/me and GET
+  // /players/me/stats) can land concurrently. A separate findOne + create
+  // lets both see "not found" and both try to insert, and the loser dies
+  // on the unique userId index instead of just returning the row the
+  // winner created.
   async getOrCreateForUser(userId: string): Promise<PlayerProfileDocument> {
-    let profile = await this.playerProfileModel.findOne({ userId });
-    if (!profile) {
-      profile = await this.playerProfileModel.create({ userId });
-    }
-    return profile;
+    return this.playerProfileModel.findOneAndUpdate(
+      { userId },
+      { $setOnInsert: { userId } },
+      { new: true, upsert: true },
+    );
   }
 
   async findPublicByIdOrThrow(id: string): Promise<PlayerProfileDocument> {
@@ -162,6 +179,12 @@ export class PlayersService {
     });
   }
 
+  // Unlike findManyPublicByIds, not restricted to PUBLIC — used by a club
+  // to list the players it manages regardless of their current visibility.
+  findManyByUserIds(userIds: string[]): Promise<PlayerProfileDocument[]> {
+    return this.playerProfileModel.find({ userId: { $in: userIds } });
+  }
+
   // Admin (Phase 4) — every profile regardless of visibility, paginated so
   // this can't attempt to load the full collection at launch scale.
   async findAllForAdmin(page = 1): Promise<PlayerSearchResult> {
@@ -189,7 +212,24 @@ export class PlayersService {
         this.cloudinary.deleteAsset(item.publicId, resourceTypeFor(item.type)),
       ),
     );
+    // Cascade: without this, a deleted player's videos keep pointing at a
+    // playerId that no longer resolves — surfacing as `author: null`
+    // entries in the Community feed, with their Cloudinary assets and
+    // likes/comments never cleaned up.
+    await this.videosService.deleteAllForPlayer(id);
     await this.playerProfileModel.deleteOne({ _id: id });
+  }
+
+  // Same cascade as deleteProfileAndMedia, looked up by the owning user's
+  // id instead of the profile id — used by UsersService.deleteById (admin
+  // delete-user) so it doesn't need direct access to the PlayerProfile
+  // model. A no-op if the user never created a player profile.
+  async deleteProfileAndMediaByUserId(userId: string): Promise<void> {
+    const profile = await this.playerProfileModel.findOne({ userId });
+    if (!profile) {
+      return;
+    }
+    await this.deleteProfileAndMedia(profile._id.toString());
   }
 
   async updateProfile(
@@ -225,24 +265,29 @@ export class PlayersService {
     return profile;
   }
 
+  // Photo-only: video uploads moved to the dedicated `videos` module.
   async addMedia(
     userId: string,
     file: Express.Multer.File,
-    type: MediaType,
     isProfilePhoto: boolean,
   ): Promise<PlayerProfileDocument> {
     if (!file) {
       throw new BadRequestException('A file is required.');
     }
-    validateMediaFile(type, file);
+    validateMediaFile(MediaType.PHOTO, file);
     const profile = await this.getOrCreateForUser(userId);
+    if (profile.media.length >= MAX_EMBEDDED_ARRAY_ITEMS) {
+      throw new BadRequestException(
+        `You've reached the maximum number of media items (${MAX_EMBEDDED_ARRAY_ITEMS}).`,
+      );
+    }
     const upload = await this.cloudinary.uploadBuffer(
       file.buffer,
       `sportxhub/players/${userId}`,
-      resourceTypeFor(type),
+      resourceTypeFor(MediaType.PHOTO),
     );
 
-    if (type === MediaType.PHOTO && isProfilePhoto) {
+    if (isProfilePhoto) {
       profile.media.forEach((item) => {
         if (item.type === MediaType.PHOTO) {
           item.isProfilePhoto = false;
@@ -251,12 +296,23 @@ export class PlayersService {
     }
 
     profile.media.push({
-      type,
+      type: MediaType.PHOTO,
       publicId: upload.publicId,
       secureUrl: upload.secureUrl,
-      isProfilePhoto: type === MediaType.PHOTO ? isProfilePhoto : false,
+      isProfilePhoto,
     });
-    await profile.save();
+    try {
+      await profile.save();
+    } catch (error) {
+      // The Cloudinary asset already landed — without this the DB write
+      // failing would leave it orphaned (never referenced, never cleaned
+      // up) while the caller gets a raw 500.
+      await this.cloudinary.deleteAsset(
+        upload.publicId,
+        resourceTypeFor(MediaType.PHOTO),
+      );
+      throw error;
+    }
     return profile;
   }
 
@@ -287,6 +343,11 @@ export class PlayersService {
     dto: CreateAchievementDto,
   ): Promise<PlayerProfileDocument> {
     const profile = await this.getOrCreateForUser(userId);
+    if (profile.achievements.length >= MAX_EMBEDDED_ARRAY_ITEMS) {
+      throw new BadRequestException(
+        `You've reached the maximum number of achievements (${MAX_EMBEDDED_ARRAY_ITEMS}).`,
+      );
+    }
     profile.achievements.push(dto);
     await profile.save();
     return profile;
@@ -332,6 +393,11 @@ export class PlayersService {
     dto: CreateSocialLinkDto,
   ): Promise<PlayerProfileDocument> {
     const profile = await this.getOrCreateForUser(userId);
+    if (profile.socialLinks.length >= MAX_EMBEDDED_ARRAY_ITEMS) {
+      throw new BadRequestException(
+        `You've reached the maximum number of social links (${MAX_EMBEDDED_ARRAY_ITEMS}).`,
+      );
+    }
     profile.socialLinks.push(dto);
     await profile.save();
     return profile;
@@ -370,5 +436,16 @@ export class PlayersService {
     ) as typeof profile.socialLinks;
     await profile.save();
     return profile;
+  }
+
+  async getStatsForUser(userId: string): Promise<{
+    profile: PlayerProfileDocument;
+    savedByClubsCount: number;
+  }> {
+    const profile = await this.getOrCreateForUser(userId);
+    const savedByClubsCount = await this.savedPlayerModel.countDocuments({
+      playerId: profile._id,
+    });
+    return { profile, savedByClubsCount };
   }
 }

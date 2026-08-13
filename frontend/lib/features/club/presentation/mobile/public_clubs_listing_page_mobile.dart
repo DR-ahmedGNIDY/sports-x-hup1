@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/theme_mode_provider.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/error_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../marketing/presentation/shared/marketing_chrome.dart';
 import '../../application/public_clubs_controller.dart';
 import '../shared/club_list_pagination.dart';
@@ -15,23 +16,17 @@ class PublicClubsListingPageMobile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final clubsAsync = ref.watch(publicClubsControllerProvider);
     final controller = ref.read(publicClubsControllerProvider.notifier);
-    final themeMode = ref.watch(themeModeProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: const AppLogo(height: 24),
-        actions: [
-          IconButton(
-            tooltip: 'Toggle dark mode',
-            onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
-            icon: Icon(themeModeToggleIcon(themeMode)),
-          ),
-        ],
+        actions: marketingMobileAppBarActions(context, ref),
       ),
       drawer: marketingMobileDrawer(context),
       body: clubsAsync.when(
         data: (page) => page.items.isEmpty
-            ? const Center(child: Text('No clubs to show yet.'))
+            ? Center(child: Text(l10n.clubsNoResults))
             : Column(
                 children: [
                   Expanded(
@@ -47,7 +42,8 @@ class PublicClubsListingPageMobile extends ConsumerWidget {
                 ],
               ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('$error')),
+        error: (error, _) =>
+            ErrorState(onRetry: () => ref.invalidate(publicClubsControllerProvider)),
       ),
     );
   }

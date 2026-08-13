@@ -67,12 +67,12 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<AuthTokens> {
-    const user = await this.usersService.findByEmail(dto.email);
+    const user = await this.usersService.findByEmailOrPhone(dto.identifier);
     const matches = user
       ? await bcrypt.compare(dto.password, user.passwordHash)
       : false;
     if (!user || !matches) {
-      throw new UnauthorizedException('Invalid email or password.');
+      throw new UnauthorizedException('Invalid credentials.');
     }
     if (user.status !== UserStatus.ACTIVE) {
       throw new UnauthorizedException('This account has been suspended.');
@@ -121,7 +121,10 @@ export class AuthService {
       expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
     });
 
-    this.mailService.sendPasswordResetEmail(user.email, rawToken);
+    // `user` was found by this exact email, so it's guaranteed to be set —
+    // pass the parameter through rather than `user.email` (now optional on
+    // the schema for phone-only club-created players).
+    this.mailService.sendPasswordResetEmail(email, rawToken);
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
@@ -150,7 +153,7 @@ export class AuthService {
 
   private async issueTokens(
     userId: string,
-    email: string,
+    email: string | undefined,
     role: string,
     userDocument: Parameters<typeof toPublicUser>[0],
   ): Promise<AuthTokens> {

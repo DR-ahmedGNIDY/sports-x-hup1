@@ -27,12 +27,12 @@ class SessionController extends Notifier<SessionState> {
     }
   }
 
-  Future<bool> login({required String email, required String password}) async {
+  Future<bool> login({required String identifier, required String password}) async {
     state = state.copyWith(status: SessionStatus.authenticating, clearError: true);
     try {
       final user = await ref
           .read(authRepositoryProvider)
-          .login(email: email, password: password);
+          .login(identifier: identifier, password: password);
       state = SessionState(status: SessionStatus.authenticated, user: user);
       return true;
     } on AppException catch (e) {

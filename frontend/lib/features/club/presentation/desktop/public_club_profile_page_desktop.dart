@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/error_state.dart';
 import '../../application/public_club_profile_provider.dart';
 import '../shared/club_profile_view.dart';
 
@@ -31,7 +32,10 @@ class PublicClubProfilePageDesktop extends ConsumerWidget {
           ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => const Center(child: Text('This club profile is not available.')),
+        error: (_, _) => ErrorState(
+          message: 'This club profile is not available.',
+          onRetry: () => ref.invalidate(publicClubProfileProvider(clubId)),
+        ),
       ),
     );
   }

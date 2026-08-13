@@ -128,4 +128,16 @@ export class ClubsService {
     }
     await this.clubProfileModel.deleteOne({ _id: id });
   }
+
+  // Same cleanup as deleteProfileAndLogo, looked up by the owning user's
+  // id instead of the profile id — used by UsersService.deleteById (admin
+  // delete-user) so it doesn't need direct access to the ClubProfile
+  // model. A no-op if the user never created a club profile.
+  async deleteProfileAndLogoByUserId(userId: string): Promise<void> {
+    const profile = await this.clubProfileModel.findOne({ userId });
+    if (!profile) {
+      return;
+    }
+    await this.deleteProfileAndLogo(profile._id.toString());
+  }
 }

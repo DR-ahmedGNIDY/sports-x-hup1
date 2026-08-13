@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_profile_controller.dart';
 
 class ClubLogoSection extends ConsumerStatefulWidget {
@@ -18,7 +19,7 @@ class _ClubLogoSectionState extends ConsumerState<ClubLogoSection> {
   String? _error;
 
   Future<void> _pickAndUpload() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       withData: true,
       type: FileType.image,
     );
@@ -43,11 +44,12 @@ class _ClubLogoSectionState extends ConsumerState<ClubLogoSection> {
   @override
   Widget build(BuildContext context) {
     final logoUrl = ref.watch(clubProfileControllerProvider).value?.logoUrl;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Club Logo', style: Theme.of(context).textTheme.titleMedium),
+        Text(l10n.clubLogoTitle, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
         Container(
           width: 96,
@@ -71,7 +73,7 @@ class _ClubLogoSectionState extends ConsumerState<ClubLogoSection> {
         OutlinedButton.icon(
           onPressed: _uploading ? null : _pickAndUpload,
           icon: const Icon(Icons.upload_outlined),
-          label: Text(_uploading ? 'Uploading…' : 'Upload logo'),
+          label: Text(_uploading ? l10n.uploadingLabel : l10n.uploadLogoLabel),
         ),
       ],
     );

@@ -11,6 +11,7 @@ abstract final class AppTextStyles {
     fontSize: 32,
     fontWeight: FontWeight.w700,
     height: 1.2,
+    letterSpacing: -0.5,
   );
 
   static const TextStyle headline = TextStyle(
@@ -18,6 +19,7 @@ abstract final class AppTextStyles {
     fontSize: 22,
     fontWeight: FontWeight.w700,
     height: 1.25,
+    letterSpacing: -0.3,
   );
 
   static const TextStyle title = TextStyle(
@@ -46,5 +48,28 @@ abstract final class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.4,
+  );
+
+  /// Small uppercase label used for section eyebrows/category tags (e.g. the
+  /// video category chip, skill-category tabs). Callers are responsible for
+  /// calling `.toUpperCase()` on the text itself — a [TextStyle] can't
+  /// transform case on its own.
+  static const TextStyle eyebrow = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 11,
+    fontWeight: FontWeight.w700,
+    height: 1.3,
+    letterSpacing: 1.1,
+  );
+
+  /// Numeric style for counts/stats/percentages (dashboard completion,
+  /// video like/comment counts, pagination). Tabular figures keep digit
+  /// widths fixed so values don't jitter horizontally as they update.
+  static const TextStyle statNumber = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    height: 1.4,
+    fontFeatures: [FontFeature.tabularFigures()],
   );
 }

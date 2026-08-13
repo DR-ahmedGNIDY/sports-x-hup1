@@ -54,11 +54,22 @@ abstract final class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: isDark ? AppColors.slate : AppColors.white,
-        elevation: 0,
+        // A real (if subtle) elevation instead of a flat outline. Dark mode
+        // leans on a faint, lighter-surface glow rather than a literal drop
+        // shadow (black-on-black doesn't read); light mode uses a
+        // conventional soft grey shadow.
+        elevation: 1,
+        shadowColor: isDark
+            ? AppColors.brandBlueLight.withValues(alpha: 0.12)
+            : AppColors.black.withValues(alpha: 0.08),
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
+          // Lighter/optional now that elevation carries the separation.
           side: BorderSide(
-            color: isDark ? AppColors.slate : AppColors.offWhite,
+            color: isDark
+                ? AppColors.slate.withValues(alpha: 0.6)
+                : AppColors.offWhite.withValues(alpha: 0.8),
           ),
         ),
       ),

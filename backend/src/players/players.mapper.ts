@@ -3,13 +3,38 @@ import {
   PlayerProfileDocument,
 } from './schemas/player-profile.schema';
 
+// Each key doubles as the i18n lookup the frontend uses to render the
+// "complete your profile" checklist, so keep these stable — renaming one
+// is a breaking change for that screen, not just a refactor here.
+const COMPLETION_CHECKS: Record<
+  string,
+  (profile: PlayerProfileDocument) => boolean
+> = {
+  firstName: (p) => Boolean(p.firstName),
+  lastName: (p) => Boolean(p.lastName),
+  dateOfBirth: (p) => Boolean(p.dateOfBirth),
+  nationality: (p) => Boolean(p.nationality),
+  country: (p) => Boolean(p.country),
+  city: (p) => Boolean(p.city),
+  sport: (p) => Boolean(p.sport),
+  position: (p) => Boolean(p.position),
+  bio: (p) => Boolean(p.bio),
+  profilePhoto: (p) => Boolean(profilePhotoUrl(p)),
+  contact: (p) =>
+    Boolean(p.contact?.phone || p.contact?.email || p.contact?.whatsapp),
+  achievements: (p) => p.achievements.length > 0,
+  socialLinks: (p) => p.socialLinks.length > 0,
+};
+
 function ageFromDateOfBirth(dateOfBirth?: Date): number | undefined {
   if (!dateOfBirth) return undefined;
   const diffMs = Date.now() - dateOfBirth.getTime();
   return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 365.25));
 }
 
-function profilePhotoUrl(profile: PlayerProfileDocument): string | undefined {
+export function profilePhotoUrl(
+  profile: PlayerProfileDocument,
+): string | undefined {
   return profile.media.find(
     (item) => item.type === MediaType.PHOTO && item.isProfilePhoto,
   )?.secureUrl;
@@ -79,5 +104,28 @@ export function toSearchResultView(profile: PlayerProfileDocument) {
     height: profile.height,
     weight: profile.weight,
     profilePhotoUrl: profilePhotoUrl(profile),
+  };
+}
+
+// GET /players/me/stats — powers the Player Dashboard's completion card
+// and quick-stats tiles. `savedByClubsCount` is computed by the service
+// (it needs the SavedPlayer collection, not just the profile document).
+export function toStatsView(
+  profile: PlayerProfileDocument,
+  savedByClubsCount: number,
+) {
+  const missingFields = Object.entries(COMPLETION_CHECKS)
+    .filter(([, check]) => !check(profile))
+    .map(([key]) => key);
+  const totalChecks = Object.keys(COMPLETION_CHECKS).length;
+  const completedChecks = totalChecks - missingFields.length;
+
+  return {
+    completionPercent: Math.round((completedChecks / totalChecks) * 100),
+    missingFields,
+    visibility: profile.visibility,
+    mediaCount: profile.media.length,
+    achievementsCount: profile.achievements.length,
+    savedByClubsCount,
   };
 }

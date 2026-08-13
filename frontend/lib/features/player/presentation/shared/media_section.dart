@@ -4,12 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_media.dart';
 
-/// Photo/video gallery — upload via Cloudinary, delete, and mark a photo
-/// as the profile photo.
+/// Photo/video gallery — upload via Cloudinary, delete. Setting the
+/// profile photo itself is [ProfilePhotoSection]'s job, not this one.
 class MediaSection extends ConsumerStatefulWidget {
   const MediaSection({super.key});
 
@@ -21,11 +22,8 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
   bool _uploading = false;
   String? _error;
 
-  Future<void> _pickAndUpload(PlayerMediaType type) async {
-    final result = await FilePicker.platform.pickFiles(
-      withData: true,
-      type: type == PlayerMediaType.photo ? FileType.image : FileType.video,
-    );
+  Future<void> _pickAndUpload() async {
+    final result = await FilePicker.pickFiles(withData: true, type: FileType.image);
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null) return;
 
@@ -36,12 +34,7 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
     try {
       await ref
           .read(playerProfileControllerProvider.notifier)
-          .uploadMedia(
-            bytes: file.bytes!,
-            filename: file.name,
-            type: type,
-            isProfilePhoto: type == PlayerMediaType.photo,
-          );
+          .uploadMedia(bytes: file.bytes!, filename: file.name, type: PlayerMediaType.photo);
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -60,11 +53,12 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
   @override
   Widget build(BuildContext context) {
     final media = ref.watch(playerProfileControllerProvider).value?.media ?? const [];
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Photos & Videos', style: Theme.of(context).textTheme.titleMedium),
+        Text(l10n.photosVideosTitle, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
         if (media.isNotEmpty)
           Wrap(
@@ -80,15 +74,9 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
         Row(
           children: [
             OutlinedButton.icon(
-              onPressed: _uploading ? null : () => _pickAndUpload(PlayerMediaType.photo),
+              onPressed: _uploading ? null : _pickAndUpload,
               icon: const Icon(Icons.add_a_photo_outlined),
-              label: const Text('Add photo'),
-            ),
-            const SizedBox(width: 12),
-            OutlinedButton.icon(
-              onPressed: _uploading ? null : () => _pickAndUpload(PlayerMediaType.video),
-              icon: const Icon(Icons.videocam_outlined),
-              label: const Text('Add video'),
+              label: Text(l10n.addPhotoLabel),
             ),
             if (_uploading) ...[
               const SizedBox(width: 12),

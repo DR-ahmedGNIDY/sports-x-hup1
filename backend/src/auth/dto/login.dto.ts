@@ -1,8 +1,11 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginDto {
-  @IsEmail()
-  email: string;
+  // Either an email or a phone number (club-created players log in with
+  // their phone as username) — AuthService resolves whichever it is.
+  @IsString()
+  @IsNotEmpty()
+  identifier: string;
 
   @IsString()
   password: string;

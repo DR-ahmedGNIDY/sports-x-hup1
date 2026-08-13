@@ -37,6 +37,7 @@ import {
   toOwnerView,
   toPublicView,
   toSearchResultView,
+  toStatsView,
 } from './players.mapper';
 import { PlayersService } from './players.service';
 
@@ -61,6 +62,17 @@ export class PlayersController {
   async me(@CurrentUser() user: JwtPayload) {
     const profile = await this.playersService.getOrCreateForUser(user.sub);
     return toOwnerView(profile);
+  }
+
+  // Registered ahead of the `:id` wildcard route below so "stats" is never
+  // matched as a player id.
+  @Get('me/stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
+  async myStats(@CurrentUser() user: JwtPayload) {
+    const { profile, savedByClubsCount } =
+      await this.playersService.getStatsForUser(user.sub);
+    return toStatsView(profile, savedByClubsCount);
   }
 
   @Patch('me')
@@ -97,7 +109,6 @@ export class PlayersController {
     const profile = await this.playersService.addMedia(
       user.sub,
       file,
-      dto.type,
       dto.isProfilePhoto ?? false,
     );
     return toOwnerView(profile);

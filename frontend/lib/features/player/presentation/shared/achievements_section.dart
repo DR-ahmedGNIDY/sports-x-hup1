@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 import '../../domain/entities/achievement.dart';
 
@@ -22,6 +23,7 @@ class AchievementsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final achievements =
         ref.watch(playerProfileControllerProvider).value?.achievements ?? const [];
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -29,16 +31,16 @@ class AchievementsSection extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-              child: Text('Achievements', style: Theme.of(context).textTheme.titleMedium),
+              child: Text(l10n.achievementsTitle, style: Theme.of(context).textTheme.titleMedium),
             ),
             IconButton(
-              tooltip: 'Add achievement',
+              tooltip: l10n.addAchievementTooltip,
               icon: const Icon(Icons.add_circle_outline),
               onPressed: () => _openForm(context, ref),
             ),
           ],
         ),
-        if (achievements.isEmpty) const Text('No achievements added yet.'),
+        if (achievements.isEmpty) Text(l10n.noAchievementsYet),
         for (final achievement in achievements)
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -98,7 +100,7 @@ class _AchievementDialogState extends ConsumerState<_AchievementDialog> {
   Future<void> _save() async {
     final year = int.tryParse(_year.text.trim());
     if (_title.text.trim().isEmpty || year == null) {
-      setState(() => _error = 'Enter a title and a valid year.');
+      setState(() => _error = AppLocalizations.of(context)!.achievementValidation);
       return;
     }
     setState(() {
@@ -131,25 +133,26 @@ class _AchievementDialogState extends ConsumerState<_AchievementDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(widget.existing != null ? 'Edit achievement' : 'Add achievement'),
+      title: Text(widget.existing != null ? l10n.editAchievementTitle : l10n.addAchievementTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _title,
-            decoration: const InputDecoration(labelText: 'Title'),
+            decoration: InputDecoration(labelText: l10n.achievementTitleLabel),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _year,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Year'),
+            decoration: InputDecoration(labelText: l10n.yearLabel),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _description,
-            decoration: const InputDecoration(labelText: 'Description'),
+            decoration: InputDecoration(labelText: l10n.descriptionLabel),
           ),
           if (_error != null) ...[
             const SizedBox(height: 8),
@@ -160,11 +163,11 @@ class _AchievementDialogState extends ConsumerState<_AchievementDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelLabel),
         ),
         FilledButton(
           onPressed: _saving ? null : _save,
-          child: const Text('Save'),
+          child: Text(l10n.saveLabel),
         ),
       ],
     );

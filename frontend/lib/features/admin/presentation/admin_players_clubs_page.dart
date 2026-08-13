@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/widgets/error_state.dart';
 import '../application/admin_clubs_controller.dart';
 import '../application/admin_players_controller.dart';
 import '../domain/entities/admin_club_summary.dart';
@@ -15,23 +16,30 @@ class AdminPlayersClubsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Admin — Players & Clubs'),
-          leading: BackButton(onPressed: () => context.go('/dashboard')),
-          actions: [
-            TextButton.icon(
-              onPressed: () => context.go('/admin/users'),
-              icon: const Icon(Icons.people_outline),
-              label: const Text('Users'),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Admin — Players & Clubs', style: Theme.of(context).textTheme.headlineSmall),
+                TextButton.icon(
+                  onPressed: () => context.go('/admin/users'),
+                  icon: const Icon(Icons.people_outline),
+                  label: const Text('Users'),
+                ),
+              ],
             ),
-            const SizedBox(width: 16),
+            const TabBar(
+              tabs: [Tab(text: 'Players'), Tab(text: 'Clubs')],
+            ),
+            const Expanded(
+              child: TabBarView(children: [_PlayersTab(), _ClubsTab()]),
+            ),
           ],
-          bottom: const TabBar(
-            tabs: [Tab(text: 'Players'), Tab(text: 'Clubs')],
-          ),
         ),
-        body: const TabBarView(children: [_PlayersTab(), _ClubsTab()]),
       ),
     );
   }
@@ -131,7 +139,8 @@ class _PlayersTab extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('$error')),
+      error: (error, _) =>
+          ErrorState(onRetry: () => ref.invalidate(adminPlayersControllerProvider)),
     );
   }
 }
@@ -228,7 +237,8 @@ class _ClubsTab extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('$error')),
+      error: (error, _) =>
+          ErrorState(onRetry: () => ref.invalidate(adminClubsControllerProvider)),
     );
   }
 }

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/locale/language_toggle_button.dart';
 import '../../../../core/theme/theme_mode_provider.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import 'marketing_nav_items.dart';
 
 /// AppBar actions shared by every Desktop marketing page (Home/About/
@@ -13,29 +15,72 @@ import 'marketing_nav_items.dart';
 /// AppLogo/BackendStatusIndicator in core/widgets.
 List<Widget> marketingDesktopNavActions(BuildContext context, WidgetRef ref) {
   final themeMode = ref.watch(themeModeProvider);
+  final l10n = AppLocalizations.of(context)!;
   return [
-    for (final item in marketingNavItems)
-      TextButton(onPressed: () => context.go(item.path), child: Text(item.label)),
+    for (final item in marketingNavItems(l10n))
+      TextButton(
+        onPressed: () => context.go(item.path),
+        style: TextButton.styleFrom(foregroundColor: Colors.white),
+        child: Text(
+          item.label,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
     const SizedBox(width: 8),
-    OutlinedButton(onPressed: () => context.go('/login'), child: const Text('Log in')),
+    OutlinedButton(
+      onPressed: () => context.go('/login'),
+      style: OutlinedButton.styleFrom(foregroundColor: Colors.white),
+      child: Text(
+        l10n.authLogIn,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    ),
     const SizedBox(width: 8),
-    FilledButton(onPressed: () => context.go('/register'), child: const Text('Register')),
+    FilledButton(
+      onPressed: () => context.go('/register'),
+      child: Text(
+        l10n.authRegister,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
     IconButton(
-      tooltip: 'Toggle dark mode',
+      tooltip: l10n.themeToggleTooltip,
       onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
       icon: Icon(themeModeToggleIcon(themeMode)),
     ),
+    const LanguageToggleButton(),
     const SizedBox(width: 16),
+  ];
+}
+
+/// AppBar actions shared by every Mobile marketing page — the theme and
+/// language toggles, identical across all six screens that used to define
+/// this inline. The nav itself lives in the Drawer (marketingMobileDrawer),
+/// not here.
+List<Widget> marketingMobileAppBarActions(BuildContext context, WidgetRef ref) {
+  final themeMode = ref.watch(themeModeProvider);
+  final l10n = AppLocalizations.of(context)!;
+  return [
+    IconButton(
+      tooltip: l10n.themeToggleTooltip,
+      onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
+      icon: Icon(themeModeToggleIcon(themeMode)),
+    ),
+    const LanguageToggleButton(),
   ];
 }
 
 /// Drawer shared by every Mobile marketing page — same rationale as above.
 Widget marketingMobileDrawer(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
   return Drawer(
     child: ListView(
       children: [
         const DrawerHeader(child: AppLogo(height: 40)),
-        for (final item in marketingNavItems)
+        for (final item in marketingNavItems(l10n))
           ListTile(
             title: Text(item.label),
             onTap: () {
@@ -45,14 +90,14 @@ Widget marketingMobileDrawer(BuildContext context) {
           ),
         const Divider(),
         ListTile(
-          title: const Text('Log in'),
+          title: Text(l10n.authLogIn),
           onTap: () {
             Navigator.of(context).pop();
             context.go('/login');
           },
         ),
         ListTile(
-          title: const Text('Register'),
+          title: Text(l10n.authRegister),
           onTap: () {
             Navigator.of(context).pop();
             context.go('/register');

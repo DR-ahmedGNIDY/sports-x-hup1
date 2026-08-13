@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 import '../../domain/entities/player_enums.dart';
 
@@ -12,21 +13,20 @@ class VisibilitySection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(playerProfileControllerProvider).value;
     final isPublic = profile?.visibility == ProfileVisibility.public;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Profile Visibility', style: Theme.of(context).textTheme.titleMedium),
+        Text(l10n.visibilityTitle, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 4),
         Text(
-          isPublic
-              ? 'Your profile is visible to Clubs in search results.'
-              : 'Your profile is hidden from search and public view.',
+          isPublic ? l10n.visibilityPublicDesc : l10n.visibilityPrivateDesc,
           style: Theme.of(context).textTheme.bodySmall,
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Public profile'),
+          title: Text(l10n.publicProfileLabel),
           value: isPublic,
           onChanged: profile == null
               ? null

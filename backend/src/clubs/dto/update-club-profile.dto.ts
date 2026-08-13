@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
 
 const MIN_FOUNDED_YEAR = 1800;
 const MAX_FOUNDED_YEAR = 2100;
@@ -6,18 +6,22 @@ const MAX_FOUNDED_YEAR = 2100;
 export class UpdateClubProfileDto {
   @IsOptional()
   @IsString()
+  @MaxLength(200)
   name?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   country?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   city?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(2000)
   description?: string;
 
   @IsOptional()
@@ -28,5 +32,6 @@ export class UpdateClubProfileDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   level?: string;
 }

@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+
+/// The current / alternate / other legend row shown under the pitch —
+/// color alone never carries the meaning (see the check/border cues on
+/// the markers themselves), this just spells it out.
+class FootballPositionLegend extends StatelessWidget {
+  const FootballPositionLegend({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Wrap(
+      spacing: 20,
+      runSpacing: 8,
+      children: [
+        _LegendItem(color: AppColors.pitchPrimary, label: l10n.footballPositionPrimaryLabel),
+        _LegendItem(color: AppColors.success, label: l10n.footballPositionSecondaryLabel),
+        _LegendItem(color: AppColors.offWhite, label: l10n.footballPositionOtherLabel),
+      ],
+    );
+  }
+}
+
+class _LegendItem extends StatelessWidget {
+  const _LegendItem({required this.color, required this.label});
+
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+            border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(label, style: const TextStyle(color: AppColors.greyLight, fontSize: 13)),
+        ),
+      ],
+    );
+  }
+}

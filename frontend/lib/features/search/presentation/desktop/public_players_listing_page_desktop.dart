@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/empty_state_illustration.dart';
+import '../../../../core/widgets/error_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../marketing/presentation/shared/marketing_chrome.dart';
 import '../../../player/presentation/shared/player_search_result_card.dart';
 import '../../application/search_controller.dart';
@@ -20,6 +24,7 @@ class PublicPlayersListingPageDesktop extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final resultsAsync = ref.watch(searchControllerProvider);
     final controller = ref.read(searchControllerProvider.notifier);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +51,18 @@ class PublicPlayersListingPageDesktop extends ConsumerWidget {
           Expanded(
             child: resultsAsync.when(
               data: (page) => page.items.isEmpty
-                  ? const Center(child: Text('No players match these filters.'))
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const EmptyStateIllustration(
+                            variant: EmptyStateVariant.noResults,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          Text(l10n.playersNoResults),
+                        ],
+                      ),
+                    )
                   : Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
@@ -73,7 +89,8 @@ class PublicPlayersListingPageDesktop extends ConsumerWidget {
                       ),
                     ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('$error')),
+              error: (error, _) =>
+                  ErrorState(onRetry: () => ref.invalidate(searchControllerProvider)),
             ),
           ),
         ],

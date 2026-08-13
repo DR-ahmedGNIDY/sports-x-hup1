@@ -10,7 +10,10 @@ abstract class AuthRepository {
     required UserRole role,
   });
 
-  Future<AppUser> login({required String email, required String password});
+  /// [identifier] is either an email or a phone number (club-created
+  /// players log in with their phone as username) — the backend resolves
+  /// whichever it is.
+  Future<AppUser> login({required String identifier, required String password});
 
   Future<void> logout();
 

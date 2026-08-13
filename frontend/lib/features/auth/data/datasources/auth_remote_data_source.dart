@@ -25,9 +25,12 @@ class AuthRemoteDataSource {
   });
 
   Future<Map<String, dynamic>> login({
-    required String email,
+    required String identifier,
     required String password,
-  }) => _postForTokens('/auth/login', {'email': email, 'password': password});
+  }) => _postForTokens('/auth/login', {
+    'identifier': identifier,
+    'password': password,
+  });
 
   Future<Map<String, dynamic>> refresh(String refreshToken) =>
       _postForTokens('/auth/refresh', {'refreshToken': refreshToken});

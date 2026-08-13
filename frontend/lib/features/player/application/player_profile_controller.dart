@@ -4,6 +4,7 @@ import '../data/repositories/player_repository_impl.dart';
 import '../domain/entities/contact_details.dart';
 import '../domain/entities/player_enums.dart';
 import '../domain/entities/player_profile.dart';
+import 'player_stats_controller.dart';
 
 /// Owns the signed-in Player's own profile — the single source of truth
 /// consumed by Edit Profile and My Profile Preview. Every mutation calls
@@ -20,6 +21,12 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
     ref.invalidateSelf();
     await future;
   }
+
+  // Every mutation below can change what GET /players/me/stats reports
+  // (completion percent, media/achievement counts, visibility) — without
+  // this, the Dashboard and the Edit Profile completion bar would keep
+  // showing stale numbers until the user navigated away and back.
+  void _invalidateStats() => ref.invalidate(playerStatsControllerProvider);
 
   Future<void> saveProfile({
     String? firstName,
@@ -58,6 +65,7 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
           contact: contact,
         );
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> setVisibility(ProfileVisibility visibility) async {
@@ -65,6 +73,7 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
         .read(playerRepositoryProvider)
         .updateVisibility(visibility);
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> uploadMedia({
@@ -82,11 +91,13 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
           isProfilePhoto: isProfilePhoto,
         );
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> deleteMedia(String mediaId) async {
     final updated = await ref.read(playerRepositoryProvider).deleteMedia(mediaId);
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> addAchievement({
@@ -98,6 +109,7 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
         .read(playerRepositoryProvider)
         .addAchievement(title: title, year: year, description: description);
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> updateAchievement(
@@ -110,11 +122,13 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
         .read(playerRepositoryProvider)
         .updateAchievement(id, title: title, year: year, description: description);
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> deleteAchievement(String id) async {
     final updated = await ref.read(playerRepositoryProvider).deleteAchievement(id);
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> addSocialLink({required String platform, required String url}) async {
@@ -122,6 +136,7 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
         .read(playerRepositoryProvider)
         .addSocialLink(platform: platform, url: url);
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> updateSocialLink(
@@ -133,11 +148,13 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
         .read(playerRepositoryProvider)
         .updateSocialLink(id, platform: platform, url: url);
     state = AsyncData(updated);
+    _invalidateStats();
   }
 
   Future<void> deleteSocialLink(String id) async {
     final updated = await ref.read(playerRepositoryProvider).deleteSocialLink(id);
     state = AsyncData(updated);
+    _invalidateStats();
   }
 }
 

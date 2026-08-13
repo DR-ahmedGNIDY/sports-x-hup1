@@ -10,8 +10,10 @@ import { UsersModule } from './users/users.module';
 import { SportsModule } from './sports/sports.module';
 import { CountriesModule } from './countries/countries.module';
 import { PlayersModule } from './players/players.module';
+import { VideosModule } from './videos/videos.module';
 import { ClubsModule } from './clubs/clubs.module';
 import { SavedPlayersModule } from './saved-players/saved-players.module';
+import { ClubPlayersModule } from './club-players/club-players.module';
 import { AdminModule } from './admin/admin.module';
 import { ContactModule } from './contact/contact.module';
 
@@ -40,8 +42,10 @@ import { ContactModule } from './contact/contact.module';
     SportsModule,
     CountriesModule,
     PlayersModule,
+    VideosModule,
     ClubsModule,
     SavedPlayersModule,
+    ClubPlayersModule,
     AdminModule,
     ContactModule,
   ],

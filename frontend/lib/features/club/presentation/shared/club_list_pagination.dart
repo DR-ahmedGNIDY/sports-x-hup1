@@ -17,6 +17,9 @@ class ClubListPagination extends StatelessWidget {
       children: [
         IconButton(
           onPressed: page.page > 1 ? () => controller.loadPage(page.page - 1) : null,
+          // Icons.chevron_left/right already have matchTextDirection: true
+          // baked into their IconData, so Flutter auto-mirrors them for
+          // RTL without any extra parameter here.
           icon: const Icon(Icons.chevron_left),
         ),
         Text('Page ${page.page} of $lastPage'),

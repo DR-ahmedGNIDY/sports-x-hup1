@@ -2,10 +2,14 @@ import '../entities/contact_details.dart';
 import '../entities/lookup_option.dart';
 import '../entities/player_enums.dart';
 import '../entities/player_profile.dart';
+import '../entities/player_stats.dart';
 
 /// All methods throw [AppException] (core/errors) on failure.
 abstract class PlayerRepository {
   Future<PlayerProfile> getMyProfile();
+
+  /// Powers the Player Dashboard's completion card and quick-stats tiles.
+  Future<PlayerStats> getMyStats();
 
   Future<PlayerProfile> updateMyProfile({
     String? firstName,

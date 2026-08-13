@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/empty_state_illustration.dart';
+import '../../../../core/widgets/error_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../player/presentation/shared/player_search_result_card.dart';
 import '../../application/search_controller.dart';
 import '../shared/player_search_filters_form.dart';
@@ -39,39 +42,59 @@ class SearchPlayersPageMobile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final resultsAsync = ref.watch(searchControllerProvider);
     final controller = ref.read(searchControllerProvider.notifier);
+    final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Players'),
-        leading: BackButton(onPressed: () => context.go('/dashboard')),
-        actions: [
-          IconButton(
-            tooltip: 'Filters',
-            onPressed: () => _openFilterSheet(context, ref),
-            icon: const Icon(Icons.filter_list),
-          ),
-        ],
-      ),
-      body: resultsAsync.when(
-        data: (page) => page.items.isEmpty
-            ? const Center(child: Text('No players match these filters.'))
-            : Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(12),
-                      itemCount: page.items.length,
-                      itemBuilder: (context, index) =>
-                          PlayerSearchResultCard(player: page.items[index]),
-                    ),
-                  ),
-                  if (page.total > page.pageSize)
-                    SearchPagination(page: page, controller: controller),
-                ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 8, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(l10n.dashboardSearchPlayers, style: Theme.of(context).textTheme.headlineSmall),
+              IconButton(
+                tooltip: 'Filters',
+                onPressed: () => _openFilterSheet(context, ref),
+                icon: const Icon(Icons.filter_list),
               ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('$error')),
-      ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: resultsAsync.when(
+            data: (page) => page.items.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        EmptyStateIllustration(
+                          variant: EmptyStateVariant.noResults,
+                        ),
+                        SizedBox(height: AppSpacing.md),
+                        Text('No players match these filters.'),
+                      ],
+                    ),
+                  )
+                : Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(12),
+                          itemCount: page.items.length,
+                          itemBuilder: (context, index) =>
+                              PlayerSearchResultCard(player: page.items[index]),
+                        ),
+                      ),
+                      if (page.total > page.pageSize)
+                        SearchPagination(page: page, controller: controller),
+                    ],
+                  ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => ErrorState(onRetry: () => ref.invalidate(searchControllerProvider)),
+          ),
+        ),
+      ],
     );
   }
 }
