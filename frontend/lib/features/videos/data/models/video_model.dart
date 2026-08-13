@@ -18,7 +18,12 @@ extension VideoModel on Video {
     final authorJson = json['author'] as Map<String, dynamic>?;
     return Video(
       id: json['id'] as String,
-      playerId: json['playerId'] as String,
+      // Community/public feed items (`toFeedItemView` on the backend) never
+      // carry a top-level `playerId` — only `/videos/me` and
+      // `/videos/:id/visibility` do. Fall back to the nested author's id.
+      playerId: (json['playerId'] as String?) ??
+          (authorJson?['playerId'] as String?) ??
+          '',
       sport: json['sport'] as String,
       category: json['category'] as String,
       title: json['title'] as String?,
