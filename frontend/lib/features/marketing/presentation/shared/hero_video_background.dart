@@ -22,11 +22,39 @@ class HeroVideoBackground extends StatefulWidget {
 class _HeroVideoBackgroundState extends State<HeroVideoBackground> {
   VideoPlayerController? _controller;
   bool _failed = false;
+  ValueNotifier<bool>? _isScrollingNotifier;
+  bool _isScrolling = false;
 
   @override
   void initState() {
     super.initState();
     _initVideo();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // On Flutter Web, this widget's `<video>` element is a browser platform
+    // view composited separately from the canvas — while the ancestor
+    // Scrollable is actively scrolling, that element has to be
+    // repositioned every frame, which is what produces the tearing/color
+    // flashes some mobile GPUs show during scroll. Swapping the live video
+    // out for a static background while scrolling (and back in once it
+    // settles) avoids repositioning it mid-scroll.
+    final newNotifier = Scrollable.maybeOf(context)?.position.isScrollingNotifier;
+    if (newNotifier != _isScrollingNotifier) {
+      _isScrollingNotifier?.removeListener(_handleScrollingChanged);
+      _isScrollingNotifier = newNotifier;
+      _isScrollingNotifier?.addListener(_handleScrollingChanged);
+      _handleScrollingChanged();
+    }
+  }
+
+  void _handleScrollingChanged() {
+    final scrolling = _isScrollingNotifier?.value ?? false;
+    if (scrolling != _isScrolling && mounted) {
+      setState(() => _isScrolling = scrolling);
+    }
   }
 
   Future<void> _initVideo() async {
@@ -45,6 +73,7 @@ class _HeroVideoBackgroundState extends State<HeroVideoBackground> {
 
   @override
   void dispose() {
+    _isScrollingNotifier?.removeListener(_handleScrollingChanged);
     _controller?.dispose();
     super.dispose();
   }
@@ -53,7 +82,10 @@ class _HeroVideoBackgroundState extends State<HeroVideoBackground> {
   Widget build(BuildContext context) {
     final controller = _controller;
     final isReady =
-        controller != null && controller.value.isInitialized && !_failed;
+        controller != null &&
+        controller.value.isInitialized &&
+        !_failed &&
+        !_isScrolling;
 
     return SizedBox(
       height: widget.height,
