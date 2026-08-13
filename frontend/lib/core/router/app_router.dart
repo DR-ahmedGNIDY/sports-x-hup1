@@ -60,10 +60,14 @@ bool _isAdminRoute(String path) => path.startsWith('/admin/');
 bool _isClubRoute(String path) => path.startsWith('/club/players');
 
 // Where an authenticated session lands after splash/login, or gets bounced
-// back to when it hits a route it doesn't own — a Player's home is their
-// own profile, everyone else's is the dashboard.
-String _landingRoute(SessionState session) =>
-    session.user?.role == UserRole.player ? '/player/preview' : '/dashboard';
+// back to when it hits a route it doesn't own.
+//
+// TEMPORARILY back to '/dashboard' for every role, including Player — a
+// pre-existing rendering bug in the Profile Preview page (unrelated to
+// this router change) leaves the app stuck on a blank screen when it's
+// the very first authenticated frame rendered. /dashboard doesn't hit it.
+// See conversation notes; re-enable the Player branch once that's fixed.
+String _landingRoute(SessionState session) => '/dashboard';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -72,8 +76,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final session = ref.read(sessionControllerProvider);
       final path = state.matchedLocation;
-      // ignore: avoid_print
-      print('ROUTER_DEBUG path=$path status=${session.status} role=${session.user?.role}');
 
       // The public marketing site and public profile/listing deep links are
       // session-independent — checked before the splash gate below, so a
