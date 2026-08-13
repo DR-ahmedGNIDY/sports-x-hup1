@@ -31,7 +31,8 @@ class CommunityFeedController extends AsyncNotifier<CommunityFeedPage> {
       }
       final defaultSport = (mySport != null && sports.any((s) => s.name == mySport))
           ? mySport
-          : (sports.isNotEmpty ? sports.first.name : 'Football');
+          : sports.where((s) => s.name == 'Football').firstOrNull?.name ??
+              (sports.isNotEmpty ? sports.first.name : 'Football');
       _filters = CommunityFilters(sport: defaultSport);
     }
     return ref
