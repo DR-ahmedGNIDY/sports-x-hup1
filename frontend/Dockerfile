@@ -1,5 +1,7 @@
-# Stage 1 — build the Flutter web app.
-FROM ghcr.io/cirruslabs/flutter:3.44.1 AS build
+# Stage 1 — build the Flutter web app. `stable` tracks whatever Flutter
+# release cirruslabs currently publishes as stable — pinning an exact patch
+# version (e.g. 3.44.1) risks the image simply not existing on ghcr.io yet.
+FROM ghcr.io/cirruslabs/flutter:stable AS build
 WORKDIR /app
 
 COPY pubspec.yaml pubspec.lock ./
