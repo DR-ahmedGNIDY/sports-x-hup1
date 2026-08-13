@@ -64,7 +64,6 @@ class PlayerRemoteDataSource {
     required List<int> bytes,
     required String filename,
     required String type,
-    required bool isProfilePhoto,
   }) async {
     final response = await _client.postMultipart(
       '/players/me/media',
@@ -72,7 +71,7 @@ class PlayerRemoteDataSource {
       fileField: 'file',
       fileBytes: bytes,
       filename: filename,
-      fields: {'type': type, 'isProfilePhoto': isProfilePhoto.toString()},
+      fields: {'type': type},
     );
     if (response.statusCode != 200 && response.statusCode != 201) {
       throw apiExceptionFromResponse(response);
@@ -83,6 +82,33 @@ class PlayerRemoteDataSource {
   Future<Map<String, dynamic>> deleteMedia(String accessToken, String mediaId) async {
     final response = await _client.delete(
       '/players/me/media/$mediaId',
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> uploadProfilePhoto(
+    String accessToken, {
+    required List<int> bytes,
+    required String filename,
+  }) async {
+    final response = await _client.postMultipart(
+      '/players/me/profile-photo',
+      headers: _bearer(accessToken),
+      fileField: 'file',
+      fileBytes: bytes,
+      filename: filename,
+    );
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw apiExceptionFromResponse(response);
+    }
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> deleteProfilePhoto(String accessToken) async {
+    final response = await _client.delete(
+      '/players/me/profile-photo',
       headers: _bearer(accessToken),
     );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);

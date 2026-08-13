@@ -1,4 +1,4 @@
-import { MediaType, PreferredFoot } from './schemas/player-profile.schema';
+import { PreferredFoot } from './schemas/player-profile.schema';
 import { toStatsView } from './players.mapper';
 
 describe('toStatsView', () => {
@@ -41,9 +41,8 @@ describe('toStatsView', () => {
       preferredFoot: PreferredFoot.LEFT,
       bio: 'Professional footballer.',
       contact: { email: 'mo@example.com' },
-      media: [
-        { type: MediaType.PHOTO, isProfilePhoto: true, secureUrl: 'x.jpg' },
-      ],
+      media: [],
+      profilePhoto: { publicId: 'p1', secureUrl: 'x.jpg' },
       achievements: [{ title: 'League Top Scorer', year: 2023 }],
       socialLinks: [{ platform: 'Instagram', url: 'https://instagram.com/x' }],
       visibility: 'PUBLIC',

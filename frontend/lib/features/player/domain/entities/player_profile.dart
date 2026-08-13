@@ -2,6 +2,7 @@ import 'achievement.dart';
 import 'contact_details.dart';
 import 'player_enums.dart';
 import 'player_media.dart';
+import 'profile_photo.dart';
 import 'social_link.dart';
 
 /// Owner's own profile — includes contact details and the current
@@ -26,6 +27,7 @@ class PlayerProfile {
     this.contact = const ContactDetails(),
     this.visibility = ProfileVisibility.private,
     this.media = const [],
+    this.profilePhoto,
     this.achievements = const [],
     this.socialLinks = const [],
   });
@@ -48,6 +50,7 @@ class PlayerProfile {
   final ContactDetails contact;
   final ProfileVisibility visibility;
   final List<PlayerMedia> media;
+  final ProfilePhoto? profilePhoto;
   final List<Achievement> achievements;
   final List<SocialLink> socialLinks;
 
@@ -55,11 +58,4 @@ class PlayerProfile {
     firstName,
     lastName,
   ].where((part) => part != null && part.isNotEmpty).join(' ');
-
-  PlayerMedia? get profilePhoto {
-    for (final item in media) {
-      if (item.type == PlayerMediaType.photo && item.isProfilePhoto) return item;
-    }
-    return null;
-  }
 }

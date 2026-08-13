@@ -80,22 +80,33 @@ class PlayerProfileController extends AsyncNotifier<PlayerProfile> {
     required List<int> bytes,
     required String filename,
     required PlayerMediaType type,
-    bool isProfilePhoto = false,
   }) async {
     final updated = await ref
         .read(playerRepositoryProvider)
-        .uploadMedia(
-          bytes: bytes,
-          filename: filename,
-          type: type,
-          isProfilePhoto: isProfilePhoto,
-        );
+        .uploadMedia(bytes: bytes, filename: filename, type: type);
     state = AsyncData(updated);
     _invalidateStats();
   }
 
   Future<void> deleteMedia(String mediaId) async {
     final updated = await ref.read(playerRepositoryProvider).deleteMedia(mediaId);
+    state = AsyncData(updated);
+    _invalidateStats();
+  }
+
+  Future<void> uploadProfilePhoto({
+    required List<int> bytes,
+    required String filename,
+  }) async {
+    final updated = await ref
+        .read(playerRepositoryProvider)
+        .uploadProfilePhoto(bytes: bytes, filename: filename);
+    state = AsyncData(updated);
+    _invalidateStats();
+  }
+
+  Future<void> deleteProfilePhoto() async {
+    final updated = await ref.read(playerRepositoryProvider).deleteProfilePhoto();
     state = AsyncData(updated);
     _invalidateStats();
   }

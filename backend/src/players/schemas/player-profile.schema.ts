@@ -46,10 +46,24 @@ export class PlayerMedia {
   @Prop({ required: true })
   secureUrl: string;
 
+  // Legacy — no longer set by any code path (the profile photo now lives
+  // in its own `profilePhoto` field below, outside this album array). Kept
+  // on the schema only so old documents (pre-migration) still deserialize;
+  // see database/migrate-profile-photos.ts.
   @Prop({ default: false })
   isProfilePhoto: boolean;
 }
 export const PlayerMediaSchema = SchemaFactory.createForClass(PlayerMedia);
+
+@Schema({ _id: false, timestamps: false })
+export class ProfilePhoto {
+  @Prop({ required: true })
+  publicId: string;
+
+  @Prop({ required: true })
+  secureUrl: string;
+}
+export const ProfilePhotoSchema = SchemaFactory.createForClass(ProfilePhoto);
 
 @Schema({ _id: true, timestamps: false })
 export class Achievement {
@@ -141,6 +155,12 @@ export class PlayerProfile {
 
   @Prop({ type: [PlayerMediaSchema], default: [] })
   media: PlayerMedia[];
+
+  // Separate from `media` on purpose — uploading a profile photo must not
+  // count toward the album (MAX_EMBEDDED_ARRAY_ITEMS) or show up in the
+  // gallery grid.
+  @Prop({ type: ProfilePhotoSchema })
+  profilePhoto?: ProfilePhoto;
 
   @Prop({ type: [AchievementSchema], default: [] })
   achievements: Achievement[];

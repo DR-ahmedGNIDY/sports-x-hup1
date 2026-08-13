@@ -109,9 +109,6 @@ class _MediaTile extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.slate,
             borderRadius: BorderRadius.circular(8),
-            border: item.isProfilePhoto
-                ? Border.all(color: AppColors.brandBlue, width: 2)
-                : null,
             image: item.type == PlayerMediaType.photo
                 ? DecorationImage(image: NetworkImage(item.secureUrl), fit: BoxFit.cover)
                 : null,

@@ -35,10 +35,16 @@ abstract class PlayerRepository {
     required List<int> bytes,
     required String filename,
     required PlayerMediaType type,
-    bool isProfilePhoto = false,
   });
 
   Future<PlayerProfile> deleteMedia(String mediaId);
+
+  Future<PlayerProfile> uploadProfilePhoto({
+    required List<int> bytes,
+    required String filename,
+  });
+
+  Future<PlayerProfile> deleteProfilePhoto();
 
   Future<PlayerProfile> addAchievement({
     required String title,

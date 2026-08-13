@@ -6,7 +6,6 @@ import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
-import '../../domain/entities/player_enums.dart';
 
 /// Dedicated profile-photo uploader — separate from the general
 /// [MediaSection] gallery so "set my profile picture" is its own obvious
@@ -36,12 +35,7 @@ class _ProfilePhotoSectionState extends ConsumerState<ProfilePhotoSection> {
     try {
       await ref
           .read(playerProfileControllerProvider.notifier)
-          .uploadMedia(
-            bytes: file.bytes!,
-            filename: file.name,
-            type: PlayerMediaType.photo,
-            isProfilePhoto: true,
-          );
+          .uploadProfilePhoto(bytes: file.bytes!, filename: file.name);
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {

@@ -19,7 +19,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { imageUploadOptions } from '../common/upload.config';
 import { UpdatePlayerProfileDto } from '../players/dto/update-player-profile.dto';
-import { UploadMediaDto } from '../players/dto/upload-media.dto';
 import { toOwnerView } from '../players/players.mapper';
 import { UserRole } from '../users/schemas/user.schema';
 import { ClubPlayersService } from './club-players.service';
@@ -84,13 +83,11 @@ export class ClubPlayersController {
     @CurrentUser() user: JwtPayload,
     @Param('playerId') playerId: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body() dto: UploadMediaDto,
   ) {
     const { profile, dialCode } = await this.clubPlayersService.uploadPhoto(
       user.sub,
       playerId,
       file,
-      dto.isProfilePhoto ?? false,
     );
     return { ...toOwnerView(profile), dialCode };
   }

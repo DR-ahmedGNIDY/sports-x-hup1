@@ -194,15 +194,11 @@ describe('PlayersService', () => {
     });
 
     await expect(
-      service.addMedia(
-        'user-1',
-        {
-          buffer: Buffer.from('x'),
-          mimetype: 'image/png',
-          size: 10,
-        } as Express.Multer.File,
-        false,
-      ),
+      service.addMedia('user-1', {
+        buffer: Buffer.from('x'),
+        mimetype: 'image/png',
+        size: 10,
+      } as Express.Multer.File),
     ).rejects.toThrow(BadRequestException);
     // Rejected before ever uploading to Cloudinary.
     expect(cloudinary.uploadBuffer).not.toHaveBeenCalled();
@@ -216,17 +212,100 @@ describe('PlayersService', () => {
     const { service, cloudinary } = buildService(profile);
 
     await expect(
-      service.addMedia(
-        'user-1',
-        {
-          buffer: Buffer.from('x'),
-          mimetype: 'image/png',
-          size: 10,
-        } as Express.Multer.File,
-        false,
-      ),
+      service.addMedia('user-1', {
+        buffer: Buffer.from('x'),
+        mimetype: 'image/png',
+        size: 10,
+      } as Express.Multer.File),
     ).rejects.toThrow('db down');
 
     expect(cloudinary.deleteAsset).toHaveBeenCalledWith('new-id', 'image');
+  });
+
+  describe('setProfilePhoto', () => {
+    const file = {
+      buffer: Buffer.from('x'),
+      mimetype: 'image/png',
+      size: 10,
+    } as Express.Multer.File;
+
+    it('stores the upload in the dedicated profilePhoto field, not media', async () => {
+      const profile: {
+        media: unknown[];
+        profilePhoto?: unknown;
+        save: jest.Mock;
+      } = { media: [], save: jest.fn() };
+      const { service } = buildService(profile);
+
+      const result = await service.setProfilePhoto('user-1', file);
+
+      expect(result.profilePhoto).toEqual({
+        publicId: 'new-id',
+        secureUrl: 'https://x',
+      });
+      expect(result.media).toEqual([]);
+      expect(profile.save).toHaveBeenCalled();
+    });
+
+    it('deletes the previous photo from Cloudinary only after the new one is saved', async () => {
+      const profile = {
+        media: [],
+        profilePhoto: { publicId: 'old-id', secureUrl: 'https://old' },
+        save: jest.fn(),
+      };
+      const { service, cloudinary } = buildService(profile);
+
+      await service.setProfilePhoto('user-1', file);
+
+      expect(cloudinary.deleteAsset).toHaveBeenCalledWith('old-id', 'image');
+      const saveOrder = profile.save.mock.invocationCallOrder[0];
+      const deleteOrder = (cloudinary.deleteAsset as jest.Mock).mock
+        .invocationCallOrder[0];
+      expect(saveOrder).toBeLessThan(deleteOrder);
+    });
+
+    it('deletes the just-uploaded asset (not the old one) if saving fails', async () => {
+      const profile = {
+        media: [],
+        profilePhoto: { publicId: 'old-id', secureUrl: 'https://old' },
+        save: jest.fn().mockRejectedValue(new Error('db down')),
+      };
+      const { service, cloudinary } = buildService(profile);
+
+      await expect(service.setProfilePhoto('user-1', file)).rejects.toThrow(
+        'db down',
+      );
+
+      expect(cloudinary.deleteAsset).toHaveBeenCalledWith('new-id', 'image');
+      expect(cloudinary.deleteAsset).not.toHaveBeenCalledWith(
+        'old-id',
+        'image',
+      );
+    });
+  });
+
+  describe('removeProfilePhoto', () => {
+    it('rejects when the profile has no photo to remove', async () => {
+      const { service } = buildService({ media: [], save: jest.fn() });
+
+      await expect(service.removeProfilePhoto('user-1')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('deletes the Cloudinary asset and clears the field', async () => {
+      const profile = {
+        media: [],
+        profilePhoto: { publicId: 'old-id', secureUrl: 'https://old' },
+        save: jest.fn(),
+      };
+      const { service, cloudinary } = buildService(profile);
+
+      const result = await service.removeProfilePhoto('user-1');
+
+      expect(cloudinary.deleteAsset).toHaveBeenCalledWith('old-id', 'image');
+      expect(result.profilePhoto).toBeUndefined();
+      expect(profile.save).toHaveBeenCalled();
+    });
   });
 });

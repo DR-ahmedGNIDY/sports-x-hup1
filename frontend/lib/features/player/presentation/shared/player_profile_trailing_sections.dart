@@ -193,12 +193,6 @@ class _MediaTile extends StatelessWidget {
                 const Center(
                   child: Icon(Icons.play_circle_outline, color: AppColors.white, size: 36),
                 ),
-              if (item.isProfilePhoto)
-                const Positioned(
-                  top: 6,
-                  right: 6,
-                  child: Icon(Icons.star, color: AppColors.warning, size: 20),
-                ),
             ],
           ),
         ),

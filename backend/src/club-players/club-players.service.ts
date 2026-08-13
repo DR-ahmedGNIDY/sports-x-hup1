@@ -156,14 +156,9 @@ export class ClubPlayersService {
     clubId: string,
     userId: string,
     file: Express.Multer.File,
-    isProfilePhoto: boolean,
   ): Promise<{ profile: PlayerProfileDocument; dialCode: string }> {
     const ownership = await this.requireOwnership(clubId, userId);
-    const profile = await this.playersService.addMedia(
-      userId,
-      file,
-      isProfilePhoto,
-    );
+    const profile = await this.playersService.setProfilePhoto(userId, file);
     return { profile, dialCode: ownership.dialCode };
   }
 

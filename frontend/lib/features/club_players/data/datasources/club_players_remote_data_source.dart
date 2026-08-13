@@ -60,7 +60,6 @@ class ClubPlayersRemoteDataSource {
       fileField: 'file',
       fileBytes: bytes,
       filename: filename,
-      fields: const {'isProfilePhoto': 'true'},
     );
     if (response.statusCode != 200 && response.statusCode != 201) {
       throw apiExceptionFromResponse(response);

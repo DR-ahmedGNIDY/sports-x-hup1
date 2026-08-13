@@ -13,7 +13,8 @@
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "jest",
     "seed": "ts-node -T src/database/seed.ts",
-    "seed:admin": "ts-node -T src/database/seed-admin.ts"
+    "seed:admin": "ts-node -T src/database/seed-admin.ts",
+    "migrate:profile-photos": "ts-node -T src/database/migrate-profile-photos.ts"
   },
   "jest": {
     "moduleFileExtensions": [

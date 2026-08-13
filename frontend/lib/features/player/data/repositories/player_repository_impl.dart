@@ -98,14 +98,12 @@ class PlayerRepositoryImpl implements PlayerRepository {
     required List<int> bytes,
     required String filename,
     required PlayerMediaType type,
-    bool isProfilePhoto = false,
   }) => _authorized((token) async {
     final json = await _remote.uploadMedia(
       token,
       bytes: bytes,
       filename: filename,
       type: type.wireValue,
-      isProfilePhoto: isProfilePhoto,
     );
     return PlayerProfileModel.fromJson(json);
   });
@@ -116,6 +114,25 @@ class PlayerRepositoryImpl implements PlayerRepository {
         final json = await _remote.deleteMedia(token, mediaId);
         return PlayerProfileModel.fromJson(json);
       });
+
+  @override
+  Future<PlayerProfile> uploadProfilePhoto({
+    required List<int> bytes,
+    required String filename,
+  }) => _authorized((token) async {
+    final json = await _remote.uploadProfilePhoto(
+      token,
+      bytes: bytes,
+      filename: filename,
+    );
+    return PlayerProfileModel.fromJson(json);
+  });
+
+  @override
+  Future<PlayerProfile> deleteProfilePhoto() => _authorized((token) async {
+    final json = await _remote.deleteProfilePhoto(token);
+    return PlayerProfileModel.fromJson(json);
+  });
 
   @override
   Future<PlayerProfile> addAchievement({

@@ -1,7 +1,4 @@
-import {
-  MediaType,
-  PlayerProfileDocument,
-} from './schemas/player-profile.schema';
+import { PlayerProfileDocument } from './schemas/player-profile.schema';
 
 // Each key doubles as the i18n lookup the frontend uses to render the
 // "complete your profile" checklist, so keep these stable — renaming one
@@ -35,9 +32,7 @@ function ageFromDateOfBirth(dateOfBirth?: Date): number | undefined {
 export function profilePhotoUrl(
   profile: PlayerProfileDocument,
 ): string | undefined {
-  return profile.media.find(
-    (item) => item.type === MediaType.PHOTO && item.isProfilePhoto,
-  )?.secureUrl;
+  return profile.profilePhoto?.secureUrl;
 }
 
 function baseView(profile: PlayerProfileDocument) {
@@ -58,6 +53,7 @@ function baseView(profile: PlayerProfileDocument) {
     currentClub: profile.currentClub,
     bio: profile.bio,
     media: profile.media,
+    profilePhoto: profile.profilePhoto,
     achievements: profile.achievements,
     socialLinks: profile.socialLinks,
   };

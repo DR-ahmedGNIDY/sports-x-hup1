@@ -2,6 +2,7 @@ import '../../domain/entities/achievement.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_media.dart';
 import '../../domain/entities/player_profile.dart';
+import '../../domain/entities/profile_photo.dart';
 import '../../domain/entities/social_link.dart';
 import 'contact_details_model.dart';
 
@@ -32,6 +33,12 @@ extension PlayerProfileModel on PlayerProfile {
       media: ((json['media'] as List<dynamic>? ?? [])
           .map((e) => _mediaFromJson(e as Map<String, dynamic>))
           .toList()),
+      profilePhoto: json['profilePhoto'] != null
+          ? ProfilePhoto(
+              secureUrl: (json['profilePhoto'] as Map<String, dynamic>)['secureUrl']
+                  as String,
+            )
+          : null,
       achievements: ((json['achievements'] as List<dynamic>? ?? [])
           .map((e) => _achievementFromJson(e as Map<String, dynamic>))
           .toList()),
@@ -47,7 +54,6 @@ PlayerMedia _mediaFromJson(Map<String, dynamic> json) {
     id: json['_id'] as String? ?? json['id'] as String,
     type: PlayerMediaType.fromWire(json['type'] as String),
     secureUrl: json['secureUrl'] as String,
-    isProfilePhoto: json['isProfilePhoto'] as bool? ?? false,
   );
 }
 

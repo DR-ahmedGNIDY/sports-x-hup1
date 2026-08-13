@@ -266,10 +266,11 @@ export class PlayersService {
   }
 
   // Photo-only: video uploads moved to the dedicated `videos` module.
+  // Album only — the profile photo has its own field/method (setProfilePhoto
+  // below) and is never stored in this array.
   async addMedia(
     userId: string,
     file: Express.Multer.File,
-    isProfilePhoto: boolean,
   ): Promise<PlayerProfileDocument> {
     if (!file) {
       throw new BadRequestException('A file is required.');
@@ -287,19 +288,11 @@ export class PlayersService {
       resourceTypeFor(MediaType.PHOTO),
     );
 
-    if (isProfilePhoto) {
-      profile.media.forEach((item) => {
-        if (item.type === MediaType.PHOTO) {
-          item.isProfilePhoto = false;
-        }
-      });
-    }
-
     profile.media.push({
       type: MediaType.PHOTO,
       publicId: upload.publicId,
       secureUrl: upload.secureUrl,
-      isProfilePhoto,
+      isProfilePhoto: false,
     });
     try {
       await profile.save();
@@ -313,6 +306,62 @@ export class PlayersService {
       );
       throw error;
     }
+    return profile;
+  }
+
+  // Separate from addMedia/the `media` album entirely — stores into the
+  // dedicated `profilePhoto` field, replacing (and deleting) whatever was
+  // there before.
+  async setProfilePhoto(
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<PlayerProfileDocument> {
+    if (!file) {
+      throw new BadRequestException('A file is required.');
+    }
+    validateMediaFile(MediaType.PHOTO, file);
+    const profile = await this.getOrCreateForUser(userId);
+    const previous = profile.profilePhoto;
+
+    const upload = await this.cloudinary.uploadBuffer(
+      file.buffer,
+      `sportxhub/players/${userId}`,
+      resourceTypeFor(MediaType.PHOTO),
+    );
+
+    profile.profilePhoto = {
+      publicId: upload.publicId,
+      secureUrl: upload.secureUrl,
+    };
+    try {
+      await profile.save();
+    } catch (error) {
+      await this.cloudinary.deleteAsset(
+        upload.publicId,
+        resourceTypeFor(MediaType.PHOTO),
+      );
+      throw error;
+    }
+    if (previous) {
+      await this.cloudinary.deleteAsset(
+        previous.publicId,
+        resourceTypeFor(MediaType.PHOTO),
+      );
+    }
+    return profile;
+  }
+
+  async removeProfilePhoto(userId: string): Promise<PlayerProfileDocument> {
+    const profile = await this.getOrCreateForUser(userId);
+    if (!profile.profilePhoto) {
+      throw new NotFoundException('No profile photo to remove.');
+    }
+    await this.cloudinary.deleteAsset(
+      profile.profilePhoto.publicId,
+      resourceTypeFor(MediaType.PHOTO),
+    );
+    profile.profilePhoto = undefined;
+    await profile.save();
     return profile;
   }
 

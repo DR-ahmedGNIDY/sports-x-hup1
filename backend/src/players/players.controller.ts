@@ -19,7 +19,10 @@ import {
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { mediaUploadOptions } from '../common/upload.config';
+import {
+  imageUploadOptions,
+  mediaUploadOptions,
+} from '../common/upload.config';
 import { UserRole } from '../users/schemas/user.schema';
 import {
   CreateAchievementDto,
@@ -32,7 +35,6 @@ import {
 } from './dto/social-link.dto';
 import { UpdatePlayerProfileDto } from './dto/update-player-profile.dto';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
-import { UploadMediaDto } from './dto/upload-media.dto';
 import {
   toOwnerView,
   toPublicView,
@@ -104,13 +106,8 @@ export class PlayersController {
   async addMedia(
     @CurrentUser() user: JwtPayload,
     @UploadedFile() file: Express.Multer.File,
-    @Body() dto: UploadMediaDto,
   ) {
-    const profile = await this.playersService.addMedia(
-      user.sub,
-      file,
-      dto.isProfilePhoto ?? false,
-    );
+    const profile = await this.playersService.addMedia(user.sub, file);
     return toOwnerView(profile);
   }
 
@@ -119,6 +116,26 @@ export class PlayersController {
   @Roles(UserRole.PLAYER)
   async removeMedia(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
     const profile = await this.playersService.removeMedia(user.sub, id);
+    return toOwnerView(profile);
+  }
+
+  @Post('me/profile-photo')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
+  @UseInterceptors(FileInterceptor('file', imageUploadOptions))
+  async setProfilePhoto(
+    @CurrentUser() user: JwtPayload,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const profile = await this.playersService.setProfilePhoto(user.sub, file);
+    return toOwnerView(profile);
+  }
+
+  @Delete('me/profile-photo')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
+  async removeProfilePhoto(@CurrentUser() user: JwtPayload) {
+    const profile = await this.playersService.removeProfilePhoto(user.sub);
     return toOwnerView(profile);
   }
 

@@ -44,7 +44,7 @@ describe('ClubPlayersService', () => {
     const playersService = {
       updateProfile: jest.fn().mockResolvedValue(savedProfile),
       getOrCreateForUser: jest.fn().mockResolvedValue(savedProfile),
-      addMedia: jest.fn().mockResolvedValue(savedProfile),
+      setProfilePhoto: jest.fn().mockResolvedValue(savedProfile),
       findManyByUserIds: jest.fn().mockResolvedValue([]),
     };
 
