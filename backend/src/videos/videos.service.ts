@@ -31,6 +31,25 @@ export interface CommunityFeedResult {
   total: number;
 }
 
+// Traits: a per-skill-category rating (0-99, like a FIFA attribute) derived
+// entirely from a player's own uploaded videos — never self-entered, so
+// there's nothing to fabricate. Deliberately slow-growing per the product
+// call: each video nudges its category by half a point, with another half
+// point if the video proved itself with more than TRAIT_LIKE_THRESHOLD
+// likes. Football-only for now — every other sport's skill categories
+// don't map to a recognizable "trait" taxonomy yet.
+const TRAITS_SPORT = 'Football';
+const TRAIT_BASE_SCORE = 40;
+const TRAIT_SCORE_PER_VIDEO = 0.5;
+const TRAIT_SCORE_LIKE_BONUS = 0.5;
+const TRAIT_LIKE_THRESHOLD = 10;
+const TRAIT_MAX_SCORE = 99;
+
+export interface PlayerTraitsResult {
+  sport: string;
+  traits: { category: string; score: number; videoCount: number }[];
+}
+
 @Injectable()
 export class VideosService {
   constructor(
@@ -143,14 +162,70 @@ export class VideosService {
     if (!Types.ObjectId.isValid(playerId)) {
       return [];
     }
+    // `Video.playerId` is declared `type: Types.ObjectId`, which Mongoose
+    // resolves as a Mixed path (not a real ObjectId SchemaType) — so a
+    // plain string here never auto-casts and silently matches nothing.
+    // Cast explicitly rather than touching the schema declaration itself,
+    // since other collections already have data stored inconsistently
+    // (string vs ObjectId) under that same pattern.
     const videos = await this.videoModel
       .find({
-        playerId,
+        playerId: new Types.ObjectId(playerId),
         visibility: VideoVisibility.PUBLIC,
         ...(category && { category }),
       })
       .sort({ createdAt: -1 });
     return videos.map((video) => toFeedItemView(video, null));
+  }
+
+  async getMyTraits(userId: string): Promise<PlayerTraitsResult | null> {
+    const profile = await this.getOwnPlayerProfileOrThrow(userId);
+    return this.traitsForPlayer(profile._id.toString(), {
+      includePrivate: true,
+    });
+  }
+
+  async getPublicTraits(playerId: string): Promise<PlayerTraitsResult | null> {
+    return this.traitsForPlayer(playerId, { includePrivate: false });
+  }
+
+  private async traitsForPlayer(
+    playerId: string,
+    options: { includePrivate: boolean },
+  ): Promise<PlayerTraitsResult | null> {
+    if (!Types.ObjectId.isValid(playerId)) return null;
+    const profile = await this.playerProfileModel.findById(playerId);
+    if (!profile || profile.sport !== TRAITS_SPORT) return null;
+
+    const categories = await this.sportsService.findCategories(TRAITS_SPORT);
+    const videos = await this.videoModel.find({
+      playerId: new Types.ObjectId(playerId),
+      category: { $in: categories.map((c) => c.name) },
+      ...(options.includePrivate ? {} : { visibility: VideoVisibility.PUBLIC }),
+    });
+
+    const byCategory = new Map<string, { total: number; count: number }>();
+    for (const video of videos) {
+      const contribution =
+        TRAIT_SCORE_PER_VIDEO +
+        (video.likeCount > TRAIT_LIKE_THRESHOLD ? TRAIT_SCORE_LIKE_BONUS : 0);
+      const entry = byCategory.get(video.category) ?? { total: 0, count: 0 };
+      entry.total += contribution;
+      entry.count += 1;
+      byCategory.set(video.category, entry);
+    }
+
+    return {
+      sport: TRAITS_SPORT,
+      traits: categories.map((c) => {
+        const entry = byCategory.get(c.name) ?? { total: 0, count: 0 };
+        return {
+          category: c.name,
+          score: Math.min(TRAIT_MAX_SCORE, TRAIT_BASE_SCORE + entry.total),
+          videoCount: entry.count,
+        };
+      }),
+    };
   }
 
   async updateVisibility(
@@ -449,7 +524,10 @@ export class VideosService {
   // so a deleted profile never leaves `author: null` entries in the
   // Community feed or orphaned Cloudinary assets behind.
   async deleteAllForPlayer(playerId: string): Promise<void> {
-    const videos = await this.videoModel.find({ playerId });
+    // Same Mixed-path cast issue as listForPlayer/traitsForPlayer above —
+    // without this cast, this cascade silently deletes nothing.
+    const objectId = new Types.ObjectId(playerId);
+    const videos = await this.videoModel.find({ playerId: objectId });
     if (videos.length === 0) {
       return;
     }
@@ -458,7 +536,7 @@ export class VideosService {
     );
     const videoIds = videos.map((video) => video._id);
     await Promise.all([
-      this.videoModel.deleteMany({ playerId }),
+      this.videoModel.deleteMany({ playerId: objectId }),
       this.videoLikeModel.deleteMany({ videoId: { $in: videoIds } }),
       this.videoCommentModel.deleteMany({ videoId: { $in: videoIds } }),
     ]);

@@ -349,6 +349,8 @@
   "communityEmptyState": "لا توجد فيديوهات بعد لهذه الرياضة/الفئة.",
   "allCategoryLabel": "الكل",
   "skillsSectionTitle": "المهارات",
+  "traitsTitle": "السمات",
+  "traitsCaption": "بتزيد كل ما ترفع فيديوهات أكتر في المهارة دي — والفيديوهات اللي بتاخد لايكات أكتر بتزيد أسرع.",
   "videosEmptyState": "لا توجد فيديوهات بعد في هذه الفئة.",
   "videoDeleteTitle": "حذف الفيديو؟",
   "videoDeleteContent": "لا يمكن التراجع عن هذا الإجراء.",

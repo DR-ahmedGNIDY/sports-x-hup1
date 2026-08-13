@@ -4,6 +4,7 @@ import '../../../../core/network/authorized_request.dart';
 import '../../../../core/storage/session_storage.dart';
 import '../../../../core/storage/session_storage_provider.dart';
 import '../../../community/domain/entities/community_feed_page.dart';
+import '../../domain/entities/player_traits.dart';
 import '../../domain/entities/skill_category.dart';
 import '../../domain/entities/video.dart';
 import '../../domain/entities/video_comment.dart';
@@ -59,6 +60,18 @@ class VideoRepositoryImpl implements VideoRepository {
   Future<List<Video>> listForPlayer(String playerId, {String? category}) async {
     final json = await _remote.listForPlayer(playerId, category: category);
     return json.map((e) => VideoModel.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  @override
+  Future<PlayerTraits?> getMyTraits() => _authorized((token) async {
+    final json = await _remote.getMyTraits(token);
+    return json == null ? null : PlayerTraitsModel.fromJson(json);
+  });
+
+  @override
+  Future<PlayerTraits?> getPlayerTraits(String playerId) async {
+    final json = await _remote.getPlayerTraits(playerId);
+    return json == null ? null : PlayerTraitsModel.fromJson(json);
   }
 
   @override

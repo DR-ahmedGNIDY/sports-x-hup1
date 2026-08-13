@@ -1868,6 +1868,18 @@ abstract class AppLocalizations {
   /// **'المهارات'**
   String get skillsSectionTitle;
 
+  /// No description provided for @traitsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'السمات'**
+  String get traitsTitle;
+
+  /// No description provided for @traitsCaption.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتزيد كل ما ترفع فيديوهات أكتر في المهارة دي — والفيديوهات اللي بتاخد لايكات أكتر بتزيد أسرع.'**
+  String get traitsCaption;
+
   /// No description provided for @videosEmptyState.
   ///
   /// In ar, this message translates to:

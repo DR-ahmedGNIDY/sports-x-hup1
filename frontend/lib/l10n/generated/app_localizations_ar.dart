@@ -937,6 +937,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get skillsSectionTitle => 'المهارات';
 
   @override
+  String get traitsTitle => 'السمات';
+
+  @override
+  String get traitsCaption =>
+      'بتزيد كل ما ترفع فيديوهات أكتر في المهارة دي — والفيديوهات اللي بتاخد لايكات أكتر بتزيد أسرع.';
+
+  @override
   String get videosEmptyState => 'لا توجد فيديوهات بعد في هذه الفئة.';
 
   @override

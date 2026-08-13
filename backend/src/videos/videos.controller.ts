@@ -55,6 +55,13 @@ export class VideosController {
     return this.videosService.listMine(user.sub, dto.category);
   }
 
+  @Get('me/traits')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
+  async myTraits(@CurrentUser() user: JwtPayload) {
+    return this.videosService.getMyTraits(user.sub);
+  }
+
   // Registered ahead of the `:id` wildcard routes below so "community" is
   // never matched as a video id.
   @Get('community')
@@ -69,6 +76,11 @@ export class VideosController {
     @Query('category') category?: string,
   ) {
     return this.videosService.listForPlayer(playerId, category);
+  }
+
+  @Get('player/:playerId/traits')
+  async playerTraits(@Param('playerId') playerId: string) {
+    return this.videosService.getPublicTraits(playerId);
   }
 
   @Patch(':id/visibility')

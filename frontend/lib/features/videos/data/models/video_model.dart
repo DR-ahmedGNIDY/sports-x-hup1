@@ -1,3 +1,4 @@
+import '../../domain/entities/player_traits.dart';
 import '../../domain/entities/video.dart';
 import '../../domain/entities/video_author.dart';
 
@@ -39,6 +40,25 @@ extension VideoModel on Video {
       author: authorJson != null ? VideoAuthorModel.fromJson(authorJson) : null,
     );
   }
+}
+
+extension PlayerTraitsModel on PlayerTraits {
+  static PlayerTraits fromJson(Map<String, dynamic> json) {
+    return PlayerTraits(
+      sport: json['sport'] as String,
+      traits: (json['traits'] as List<dynamic>)
+          .map((e) => _traitFromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}
+
+PlayerTrait _traitFromJson(Map<String, dynamic> json) {
+  return PlayerTrait(
+    category: json['category'] as String,
+    score: (json['score'] as num).toDouble(),
+    videoCount: (json['videoCount'] as num).toInt(),
+  );
 }
 
 extension VideoLikeResultModel on VideoLikeResult {

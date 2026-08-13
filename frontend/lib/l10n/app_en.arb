@@ -349,6 +349,8 @@
   "communityEmptyState": "No videos yet for this sport/category.",
   "allCategoryLabel": "All",
   "skillsSectionTitle": "Skills",
+  "traitsTitle": "Traits",
+  "traitsCaption": "Grows as you upload more videos in each skill — liked videos count extra.",
   "videosEmptyState": "No videos yet in this category.",
   "videoDeleteTitle": "Delete video?",
   "videoDeleteContent": "This cannot be undone.",

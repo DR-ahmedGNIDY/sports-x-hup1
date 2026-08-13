@@ -71,6 +71,22 @@ class VideoRemoteDataSource {
     return jsonDecode(response.body) as List<dynamic>;
   }
 
+  /// `null` body means the player isn't on a sport traits are computed
+  /// for (Football-only for now).
+  Future<Map<String, dynamic>?> getMyTraits(String accessToken) async {
+    final response = await _client.get('/videos/me/traits', headers: _bearer(accessToken));
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    final decoded = jsonDecode(response.body);
+    return decoded == null ? null : decoded as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>?> getPlayerTraits(String playerId) async {
+    final response = await _client.get('/videos/player/$playerId/traits');
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    final decoded = jsonDecode(response.body);
+    return decoded == null ? null : decoded as Map<String, dynamic>;
+  }
+
   Future<Map<String, dynamic>> updateVisibility(
     String accessToken,
     String videoId,

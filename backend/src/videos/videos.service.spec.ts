@@ -218,8 +218,13 @@ describe('VideosService', () => {
 
     await service.deleteAllForPlayer(playerId);
 
+    // `Video.playerId` is stored as a real ObjectId — the cascade must
+    // cast the string id back to one, or (as it silently did before this
+    // fix) it deletes nothing.
     expect(cloudinary.deleteAsset).toHaveBeenCalledWith('video-1', 'video');
-    expect(videoModel.deleteMany).toHaveBeenCalledWith({ playerId });
+    expect(videoModel.deleteMany).toHaveBeenCalledWith({
+      playerId: new Types.ObjectId(playerId),
+    });
     expect(videoLikeModel.deleteMany).toHaveBeenCalledWith({
       videoId: { $in: [videoId] },
     });

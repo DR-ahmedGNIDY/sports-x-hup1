@@ -8,6 +8,7 @@ import '../../domain/entities/player_media.dart';
 import '../../domain/entities/player_profile.dart';
 import 'section_card.dart';
 import 'skills_section.dart';
+import 'traits_section.dart';
 
 /// Gallery, achievements, social links, and contact — unchanged
 /// functionality from the pre-redesign profile view, just restyled onto
@@ -39,6 +40,12 @@ List<Widget> buildTrailingSections(
           sport: profile.sport!,
           showHeading: false,
         ),
+      ),
+    if (profile.sport == 'Football')
+      ProfileSectionCard(
+        icon: Icons.insights_outlined,
+        title: l10n.traitsTitle,
+        child: TraitsSection(isOwner: isOwner, playerId: profile.id),
       ),
     if (profile.achievements.isNotEmpty)
       ProfileSectionCard(

@@ -1,4 +1,5 @@
 import '../../../community/domain/entities/community_feed_page.dart';
+import '../entities/player_traits.dart';
 import '../entities/skill_category.dart';
 import '../entities/video.dart';
 import '../entities/video_comment.dart';
@@ -22,6 +23,13 @@ abstract class VideoRepository {
 
   /// PUBLIC-only, no auth required. `null` category means "All".
   Future<List<Video>> listForPlayer(String playerId, {String? category});
+
+  /// `null` means the signed-in player isn't on a sport traits are
+  /// computed for (Football-only for now).
+  Future<PlayerTraits?> getMyTraits();
+
+  /// PUBLIC-videos-only view of another player's traits, no auth required.
+  Future<PlayerTraits?> getPlayerTraits(String playerId);
 
   Future<Video> updateVisibility(String videoId, VideoVisibility visibility);
 

@@ -949,6 +949,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skillsSectionTitle => 'Skills';
 
   @override
+  String get traitsTitle => 'Traits';
+
+  @override
+  String get traitsCaption =>
+      'Grows as you upload more videos in each skill — liked videos count extra.';
+
+  @override
   String get videosEmptyState => 'No videos yet in this category.';
 
   @override
