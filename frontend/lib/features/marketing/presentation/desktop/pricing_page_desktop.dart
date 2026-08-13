@@ -16,7 +16,8 @@ class PricingPageDesktop extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final plans = pricingPlans(l10n);
     return Scaffold(
-      appBar: AppBar(
+      appBar: marketingHeaderAppBar(
+        context,
         title: const AppLogo(height: 28),
         actions: marketingDesktopNavActions(context, ref),
       ),

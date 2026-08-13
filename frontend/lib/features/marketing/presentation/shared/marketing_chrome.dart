@@ -73,6 +73,28 @@ List<Widget> marketingMobileAppBarActions(BuildContext context, WidgetRef ref) {
   ];
 }
 
+/// Wraps the marketing header's AppBar so its layout runs *opposite* the
+/// page's ambient locale direction — Arabic pages get a left-to-right
+/// header (logo/actions read like LTR) and English pages get a
+/// right-to-left header — per product decision to invert the header only,
+/// leaving the rest of the page's RTL/LTR behavior untouched.
+PreferredSizeWidget marketingHeaderAppBar(
+  BuildContext context, {
+  required Widget title,
+  required List<Widget> actions,
+}) {
+  final flipped = Directionality.of(context) == TextDirection.rtl
+      ? TextDirection.ltr
+      : TextDirection.rtl;
+  return PreferredSize(
+    preferredSize: const Size.fromHeight(kToolbarHeight),
+    child: Directionality(
+      textDirection: flipped,
+      child: AppBar(title: title, actions: actions),
+    ),
+  );
+}
+
 /// Drawer shared by every Mobile marketing page — same rationale as above.
 Widget marketingMobileDrawer(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;

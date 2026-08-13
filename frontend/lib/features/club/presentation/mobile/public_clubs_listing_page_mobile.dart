@@ -19,7 +19,8 @@ class PublicClubsListingPageMobile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: marketingHeaderAppBar(
+        context,
         title: const AppLogo(height: 24),
         actions: marketingMobileAppBarActions(context, ref),
       ),

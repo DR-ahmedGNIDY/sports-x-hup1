@@ -13,7 +13,8 @@ class AboutPageMobile extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
+      appBar: marketingHeaderAppBar(
+        context,
         title: const AppLogo(height: 24),
         actions: marketingMobileAppBarActions(context, ref),
       ),
