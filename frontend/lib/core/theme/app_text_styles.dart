@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// Individual screens should reference these rather than hardcoding styles,
 /// so a single tweak here propagates everywhere.
 abstract final class AppTextStyles {
-  static const String fontFamily = 'Roboto';
+  static const String fontFamily = 'Tajawal';
 
   static const TextStyle displayLarge = TextStyle(
     fontFamily: fontFamily,
