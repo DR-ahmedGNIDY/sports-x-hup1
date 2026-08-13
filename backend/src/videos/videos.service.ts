@@ -116,6 +116,7 @@ export class VideosService {
         userId,
         sport: profile.sport,
         category: dto.category,
+        title: dto.title,
         visibility: dto.visibility,
         publicId: upload.publicId,
         secureUrl: upload.secureUrl,
@@ -162,6 +163,16 @@ export class VideosService {
       throw new NotFoundException('Video not found.');
     }
     video.visibility = visibility;
+    await video.save();
+    return toOwnerVideoView(video);
+  }
+
+  async updateTitle(userId: string, videoId: string, title: string | undefined) {
+    const video = await this.findVideoOrThrow(videoId);
+    if (video.userId.toString() !== userId) {
+      throw new NotFoundException('Video not found.');
+    }
+    video.title = title;
     await video.save();
     return toOwnerVideoView(video);
   }

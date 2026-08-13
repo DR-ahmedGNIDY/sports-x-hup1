@@ -21,6 +21,7 @@ extension VideoModel on Video {
       playerId: json['playerId'] as String,
       sport: json['sport'] as String,
       category: json['category'] as String,
+      title: json['title'] as String?,
       secureUrl: json['secureUrl'] as String,
       thumbnailUrl: json['thumbnailUrl'] as String?,
       visibility: json['visibility'] != null

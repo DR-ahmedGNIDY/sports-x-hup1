@@ -1898,6 +1898,12 @@ abstract class AppLocalizations {
   /// **'جعله عامًا'**
   String get videoMakePublic;
 
+  /// No description provided for @videoEditTitleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل العنوان'**
+  String get videoEditTitleLabel;
+
   /// No description provided for @videoUploadTitle.
   ///
   /// In ar, this message translates to:
@@ -1909,6 +1915,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اختر ملف فيديو'**
   String get videoChooseFileLabel;
+
+  /// No description provided for @videoTitleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان الفيديو (اختياري)'**
+  String get videoTitleLabel;
 
   /// No description provided for @videoCategoryLabel.
   ///

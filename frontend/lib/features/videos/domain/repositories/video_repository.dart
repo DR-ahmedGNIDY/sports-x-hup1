@@ -14,6 +14,7 @@ abstract class VideoRepository {
     required String filename,
     required String category,
     required VideoVisibility visibility,
+    String? title,
   });
 
   /// Owner-only, all visibilities. `null` category means "All".
@@ -23,6 +24,8 @@ abstract class VideoRepository {
   Future<List<Video>> listForPlayer(String playerId, {String? category});
 
   Future<Video> updateVisibility(String videoId, VideoVisibility visibility);
+
+  Future<Video> updateTitle(String videoId, String? title);
 
   Future<void> deleteVideo(String videoId);
 

@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 import { VideoVisibility } from '../schemas/video.schema';
 
 export class UploadVideoDto {
@@ -8,4 +8,9 @@ export class UploadVideoDto {
 
   @IsEnum(VideoVisibility)
   visibility: VideoVisibility;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  title?: string;
 }

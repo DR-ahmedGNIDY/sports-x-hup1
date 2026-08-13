@@ -952,10 +952,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get videoMakePublic => 'جعله عامًا';
 
   @override
+  String get videoEditTitleLabel => 'تعديل العنوان';
+
+  @override
   String get videoUploadTitle => 'إضافة فيديو';
 
   @override
   String get videoChooseFileLabel => 'اختر ملف فيديو';
+
+  @override
+  String get videoTitleLabel => 'عنوان الفيديو (اختياري)';
 
   @override
   String get videoCategoryLabel => 'الفئة';

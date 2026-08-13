@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../player/application/lookup_providers.dart';
+import '../../player/application/player_profile_controller.dart';
 import '../../videos/data/repositories/video_repository_impl.dart';
 import '../domain/entities/community_feed_page.dart';
 import 'community_filters.dart';
@@ -8,8 +9,10 @@ import 'community_filters.dart';
 /// Owns the current Community feed filters and the resulting page — mirrors
 /// [PlayerSearchController]'s shape: a filter change always resets to page
 /// 1, [loadPage] keeps the filters and moves through the existing result
-/// set. Defaults [CommunityFilters.sport] to the first of the (now
-/// exactly 6) sports once [sportsProvider] resolves.
+/// set. Defaults [CommunityFilters.sport] to the signed-in player's own
+/// sport (so a video they just uploaded shows up immediately without
+/// having to tap a sport chip); falls back to the first of the sports list
+/// for non-player viewers or players without a sport set yet.
 class CommunityFeedController extends AsyncNotifier<CommunityFeedPage> {
   CommunityFilters? _filters;
 
@@ -19,7 +22,16 @@ class CommunityFeedController extends AsyncNotifier<CommunityFeedPage> {
   Future<CommunityFeedPage> build() async {
     if (_filters == null) {
       final sports = await ref.read(sportsProvider.future);
-      final defaultSport = sports.isNotEmpty ? sports.first.name : 'Football';
+      String? mySport;
+      try {
+        final profile = await ref.read(playerProfileControllerProvider.future);
+        mySport = profile.sport;
+      } catch (_) {
+        mySport = null;
+      }
+      final defaultSport = (mySport != null && sports.any((s) => s.name == mySport))
+          ? mySport
+          : (sports.isNotEmpty ? sports.first.name : 'Football');
       _filters = CommunityFilters(sport: defaultSport);
     }
     return ref

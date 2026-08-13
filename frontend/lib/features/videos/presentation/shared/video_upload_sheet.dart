@@ -46,6 +46,13 @@ class _VideoUploadSheetState extends ConsumerState<VideoUploadSheet> {
   VideoVisibility _visibility = VideoVisibility.private;
   bool _uploading = false;
   String? _error;
+  final _titleController = TextEditingController();
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickFile() async {
     final result = await FilePicker.pickFiles(withData: true, type: FileType.video);
@@ -86,6 +93,9 @@ class _VideoUploadSheetState extends ConsumerState<VideoUploadSheet> {
             filename: file.name,
             category: category,
             visibility: _visibility,
+            title: _titleController.text.trim().isEmpty
+                ? null
+                : _titleController.text.trim(),
           );
       if (mounted) Navigator.of(context).pop();
     } on AppException catch (e) {
@@ -122,6 +132,12 @@ class _VideoUploadSheetState extends ConsumerState<VideoUploadSheet> {
             label: Text(_file == null ? l10n.videoChooseFileLabel : _file!.name),
           ),
           const SizedBox(height: 16),
+          TextField(
+            controller: _titleController,
+            enabled: !_uploading,
+            maxLength: 100,
+            decoration: InputDecoration(labelText: l10n.videoTitleLabel),
+          ),
           categoriesAsync.when(
             data: (categories) => DropdownButtonFormField<String>(
               initialValue: _category,

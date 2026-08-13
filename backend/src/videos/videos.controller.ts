@@ -24,6 +24,7 @@ import { UserRole } from '../users/schemas/user.schema';
 import { CommunityFeedDto } from './dto/community-feed.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { ListVideosDto } from './dto/list-videos.dto';
+import { UpdateVideoTitleDto } from './dto/update-video-title.dto';
 import { UpdateVideoVisibilityDto } from './dto/update-video-visibility.dto';
 import { UploadVideoDto } from './dto/upload-video.dto';
 import { VideosService } from './videos.service';
@@ -79,6 +80,17 @@ export class VideosController {
     @Body() dto: UpdateVideoVisibilityDto,
   ) {
     return this.videosService.updateVisibility(user.sub, id, dto.visibility);
+  }
+
+  @Patch(':id/title')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PLAYER)
+  async updateTitle(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+    @Body() dto: UpdateVideoTitleDto,
+  ) {
+    return this.videosService.updateTitle(user.sub, id, dto.title);
   }
 
   @Delete(':id')

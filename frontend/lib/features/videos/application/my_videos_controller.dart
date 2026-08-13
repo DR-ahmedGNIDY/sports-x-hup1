@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../community/application/community_feed_controller.dart';
 import '../data/repositories/video_repository_impl.dart';
 import '../domain/entities/skill_category.dart';
 import '../domain/entities/video.dart';
@@ -18,6 +19,14 @@ class MyVideosController extends AsyncNotifier<List<Video>> {
   Future<List<Video>> build() {
     return ref.read(videoRepositoryProvider).listMine(category: _category);
   }
+
+  // The Community feed is a separate, non-autoDispose provider that only
+  // refetches when its filters change — without this, a video
+  // uploaded/made public/deleted here would leave Community showing a
+  // stale list (missing the new video, or still showing a deleted one)
+  // until the user manually changed a filter chip.
+  void _invalidateCommunityFeed() =>
+      ref.invalidate(communityFeedControllerProvider);
 
   Future<void> setCategory(String? category) async {
     if (category == kAllSkillCategoryId) category = null;
@@ -40,6 +49,7 @@ class MyVideosController extends AsyncNotifier<List<Video>> {
     required String filename,
     required String category,
     required VideoVisibility visibility,
+    String? title,
   }) async {
     await ref
         .read(videoRepositoryProvider)
@@ -48,8 +58,10 @@ class MyVideosController extends AsyncNotifier<List<Video>> {
           filename: filename,
           category: category,
           visibility: visibility,
+          title: title,
         );
     await refresh();
+    _invalidateCommunityFeed();
   }
 
   Future<void> updateVisibility(String videoId, VideoVisibility visibility) async {
@@ -61,12 +73,24 @@ class MyVideosController extends AsyncNotifier<List<Video>> {
       for (final video in current)
         if (video.id == updated.id) updated else video,
     ]);
+    _invalidateCommunityFeed();
+  }
+
+  Future<void> updateTitle(String videoId, String? title) async {
+    final updated = await ref.read(videoRepositoryProvider).updateTitle(videoId, title);
+    final current = state.value ?? const [];
+    state = AsyncData([
+      for (final video in current)
+        if (video.id == updated.id) updated else video,
+    ]);
+    _invalidateCommunityFeed();
   }
 
   Future<void> delete(String videoId) async {
     await ref.read(videoRepositoryProvider).deleteVideo(videoId);
     final current = state.value ?? const [];
     state = AsyncData(current.where((v) => v.id != videoId).toList());
+    _invalidateCommunityFeed();
   }
 
   Future<void> toggleLike(String videoId) async {

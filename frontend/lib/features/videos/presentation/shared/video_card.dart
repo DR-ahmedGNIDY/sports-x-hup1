@@ -145,6 +145,19 @@ class _VideoCardState extends State<VideoCard> {
                     _AuthorRow(author: video.author!),
                     const SizedBox(height: AppSpacing.sm),
                   ],
+                  if (video.title != null && video.title!.isNotEmpty) ...[
+                    Text(
+                      video.title!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.profileText,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                  ],
                   Row(
                     children: [
                       ?likeButton,

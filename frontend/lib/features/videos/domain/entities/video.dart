@@ -33,6 +33,7 @@ class Video {
     required this.playerId,
     required this.sport,
     required this.category,
+    this.title,
     required this.secureUrl,
     this.thumbnailUrl,
     this.visibility = VideoVisibility.private,
@@ -47,6 +48,7 @@ class Video {
   final String playerId;
   final String sport;
   final String category;
+  final String? title;
   final String secureUrl;
   final String? thumbnailUrl;
   final VideoVisibility visibility;
@@ -57,6 +59,7 @@ class Video {
   final VideoAuthor? author;
 
   Video copyWith({
+    String? title,
     VideoVisibility? visibility,
     int? likeCount,
     int? commentCount,
@@ -67,6 +70,7 @@ class Video {
       playerId: playerId,
       sport: sport,
       category: category,
+      title: title ?? this.title,
       secureUrl: secureUrl,
       thumbnailUrl: thumbnailUrl,
       visibility: visibility ?? this.visibility,

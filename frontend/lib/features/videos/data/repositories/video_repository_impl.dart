@@ -36,6 +36,7 @@ class VideoRepositoryImpl implements VideoRepository {
     required String filename,
     required String category,
     required VideoVisibility visibility,
+    String? title,
   }) => _authorized((token) async {
     final json = await _remote.uploadVideo(
       token,
@@ -43,6 +44,7 @@ class VideoRepositoryImpl implements VideoRepository {
       filename: filename,
       category: category,
       visibility: visibility.wireValue,
+      title: title,
     );
     return VideoModel.fromJson(json);
   });
@@ -63,6 +65,13 @@ class VideoRepositoryImpl implements VideoRepository {
   Future<Video> updateVisibility(String videoId, VideoVisibility visibility) =>
       _authorized((token) async {
         final json = await _remote.updateVisibility(token, videoId, visibility.wireValue);
+        return VideoModel.fromJson(json);
+      });
+
+  @override
+  Future<Video> updateTitle(String videoId, String? title) =>
+      _authorized((token) async {
+        final json = await _remote.updateTitle(token, videoId, title);
         return VideoModel.fromJson(json);
       });
 

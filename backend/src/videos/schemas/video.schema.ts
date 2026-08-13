@@ -22,6 +22,9 @@ export class Video {
   @Prop({ required: true, trim: true })
   category: string;
 
+  @Prop({ trim: true, maxlength: 100 })
+  title?: string;
+
   @Prop({ required: true })
   publicId: string;
 

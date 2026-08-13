@@ -964,10 +964,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get videoMakePublic => 'Make public';
 
   @override
+  String get videoEditTitleLabel => 'Edit title';
+
+  @override
   String get videoUploadTitle => 'Add video';
 
   @override
   String get videoChooseFileLabel => 'Choose video file';
+
+  @override
+  String get videoTitleLabel => 'Video title (optional)';
 
   @override
   String get videoCategoryLabel => 'Category';

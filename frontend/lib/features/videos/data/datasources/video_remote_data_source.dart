@@ -31,6 +31,7 @@ class VideoRemoteDataSource {
     required String filename,
     required String category,
     required String visibility,
+    String? title,
   }) async {
     final response = await _client.postMultipart(
       '/videos',
@@ -38,7 +39,11 @@ class VideoRemoteDataSource {
       fileField: 'file',
       fileBytes: bytes,
       filename: filename,
-      fields: {'category': category, 'visibility': visibility},
+      fields: {
+        'category': category,
+        'visibility': visibility,
+        if (title != null && title.isNotEmpty) 'title': title,
+      },
     );
     if (response.statusCode != 200 && response.statusCode != 201) {
       throw apiExceptionFromResponse(response);
@@ -75,6 +80,20 @@ class VideoRemoteDataSource {
       '/videos/$videoId/visibility',
       headers: _bearer(accessToken),
       body: {'visibility': visibility},
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> updateTitle(
+    String accessToken,
+    String videoId,
+    String? title,
+  ) async {
+    final response = await _client.patch(
+      '/videos/$videoId/title',
+      headers: _bearer(accessToken),
+      body: {'title': title},
     );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
     return jsonDecode(response.body) as Map<String, dynamic>;

@@ -167,6 +167,44 @@ class _OwnerVideoCard extends ConsumerWidget {
     }
   }
 
+  Future<void> _editTitle(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController(text: video.title ?? '');
+    final newTitle = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.videoEditTitleLabel),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLength: 100,
+          decoration: InputDecoration(labelText: l10n.videoTitleLabel),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancelLabel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: Text(l10n.saveLabel),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (newTitle == null) return;
+    try {
+      await ref
+          .read(myVideosControllerProvider.notifier)
+          .updateTitle(video.id, newTitle.isEmpty ? null : newTitle);
+    } on AppException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return VideoCard(
@@ -195,6 +233,8 @@ class _OwnerVideoCard extends ConsumerWidget {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
               }
             }
+          } else if (value == 'title') {
+            await _editTitle(context, ref);
           } else if (value == 'delete') {
             await _confirmDelete(context, ref);
           }
@@ -210,6 +250,7 @@ class _OwnerVideoCard extends ConsumerWidget {
                     : l10n.videoMakePublic,
               ),
             ),
+            PopupMenuItem(value: 'title', child: Text(l10n.videoEditTitleLabel)),
             PopupMenuItem(value: 'delete', child: Text(l10n.deleteLabel)),
           ];
         },
