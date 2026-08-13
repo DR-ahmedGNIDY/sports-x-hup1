@@ -70,8 +70,8 @@ class _SportXHubAppState extends ConsumerState<SportXHubApp> {
       routerConfig: router,
       builder: (context, child) => Directionality(
         textDirection: locale == arabicLocale
-            ? TextDirection.ltr
-            : TextDirection.rtl,
+            ? TextDirection.rtl
+            : TextDirection.ltr,
         child: child!,
       ),
     );
