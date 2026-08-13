@@ -16,6 +16,10 @@ import 'l10n/generated/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = (details) {
+    // ignore: avoid_print
+    print('DEBUG_FLUTTER_ERROR: ${details.exceptionAsString()}\n${details.stack}');
+  };
   await Env.load();
   final prefs = await SharedPreferences.getInstance();
 

@@ -72,6 +72,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final session = ref.read(sessionControllerProvider);
       final path = state.matchedLocation;
+      // ignore: avoid_print
+      print('ROUTER_DEBUG path=$path status=${session.status} role=${session.user?.role}');
 
       // The public marketing site and public profile/listing deep links are
       // session-independent — checked before the splash gate below, so a
