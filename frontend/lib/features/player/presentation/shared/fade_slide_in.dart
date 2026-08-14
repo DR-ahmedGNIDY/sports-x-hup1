@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/theme/app_motion.dart';
+
+/// A small one-shot fade + upward-slide entrance, used to stagger the
+/// Player Profile's sections in on first paint (Hero, Quick Stats,
+/// Position, ...) instead of everything popping in at once. Purely
+/// decorative — no layout is reserved/changed, it just animates the
+/// child's opacity/offset in place. Respects
+/// `MediaQuery.disableAnimations` (reduced motion) by skipping straight
+/// to the settled state, and uses [AppMotion]'s shared duration/curve
+/// constants rather than inventing new ones.
+class FadeSlideIn extends StatefulWidget {
+  const FadeSlideIn({super.key, required this.child, this.delay = Duration.zero});
+
+  final Widget child;
+  final Duration delay;
+
+  @override
+  State<FadeSlideIn> createState() => _FadeSlideInState();
+}
+
+class _FadeSlideInState extends State<FadeSlideIn> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: AppMotion.slow,
+  );
+  late final Animation<double> _opacity = CurvedAnimation(parent: _controller, curve: AppMotion.enter);
+  late final Animation<Offset> _offset = Tween(
+    begin: const Offset(0, 0.04),
+    end: Offset.zero,
+  ).animate(CurvedAnimation(parent: _controller, curve: AppMotion.enter));
+
+  @override
+  void initState() {
+    super.initState();
+    if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) {
+      _controller.value = 1;
+      return;
+    }
+    if (widget.delay == Duration.zero) {
+      _controller.forward();
+    } else {
+      Future.delayed(widget.delay, () {
+        if (mounted) _controller.forward();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.of(context).disableAnimations) return widget.child;
+    return FadeTransition(
+      opacity: _opacity,
+      child: SlideTransition(position: _offset, child: widget.child),
+    );
+  }
+}

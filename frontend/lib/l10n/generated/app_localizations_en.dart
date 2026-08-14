@@ -339,6 +339,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ageLabel => 'Age';
 
   @override
+  String get birthYearLabel => 'Birth year';
+
+  @override
+  String get playerProfileBadge => 'Player Profile';
+
+  @override
+  String get playerInformationTitle => 'Player Information';
+
+  @override
+  String get noClubTitle => 'No Club';
+
+  @override
+  String get noClubSubtitle => 'Not currently affiliated with a club';
+
+  @override
   String get personalInfoTitle => 'Personal Information';
 
   @override

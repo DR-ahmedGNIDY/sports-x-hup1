@@ -6,16 +6,38 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_media.dart';
 import '../../domain/entities/player_profile.dart';
+import 'achievement_badge_card.dart';
 import 'section_card.dart';
 import 'skills_section.dart';
 import 'traits_section.dart';
 
-/// Gallery, achievements, social links, and contact — unchanged
-/// functionality from the pre-redesign profile view, just restyled onto
-/// [ProfileSectionCard] and moved below the new hero/quick-facts/pitch
-/// sections. Identical on desktop and mobile: a stacked full-width list
-/// reads fine at any width, so there's no platform-specific layout to
-/// split out here.
+/// The Achievements card — gold-accented, `null` when the player has no
+/// achievements on file (per the redesign spec: don't show an empty
+/// section). Pulled out of [buildTrailingSections] into its own function
+/// so the layouts can place it right after the Position section, per the
+/// redesign's requested page order, instead of bundled with Gallery/
+/// Skills/Traits/Social/Contact at the bottom.
+Widget? buildAchievementsSection(BuildContext context, PlayerProfile profile) {
+  if (profile.achievements.isEmpty) return null;
+  final l10n = AppLocalizations.of(context)!;
+  return ProfileSectionCard(
+    icon: Icons.emoji_events_outlined,
+    title: l10n.achievementsTitle,
+    accentColor: AppColors.profileGold,
+    child: Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: [for (final achievement in profile.achievements) AchievementBadgeCard(achievement: achievement)],
+    ),
+  );
+}
+
+/// Gallery, skills (video gallery), traits, social links, and contact —
+/// unchanged functionality from the pre-redesign profile view, just
+/// restyled onto [ProfileSectionCard] and moved below the new hero/
+/// quick-stats/position/achievements/info sections. Identical on desktop
+/// and mobile: a stacked full-width list reads fine at any width, so
+/// there's no platform-specific layout to split out here.
 List<Widget> buildTrailingSections(
   BuildContext context,
   PlayerProfile profile, {
@@ -46,33 +68,6 @@ List<Widget> buildTrailingSections(
         icon: Icons.insights_outlined,
         title: l10n.traitsTitle,
         child: TraitsSection(isOwner: isOwner, playerId: profile.id),
-      ),
-    if (profile.achievements.isNotEmpty)
-      ProfileSectionCard(
-        icon: Icons.emoji_events_outlined,
-        title: l10n.achievementsTitle,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (final achievement in profile.achievements)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  iconColor: AppColors.profileAccent,
-                  textColor: AppColors.profileText,
-                  leading: const Icon(Icons.emoji_events_outlined),
-                  title: Text('${achievement.title} (${achievement.year})'),
-                  subtitle: achievement.description != null
-                      ? Text(
-                          achievement.description!,
-                          style: const TextStyle(color: AppColors.greyLight),
-                        )
-                      : null,
-                ),
-              ),
-          ],
-        ),
       ),
     if (profile.socialLinks.isNotEmpty)
       ProfileSectionCard(

@@ -340,6 +340,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ageLabel => 'العمر';
 
   @override
+  String get birthYearLabel => 'سنة الميلاد';
+
+  @override
+  String get playerProfileBadge => 'الملف الشخصي للاعب';
+
+  @override
+  String get playerInformationTitle => 'معلومات اللاعب';
+
+  @override
+  String get noClubTitle => 'بدون نادٍ';
+
+  @override
+  String get noClubSubtitle => 'غير منضم لأي نادٍ حاليًا';
+
+  @override
   String get personalInfoTitle => 'المعلومات الشخصية';
 
   @override

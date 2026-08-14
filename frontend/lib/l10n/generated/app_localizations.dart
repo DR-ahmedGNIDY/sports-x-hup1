@@ -728,6 +728,36 @@ abstract class AppLocalizations {
   /// **'العمر'**
   String get ageLabel;
 
+  /// No description provided for @birthYearLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنة الميلاد'**
+  String get birthYearLabel;
+
+  /// No description provided for @playerProfileBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف الشخصي للاعب'**
+  String get playerProfileBadge;
+
+  /// No description provided for @playerInformationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات اللاعب'**
+  String get playerInformationTitle;
+
+  /// No description provided for @noClubTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون نادٍ'**
+  String get noClubTitle;
+
+  /// No description provided for @noClubSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير منضم لأي نادٍ حاليًا'**
+  String get noClubSubtitle;
+
   /// No description provided for @personalInfoTitle.
   ///
   /// In ar, this message translates to:

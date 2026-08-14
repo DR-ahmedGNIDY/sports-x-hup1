@@ -41,4 +41,20 @@ abstract final class AppColors {
   // skills/community accent reads as part of the same brand-blue family
   // instead of a separately-hued blue.
   static const Color profileAccent = brandBlueLight;
+
+  // Player Profile premium-scouting-portfolio redesign — two additive
+  // accents layered on top of the existing dark palette above. Deliberately
+  // distinct from `success`/`warning` (which stay semantic status colors)
+  // so a "neon glow" or "gold trophy" accent never gets confused with a
+  // green success toast or an amber warning banner.
+  /// Neon green — active/current-status highlights on the Player Profile
+  /// (e.g. an "active" badge glow). Brighter/more saturated than `success`
+  /// on purpose; `success` keeps its existing semantic meaning everywhere
+  /// else (secondary position marker, completion-bar "done" state).
+  static const Color profileNeonGreen = Color(0xFF39FF88);
+
+  /// Gold — achievements/trophies accent on the Player Profile. Distinct
+  /// from `warning` (amber, semantically "needs attention") even though
+  /// the hues are neighbors.
+  static const Color profileGold = Color(0xFFE8B93B);
 }

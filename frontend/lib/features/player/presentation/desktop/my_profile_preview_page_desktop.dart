@@ -25,38 +25,30 @@ class MyProfilePreviewPageDesktop extends ConsumerWidget {
             constraints: const BoxConstraints(maxWidth: 1180),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(32),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        l10n.myProfileTitle,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineSmall?.copyWith(color: AppColors.profileText),
+              child: PlayerProfileScoutingLayoutDesktop(
+                profile: profile,
+                showContact: true,
+                isOwner: true,
+                heroActions: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () => context.go('/player/edit'),
+                      icon: const Icon(Icons.edit_outlined, size: 18, color: AppColors.profileAccent),
+                      label: Text(
+                        l10n.dashboardEditProfile,
+                        style: const TextStyle(color: AppColors.profileAccent),
                       ),
-                      Row(
-                        children: [
-                          ShareProfileButton(playerId: profile.id),
-                          const SizedBox(width: 8),
-                          TextButton.icon(
-                            onPressed: () => context.go('/player/edit'),
-                            icon: const Icon(Icons.edit_outlined),
-                            label: Text(l10n.dashboardEditProfile),
-                          ),
-                        ],
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: AppColors.profileAccent.withValues(alpha: 0.4)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  PlayerProfileScoutingLayoutDesktop(
-                    profile: profile,
-                    showContact: true,
-                    isOwner: true,
-                  ),
-                ],
+                    ),
+                    const SizedBox(width: 12),
+                    ShareProfileButton(playerId: profile.id),
+                  ],
+                ),
               ),
             ),
           ),

@@ -22,43 +22,55 @@ class MyProfilePreviewPageMobile extends ConsumerWidget {
       child: profileAsync.when(
         data: (profile) => SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    l10n.myProfileTitle,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleLarge?.copyWith(color: AppColors.profileText),
-                  ),
-                  Row(
-                    children: [
-                      ShareProfileButton(playerId: profile.id, compact: true),
-                      IconButton(
-                        tooltip: l10n.dashboardEditProfile,
-                        onPressed: () => context.go('/player/edit'),
-                        icon: const Icon(Icons.edit_outlined),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              PlayerProfileScoutingLayoutMobile(
-                profile: profile,
-                showContact: true,
-                isOwner: true,
-              ),
-            ],
+          child: PlayerProfileScoutingLayoutMobile(
+            profile: profile,
+            showContact: true,
+            isOwner: true,
+            heroActions: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _HeroActionButton(
+                  icon: Icons.edit_outlined,
+                  label: l10n.dashboardEditProfile,
+                  onPressed: () => context.go('/player/edit'),
+                ),
+                const SizedBox(width: 10),
+                ShareProfileButton(playerId: profile.id, compact: true),
+              ],
+            ),
           ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => ErrorState(
           onRetry: () => ref.read(playerProfileControllerProvider.notifier).refresh(),
         ),
+      ),
+    );
+  }
+}
+
+/// A small pill action button for the Hero Card's action slot — same
+/// role as the old page-header `IconButton`, just styled to sit on the
+/// hero's dark/glow background instead of a plain app bar.
+class _HeroActionButton extends StatelessWidget {
+  const _HeroActionButton({required this.icon, required this.label, required this.onPressed});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 16, color: AppColors.profileAccent),
+      label: Text(label, style: const TextStyle(color: AppColors.profileAccent, fontSize: 12)),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        side: BorderSide(color: AppColors.profileAccent.withValues(alpha: 0.4)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
       ),
     );
   }

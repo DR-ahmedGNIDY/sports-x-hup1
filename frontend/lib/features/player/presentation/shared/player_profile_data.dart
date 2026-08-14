@@ -34,19 +34,16 @@ class QuickFact {
   final String value;
 }
 
-/// Age, date of birth, height, weight, preferred foot — only the ones
-/// actually set on the profile. Order matches the design spec's example
-/// ("Age | Height | Weight | Foot"), with date of birth right after age.
+/// Age, height, weight, preferred foot, birth year — only the ones
+/// actually derivable from the profile. Order matches the redesigned
+/// "Quick Stats" row (Age | Height | Weight | Foot | Birth year); date of
+/// birth's year is a plain `.year` read off the same `dateOfBirth` used
+/// for age, not a new field, so this stays within the "no fabricated
+/// data" rule above.
 List<QuickFact> buildQuickFacts(AppLocalizations l10n, PlayerProfile profile) {
   final age = computeAge(profile.dateOfBirth);
   return [
     if (age != null) QuickFact(icon: Icons.cake_outlined, label: l10n.ageLabel, value: '$age'),
-    if (profile.dateOfBirth != null)
-      QuickFact(
-        icon: Icons.event_outlined,
-        label: l10n.dateOfBirthLabel,
-        value: formatDate(profile.dateOfBirth!),
-      ),
     if (profile.height != null)
       QuickFact(icon: Icons.height, label: l10n.heightStatLabel, value: '${profile.height} cm'),
     if (profile.weight != null)
@@ -60,6 +57,12 @@ List<QuickFact> buildQuickFacts(AppLocalizations l10n, PlayerProfile profile) {
         icon: Icons.sports_soccer_outlined,
         label: l10n.preferredFootLabel,
         value: preferredFootLabel(l10n, profile.preferredFoot!),
+      ),
+    if (profile.dateOfBirth != null)
+      QuickFact(
+        icon: Icons.event_outlined,
+        label: l10n.birthYearLabel,
+        value: '${profile.dateOfBirth!.year}',
       ),
   ];
 }

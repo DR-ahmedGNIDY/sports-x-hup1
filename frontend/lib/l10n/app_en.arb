@@ -127,6 +127,11 @@
   "shareProfileLabel": "Share Profile",
   "shareProfileLinkCopied": "Profile link copied to clipboard",
   "ageLabel": "Age",
+  "birthYearLabel": "Birth year",
+  "playerProfileBadge": "Player Profile",
+  "playerInformationTitle": "Player Information",
+  "noClubTitle": "No Club",
+  "noClubSubtitle": "Not currently affiliated with a club",
 
   "personalInfoTitle": "Personal Information",
   "firstNameLabel": "First name",

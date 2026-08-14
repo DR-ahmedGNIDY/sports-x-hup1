@@ -127,6 +127,11 @@
   "shareProfileLabel": "مشاركة الملف",
   "shareProfileLinkCopied": "تم نسخ رابط الملف الشخصي",
   "ageLabel": "العمر",
+  "birthYearLabel": "سنة الميلاد",
+  "playerProfileBadge": "الملف الشخصي للاعب",
+  "playerInformationTitle": "معلومات اللاعب",
+  "noClubTitle": "بدون نادٍ",
+  "noClubSubtitle": "غير منضم لأي نادٍ حاليًا",
 
   "personalInfoTitle": "المعلومات الشخصية",
   "firstNameLabel": "الاسم الأول",
