@@ -10,6 +10,7 @@ import '../shared/player_club_card.dart';
 import '../shared/player_hero_card.dart';
 import '../shared/player_info_card.dart';
 import '../shared/player_profile_data.dart';
+import '../shared/owner_account_section.dart';
 import '../shared/player_profile_trailing_sections.dart';
 import '../shared/quick_stats_grid.dart';
 import 'basketball_position_section_desktop.dart';
@@ -71,6 +72,10 @@ class PlayerProfileScoutingLayoutDesktop extends StatelessWidget {
         if (facts.isNotEmpty) ...[
           const SizedBox(height: 24),
           staggered(QuickStatsGrid(facts: facts)),
+        ],
+        if (isOwner) ...[
+          const SizedBox(height: 24),
+          staggered(const OwnerAccountSection()),
         ],
         if (hasFootball || hasBasketball) ...[
           const SizedBox(height: 24),

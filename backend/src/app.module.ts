@@ -16,6 +16,7 @@ import { SavedPlayersModule } from './saved-players/saved-players.module';
 import { ClubPlayersModule } from './club-players/club-players.module';
 import { AdminModule } from './admin/admin.module';
 import { ContactModule } from './contact/contact.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ContactModule } from './contact/contact.module';
     ClubPlayersModule,
     AdminModule,
     ContactModule,
+    PostsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

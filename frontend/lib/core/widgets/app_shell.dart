@@ -284,8 +284,10 @@ class _MobileShell extends ConsumerWidget {
   final String currentPath;
   final Widget child;
 
-  // A Player gets two extra tabs (Skills, Traits) next to Home — everyone
-  // else keeps the original three.
+  // A Player gets two extra tabs (Profile, Skills) next to Home — everyone
+  // else keeps the original three. Traits isn't a separate tab: it's
+  // already shown read-only inside the Profile page (see TraitsSection),
+  // so a dedicated bottom-nav slot for it would just be a duplicate.
   List<_MobileNavDestination> _destinationsFor(AppLocalizations l10n, UserRole? role) {
     final home = _MobileNavDestination(
       icon: Icons.home_outlined,
@@ -308,14 +310,14 @@ class _MobileShell extends ConsumerWidget {
     return [
       home,
       _MobileNavDestination(
+        icon: Icons.badge_outlined,
+        label: l10n.dashboardMyProfile,
+        route: '/player/preview',
+      ),
+      _MobileNavDestination(
         icon: Icons.sports_soccer_outlined,
         label: l10n.skillsSectionTitle,
         route: '/player/skills',
-      ),
-      _MobileNavDestination(
-        icon: Icons.insights_outlined,
-        label: l10n.traitsTitle,
-        route: '/player/traits',
       ),
       community,
       settings,

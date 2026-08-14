@@ -1886,6 +1886,72 @@ abstract class AppLocalizations {
   /// **'لا توجد فيديوهات بعد لهذه الرياضة/الفئة.'**
   String get communityEmptyState;
 
+  /// No description provided for @homeFeedEmptyState.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد نشاط بعد في رياضتك. أول فيديو أو صورة تتنشر هتظهر هنا.'**
+  String get homeFeedEmptyState;
+
+  /// No description provided for @homeFeedNewPostTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشر صورة'**
+  String get homeFeedNewPostTooltip;
+
+  /// No description provided for @homeFeedNewPostTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشر صورة'**
+  String get homeFeedNewPostTitle;
+
+  /// No description provided for @homeFeedChooseImageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر صورة'**
+  String get homeFeedChooseImageLabel;
+
+  /// No description provided for @homeFeedCaptionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصف (اختياري)'**
+  String get homeFeedCaptionLabel;
+
+  /// No description provided for @homeFeedSportLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرياضة'**
+  String get homeFeedSportLabel;
+
+  /// No description provided for @homeFeedPostButtonLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشر'**
+  String get homeFeedPostButtonLabel;
+
+  /// No description provided for @homeFeedPostMissingImageError.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر صورة قبل النشر.'**
+  String get homeFeedPostMissingImageError;
+
+  /// No description provided for @homeFeedPostMissingSportError.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الرياضة قبل النشر.'**
+  String get homeFeedPostMissingSportError;
+
+  /// No description provided for @homeFeedPostTooLargeError.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم هذه الصورة أكبر من الحد المسموح به وهو {limit} ميجابايت. اختر ملفًا أصغر.'**
+  String homeFeedPostTooLargeError(int limit);
+
+  /// No description provided for @homeFeedPostSuccessMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم النشر بنجاح.'**
+  String get homeFeedPostSuccessMessage;
+
   /// No description provided for @allCategoryLabel.
   ///
   /// In ar, this message translates to:

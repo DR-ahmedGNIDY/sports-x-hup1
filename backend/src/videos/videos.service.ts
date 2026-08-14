@@ -15,8 +15,15 @@ import { SportsService } from '../sports/sports.service';
 import { User } from '../users/schemas/user.schema';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UploadVideoDto } from './dto/upload-video.dto';
-import { toCommentView, toFeedItemView, toOwnerVideoView } from './videos.mapper';
-import { VideoComment, VideoCommentDocument } from './schemas/video-comment.schema';
+import {
+  toCommentView,
+  toFeedItemView,
+  toOwnerVideoView,
+} from './videos.mapper';
+import {
+  VideoComment,
+  VideoCommentDocument,
+} from './schemas/video-comment.schema';
 import { VideoLike } from './schemas/video-like.schema';
 import { Video, VideoDocument, VideoVisibility } from './schemas/video.schema';
 
@@ -54,7 +61,8 @@ export interface PlayerTraitsResult {
 export class VideosService {
   constructor(
     @InjectModel(Video.name) private readonly videoModel: Model<Video>,
-    @InjectModel(VideoLike.name) private readonly videoLikeModel: Model<VideoLike>,
+    @InjectModel(VideoLike.name)
+    private readonly videoLikeModel: Model<VideoLike>,
     @InjectModel(VideoComment.name)
     private readonly videoCommentModel: Model<VideoComment>,
     @InjectModel(PlayerProfile.name)
@@ -242,7 +250,11 @@ export class VideosService {
     return toOwnerVideoView(video);
   }
 
-  async updateTitle(userId: string, videoId: string, title: string | undefined) {
+  async updateTitle(
+    userId: string,
+    videoId: string,
+    title: string | undefined,
+  ) {
     const video = await this.findVideoOrThrow(videoId);
     if (video.userId.toString() !== userId) {
       throw new NotFoundException('Video not found.');
@@ -311,6 +323,28 @@ export class VideosService {
     };
   }
 
+  // Used by PostsService.homeFeed to build the unified Home feed (videos +
+  // photos merged by date). Same PUBLIC+sport filter as communityFeed but
+  // without a category filter and without communityFeed's own pagination —
+  // the caller merges these with another collection before paging, so it
+  // needs the raw top-N docs rather than a single already-paged slice.
+  async findPublicForFeed(
+    sport: string,
+    limit: number,
+  ): Promise<VideoDocument[]> {
+    return this.videoModel
+      .find({ visibility: VideoVisibility.PUBLIC, sport })
+      .sort({ createdAt: -1 })
+      .limit(limit);
+  }
+
+  async countPublicForSport(sport: string): Promise<number> {
+    return this.videoModel.countDocuments({
+      visibility: VideoVisibility.PUBLIC,
+      sport,
+    });
+  }
+
   async like(userId: string, videoId: string) {
     const video = await this.findVideoOrThrow(videoId);
     this.assertViewable(video, userId);
@@ -327,7 +361,10 @@ export class VideosService {
       { $inc: { likeCount: 1 } },
       { new: true },
     );
-    return { likeCount: updated?.likeCount ?? video.likeCount + 1, isLikedByMe: true };
+    return {
+      likeCount: updated?.likeCount ?? video.likeCount + 1,
+      isLikedByMe: true,
+    };
   }
 
   async unlike(userId: string, videoId: string) {
@@ -532,7 +569,9 @@ export class VideosService {
       return;
     }
     await Promise.all(
-      videos.map((video) => this.cloudinary.deleteAsset(video.publicId, 'video')),
+      videos.map((video) =>
+        this.cloudinary.deleteAsset(video.publicId, 'video'),
+      ),
     );
     const videoIds = videos.map((video) => video._id);
     await Promise.all([

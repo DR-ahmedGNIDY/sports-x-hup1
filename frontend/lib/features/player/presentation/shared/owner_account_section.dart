@@ -1,0 +1,209 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/error_state.dart';
+import '../../../../core/widgets/skeleton_box.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../application/player_stats_controller.dart';
+import '../../domain/entities/player_stats.dart';
+import 'player_enum_labels.dart';
+import 'player_profile_data.dart';
+import 'quick_stats_grid.dart';
+import 'section_card.dart';
+import 'visibility_section.dart';
+
+/// Owner-only "manage my profile" block: completion progress, activity
+/// stats (saved-by-clubs/media/achievements counts), and the public/
+/// private visibility toggle. Used to live on the Home tab (the old
+/// Player Dashboard) — moved here because it's about the profile it now
+/// sits inside, not about platform activity (that's the Home feed's job).
+/// Renders nothing for a viewer who isn't the profile's owner; the caller
+/// still has to check `isOwner` before placing this widget, since a
+/// missing/failed stats fetch degrades to an inline retry rather than
+/// hiding the whole section.
+class OwnerAccountSection extends ConsumerWidget {
+  const OwnerAccountSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsAsync = ref.watch(playerStatsControllerProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        statsAsync.when(
+          data: (stats) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _CompletionCard(stats: stats),
+              const SizedBox(height: 16),
+              _StatsRow(stats: stats),
+            ],
+          ),
+          loading: () => const _OwnerSectionSkeleton(),
+          error: (error, _) => ProfileSectionCard(
+            icon: Icons.error_outline,
+            title: AppLocalizations.of(context)!.dashboardProfileCompletionTitle,
+            child: ErrorState(onRetry: () => ref.invalidate(playerStatsControllerProvider)),
+          ),
+        ),
+        const SizedBox(height: 16),
+        ProfileSectionCard(
+          icon: Icons.visibility_outlined,
+          title: AppLocalizations.of(context)!.visibilityTitle,
+          // VisibilitySection renders its own titleMedium/bodySmall text
+          // via Theme.of(context) — fine on the rest of the app's
+          // light/dark Material theme, but this page is permanently dark
+          // (see ProfileSectionCard), so its default text color would be
+          // near-invisible without this override.
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              textTheme: Theme.of(
+                context,
+              ).textTheme.apply(bodyColor: AppColors.profileText, displayColor: AppColors.profileText),
+            ),
+            child: const VisibilitySection(showTitle: false),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CompletionCard extends StatelessWidget {
+  const _CompletionCard({required this.stats});
+
+  final PlayerStats stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final progressColor = stats.isComplete ? AppColors.success : AppColors.profileAccent;
+
+    return ProfileSectionCard(
+      icon: Icons.task_alt_outlined,
+      title: l10n.dashboardProfileCompletionTitle,
+      accentColor: progressColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.dashboardProfileCompletePercent(stats.completionPercent),
+                style: TextStyle(color: progressColor, fontSize: 15, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: stats.completionPercent / 100,
+              minHeight: 8,
+              backgroundColor: Colors.white.withValues(alpha: 0.08),
+              color: progressColor,
+            ),
+          ),
+          const SizedBox(height: 14),
+          if (stats.isComplete)
+            Row(
+              children: [
+                const Icon(Icons.check_circle_outline, color: AppColors.success, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.dashboardProfileCompleteMessage,
+                    style: const TextStyle(color: AppColors.profileText, fontSize: 13),
+                  ),
+                ),
+              ],
+            )
+          else ...[
+            Text(
+              l10n.dashboardMissingFieldsHint,
+              style: const TextStyle(color: AppColors.greyLight, fontSize: 12),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: stats.missingFields
+                  .map(
+                    (key) => ActionChip(
+                      backgroundColor: AppColors.profileBg,
+                      side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                      labelStyle: const TextStyle(color: AppColors.profileText, fontSize: 12),
+                      avatar: const Icon(Icons.add, size: 14, color: AppColors.profileAccent),
+                      label: Text(missingFieldLabel(l10n, key)),
+                      onPressed: () => context.go('/player/edit'),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// No card chrome here on purpose — each [QuickFact] tile already renders
+/// on its own bordered surface (see [QuickStatsGrid]), same as the Quick
+/// Stats row right under the hero card, so wrapping it in another
+/// [ProfileSectionCard] would just double up the border/shadow.
+class _StatsRow extends StatelessWidget {
+  const _StatsRow({required this.stats});
+
+  final PlayerStats stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return QuickStatsGrid(
+      compact: true,
+      facts: [
+        QuickFact(
+          icon: Icons.bookmark_outline,
+          label: l10n.dashboardStatSavedByClubs,
+          value: '${stats.savedByClubsCount}',
+        ),
+        QuickFact(
+          icon: Icons.perm_media_outlined,
+          label: l10n.dashboardStatMedia,
+          value: '${stats.mediaCount}',
+        ),
+        QuickFact(
+          icon: Icons.emoji_events_outlined,
+          label: l10n.dashboardStatAchievements,
+          value: '${stats.achievementsCount}',
+        ),
+      ],
+    );
+  }
+}
+
+/// Loading placeholder matching [_CompletionCard] + [_StatsRow]'s shape
+/// so the section doesn't jump when the real stats arrive.
+class _OwnerSectionSkeleton extends StatelessWidget {
+  const _OwnerSectionSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ProfileSectionCard(
+      icon: Icons.task_alt_outlined,
+      title: AppLocalizations.of(context)!.dashboardProfileCompletionTitle,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SkeletonBox(height: 8, borderRadius: BorderRadius.circular(8)),
+          const SizedBox(height: 14),
+          const SkeletonBox(width: double.infinity, height: 14),
+        ],
+      ),
+    );
+  }
+}

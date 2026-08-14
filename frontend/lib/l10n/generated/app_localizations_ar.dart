@@ -946,6 +946,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityEmptyState => 'لا توجد فيديوهات بعد لهذه الرياضة/الفئة.';
 
   @override
+  String get homeFeedEmptyState =>
+      'لا يوجد نشاط بعد في رياضتك. أول فيديو أو صورة تتنشر هتظهر هنا.';
+
+  @override
+  String get homeFeedNewPostTooltip => 'نشر صورة';
+
+  @override
+  String get homeFeedNewPostTitle => 'نشر صورة';
+
+  @override
+  String get homeFeedChooseImageLabel => 'اختر صورة';
+
+  @override
+  String get homeFeedCaptionLabel => 'وصف (اختياري)';
+
+  @override
+  String get homeFeedSportLabel => 'الرياضة';
+
+  @override
+  String get homeFeedPostButtonLabel => 'نشر';
+
+  @override
+  String get homeFeedPostMissingImageError => 'اختر صورة قبل النشر.';
+
+  @override
+  String get homeFeedPostMissingSportError => 'اختر الرياضة قبل النشر.';
+
+  @override
+  String homeFeedPostTooLargeError(int limit) {
+    return 'حجم هذه الصورة أكبر من الحد المسموح به وهو $limit ميجابايت. اختر ملفًا أصغر.';
+  }
+
+  @override
+  String get homeFeedPostSuccessMessage => 'تم النشر بنجاح.';
+
+  @override
   String get allCategoryLabel => 'الكل';
 
   @override

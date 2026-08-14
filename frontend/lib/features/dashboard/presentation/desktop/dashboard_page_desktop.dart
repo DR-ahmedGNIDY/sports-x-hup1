@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
-import '../shared/player_dashboard_content.dart';
+import '../../../home_feed/presentation/desktop/home_feed_page_desktop.dart';
+import '../../../home_feed/presentation/shared/create_post_sheet.dart';
 
 /// Content-only — the sidebar/top bar chrome that used to live here now
 /// lives in `AppShell` (mounted once by the `/dashboard` ShellRoute), so
@@ -23,8 +24,11 @@ class DashboardPageDesktop extends ConsumerWidget {
       _ => l10n.rolePlayer,
     };
 
+    // Player's Home content used to live here (profile completion, stats,
+    // quick actions) — it moved to the Player Profile page (see
+    // OwnerAccountSection); Home itself is now the activity feed.
     if (user?.role == UserRole.player) {
-      return const PlayerDashboardContent();
+      return const HomeFeedPageDesktop();
     }
     if (user?.role == UserRole.club) {
       return Center(
@@ -55,6 +59,12 @@ class DashboardPageDesktop extends ConsumerWidget {
               onPressed: () => context.go('/club/preview'),
               icon: const Icon(Icons.shield_outlined),
               label: Text(l10n.dashboardMyClub),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => CreatePostSheet.show(context, role: UserRole.club),
+              icon: const Icon(Icons.add_a_photo_outlined),
+              label: Text(l10n.homeFeedNewPostTitle),
             ),
           ],
         ),

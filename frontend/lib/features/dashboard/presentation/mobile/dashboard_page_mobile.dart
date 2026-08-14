@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
-import '../shared/player_dashboard_content.dart';
+import '../../../home_feed/presentation/mobile/home_feed_page_mobile.dart';
+import '../../../home_feed/presentation/shared/create_post_sheet.dart';
 
 /// Content-only — the top bar/bottom nav chrome that used to live here now
 /// lives in `AppShell` (mounted once by the `/dashboard` ShellRoute), so
@@ -35,8 +36,11 @@ class _DashboardBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // Player's Home content used to live here (profile completion, stats,
+    // quick actions) — it moved to the Player Profile page (see
+    // OwnerAccountSection); Home itself is now the activity feed.
     if (role == UserRole.player) {
-      return const PlayerDashboardContent(maxWidth: double.infinity);
+      return const HomeFeedPageMobile();
     }
     if (role == UserRole.club) {
       return Center(
@@ -67,6 +71,12 @@ class _DashboardBody extends StatelessWidget {
               onPressed: () => context.go('/club/preview'),
               icon: const Icon(Icons.shield_outlined),
               label: Text(l10n.dashboardMyClub),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => CreatePostSheet.show(context, role: UserRole.club),
+              icon: const Icon(Icons.add_a_photo_outlined),
+              label: Text(l10n.homeFeedNewPostTitle),
             ),
           ],
         ),

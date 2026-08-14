@@ -958,6 +958,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityEmptyState => 'No videos yet for this sport/category.';
 
   @override
+  String get homeFeedEmptyState =>
+      'No activity yet in your sport. The first video or photo posted will show up here.';
+
+  @override
+  String get homeFeedNewPostTooltip => 'Post a photo';
+
+  @override
+  String get homeFeedNewPostTitle => 'Post a photo';
+
+  @override
+  String get homeFeedChooseImageLabel => 'Choose an image';
+
+  @override
+  String get homeFeedCaptionLabel => 'Caption (optional)';
+
+  @override
+  String get homeFeedSportLabel => 'Sport';
+
+  @override
+  String get homeFeedPostButtonLabel => 'Post';
+
+  @override
+  String get homeFeedPostMissingImageError => 'Choose an image before posting.';
+
+  @override
+  String get homeFeedPostMissingSportError => 'Choose a sport before posting.';
+
+  @override
+  String homeFeedPostTooLargeError(int limit) {
+    return 'This image is larger than the ${limit}MB limit. Choose a smaller file.';
+  }
+
+  @override
+  String get homeFeedPostSuccessMessage => 'Posted successfully.';
+
+  @override
   String get allCategoryLabel => 'All';
 
   @override

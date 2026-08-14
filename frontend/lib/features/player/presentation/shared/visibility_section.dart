@@ -7,7 +7,13 @@ import '../../domain/entities/player_enums.dart';
 
 /// Binary Public/Private toggle — no tiered visibility in V1.
 class VisibilitySection extends ConsumerWidget {
-  const VisibilitySection({super.key});
+  // [showTitle] defaults to true for the original Dashboard-card usage,
+  // which had no outer heading of its own. Pass false when the caller
+  // already renders a title around this widget (e.g. inside a
+  // `ProfileSectionCard`) so it isn't printed twice.
+  const VisibilitySection({super.key, this.showTitle = true});
+
+  final bool showTitle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,8 +24,10 @@ class VisibilitySection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.visibilityTitle, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 4),
+        if (showTitle) ...[
+          Text(l10n.visibilityTitle, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 4),
+        ],
         Text(
           isPublic ? l10n.visibilityPublicDesc : l10n.visibilityPrivateDesc,
           style: Theme.of(context).textTheme.bodySmall,
