@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/public_player_profile_provider.dart';
@@ -21,12 +21,13 @@ class PublicPlayerProfilePageMobile extends ConsumerWidget {
     final profileAsync = ref.watch(publicPlayerProfileProvider(playerId));
     final l10n = AppLocalizations.of(context)!;
 
+    final profileColors = context.profileColors;
     return Scaffold(
-      backgroundColor: AppColors.profileBg,
+      backgroundColor: profileColors.bg,
       appBar: AppBar(
-        backgroundColor: AppColors.profileSurface,
-        leading: BackButton(onPressed: () => context.go('/players'), color: AppColors.profileText),
-        title: Text(l10n.backToPlayersLabel, style: const TextStyle(color: AppColors.profileText, fontSize: 16)),
+        backgroundColor: profileColors.surface,
+        leading: BackButton(onPressed: () => context.go('/players'), color: profileColors.text),
+        title: Text(l10n.backToPlayersLabel, style: TextStyle(color: profileColors.text, fontSize: 16)),
         actions: [
           ShareProfileButton(playerId: playerId, compact: true),
           profileAsync.maybeWhen(

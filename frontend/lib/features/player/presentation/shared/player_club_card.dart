@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_profile.dart';
 import 'player_profile_data.dart';
@@ -16,6 +16,7 @@ import 'section_card.dart';
 Widget buildCurrentClubCard(BuildContext context, PlayerProfile profile) {
   final club = currentClubInfo(profile);
   final l10n = AppLocalizations.of(context)!;
+  final profileColors = context.profileColors;
   return ProfileSectionCard(
     icon: Icons.shield_outlined,
     title: l10n.currentClubLabel,
@@ -28,11 +29,11 @@ Widget buildCurrentClubCard(BuildContext context, PlayerProfile profile) {
                 height: 44,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.profileBg,
+                  color: profileColors.bg,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                  border: Border.all(color: profileColors.borderOnSurface.withValues(alpha: 0.08)),
                 ),
-                child: const Icon(Icons.shield_outlined, color: AppColors.profileAccent, size: 22),
+                child: Icon(Icons.shield_outlined, color: profileColors.accent, size: 22),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -41,15 +42,15 @@ Widget buildCurrentClubCard(BuildContext context, PlayerProfile profile) {
                   children: [
                     Text(
                       club.name,
-                      style: const TextStyle(
-                        color: AppColors.profileText,
+                      style: TextStyle(
+                        color: profileColors.text,
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
                     ),
                     if (club.status != null) ...[
                       const SizedBox(height: 2),
-                      Text(club.status!, style: const TextStyle(color: AppColors.greyLight, fontSize: 13)),
+                      Text(club.status!, style: TextStyle(color: profileColors.textMuted, fontSize: 13)),
                     ],
                   ],
                 ),
@@ -66,6 +67,7 @@ class _NoClubState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileColors = context.profileColors;
     return Row(
       children: [
         Container(
@@ -73,11 +75,14 @@ class _NoClubState extends StatelessWidget {
           height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.profileBg,
+            color: profileColors.bg,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08), style: BorderStyle.solid),
+            border: Border.all(
+              color: profileColors.borderOnSurface.withValues(alpha: 0.08),
+              style: BorderStyle.solid,
+            ),
           ),
-          child: const Icon(Icons.shield_moon_outlined, color: AppColors.greyLight, size: 22),
+          child: Icon(Icons.shield_moon_outlined, color: profileColors.textMuted, size: 22),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -86,10 +91,10 @@ class _NoClubState extends StatelessWidget {
             children: [
               Text(
                 l10n.noClubTitle,
-                style: const TextStyle(color: AppColors.profileText, fontWeight: FontWeight.w600, fontSize: 15),
+                style: TextStyle(color: profileColors.text, fontWeight: FontWeight.w600, fontSize: 15),
               ),
               const SizedBox(height: 2),
-              Text(l10n.noClubSubtitle, style: const TextStyle(color: AppColors.greyLight, fontSize: 13)),
+              Text(l10n.noClubSubtitle, style: TextStyle(color: profileColors.textMuted, fontSize: 13)),
             ],
           ),
         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
@@ -17,6 +17,7 @@ class MyTraitsPageBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(playerProfileControllerProvider);
     final l10n = AppLocalizations.of(context)!;
+    final profileColors = context.profileColors;
 
     return profileAsync.when(
       data: (profile) {
@@ -25,7 +26,7 @@ class MyTraitsPageBody extends ConsumerWidget {
             child: Text(
               l10n.traitsFootballOnlyMessage,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.greyLight),
+              style: TextStyle(color: profileColors.textMuted),
             ),
           );
         }
@@ -34,8 +35,8 @@ class MyTraitsPageBody extends ConsumerWidget {
           children: [
             Text(
               l10n.traitsTitle,
-              style: const TextStyle(
-                color: AppColors.profileText,
+              style: TextStyle(
+                color: profileColors.text,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),

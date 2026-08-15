@@ -48,6 +48,7 @@ class _ProfilePhotoSectionState extends ConsumerState<ProfilePhotoSection> {
     final photoUrl = ref.watch(playerProfileControllerProvider).value?.profilePhoto?.secureUrl;
     final l10n = AppLocalizations.of(context)!;
 
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -57,10 +58,10 @@ class _ProfilePhotoSectionState extends ConsumerState<ProfilePhotoSection> {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundColor: AppColors.slate,
+              backgroundColor: colorScheme.surfaceContainerHighest,
               backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
               child: photoUrl == null
-                  ? const Icon(Icons.person, size: 40, color: AppColors.greyLight)
+                  ? Icon(Icons.person, size: 40, color: colorScheme.onSurfaceVariant)
                   : null,
             ),
             const SizedBox(width: 16),

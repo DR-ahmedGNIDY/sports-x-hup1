@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_profile.dart';
 import 'player_profile_data.dart';
@@ -28,6 +28,7 @@ class PlayerHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final profileColors = context.profileColors;
     final photo = profile.profilePhoto;
     final name = profile.fullName.isEmpty ? l10n.unnamedPlayer : profile.fullName;
     final positionLine = playerPositionSummary(profile);
@@ -41,7 +42,7 @@ class PlayerHeroCard extends StatelessWidget {
       child: Container(
         width: compact ? 92 : 240,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: profileColors.borderOnSurface.withValues(alpha: 0.1)),
           boxShadow: [
             BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 20, offset: const Offset(0, 10)),
           ],
@@ -51,8 +52,8 @@ class PlayerHeroCard extends StatelessWidget {
           child: photo != null
               ? Image.network(photo.secureUrl, fit: BoxFit.cover)
               : ColoredBox(
-                  color: AppColors.profileBg,
-                  child: Icon(Icons.person, size: compact ? 40 : 88, color: AppColors.greyLight),
+                  color: profileColors.bg,
+                  child: Icon(Icons.person, size: compact ? 40 : 88, color: profileColors.textMuted),
                 ),
         ),
       ),
@@ -67,7 +68,7 @@ class PlayerHeroCard extends StatelessWidget {
         Text(
           name,
           style: TextStyle(
-            color: AppColors.profileText,
+            color: profileColors.text,
             fontSize: compact ? 20 : 32,
             fontWeight: FontWeight.w800,
             height: 1.1,
@@ -78,7 +79,7 @@ class PlayerHeroCard extends StatelessWidget {
           Text(
             positionLine,
             style: TextStyle(
-              color: AppColors.profileAccent,
+              color: profileColors.accent,
               fontSize: compact ? 13 : 18,
               fontWeight: FontWeight.w600,
             ),
@@ -89,13 +90,13 @@ class PlayerHeroCard extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.place_outlined, size: compact ? 13 : 16, color: AppColors.greyLight),
+              Icon(Icons.place_outlined, size: compact ? 13 : 16, color: profileColors.textMuted),
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   location,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: AppColors.greyLight, fontSize: compact ? 12 : 14),
+                  style: TextStyle(color: profileColors.textMuted, fontSize: compact ? 12 : 14),
                 ),
               ),
             ],
@@ -112,7 +113,7 @@ class PlayerHeroCard extends StatelessWidget {
           const Positioned.fill(child: _HeroBackdrop()),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.profileAccent.withValues(alpha: 0.12)),
+              border: Border.all(color: profileColors.accent.withValues(alpha: 0.12)),
               boxShadow: [
                 BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 28, offset: const Offset(0, 12)),
               ],
@@ -141,22 +142,23 @@ class _PlayerProfileBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = context.profileColors.accent;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: compact ? 8 : 10, vertical: compact ? 3 : 5),
       decoration: BoxDecoration(
-        color: AppColors.profileAccent.withValues(alpha: 0.12),
+        color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.profileAccent.withValues(alpha: 0.35)),
+        border: Border.all(color: accent.withValues(alpha: 0.35)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.verified_outlined, size: compact ? 11 : 13, color: AppColors.profileAccent),
+          Icon(Icons.verified_outlined, size: compact ? 11 : 13, color: accent),
           const SizedBox(width: 4),
           Text(
             label.toUpperCase(),
             style: TextStyle(
-              color: AppColors.profileAccent,
+              color: accent,
               fontSize: compact ? 9 : 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.8,
@@ -178,23 +180,24 @@ class _HeroBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileColors = context.profileColors;
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.profileSurface, Color(0xFF0F1520)],
+          colors: [profileColors.surface, profileColors.surfaceAlt],
         ),
       ),
       child: Stack(
         children: [
-          Positioned(top: -70, right: -50, child: _Glow(color: AppColors.profileAccent.withValues(alpha: 0.14))),
+          Positioned(top: -70, right: -50, child: _Glow(color: profileColors.accent.withValues(alpha: 0.14))),
           Positioned(
             bottom: -80,
             left: -60,
-            child: _Glow(color: AppColors.profileNeonGreen.withValues(alpha: 0.06)),
+            child: _Glow(color: profileColors.neonGreen.withValues(alpha: 0.06)),
           ),
-          Positioned.fill(child: CustomPaint(painter: _StripePainter())),
+          Positioned.fill(child: CustomPaint(painter: _StripePainter(color: profileColors.borderOnSurface))),
         ],
       ),
     );
@@ -222,12 +225,14 @@ class _Glow extends StatelessWidget {
 }
 
 class _StripePainter extends CustomPainter {
-  const _StripePainter();
+  const _StripePainter({required this.color});
+
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.025)
+      ..color = color.withValues(alpha: 0.025)
       ..strokeWidth = 18;
     const gap = 34.0;
     for (var x = -size.height; x < size.width; x += gap) {
@@ -236,5 +241,5 @@ class _StripePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _StripePainter oldDelegate) => oldDelegate.color != color;
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../videos/application/player_traits_provider.dart';
 import '../../../videos/domain/entities/player_traits.dart';
@@ -32,7 +32,7 @@ class TraitsSection extends ConsumerWidget {
           children: [
             Text(
               l10n.traitsCaption,
-              style: const TextStyle(color: AppColors.greyLight, fontSize: 12),
+              style: TextStyle(color: context.profileColors.textMuted, fontSize: 12),
             ),
             const SizedBox(height: AppSpacing.md),
             for (final trait in traits.traits) ...[
@@ -59,6 +59,7 @@ class _TraitBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayScore = trait.score.round();
+    final profileColors = context.profileColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -67,8 +68,8 @@ class _TraitBar extends StatelessWidget {
             Expanded(
               child: Text(
                 trait.category,
-                style: const TextStyle(
-                  color: AppColors.profileText,
+                style: TextStyle(
+                  color: profileColors.text,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
@@ -76,8 +77,8 @@ class _TraitBar extends StatelessWidget {
             ),
             Text(
               '$displayScore',
-              style: const TextStyle(
-                color: AppColors.profileAccent,
+              style: TextStyle(
+                color: profileColors.accent,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
@@ -90,8 +91,8 @@ class _TraitBar extends StatelessWidget {
           child: LinearProgressIndicator(
             value: trait.score / 99,
             minHeight: 6,
-            backgroundColor: Colors.white.withValues(alpha: 0.08),
-            valueColor: const AlwaysStoppedAnimation(AppColors.profileAccent),
+            backgroundColor: profileColors.borderOnSurface.withValues(alpha: 0.08),
+            valueColor: AlwaysStoppedAnimation(profileColors.accent),
           ),
         ),
       ],

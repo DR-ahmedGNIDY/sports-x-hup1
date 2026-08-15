@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../domain/entities/achievement.dart';
 
 /// A single achievement rendered as a small gold-accented card (icon +
@@ -14,15 +14,16 @@ class AchievementBadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileColors = context.profileColors;
     return Container(
       width: 220,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.profileBg,
+        color: profileColors.bg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.profileGold.withValues(alpha: 0.28)),
+        border: Border.all(color: profileColors.gold.withValues(alpha: 0.28)),
         boxShadow: [
-          BoxShadow(color: AppColors.profileGold.withValues(alpha: 0.06), blurRadius: 16, spreadRadius: -4),
+          BoxShadow(color: profileColors.gold.withValues(alpha: 0.06), blurRadius: 16, spreadRadius: -4),
         ],
       ),
       child: Column(
@@ -36,22 +37,22 @@ class AchievementBadgeCard extends StatelessWidget {
                 height: 30,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.profileGold.withValues(alpha: 0.14),
+                  color: profileColors.gold.withValues(alpha: 0.14),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.emoji_events_outlined, size: 16, color: AppColors.profileGold),
+                child: Icon(Icons.emoji_events_outlined, size: 16, color: profileColors.gold),
               ),
               const SizedBox(width: 8),
               Text(
                 '${achievement.year}',
-                style: const TextStyle(color: AppColors.profileGold, fontSize: 12, fontWeight: FontWeight.w700),
+                style: TextStyle(color: profileColors.gold, fontSize: 12, fontWeight: FontWeight.w700),
               ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             achievement.title,
-            style: const TextStyle(color: AppColors.profileText, fontSize: 14, fontWeight: FontWeight.w700),
+            style: TextStyle(color: profileColors.text, fontSize: 14, fontWeight: FontWeight.w700),
           ),
           if (achievement.description != null && achievement.description!.isNotEmpty) ...[
             const SizedBox(height: 4),
@@ -59,7 +60,7 @@ class AchievementBadgeCard extends StatelessWidget {
               achievement.description!,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: AppColors.greyLight, fontSize: 12),
+              style: TextStyle(color: profileColors.textMuted, fontSize: 12),
             ),
           ],
         ],

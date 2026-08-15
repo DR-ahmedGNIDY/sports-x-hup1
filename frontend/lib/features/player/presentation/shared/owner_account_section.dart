@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -29,6 +30,7 @@ class OwnerAccountSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statsAsync = ref.watch(playerStatsControllerProvider);
+    final profileText = context.profileColors.text;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -53,16 +55,16 @@ class OwnerAccountSection extends ConsumerWidget {
         ProfileSectionCard(
           icon: Icons.visibility_outlined,
           title: AppLocalizations.of(context)!.visibilityTitle,
-          // VisibilitySection renders its own titleMedium/bodySmall text
-          // via Theme.of(context) — fine on the rest of the app's
-          // light/dark Material theme, but this page is permanently dark
-          // (see ProfileSectionCard), so its default text color would be
-          // near-invisible without this override.
+          // VisibilitySection renders its own titleMedium/bodySmall text via
+          // Theme.of(context), which is tuned for the app-wide Material
+          // colorScheme — this card sits on the Player Profile's own
+          // [ProfileColors] surface instead, so its default text color can
+          // be wrong without this override.
           child: Theme(
             data: Theme.of(context).copyWith(
               textTheme: Theme.of(
                 context,
-              ).textTheme.apply(bodyColor: AppColors.profileText, displayColor: AppColors.profileText),
+              ).textTheme.apply(bodyColor: profileText, displayColor: profileText),
             ),
             child: const VisibilitySection(showTitle: false),
           ),
@@ -80,7 +82,8 @@ class _CompletionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final progressColor = stats.isComplete ? AppColors.success : AppColors.profileAccent;
+    final profileColors = context.profileColors;
+    final progressColor = stats.isComplete ? AppColors.success : profileColors.accent;
 
     return ProfileSectionCard(
       icon: Icons.task_alt_outlined,
@@ -104,7 +107,7 @@ class _CompletionCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: stats.completionPercent / 100,
               minHeight: 8,
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
+              backgroundColor: profileColors.borderOnSurface.withValues(alpha: 0.08),
               color: progressColor,
             ),
           ),
@@ -117,7 +120,7 @@ class _CompletionCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     l10n.dashboardProfileCompleteMessage,
-                    style: const TextStyle(color: AppColors.profileText, fontSize: 13),
+                    style: TextStyle(color: profileColors.text, fontSize: 13),
                   ),
                 ),
               ],
@@ -125,7 +128,7 @@ class _CompletionCard extends StatelessWidget {
           else ...[
             Text(
               l10n.dashboardMissingFieldsHint,
-              style: const TextStyle(color: AppColors.greyLight, fontSize: 12),
+              style: TextStyle(color: profileColors.textMuted, fontSize: 12),
             ),
             const SizedBox(height: 10),
             Wrap(
@@ -134,10 +137,10 @@ class _CompletionCard extends StatelessWidget {
               children: stats.missingFields
                   .map(
                     (key) => ActionChip(
-                      backgroundColor: AppColors.profileBg,
-                      side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                      labelStyle: const TextStyle(color: AppColors.profileText, fontSize: 12),
-                      avatar: const Icon(Icons.add, size: 14, color: AppColors.profileAccent),
+                      backgroundColor: profileColors.bg,
+                      side: BorderSide(color: profileColors.borderOnSurface.withValues(alpha: 0.1)),
+                      labelStyle: TextStyle(color: profileColors.text, fontSize: 12),
+                      avatar: Icon(Icons.add, size: 14, color: profileColors.accent),
                       label: Text(missingFieldLabel(l10n, key)),
                       onPressed: () => context.go('/player/edit'),
                     ),

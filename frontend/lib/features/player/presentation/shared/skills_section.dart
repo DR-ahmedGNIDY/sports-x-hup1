@@ -218,7 +218,7 @@ class _OwnerVideoCard extends ConsumerWidget {
             .incrementCommentCount(video.id, delta),
       ),
       trailing: PopupMenuButton<String>(
-        icon: const Icon(Icons.more_vert, color: AppColors.white),
+        icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurface),
         onSelected: (value) async {
           if (value == 'visibility') {
             final next = video.visibility == VideoVisibility.public
@@ -314,7 +314,7 @@ class _EmptyState extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               AppLocalizations.of(context)!.videosEmptyState,
-              style: const TextStyle(color: AppColors.greyLight),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ),

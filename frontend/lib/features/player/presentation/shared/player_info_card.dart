@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_profile.dart';
 import 'player_enum_labels.dart';
@@ -16,6 +16,7 @@ import 'section_card.dart';
 /// [PlayerProfile] today.
 Widget? buildPlayerInfoCard(BuildContext context, PlayerProfile profile) {
   final l10n = AppLocalizations.of(context)!;
+  final profileColors = context.profileColors;
   final rows = <_InfoRow>[
     if (profile.preferredFoot != null)
       _InfoRow(
@@ -43,14 +44,20 @@ Widget? buildPlayerInfoCard(BuildContext context, PlayerProfile profile) {
           if (i != rows.length - 1 || hasBio) const SizedBox(height: 12),
         ],
         if (hasBio) ...[
-          if (rows.isNotEmpty) const Divider(color: Color(0x14FFFFFF), height: 1),
+          if (rows.isNotEmpty)
+            Divider(color: profileColors.borderOnSurface.withValues(alpha: 0.08), height: 1),
           if (rows.isNotEmpty) const SizedBox(height: 12),
           Text(
             l10n.bioLabel.toUpperCase(),
-            style: const TextStyle(color: AppColors.greyLight, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.6),
+            style: TextStyle(
+              color: profileColors.textMuted,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.6,
+            ),
           ),
           const SizedBox(height: 6),
-          Text(bio, style: const TextStyle(color: AppColors.profileText, height: 1.5)),
+          Text(bio, style: TextStyle(color: profileColors.text, height: 1.5)),
         ],
       ],
     ),
@@ -66,18 +73,19 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileColors = context.profileColors;
     return Row(
       children: [
-        Icon(icon, size: 17, color: AppColors.profileAccent),
+        Icon(icon, size: 17, color: profileColors.accent),
         const SizedBox(width: 10),
-        Text(label, style: const TextStyle(color: AppColors.greyLight, fontSize: 13)),
+        Text(label, style: TextStyle(color: profileColors.textMuted, fontSize: 13)),
         const Spacer(),
         Flexible(
           child: Text(
             value,
             textAlign: TextAlign.end,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: AppColors.profileText, fontSize: 13, fontWeight: FontWeight.w700),
+            style: TextStyle(color: profileColors.text, fontSize: 13, fontWeight: FontWeight.w700),
           ),
         ),
       ],

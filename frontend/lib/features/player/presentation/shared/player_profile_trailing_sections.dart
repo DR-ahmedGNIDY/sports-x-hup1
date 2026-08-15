@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_media.dart';
@@ -23,7 +23,7 @@ Widget? buildAchievementsSection(BuildContext context, PlayerProfile profile) {
   return ProfileSectionCard(
     icon: Icons.emoji_events_outlined,
     title: l10n.achievementsTitle,
-    accentColor: AppColors.profileGold,
+    accentColor: context.profileColors.gold,
     child: Wrap(
       spacing: 12,
       runSpacing: 12,
@@ -45,6 +45,7 @@ List<Widget> buildTrailingSections(
   required bool isOwner,
 }) {
   final l10n = AppLocalizations.of(context)!;
+  final profileColors = context.profileColors;
   return [
     if (profile.media.isNotEmpty)
       ProfileSectionCard(
@@ -79,10 +80,10 @@ List<Widget> buildTrailingSections(
           children: profile.socialLinks
               .map(
                 (link) => ActionChip(
-                  backgroundColor: AppColors.profileBg,
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                  labelStyle: const TextStyle(color: AppColors.profileText),
-                  avatar: const Icon(Icons.link, size: 16, color: AppColors.profileAccent),
+                  backgroundColor: profileColors.bg,
+                  side: BorderSide(color: profileColors.borderOnSurface.withValues(alpha: 0.1)),
+                  labelStyle: TextStyle(color: profileColors.text),
+                  avatar: Icon(Icons.link, size: 16, color: profileColors.accent),
                   label: Text(link.platform),
                   onPressed: () => launchUrl(Uri.parse(link.url)),
                 ),
@@ -120,13 +121,14 @@ class _ContactRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileColors = context.profileColors;
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.profileAccent),
+          Icon(icon, size: 18, color: profileColors.accent),
           const SizedBox(width: 10),
-          Text(text, style: const TextStyle(color: AppColors.profileText)),
+          Text(text, style: TextStyle(color: profileColors.text)),
         ],
       ),
     );
@@ -180,10 +182,11 @@ class _MediaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileColors = context.profileColors;
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: Material(
-        color: AppColors.profileBg,
+        color: profileColors.bg,
         child: InkWell(
           onTap: () => _open(context),
           child: Stack(
@@ -192,8 +195,8 @@ class _MediaTile extends StatelessWidget {
               if (item.type == PlayerMediaType.photo)
                 Image.network(item.secureUrl, fit: BoxFit.cover)
               else
-                const Center(
-                  child: Icon(Icons.play_circle_outline, color: AppColors.white, size: 36),
+                Center(
+                  child: Icon(Icons.play_circle_outline, color: profileColors.textMuted, size: 36),
                 ),
             ],
           ),

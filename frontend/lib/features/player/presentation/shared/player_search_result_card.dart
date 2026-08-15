@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
@@ -39,16 +38,17 @@ class PlayerSearchResultCard extends ConsumerWidget {
       if (player.weight != null) '${player.weight}kg',
     ].join(' · ');
 
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       child: ListTile(
         onTap: () => context.push('/players/${player.id}'),
         leading: CircleAvatar(
-          backgroundColor: AppColors.slate,
+          backgroundColor: colorScheme.surfaceContainerHighest,
           backgroundImage: player.profilePhotoUrl != null
               ? NetworkImage(player.profilePhotoUrl!)
               : null,
           child: player.profilePhotoUrl == null
-              ? const Icon(Icons.person, color: AppColors.greyLight)
+              ? Icon(Icons.person, color: colorScheme.onSurfaceVariant)
               : null,
         ),
         title: Text(player.fullName.isEmpty ? l10n.unnamedPlayer : player.fullName),

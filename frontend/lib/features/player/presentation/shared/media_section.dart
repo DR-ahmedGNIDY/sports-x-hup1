@@ -101,21 +101,22 @@ class _MediaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Stack(
       children: [
         Container(
           width: 100,
           height: 100,
           decoration: BoxDecoration(
-            color: AppColors.slate,
+            color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(8),
             image: item.type == PlayerMediaType.photo
                 ? DecorationImage(image: NetworkImage(item.secureUrl), fit: BoxFit.cover)
                 : null,
           ),
           child: item.type == PlayerMediaType.video
-              ? const Center(
-                  child: Icon(Icons.play_circle_outline, color: AppColors.white, size: 32),
+              ? Center(
+                  child: Icon(Icons.play_circle_outline, color: colorScheme.onSurfaceVariant, size: 32),
                 )
               : null,
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/football_position.dart';
 
@@ -85,6 +86,7 @@ class _PositionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileColors = context.profileColors;
     final accent = isPrimary
         ? AppColors.pitchPrimary
         : isSecondary
@@ -96,7 +98,7 @@ class _PositionRow extends StatelessWidget {
       button: true,
       selected: isPrimary || isSecondary,
       child: Material(
-        color: AppColors.charcoal,
+        color: profileColors.surface,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
@@ -106,7 +108,10 @@ class _PositionRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: accent ?? Colors.white.withValues(alpha: 0.08), width: accent != null ? 1.4 : 1),
+              border: Border.all(
+                color: accent ?? profileColors.borderOnSurface.withValues(alpha: 0.08),
+                width: accent != null ? 1.4 : 1,
+              ),
               boxShadow: accent != null
                   ? [BoxShadow(color: accent.withValues(alpha: 0.25), blurRadius: 14, spreadRadius: -2)]
                   : null,
@@ -119,7 +124,7 @@ class _PositionRow extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: accent ?? AppColors.offWhite,
+                    color: accent ?? profileColors.neutralBadgeBg,
                   ),
                   child: Text(
                     code,
@@ -137,8 +142,8 @@ class _PositionRow extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: const TextStyle(
-                          color: AppColors.white,
+                        style: TextStyle(
+                          color: profileColors.text,
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -147,7 +152,7 @@ class _PositionRow extends StatelessWidget {
                         description,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: AppColors.greyLight, fontSize: 12),
+                        style: TextStyle(color: profileColors.textMuted, fontSize: 12),
                       ),
                     ],
                   ),

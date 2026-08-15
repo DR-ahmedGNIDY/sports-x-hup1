@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/public_player_profile_provider.dart';
@@ -21,10 +21,11 @@ class PublicPlayerProfilePageDesktop extends ConsumerWidget {
     final profileAsync = ref.watch(publicPlayerProfileProvider(playerId));
     final l10n = AppLocalizations.of(context)!;
 
+    final profileColors = context.profileColors;
     return Scaffold(
-      backgroundColor: AppColors.profileBg,
+      backgroundColor: profileColors.bg,
       appBar: AppBar(
-        backgroundColor: AppColors.profileSurface,
+        backgroundColor: profileColors.surface,
         automaticallyImplyLeading: false,
         leadingWidth: 200,
         leading: Padding(

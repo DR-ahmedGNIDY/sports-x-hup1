@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
@@ -18,7 +18,7 @@ class MyProfilePreviewPageMobile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return ColoredBox(
-      color: AppColors.profileBg,
+      color: context.profileColors.bg,
       child: profileAsync.when(
         data: (profile) => SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -61,15 +61,16 @@ class _HeroActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = context.profileColors.accent;
     return OutlinedButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon, size: 16, color: AppColors.profileAccent),
-      label: Text(label, style: const TextStyle(color: AppColors.profileAccent, fontSize: 12)),
+      icon: Icon(icon, size: 16, color: accent),
+      label: Text(label, style: TextStyle(color: accent, fontSize: 12)),
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        side: BorderSide(color: AppColors.profileAccent.withValues(alpha: 0.4)),
+        side: BorderSide(color: accent.withValues(alpha: 0.4)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
       ),
     );

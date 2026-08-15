@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import 'player_profile_data.dart';
 
 /// The "Quick Stats" row right below the hero — Age / Height / Weight /
@@ -43,12 +43,13 @@ class _QuickStatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileColors = context.profileColors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.profileSurface,
+        color: profileColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.profileAccent.withValues(alpha: 0.1)),
+        border: Border.all(color: profileColors.accent.withValues(alpha: 0.1)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -58,10 +59,10 @@ class _QuickStatTile extends StatelessWidget {
             height: 34,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: AppColors.profileAccent.withValues(alpha: 0.12),
+              color: profileColors.accent.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: Icon(fact.icon, size: 17, color: AppColors.profileAccent),
+            child: Icon(fact.icon, size: 17, color: profileColors.accent),
           ),
           const SizedBox(width: 10),
           Flexible(
@@ -72,12 +73,12 @@ class _QuickStatTile extends StatelessWidget {
                 Text(
                   fact.label,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.greyLight, fontSize: 11),
+                  style: TextStyle(color: profileColors.textMuted, fontSize: 11),
                 ),
                 Text(
                   fact.value,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.profileText, fontSize: 14, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: profileColors.text, fontSize: 14, fontWeight: FontWeight.w700),
                 ),
               ],
             ),

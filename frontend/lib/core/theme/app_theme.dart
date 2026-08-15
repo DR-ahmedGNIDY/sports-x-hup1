@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 import 'app_text_styles.dart';
+import 'profile_colors.dart';
 
 /// Central theme definitions. Screens must consume colors/text styles via
 /// `Theme.of(context)`, never by hardcoding hex values inline.
@@ -108,6 +109,7 @@ abstract final class AppTheme {
         color: isDark ? AppColors.slate : AppColors.offWhite,
         thickness: 1,
       ),
+      extensions: [isDark ? ProfileColors.dark : ProfileColors.light],
     );
   }
 }
