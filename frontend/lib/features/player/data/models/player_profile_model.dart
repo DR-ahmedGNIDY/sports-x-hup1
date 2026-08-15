@@ -45,6 +45,9 @@ extension PlayerProfileModel on PlayerProfile {
       socialLinks: ((json['socialLinks'] as List<dynamic>? ?? [])
           .map((e) => _socialLinkFromJson(e as Map<String, dynamic>))
           .toList()),
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
     );
   }
 }

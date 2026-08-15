@@ -73,6 +73,12 @@ final List<_NavItem> _navItems = [
     roles: {UserRole.club},
   ),
   _NavItem(
+    icon: Icons.groups_outlined,
+    label: (l10n) => l10n.clubPlayersTitle,
+    route: '/club/players',
+    roles: {UserRole.club},
+  ),
+  _NavItem(
     icon: Icons.edit_outlined,
     label: (l10n) => l10n.dashboardEditClubProfile,
     route: '/club/edit',
@@ -284,10 +290,11 @@ class _MobileShell extends ConsumerWidget {
   final String currentPath;
   final Widget child;
 
-  // A Player gets two extra tabs (Profile, Skills) next to Home — everyone
-  // else keeps the original three. Traits isn't a separate tab: it's
-  // already shown read-only inside the Profile page (see TraitsSection),
-  // so a dedicated bottom-nav slot for it would just be a duplicate.
+  // A Player gets two extra tabs (Profile, Skills) next to Home, a Club
+  // gets one (Club Players) — Admin keeps the original three. Traits
+  // isn't a separate Player tab: it's already shown read-only inside the
+  // Profile page (see TraitsSection), so a dedicated bottom-nav slot for
+  // it would just be a duplicate.
   List<_MobileNavDestination> _destinationsFor(AppLocalizations l10n, UserRole? role) {
     final home = _MobileNavDestination(
       icon: Icons.home_outlined,
@@ -304,6 +311,21 @@ class _MobileShell extends ConsumerWidget {
       label: l10n.dashboardNavSettings,
       route: '/settings',
     );
+    if (role == UserRole.club) {
+      // Club Players is the Club's most-used daily tool — same reasoning
+      // as the Player's extra tabs below: it belongs in the permanent nav,
+      // not buried behind the dashboard.
+      return [
+        home,
+        _MobileNavDestination(
+          icon: Icons.groups_outlined,
+          label: l10n.clubPlayersTitle,
+          route: '/club/players',
+        ),
+        community,
+        settings,
+      ];
+    }
     if (role != UserRole.player) {
       return [home, community, settings];
     }

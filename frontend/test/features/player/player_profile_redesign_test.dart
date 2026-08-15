@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:sport_x_hub/core/theme/app_theme.dart';
 import 'package:sport_x_hub/features/player/domain/entities/achievement.dart';
 import 'package:sport_x_hub/features/player/domain/entities/player_profile.dart';
 import 'package:sport_x_hub/features/player/presentation/shared/player_club_card.dart';
@@ -15,6 +16,11 @@ import 'package:sport_x_hub/l10n/generated/app_localizations.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
+    // Player Profile widgets read colors via `context.profileColors`
+    // (see core/theme/profile_colors.dart), which requires the
+    // `ProfileColors` ThemeExtension the real app always registers
+    // through AppTheme — a bare/default ThemeData doesn't have it.
+    theme: AppTheme.dark,
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(body: child),

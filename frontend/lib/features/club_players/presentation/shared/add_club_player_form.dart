@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../player/application/lookup_providers.dart';
 import '../../../player/domain/entities/player_enums.dart';
 import '../../application/club_players_controller.dart';
@@ -69,9 +71,10 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
   }
 
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     if (_countryIsoCode == null) {
-      setState(() => _error = 'اختر الدولة.');
+      setState(() => _error = l10n.clubPlayerSelectCountryError);
       return;
     }
     setState(() {
@@ -103,14 +106,14 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          title: const Text('تم إنشاء حساب اللاعب'),
+          title: Text(l10n.clubPlayerAccountCreatedTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('اسم المستخدم: ${credentials.username}'),
+              Text(l10n.clubPlayerUsernameValue(credentials.username)),
               const SizedBox(height: 4),
-              Text('كلمة المرور: ${credentials.password}'),
+              Text(l10n.clubPlayerPasswordValue(credentials.password)),
               const SizedBox(height: 16),
               SendCredentialsWhatsAppButton(
                 firstName: input.firstName,
@@ -124,7 +127,7 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
                 Navigator.of(context).pop();
                 context.go('/club/players');
               },
-              child: const Text('تم'),
+              child: Text(l10n.clubPlayerDoneLabel),
             ),
           ],
         ),
@@ -140,9 +143,12 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final countries = ref.watch(countriesProvider);
     final sports = ref.watch(sportsProvider);
     final dialCode = _countryIsoCode != null ? kDialCodes[_countryIsoCode] : null;
+    String? requiredValidator(String? v) =>
+        (v == null || v.trim().isEmpty) ? l10n.clubPlayerFieldRequiredValidation : null;
 
     return Form(
       key: _formKey,
@@ -151,26 +157,26 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         children: [
           TextFormField(
             controller: _firstName,
-            decoration: const InputDecoration(labelText: 'الاسم الأول'),
-            validator: (v) => (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
+            decoration: InputDecoration(labelText: l10n.clubPlayerFirstNameLabel),
+            validator: requiredValidator,
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _lastName,
-            decoration: const InputDecoration(labelText: 'اسم العائلة'),
-            validator: (v) => (v == null || v.trim().isEmpty) ? 'مطلوب' : null,
+            decoration: InputDecoration(labelText: l10n.clubPlayerLastNameLabel),
+            validator: requiredValidator,
           ),
           const SizedBox(height: 12),
           countries.when(
             data: (options) => DropdownButtonFormField<String>(
               initialValue: _countryIsoCode,
-              decoration: const InputDecoration(labelText: 'الدولة'),
+              decoration: InputDecoration(labelText: l10n.clubPlayerCountryLabel),
               items: options
                   .where((o) => o.code != null)
                   .map((o) => DropdownMenuItem(value: o.code, child: Text(o.name)))
                   .toList(),
               onChanged: (value) => setState(() => _countryIsoCode = value),
-              validator: (v) => v == null ? 'مطلوب' : null,
+              validator: (v) => v == null ? l10n.clubPlayerFieldRequiredValidation : null,
             ),
             loading: () => const LinearProgressIndicator(),
             error: (_, _) => const SizedBox.shrink(),
@@ -180,27 +186,27 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
             controller: _phone,
             keyboardType: TextInputType.phone,
             decoration: InputDecoration(
-              labelText: 'رقم الموبايل',
+              labelText: l10n.clubPlayerPhoneLabel,
               prefixText: dialCode != null ? '$dialCode ' : null,
-              hintText: 'بدون صفر في البداية',
+              hintText: l10n.clubPlayerPhoneHint,
             ),
             validator: (v) => (v == null || v.trim().isEmpty)
-                ? 'مطلوب'
-                : (!RegExp(r'^\d{6,14}$').hasMatch(v.trim()) ? 'رقم غير صحيح' : null),
+                ? l10n.clubPlayerFieldRequiredValidation
+                : (!RegExp(r'^\d{6,14}$').hasMatch(v.trim()) ? l10n.clubPlayerPhoneInvalid : null),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _email,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(labelText: 'البريد الإلكتروني (اختياري)'),
+            decoration: InputDecoration(labelText: l10n.clubPlayerEmailOptionalLabel),
           ),
           const SizedBox(height: 12),
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
               _dateOfBirth != null
-                  ? 'تاريخ الميلاد: ${_dateOfBirth!.year}-${_dateOfBirth!.month}-${_dateOfBirth!.day}'
-                  : 'تاريخ الميلاد (اختياري)',
+                  ? l10n.clubPlayerDobValueLabel(DateFormat.yMd().format(_dateOfBirth!))
+                  : l10n.clubPlayerDobOptionalLabel,
             ),
             trailing: const Icon(Icons.calendar_today_outlined),
             onTap: _pickDateOfBirth,
@@ -208,18 +214,18 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
           const SizedBox(height: 12),
           TextFormField(
             controller: _nationality,
-            decoration: const InputDecoration(labelText: 'الجنسية (اختياري)'),
+            decoration: InputDecoration(labelText: l10n.clubPlayerNationalityOptionalLabel),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _city,
-            decoration: const InputDecoration(labelText: 'المدينة (اختياري)'),
+            decoration: InputDecoration(labelText: l10n.clubPlayerCityOptionalLabel),
           ),
           const SizedBox(height: 12),
           sports.when(
             data: (options) => DropdownButtonFormField<String>(
               initialValue: _sport,
-              decoration: const InputDecoration(labelText: 'الرياضة (اختياري)'),
+              decoration: InputDecoration(labelText: l10n.clubPlayerSportOptionalLabel),
               items: options
                   .map((o) => DropdownMenuItem(value: o.name, child: Text(o.name)))
                   .toList(),
@@ -231,12 +237,12 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
           const SizedBox(height: 12),
           TextFormField(
             controller: _position,
-            decoration: const InputDecoration(labelText: 'المركز (اختياري)'),
+            decoration: InputDecoration(labelText: l10n.clubPlayerPositionOptionalLabel),
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<PreferredFoot>(
             initialValue: _preferredFoot,
-            decoration: const InputDecoration(labelText: 'القدم المفضلة (اختياري)'),
+            decoration: InputDecoration(labelText: l10n.clubPlayerPreferredFootOptionalLabel),
             items: PreferredFoot.values
                 .map((f) => DropdownMenuItem(value: f, child: Text(f.label)))
                 .toList(),
@@ -249,7 +255,7 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
                 child: TextFormField(
                   controller: _height,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'الطول (سم)'),
+                  decoration: InputDecoration(labelText: l10n.clubPlayerHeightLabel),
                 ),
               ),
               const SizedBox(width: 12),
@@ -257,7 +263,7 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
                 child: TextFormField(
                   controller: _weight,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'الوزن (كجم)'),
+                  decoration: InputDecoration(labelText: l10n.clubPlayerWeightLabel),
                 ),
               ),
             ],
@@ -266,7 +272,7 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
           TextFormField(
             controller: _bio,
             maxLines: 3,
-            decoration: const InputDecoration(labelText: 'نبذة (اختياري)'),
+            decoration: InputDecoration(labelText: l10n.clubPlayerBioOptionalLabel),
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
@@ -281,7 +287,7 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('إنشاء الحساب'),
+                : Text(l10n.clubPlayerCreateAccountButton),
           ),
         ],
       ),

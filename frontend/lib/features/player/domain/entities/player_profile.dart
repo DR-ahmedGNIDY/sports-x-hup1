@@ -30,6 +30,7 @@ class PlayerProfile {
     this.profilePhoto,
     this.achievements = const [],
     this.socialLinks = const [],
+    this.createdAt,
   });
 
   final String id;
@@ -53,6 +54,12 @@ class PlayerProfile {
   final ProfilePhoto? profilePhoto;
   final List<Achievement> achievements;
   final List<SocialLink> socialLinks;
+
+  /// When this profile document was created. Only meaningful for owner
+  /// views (`toOwnerView` on the backend) — public/search views never
+  /// populate it. Used by the Club Dashboard's "recently added players"
+  /// section; `null` anywhere that view doesn't apply.
+  final DateTime? createdAt;
 
   String get fullName => [
     firstName,

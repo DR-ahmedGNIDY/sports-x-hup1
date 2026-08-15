@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/errors/app_exception.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../club/application/club_profile_controller.dart';
 import '../../application/club_players_controller.dart';
 import '../../domain/entities/club_managed_player.dart';
@@ -11,14 +12,17 @@ import '../../domain/entities/club_player_credentials.dart';
 String _digitsOnly(String value) => value.replaceAll(RegExp(r'[^0-9]'), '');
 
 String _credentialsMessage({
+  required AppLocalizations l10n,
   required String firstName,
   required String clubName,
   required ClubPlayerCredentials credentials,
 }) {
-  return 'مرحباً $firstName، تم إنشاء حسابك في سبورت اكس هب من قبل نادي $clubName.\n'
-      'اسم المستخدم: ${credentials.username}\n'
-      'كلمة المرور: ${credentials.password}\n'
-      'يرجى تسجيل الدخول وتغيير كلمة المرور من الإعدادات.';
+  return l10n.clubPlayerCredentialsWhatsAppMessage(
+    firstName,
+    clubName,
+    credentials.username,
+    credentials.password,
+  );
 }
 
 Future<void> _openWhatsApp({
@@ -46,18 +50,20 @@ class SendCredentialsWhatsAppButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final clubName = ref.watch(clubProfileControllerProvider).value?.name ?? '';
     return FilledButton.icon(
       onPressed: () => _openWhatsApp(
         phone: credentials.username,
         message: _credentialsMessage(
+          l10n: l10n,
           firstName: firstName,
           clubName: clubName,
           credentials: credentials,
         ),
       ),
       icon: const Icon(Icons.chat_outlined),
-      label: const Text('إرسال عبر واتساب'),
+      label: Text(l10n.clubPlayerSendWhatsAppButton),
     );
   }
 }
@@ -80,6 +86,7 @@ class _ResendCredentialsWhatsAppButtonState
   bool _sending = false;
 
   Future<void> _resendAndSend() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _sending = true);
     try {
       final credentials = await ref
@@ -90,6 +97,7 @@ class _ResendCredentialsWhatsAppButtonState
       await _openWhatsApp(
         phone: credentials.username,
         message: _credentialsMessage(
+          l10n: l10n,
           firstName: widget.player.profile.firstName ?? '',
           clubName: clubName,
           credentials: credentials,
@@ -105,6 +113,7 @@ class _ResendCredentialsWhatsAppButtonState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return OutlinedButton.icon(
       onPressed: _sending ? null : _resendAndSend,
       icon: _sending
@@ -114,7 +123,7 @@ class _ResendCredentialsWhatsAppButtonState
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           : const Icon(Icons.chat_outlined),
-      label: const Text('إرسال بيانات الدخول عبر واتساب'),
+      label: Text(l10n.clubPlayerResendCredentialsWhatsAppButton),
     );
   }
 }

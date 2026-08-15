@@ -738,6 +738,135 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadLogoLabel => 'Upload logo';
 
   @override
+  String get clubPlayersTitle => 'Club Players';
+
+  @override
+  String get clubPlayersAddPlayerLabel => 'Add Player';
+
+  @override
+  String get clubPlayersEmptyState => 'No players added yet.';
+
+  @override
+  String get clubPlayerAccountCreatedTitle => 'Player account created';
+
+  @override
+  String clubPlayerUsernameValue(String username) {
+    return 'Username: $username';
+  }
+
+  @override
+  String clubPlayerPasswordValue(String password) {
+    return 'Password: $password';
+  }
+
+  @override
+  String get clubPlayerDoneLabel => 'Done';
+
+  @override
+  String get clubPlayerSelectCountryError => 'Select a country.';
+
+  @override
+  String get clubPlayerFieldRequiredValidation => 'Required';
+
+  @override
+  String get clubPlayerFirstNameLabel => 'First name';
+
+  @override
+  String get clubPlayerLastNameLabel => 'Last name';
+
+  @override
+  String get clubPlayerCountryLabel => 'Country';
+
+  @override
+  String get clubPlayerPhoneLabel => 'Phone number';
+
+  @override
+  String get clubPlayerPhoneHint => 'Without the leading zero';
+
+  @override
+  String get clubPlayerPhoneInvalid => 'Invalid number';
+
+  @override
+  String get clubPlayerEmailOptionalLabel => 'Email (optional)';
+
+  @override
+  String clubPlayerDobValueLabel(String date) {
+    return 'Date of birth: $date';
+  }
+
+  @override
+  String get clubPlayerDobOptionalLabel => 'Date of birth (optional)';
+
+  @override
+  String get clubPlayerNationalityOptionalLabel => 'Nationality (optional)';
+
+  @override
+  String get clubPlayerCityOptionalLabel => 'City (optional)';
+
+  @override
+  String get clubPlayerSportOptionalLabel => 'Sport (optional)';
+
+  @override
+  String get clubPlayerPositionOptionalLabel => 'Position (optional)';
+
+  @override
+  String get clubPlayerPreferredFootOptionalLabel =>
+      'Preferred foot (optional)';
+
+  @override
+  String get clubPlayerHeightLabel => 'Height (cm)';
+
+  @override
+  String get clubPlayerWeightLabel => 'Weight (kg)';
+
+  @override
+  String get clubPlayerBioOptionalLabel => 'Bio (optional)';
+
+  @override
+  String get clubPlayerCreateAccountButton => 'Create account';
+
+  @override
+  String get clubPlayerSendWhatsAppButton => 'Send via WhatsApp';
+
+  @override
+  String get clubPlayerResendCredentialsWhatsAppButton =>
+      'Resend login details via WhatsApp';
+
+  @override
+  String clubPlayerCredentialsWhatsAppMessage(
+    String firstName,
+    String clubName,
+    String username,
+    String password,
+  ) {
+    return 'Hi $firstName, your Sport X Hub account was created by $clubName.\nUsername: $username\nPassword: $password\nPlease log in and change your password from Settings.';
+  }
+
+  @override
+  String get clubDashboardTotalPlayersLabel => 'Total players';
+
+  @override
+  String get clubDashboardCompleteProfilesLabel => 'Complete profiles';
+
+  @override
+  String get clubDashboardIncompleteProfilesLabel => 'Incomplete profiles';
+
+  @override
+  String get clubDashboardRecentPlayersTitle => 'Recently added players';
+
+  @override
+  String get clubDashboardViewAllLabel => 'View all';
+
+  @override
+  String get clubDashboardEmptyStateHint =>
+      'Add your first player to get started';
+
+  @override
+  String clubDashboardAddedOnLabel(String date) {
+    return 'Added on $date';
+  }
+
+  @override
   String get minAgeLabel => 'Min age';
 
   @override

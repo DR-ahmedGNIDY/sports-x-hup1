@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../shared/add_club_player_form.dart';
 
 class AddClubPlayerPageDesktop extends StatelessWidget {
@@ -8,6 +9,7 @@ class AddClubPlayerPageDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 640),
@@ -19,11 +21,11 @@ class AddClubPlayerPageDesktop extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('إضافة لاعب', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(l10n.clubPlayersAddPlayerLabel, style: Theme.of(context).textTheme.headlineSmall),
                   TextButton.icon(
                     onPressed: () => context.go('/club/players'),
                     icon: const Icon(Icons.arrow_back_outlined),
-                    label: const Text('رجوع'),
+                    label: Text(l10n.backLabel),
                   ),
                 ],
               ),

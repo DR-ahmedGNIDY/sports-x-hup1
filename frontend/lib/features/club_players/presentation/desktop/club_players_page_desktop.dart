@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/error_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_players_controller.dart';
 import '../shared/club_managed_player_card.dart';
 
@@ -12,6 +13,7 @@ class ClubPlayersPageDesktop extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final playersAsync = ref.watch(clubPlayersControllerProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Center(
       child: ConstrainedBox(
@@ -24,11 +26,11 @@ class ClubPlayersPageDesktop extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('لاعبو النادي', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(l10n.clubPlayersTitle, style: Theme.of(context).textTheme.headlineSmall),
                   FilledButton.icon(
                     onPressed: () => context.go('/club/players/new'),
                     icon: const Icon(Icons.person_add_outlined),
-                    label: const Text('إضافة لاعب'),
+                    label: Text(l10n.clubPlayersAddPlayerLabel),
                   ),
                 ],
               ),
@@ -36,7 +38,7 @@ class ClubPlayersPageDesktop extends ConsumerWidget {
               Expanded(
                 child: playersAsync.when(
                   data: (players) => players.isEmpty
-                      ? const Center(child: Text('لم تتم إضافة أي لاعب بعد.'))
+                      ? Center(child: Text(l10n.clubPlayersEmptyState))
                       : RefreshIndicator(
                           onRefresh: () =>
                               ref.read(clubPlayersControllerProvider.notifier).refresh(),

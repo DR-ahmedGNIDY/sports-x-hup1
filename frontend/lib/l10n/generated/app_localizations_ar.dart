@@ -728,6 +728,133 @@ class AppLocalizationsAr extends AppLocalizations {
   String get uploadLogoLabel => 'رفع الشعار';
 
   @override
+  String get clubPlayersTitle => 'لاعبو النادي';
+
+  @override
+  String get clubPlayersAddPlayerLabel => 'إضافة لاعب';
+
+  @override
+  String get clubPlayersEmptyState => 'لم تتم إضافة أي لاعب بعد.';
+
+  @override
+  String get clubPlayerAccountCreatedTitle => 'تم إنشاء حساب اللاعب';
+
+  @override
+  String clubPlayerUsernameValue(String username) {
+    return 'اسم المستخدم: $username';
+  }
+
+  @override
+  String clubPlayerPasswordValue(String password) {
+    return 'كلمة المرور: $password';
+  }
+
+  @override
+  String get clubPlayerDoneLabel => 'تم';
+
+  @override
+  String get clubPlayerSelectCountryError => 'اختر الدولة.';
+
+  @override
+  String get clubPlayerFieldRequiredValidation => 'مطلوب';
+
+  @override
+  String get clubPlayerFirstNameLabel => 'الاسم الأول';
+
+  @override
+  String get clubPlayerLastNameLabel => 'اسم العائلة';
+
+  @override
+  String get clubPlayerCountryLabel => 'الدولة';
+
+  @override
+  String get clubPlayerPhoneLabel => 'رقم الموبايل';
+
+  @override
+  String get clubPlayerPhoneHint => 'بدون صفر في البداية';
+
+  @override
+  String get clubPlayerPhoneInvalid => 'رقم غير صحيح';
+
+  @override
+  String get clubPlayerEmailOptionalLabel => 'البريد الإلكتروني (اختياري)';
+
+  @override
+  String clubPlayerDobValueLabel(String date) {
+    return 'تاريخ الميلاد: $date';
+  }
+
+  @override
+  String get clubPlayerDobOptionalLabel => 'تاريخ الميلاد (اختياري)';
+
+  @override
+  String get clubPlayerNationalityOptionalLabel => 'الجنسية (اختياري)';
+
+  @override
+  String get clubPlayerCityOptionalLabel => 'المدينة (اختياري)';
+
+  @override
+  String get clubPlayerSportOptionalLabel => 'الرياضة (اختياري)';
+
+  @override
+  String get clubPlayerPositionOptionalLabel => 'المركز (اختياري)';
+
+  @override
+  String get clubPlayerPreferredFootOptionalLabel => 'القدم المفضلة (اختياري)';
+
+  @override
+  String get clubPlayerHeightLabel => 'الطول (سم)';
+
+  @override
+  String get clubPlayerWeightLabel => 'الوزن (كجم)';
+
+  @override
+  String get clubPlayerBioOptionalLabel => 'نبذة (اختياري)';
+
+  @override
+  String get clubPlayerCreateAccountButton => 'إنشاء الحساب';
+
+  @override
+  String get clubPlayerSendWhatsAppButton => 'إرسال عبر واتساب';
+
+  @override
+  String get clubPlayerResendCredentialsWhatsAppButton =>
+      'إرسال بيانات الدخول عبر واتساب';
+
+  @override
+  String clubPlayerCredentialsWhatsAppMessage(
+    String firstName,
+    String clubName,
+    String username,
+    String password,
+  ) {
+    return 'مرحباً $firstName، تم إنشاء حسابك في سبورت اكس هب من قبل نادي $clubName.\nاسم المستخدم: $username\nكلمة المرور: $password\nيرجى تسجيل الدخول وتغيير كلمة المرور من الإعدادات.';
+  }
+
+  @override
+  String get clubDashboardTotalPlayersLabel => 'إجمالي اللاعبين';
+
+  @override
+  String get clubDashboardCompleteProfilesLabel => 'ملفات مكتملة';
+
+  @override
+  String get clubDashboardIncompleteProfilesLabel => 'ملفات غير مكتملة';
+
+  @override
+  String get clubDashboardRecentPlayersTitle => 'أحدث اللاعبين المضافين';
+
+  @override
+  String get clubDashboardViewAllLabel => 'عرض الكل';
+
+  @override
+  String get clubDashboardEmptyStateHint => 'أضف أول لاعب لناديك للبدء';
+
+  @override
+  String clubDashboardAddedOnLabel(String date) {
+    return 'أُضيف في $date';
+  }
+
+  @override
   String get minAgeLabel => 'أقل عمر';
 
   @override

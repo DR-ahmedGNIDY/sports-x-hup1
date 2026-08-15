@@ -1484,6 +1484,233 @@ abstract class AppLocalizations {
   /// **'رفع الشعار'**
   String get uploadLogoLabel;
 
+  /// No description provided for @clubPlayersTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لاعبو النادي'**
+  String get clubPlayersTitle;
+
+  /// No description provided for @clubPlayersAddPlayerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة لاعب'**
+  String get clubPlayersAddPlayerLabel;
+
+  /// No description provided for @clubPlayersEmptyState.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تتم إضافة أي لاعب بعد.'**
+  String get clubPlayersEmptyState;
+
+  /// No description provided for @clubPlayerAccountCreatedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إنشاء حساب اللاعب'**
+  String get clubPlayerAccountCreatedTitle;
+
+  /// No description provided for @clubPlayerUsernameValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المستخدم: {username}'**
+  String clubPlayerUsernameValue(String username);
+
+  /// No description provided for @clubPlayerPasswordValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور: {password}'**
+  String clubPlayerPasswordValue(String password);
+
+  /// No description provided for @clubPlayerDoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم'**
+  String get clubPlayerDoneLabel;
+
+  /// No description provided for @clubPlayerSelectCountryError.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الدولة.'**
+  String get clubPlayerSelectCountryError;
+
+  /// No description provided for @clubPlayerFieldRequiredValidation.
+  ///
+  /// In ar, this message translates to:
+  /// **'مطلوب'**
+  String get clubPlayerFieldRequiredValidation;
+
+  /// No description provided for @clubPlayerFirstNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم الأول'**
+  String get clubPlayerFirstNameLabel;
+
+  /// No description provided for @clubPlayerLastNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم العائلة'**
+  String get clubPlayerLastNameLabel;
+
+  /// No description provided for @clubPlayerCountryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدولة'**
+  String get clubPlayerCountryLabel;
+
+  /// No description provided for @clubPlayerPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الموبايل'**
+  String get clubPlayerPhoneLabel;
+
+  /// No description provided for @clubPlayerPhoneHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون صفر في البداية'**
+  String get clubPlayerPhoneHint;
+
+  /// No description provided for @clubPlayerPhoneInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم غير صحيح'**
+  String get clubPlayerPhoneInvalid;
+
+  /// No description provided for @clubPlayerEmailOptionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني (اختياري)'**
+  String get clubPlayerEmailOptionalLabel;
+
+  /// No description provided for @clubPlayerDobValueLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الميلاد: {date}'**
+  String clubPlayerDobValueLabel(String date);
+
+  /// No description provided for @clubPlayerDobOptionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الميلاد (اختياري)'**
+  String get clubPlayerDobOptionalLabel;
+
+  /// No description provided for @clubPlayerNationalityOptionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجنسية (اختياري)'**
+  String get clubPlayerNationalityOptionalLabel;
+
+  /// No description provided for @clubPlayerCityOptionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدينة (اختياري)'**
+  String get clubPlayerCityOptionalLabel;
+
+  /// No description provided for @clubPlayerSportOptionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرياضة (اختياري)'**
+  String get clubPlayerSportOptionalLabel;
+
+  /// No description provided for @clubPlayerPositionOptionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المركز (اختياري)'**
+  String get clubPlayerPositionOptionalLabel;
+
+  /// No description provided for @clubPlayerPreferredFootOptionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'القدم المفضلة (اختياري)'**
+  String get clubPlayerPreferredFootOptionalLabel;
+
+  /// No description provided for @clubPlayerHeightLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطول (سم)'**
+  String get clubPlayerHeightLabel;
+
+  /// No description provided for @clubPlayerWeightLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوزن (كجم)'**
+  String get clubPlayerWeightLabel;
+
+  /// No description provided for @clubPlayerBioOptionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نبذة (اختياري)'**
+  String get clubPlayerBioOptionalLabel;
+
+  /// No description provided for @clubPlayerCreateAccountButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء الحساب'**
+  String get clubPlayerCreateAccountButton;
+
+  /// No description provided for @clubPlayerSendWhatsAppButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال عبر واتساب'**
+  String get clubPlayerSendWhatsAppButton;
+
+  /// No description provided for @clubPlayerResendCredentialsWhatsAppButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال بيانات الدخول عبر واتساب'**
+  String get clubPlayerResendCredentialsWhatsAppButton;
+
+  /// No description provided for @clubPlayerCredentialsWhatsAppMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحباً {firstName}، تم إنشاء حسابك في سبورت اكس هب من قبل نادي {clubName}.\nاسم المستخدم: {username}\nكلمة المرور: {password}\nيرجى تسجيل الدخول وتغيير كلمة المرور من الإعدادات.'**
+  String clubPlayerCredentialsWhatsAppMessage(
+    String firstName,
+    String clubName,
+    String username,
+    String password,
+  );
+
+  /// No description provided for @clubDashboardTotalPlayersLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي اللاعبين'**
+  String get clubDashboardTotalPlayersLabel;
+
+  /// No description provided for @clubDashboardCompleteProfilesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملفات مكتملة'**
+  String get clubDashboardCompleteProfilesLabel;
+
+  /// No description provided for @clubDashboardIncompleteProfilesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملفات غير مكتملة'**
+  String get clubDashboardIncompleteProfilesLabel;
+
+  /// No description provided for @clubDashboardRecentPlayersTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أحدث اللاعبين المضافين'**
+  String get clubDashboardRecentPlayersTitle;
+
+  /// No description provided for @clubDashboardViewAllLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الكل'**
+  String get clubDashboardViewAllLabel;
+
+  /// No description provided for @clubDashboardEmptyStateHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف أول لاعب لناديك للبدء'**
+  String get clubDashboardEmptyStateHint;
+
+  /// No description provided for @clubDashboardAddedOnLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُضيف في {date}'**
+  String clubDashboardAddedOnLabel(String date);
+
   /// No description provided for @minAgeLabel.
   ///
   /// In ar, this message translates to:
