@@ -30,13 +30,39 @@ class ClubPlayersRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
-  Future<List<dynamic>> list(String accessToken) async {
+  /// Paginated + optionally filtered roster page — server-side (see
+  /// ClubPlayersService.listForClub), never the full roster.
+  Future<Map<String, dynamic>> list(
+    String accessToken, {
+    int page = 1,
+    String? search,
+    String? sport,
+    String? position,
+  }) async {
+    final query = <String, String>{
+      'page': '$page',
+      'search': ?search,
+      'sport': ?sport,
+      'position': ?position,
+    };
+    final queryString = Uri(queryParameters: query).query;
     final response = await _client.get(
-      '/club-players',
+      '/club-players?$queryString',
       headers: _bearer(accessToken),
     );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
-    return jsonDecode(response.body) as List<dynamic>;
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
+  /// Roster summary for the Club Dashboard (GET /club-players/summary) —
+  /// a handful of numbers + up to 5 recent players, not the full roster.
+  Future<Map<String, dynamic>> summary(String accessToken) async {
+    final response = await _client.get(
+      '/club-players/summary',
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> getOne(String accessToken, String userId) async {

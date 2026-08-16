@@ -55,7 +55,7 @@ class _ClubDashboardDesktop extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final playersAsync = ref.watch(clubPlayersControllerProvider);
+    final summaryAsync = ref.watch(clubDashboardSummaryProvider);
     final clubName = ref.watch(clubProfileControllerProvider).value?.name;
 
     return Center(
@@ -85,16 +85,14 @@ class _ClubDashboardDesktop extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              playersAsync.when(
-                data: (players) => _ClubDashboardBody(
-                  summary: ClubDashboardSummary.fromPlayers(players),
-                ),
+              summaryAsync.when(
+                data: (summary) => _ClubDashboardBody(summary: summary),
                 loading: () => const Padding(
                   padding: EdgeInsets.symmetric(vertical: 48),
                   child: Center(child: CircularProgressIndicator()),
                 ),
                 error: (error, _) => ErrorState(
-                  onRetry: () => ref.invalidate(clubPlayersControllerProvider),
+                  onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
                 ),
               ),
             ],

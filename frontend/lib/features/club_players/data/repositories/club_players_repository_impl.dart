@@ -5,8 +5,11 @@ import '../../../../core/storage/session_storage.dart';
 import '../../../../core/storage/session_storage_provider.dart';
 import '../../../player/domain/entities/contact_details.dart';
 import '../../../player/domain/entities/player_enums.dart';
+import '../../domain/entities/club_dashboard_summary.dart';
 import '../../domain/entities/club_managed_player.dart';
 import '../../domain/entities/club_player_credentials.dart';
+import '../../domain/entities/club_players_filters.dart';
+import '../../domain/entities/club_roster_page.dart';
 import '../../domain/entities/create_club_player_input.dart';
 import '../../domain/repositories/club_players_repository.dart';
 import '../datasources/club_players_remote_data_source.dart';
@@ -23,11 +26,22 @@ class ClubPlayersRepositoryImpl implements ClubPlayersRepository {
       runAuthorized(_ref, _storage, call);
 
   @override
-  Future<List<ClubManagedPlayer>> listPlayers() => _authorized((token) async {
-    final json = await _remote.list(token);
-    return json
-        .map((e) => ClubManagedPlayerModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+  Future<ClubRosterPage> listPlayers(ClubPlayersFilters filters) =>
+      _authorized((token) async {
+        final json = await _remote.list(
+          token,
+          page: filters.page,
+          search: filters.search,
+          sport: filters.sport,
+          position: filters.position,
+        );
+        return ClubRosterPageModel.fromJson(json);
+      });
+
+  @override
+  Future<ClubDashboardSummary> getSummary() => _authorized((token) async {
+    final json = await _remote.summary(token);
+    return ClubDashboardSummaryModel.fromJson(json);
   });
 
   @override

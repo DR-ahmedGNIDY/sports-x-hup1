@@ -7,8 +7,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { generateStrongPassword } from '../common/password-generator';
 import { getDialCode } from '../countries/dial-codes';
+import { isProfileComplete } from '../players/players.mapper';
 import { UpdatePlayerProfileDto } from '../players/dto/update-player-profile.dto';
-import { PlayersService } from '../players/players.service';
+import { PlayerSearchResult, PlayersService } from '../players/players.service';
 import {
   PlayerProfileDocument,
   ProfileVisibility,
@@ -16,6 +17,7 @@ import {
 import * as bcrypt from 'bcryptjs';
 import { PASSWORD_SALT_ROUNDS, UsersService } from '../users/users.service';
 import { CreateClubPlayerDto } from './dto/create-club-player.dto';
+import { ListClubPlayersDto } from './dto/list-club-players.dto';
 import {
   ClubManagedPlayer,
   ClubManagedPlayerDocument,
@@ -25,6 +27,23 @@ export interface Credentials {
   username: string;
   password: string;
 }
+
+export interface ClubRosterPage {
+  items: Array<{ profile: PlayerProfileDocument; dialCode: string }>;
+  page: number;
+  pageSize: number;
+  total: number;
+}
+
+export interface ClubPlayersSummary {
+  totalPlayers: number;
+  completeProfiles: number;
+  incompleteProfiles: number;
+  // Newest-first, capped — a Dashboard summary tile, not a roster page.
+  recentPlayers: Array<{ profile: PlayerProfileDocument; dialCode: string }>;
+}
+
+const RECENT_PLAYERS_LIMIT = 5;
 
 @Injectable()
 export class ClubPlayersService {
@@ -111,26 +130,96 @@ export class ClubPlayersService {
     return ownership;
   }
 
-  async listForClub(clubId: string): Promise<
-    Array<{
-      ownership: ClubManagedPlayerDocument;
-      profile: PlayerProfileDocument | null;
-    }>
-  > {
-    const ownerships = await this.clubManagedPlayerModel
-      .find({ clubId })
-      .sort({ createdAt: -1 });
-    const userIds = ownerships.map((o) => o.userId.toString());
-    if (userIds.length === 0) return [];
+  // Every ownership row for the club — cheap (userId + dialCode only,
+  // no profile data) and bounded by what this one club created, so
+  // fetching it in full (rather than paginating it too) doesn't risk the
+  // "download everything" problem GET /club-players itself avoids: the
+  // heavy part (full PlayerProfile documents) is still paginated below.
+  private async ownershipsForClub(
+    clubId: string,
+  ): Promise<ClubManagedPlayerDocument[]> {
+    return this.clubManagedPlayerModel.find({ clubId }).sort({ createdAt: -1 });
+  }
 
+  // Paginated + optionally filtered by name/phone search and sport/
+  // position — see PlayersService.findManyByUserIdsFiltered for how the
+  // actual query stays bounded to this club's own roster.
+  async listForClub(
+    clubId: string,
+    dto: ListClubPlayersDto,
+  ): Promise<ClubRosterPage> {
+    const ownerships = await this.ownershipsForClub(clubId);
+    const userIds = ownerships.map((o) => o.userId.toString());
+    if (userIds.length === 0) {
+      return { items: [], page: dto.page ?? 1, pageSize: 20, total: 0 };
+    }
+
+    const dialCodeByUserId = new Map(
+      ownerships.map((o) => [o.userId.toString(), o.dialCode]),
+    );
+    const result: PlayerSearchResult =
+      await this.playersService.findManyByUserIdsFiltered(userIds, {
+        search: dto.search,
+        sport: dto.sport,
+        position: dto.position,
+        page: dto.page,
+      });
+    return {
+      items: result.items.map((profile) => ({
+        profile,
+        dialCode: dialCodeByUserId.get(profile.userId.toString()) ?? '',
+      })),
+      page: result.page,
+      pageSize: result.pageSize,
+      total: result.total,
+    };
+  }
+
+  // Powers the Club Dashboard's summary tiles — total/complete/incomplete
+  // counts and the 5 most-recently-added players. Deliberately not
+  // paginated (it needs to look at every managed player once to count
+  // completeness), but the response sent back to the client stays small
+  // regardless of roster size: 3 numbers + up to 5 players, never the
+  // full roster.
+  async getSummaryForClub(clubId: string): Promise<ClubPlayersSummary> {
+    const ownerships = await this.ownershipsForClub(clubId);
+    const userIds = ownerships.map((o) => o.userId.toString());
+    if (userIds.length === 0) {
+      return {
+        totalPlayers: 0,
+        completeProfiles: 0,
+        incompleteProfiles: 0,
+        recentPlayers: [],
+      };
+    }
+
+    const dialCodeByUserId = new Map(
+      ownerships.map((o) => [o.userId.toString(), o.dialCode]),
+    );
     const profiles = await this.playersService.findManyByUserIds(userIds);
     const profileByUserId = new Map(
       profiles.map((p) => [p.userId.toString(), p]),
     );
-    return ownerships.map((ownership) => ({
-      ownership,
-      profile: profileByUserId.get(ownership.userId.toString()) ?? null,
-    }));
+
+    const completeProfiles = profiles.filter(isProfileComplete).length;
+    // `ownerships` is already newest-first; not every ownership row is
+    // guaranteed to have a matching profile (defensive, same as the old
+    // listForClub's null-profile filter).
+    const recentPlayers = userIds
+      .map((id) => profileByUserId.get(id))
+      .filter((profile): profile is PlayerProfileDocument => Boolean(profile))
+      .slice(0, RECENT_PLAYERS_LIMIT)
+      .map((profile) => ({
+        profile,
+        dialCode: dialCodeByUserId.get(profile.userId.toString()) ?? '',
+      }));
+
+    return {
+      totalPlayers: userIds.length,
+      completeProfiles,
+      incompleteProfiles: userIds.length - completeProfiles,
+      recentPlayers,
+    };
   }
 
   async getOneForClub(

@@ -53,6 +53,7 @@ class ClubManagedPlayerCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     final profile = player.profile;
     final fullName = profile.fullName.isEmpty ? profile.contact.phone ?? '' : profile.fullName;
     final subtitle = [
@@ -70,12 +71,12 @@ class ClubManagedPlayerCard extends ConsumerWidget {
             children: [
               CircleAvatar(
                 radius: 28,
-                backgroundColor: AppColors.slate,
+                backgroundColor: colorScheme.surfaceContainerHighest,
                 backgroundImage: profile.profilePhoto != null
                     ? NetworkImage(profile.profilePhoto!.secureUrl)
                     : null,
                 child: profile.profilePhoto == null
-                    ? const Icon(Icons.person, color: AppColors.greyLight)
+                    ? Icon(Icons.person, color: colorScheme.onSurfaceVariant)
                     : null,
               ),
               const SizedBox(width: 16),

@@ -891,6 +891,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clubPlayerRemovedMessage => 'تمت إزالة اللاعب من ناديك.';
 
   @override
+  String get clubPlayersSearchLabel => 'البحث بالاسم أو رقم الهاتف';
+
+  @override
+  String get clubPlayersAnyFilterOption => 'الكل';
+
+  @override
+  String get clubPlayersSportFilterLabel => 'الرياضة';
+
+  @override
+  String get clubPlayersPositionFilterLabel => 'المركز';
+
+  @override
+  String get clubPlayersNoSearchResults =>
+      'لا يوجد لاعبون مطابقون لهذا البحث/الفلاتر.';
+
+  @override
   String get minAgeLabel => 'أقل عمر';
 
   @override

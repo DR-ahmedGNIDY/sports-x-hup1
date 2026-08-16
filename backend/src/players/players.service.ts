@@ -73,6 +73,15 @@ function validateMediaFile(type: MediaType, file: Express.Multer.File): void {
 
 const SEARCH_PAGE_SIZE = 20;
 const ADMIN_LIST_PAGE_SIZE = 20;
+const CLUB_ROSTER_PAGE_SIZE = 20;
+
+// Escapes regex metacharacters in free-text search input before it's used
+// inside a MongoDB $regex filter — without this, a search string like
+// "a.*" or "(" would be interpreted as regex syntax instead of literal
+// text (and unbalanced groups throw at query time).
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 // Caps unbounded growth of a profile's embedded arrays — each item lives
 // inside the PlayerProfile document itself (not a separate collection), so
@@ -183,6 +192,44 @@ export class PlayersService {
   // to list the players it manages regardless of their current visibility.
   findManyByUserIds(userIds: string[]): Promise<PlayerProfileDocument[]> {
     return this.playerProfileModel.find({ userId: { $in: userIds } });
+  }
+
+  // Same audience as findManyByUserIds (a club's own roster) but paginated
+  // and optionally narrowed by name/phone search and sport/position
+  // filters — backs GET /club-players. [userIds] bounds every query to
+  // the calling club's own roster (via the unique index already on
+  // `userId`), so this never scans the full players collection the way
+  // the public search/admin-list endpoints intentionally can.
+  async findManyByUserIdsFiltered(
+    userIds: string[],
+    {
+      search,
+      sport,
+      position,
+      page = 1,
+    }: { search?: string; sport?: string; position?: string; page?: number },
+  ): Promise<PlayerSearchResult> {
+    const filter: Record<string, unknown> = { userId: { $in: userIds } };
+    if (sport) filter.sport = sport;
+    if (position) filter.position = position;
+    if (search && search.trim()) {
+      const regex = { $regex: escapeRegex(search.trim()), $options: 'i' };
+      filter.$or = [
+        { firstName: regex },
+        { lastName: regex },
+        { 'contact.phone': regex },
+      ];
+    }
+
+    const [items, total] = await Promise.all([
+      this.playerProfileModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * CLUB_ROSTER_PAGE_SIZE)
+        .limit(CLUB_ROSTER_PAGE_SIZE),
+      this.playerProfileModel.countDocuments(filter),
+    ]);
+    return { items, page, pageSize: CLUB_ROSTER_PAGE_SIZE, total };
   }
 
   // Admin (Phase 4) — every profile regardless of visibility, paginated so

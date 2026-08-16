@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/club_profile.dart';
 import 'club_level_labels.dart';
@@ -14,6 +13,7 @@ class ClubProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     final location = [
       profile.city,
@@ -29,7 +29,7 @@ class ClubProfileView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: AppColors.slate,
+                color: colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
                 image: profile.logoUrl != null
                     ? DecorationImage(
@@ -39,7 +39,7 @@ class ClubProfileView extends StatelessWidget {
                     : null,
               ),
               child: profile.logoUrl == null
-                  ? const Icon(Icons.shield_outlined, color: AppColors.greyLight)
+                  ? Icon(Icons.shield_outlined, color: colorScheme.onSurfaceVariant)
                   : null,
             ),
             const SizedBox(width: 20),

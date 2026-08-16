@@ -1,12 +1,18 @@
 import '../../../player/domain/entities/contact_details.dart';
 import '../../../player/domain/entities/player_enums.dart';
+import '../entities/club_dashboard_summary.dart';
 import '../entities/club_managed_player.dart';
 import '../entities/club_player_credentials.dart';
+import '../entities/club_players_filters.dart';
+import '../entities/club_roster_page.dart';
 import '../entities/create_club_player_input.dart';
 
 /// All methods throw [AppException] (core/errors) on failure.
 abstract class ClubPlayersRepository {
-  Future<List<ClubManagedPlayer>> listPlayers();
+  Future<ClubRosterPage> listPlayers(ClubPlayersFilters filters);
+
+  /// Roster summary for the Club Dashboard — see [ClubDashboardSummary].
+  Future<ClubDashboardSummary> getSummary();
 
   Future<({ClubManagedPlayer player, ClubPlayerCredentials credentials})>
   createPlayer(CreateClubPlayerInput input);

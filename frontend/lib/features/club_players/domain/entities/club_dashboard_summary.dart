@@ -1,11 +1,11 @@
 import 'club_managed_player.dart';
-import 'club_player_completion.dart';
 
-/// Pure derived view over the Club's existing roster (`GET /club-players`)
-/// for the Club Dashboard — no separate endpoint, no invented data. The
-/// roster is already returned newest-first by the backend (sorted by the
-/// ownership record's `createdAt`), so `recentPlayers` is just the head of
-/// that same list.
+/// The Club Dashboard's roster summary — total/complete/incomplete counts
+/// and the most-recently-added players. Computed server-side (`GET
+/// /club-players/summary`, backed by the same `isProfileComplete` check
+/// the backend already uses for a Player's own completion stats) so the
+/// client never has to download the full roster just to show 3 numbers
+/// and a short recent list.
 class ClubDashboardSummary {
   const ClubDashboardSummary({
     required this.totalPlayers,
@@ -18,19 +18,4 @@ class ClubDashboardSummary {
   final int completeProfiles;
   final int incompleteProfiles;
   final List<ClubManagedPlayer> recentPlayers;
-
-  factory ClubDashboardSummary.fromPlayers(
-    List<ClubManagedPlayer> players, {
-    int recentLimit = 5,
-  }) {
-    final complete = players
-        .where((p) => isClubPlayerProfileComplete(p.profile))
-        .length;
-    return ClubDashboardSummary(
-      totalPlayers: players.length,
-      completeProfiles: complete,
-      incompleteProfiles: players.length - complete,
-      recentPlayers: players.take(recentLimit).toList(),
-    );
-  }
 }

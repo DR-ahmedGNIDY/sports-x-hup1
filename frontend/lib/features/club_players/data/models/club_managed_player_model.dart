@@ -1,7 +1,9 @@
 import '../../../player/data/models/player_profile_model.dart';
 import '../../../player/domain/entities/contact_details.dart';
+import '../../domain/entities/club_dashboard_summary.dart';
 import '../../domain/entities/club_managed_player.dart';
 import '../../domain/entities/club_player_credentials.dart';
+import '../../domain/entities/club_roster_page.dart';
 
 extension ClubManagedPlayerModel on ClubManagedPlayer {
   /// The backend's owner view (toOwnerView) plus `userId` and `dialCode`
@@ -12,6 +14,32 @@ extension ClubManagedPlayerModel on ClubManagedPlayer {
       userId: json['userId'] as String,
       dialCode: json['dialCode'] as String,
       profile: PlayerProfileModel.fromJson(json),
+    );
+  }
+}
+
+extension ClubRosterPageModel on ClubRosterPage {
+  static ClubRosterPage fromJson(Map<String, dynamic> json) {
+    return ClubRosterPage(
+      items: (json['items'] as List<dynamic>)
+          .map((e) => ClubManagedPlayerModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      page: json['page'] as int,
+      pageSize: json['pageSize'] as int,
+      total: json['total'] as int,
+    );
+  }
+}
+
+extension ClubDashboardSummaryModel on ClubDashboardSummary {
+  static ClubDashboardSummary fromJson(Map<String, dynamic> json) {
+    return ClubDashboardSummary(
+      totalPlayers: json['totalPlayers'] as int,
+      completeProfiles: json['completeProfiles'] as int,
+      incompleteProfiles: json['incompleteProfiles'] as int,
+      recentPlayers: (json['recentPlayers'] as List<dynamic>)
+          .map((e) => ClubManagedPlayerModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

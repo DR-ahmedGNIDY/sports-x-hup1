@@ -25,7 +25,7 @@ class EditClubPlayerPageDesktop extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final playerAsync = ref.watch(clubManagedPlayerProvider(userId));
-    final notifier = ref.read(clubPlayersControllerProvider.notifier);
+    final actions = ref.read(clubPlayersActionsProvider);
 
     return Center(
       child: ConstrainedBox(
@@ -57,7 +57,7 @@ class EditClubPlayerPageDesktop extends ConsumerWidget {
                         ProfilePhotoSection(
                           photoUrl: player.profile.profilePhoto?.secureUrl,
                           onUpload: ({required bytes, required filename}) =>
-                              notifier.uploadPhoto(userId, bytes: bytes, filename: filename),
+                              actions.uploadPhoto(userId, bytes: bytes, filename: filename),
                         ),
                         const SizedBox(height: 24),
                         Divider(color: Theme.of(context).colorScheme.outlineVariant),
@@ -83,7 +83,7 @@ class EditClubPlayerPageDesktop extends ConsumerWidget {
                                 currentClub,
                                 bio,
                                 contact,
-                              }) => notifier.updatePlayer(
+                              }) => actions.updatePlayer(
                                 userId,
                                 firstName: firstName,
                                 lastName: lastName,

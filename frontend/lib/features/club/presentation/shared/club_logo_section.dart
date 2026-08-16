@@ -45,6 +45,7 @@ class _ClubLogoSectionState extends ConsumerState<ClubLogoSection> {
   Widget build(BuildContext context) {
     final logoUrl = ref.watch(clubProfileControllerProvider).value?.logoUrl;
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -55,14 +56,14 @@ class _ClubLogoSectionState extends ConsumerState<ClubLogoSection> {
           width: 96,
           height: 96,
           decoration: BoxDecoration(
-            color: AppColors.slate,
+            color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(8),
             image: logoUrl != null
                 ? DecorationImage(image: NetworkImage(logoUrl), fit: BoxFit.cover)
                 : null,
           ),
           child: logoUrl == null
-              ? const Icon(Icons.shield_outlined, color: AppColors.greyLight, size: 40)
+              ? Icon(Icons.shield_outlined, color: colorScheme.onSurfaceVariant, size: 40)
               : null,
         ),
         if (_error != null) ...[

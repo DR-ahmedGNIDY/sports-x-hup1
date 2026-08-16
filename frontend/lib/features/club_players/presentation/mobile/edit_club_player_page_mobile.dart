@@ -25,7 +25,7 @@ class EditClubPlayerPageMobile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final playerAsync = ref.watch(clubManagedPlayerProvider(userId));
-    final notifier = ref.read(clubPlayersControllerProvider.notifier);
+    final actions = ref.read(clubPlayersActionsProvider);
 
     return playerAsync.when(
       data: (player) => ListView(
@@ -45,7 +45,7 @@ class EditClubPlayerPageMobile extends ConsumerWidget {
           ProfilePhotoSection(
             photoUrl: player.profile.profilePhoto?.secureUrl,
             onUpload: ({required bytes, required filename}) =>
-                notifier.uploadPhoto(userId, bytes: bytes, filename: filename),
+                actions.uploadPhoto(userId, bytes: bytes, filename: filename),
           ),
           const SizedBox(height: 16),
           ProfileDetailsForm(
@@ -69,7 +69,7 @@ class EditClubPlayerPageMobile extends ConsumerWidget {
                   currentClub,
                   bio,
                   contact,
-                }) => notifier.updatePlayer(
+                }) => actions.updatePlayer(
                   userId,
                   firstName: firstName,
                   lastName: lastName,

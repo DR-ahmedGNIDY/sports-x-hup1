@@ -334,6 +334,12 @@
   "clubPlayerRemoveConfirm": "Remove",
   "clubPlayerRemovedMessage": "Player removed from your club.",
 
+  "clubPlayersSearchLabel": "Search by name or phone",
+  "clubPlayersAnyFilterOption": "Any",
+  "clubPlayersSportFilterLabel": "Sport",
+  "clubPlayersPositionFilterLabel": "Position",
+  "clubPlayersNoSearchResults": "No players match this search/filters.",
+
   "minAgeLabel": "Min age",
   "maxAgeLabel": "Max age",
   "minHeightLabel": "Min height (cm)",

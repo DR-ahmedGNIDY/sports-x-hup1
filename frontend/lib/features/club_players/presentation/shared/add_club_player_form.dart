@@ -98,9 +98,7 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         weight: num.tryParse(_weight.text),
         bio: _emptyToNull(_bio.text),
       );
-      final credentials = await ref
-          .read(clubPlayersControllerProvider.notifier)
-          .addPlayer(input);
+      final credentials = await ref.read(clubPlayersActionsProvider).addPlayer(input);
       if (!mounted) return;
       await showDialog<void>(
         context: context,

@@ -903,6 +903,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clubPlayerRemovedMessage => 'Player removed from your club.';
 
   @override
+  String get clubPlayersSearchLabel => 'Search by name or phone';
+
+  @override
+  String get clubPlayersAnyFilterOption => 'Any';
+
+  @override
+  String get clubPlayersSportFilterLabel => 'Sport';
+
+  @override
+  String get clubPlayersPositionFilterLabel => 'Position';
+
+  @override
+  String get clubPlayersNoSearchResults =>
+      'No players match this search/filters.';
+
+  @override
   String get minAgeLabel => 'Min age';
 
   @override

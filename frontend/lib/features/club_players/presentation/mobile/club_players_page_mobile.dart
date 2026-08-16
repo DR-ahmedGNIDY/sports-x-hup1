@@ -6,13 +6,15 @@ import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_players_controller.dart';
 import '../shared/club_managed_player_card.dart';
+import '../shared/club_players_pagination.dart';
+import '../shared/club_players_toolbar.dart';
 
 class ClubPlayersPageMobile extends ConsumerWidget {
   const ClubPlayersPageMobile({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playersAsync = ref.watch(clubPlayersControllerProvider);
+    final rosterAsync = ref.watch(clubPlayersControllerProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
@@ -32,23 +34,52 @@ class ClubPlayersPageMobile extends ConsumerWidget {
             ],
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: const ClubPlayersToolbar(),
+        ),
+        const SizedBox(height: 8),
         Expanded(
-          child: playersAsync.when(
-            data: (players) => players.isEmpty
-                ? Center(child: Text(l10n.clubPlayersEmptyState))
-                : RefreshIndicator(
-                    onRefresh: () =>
-                        ref.read(clubPlayersControllerProvider.notifier).refresh(),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(12),
-                      itemCount: players.length,
-                      itemBuilder: (context, index) =>
-                          ClubManagedPlayerCard(player: players[index]),
+          child: rosterAsync.when(
+            data: (roster) {
+              final filtersActive = clubPlayersFiltersActive(
+                ref.read(clubPlayersControllerProvider.notifier).filters,
+              );
+              if (roster.items.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      filtersActive ? l10n.clubPlayersNoSearchResults : l10n.clubPlayersEmptyState,
+                      textAlign: TextAlign.center,
                     ),
                   ),
+                );
+              }
+              return RefreshIndicator(
+                onRefresh: () => ref.read(clubPlayersControllerProvider.notifier).refresh(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(12),
+                        itemCount: roster.items.length,
+                        itemBuilder: (context, index) =>
+                            ClubManagedPlayerCard(player: roster.items[index]),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: ClubPlayersPagination(page: roster),
+                    ),
+                  ],
+                ),
+              );
+            },
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) =>
-                ErrorState(onRetry: () => ref.invalidate(clubPlayersControllerProvider)),
+                ErrorState(onRetry: () => ref.read(clubPlayersControllerProvider.notifier).refresh()),
           ),
         ),
       ],

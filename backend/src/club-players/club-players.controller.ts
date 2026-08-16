@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -25,6 +26,7 @@ import { toOwnerView } from '../players/players.mapper';
 import { UserRole } from '../users/schemas/user.schema';
 import { ClubPlayersService } from './club-players.service';
 import { CreateClubPlayerDto } from './dto/create-club-player.dto';
+import { ListClubPlayersDto } from './dto/list-club-players.dto';
 
 @Controller('club-players')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -43,14 +45,36 @@ export class ClubPlayersController {
   }
 
   @Get()
-  async list(@CurrentUser() user: JwtPayload) {
-    const rows = await this.clubPlayersService.listForClub(user.sub);
-    return rows
-      .filter((row) => row.profile !== null)
-      .map((row) => ({
-        ...toOwnerView(row.profile!),
-        dialCode: row.ownership.dialCode,
-      }));
+  async list(
+    @CurrentUser() user: JwtPayload,
+    @Query() dto: ListClubPlayersDto,
+  ) {
+    const result = await this.clubPlayersService.listForClub(user.sub, dto);
+    return {
+      items: result.items.map((row) => ({
+        ...toOwnerView(row.profile),
+        dialCode: row.dialCode,
+      })),
+      page: result.page,
+      pageSize: result.pageSize,
+      total: result.total,
+    };
+  }
+
+  // Fixed path, must be registered before the dynamic ':playerId' route
+  // below — otherwise Nest would match "summary" as a :playerId.
+  @Get('summary')
+  async summary(@CurrentUser() user: JwtPayload) {
+    const result = await this.clubPlayersService.getSummaryForClub(user.sub);
+    return {
+      totalPlayers: result.totalPlayers,
+      completeProfiles: result.completeProfiles,
+      incompleteProfiles: result.incompleteProfiles,
+      recentPlayers: result.recentPlayers.map((row) => ({
+        ...toOwnerView(row.profile),
+        dialCode: row.dialCode,
+      })),
+    };
   }
 
   @Get(':playerId')

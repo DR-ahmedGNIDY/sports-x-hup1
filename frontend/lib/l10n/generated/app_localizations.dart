@@ -1777,6 +1777,36 @@ abstract class AppLocalizations {
   /// **'تمت إزالة اللاعب من ناديك.'**
   String get clubPlayerRemovedMessage;
 
+  /// No description provided for @clubPlayersSearchLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث بالاسم أو رقم الهاتف'**
+  String get clubPlayersSearchLabel;
+
+  /// No description provided for @clubPlayersAnyFilterOption.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get clubPlayersAnyFilterOption;
+
+  /// No description provided for @clubPlayersSportFilterLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرياضة'**
+  String get clubPlayersSportFilterLabel;
+
+  /// No description provided for @clubPlayersPositionFilterLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المركز'**
+  String get clubPlayersPositionFilterLabel;
+
+  /// No description provided for @clubPlayersNoSearchResults.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد لاعبون مطابقون لهذا البحث/الفلاتر.'**
+  String get clubPlayersNoSearchResults;
+
   /// No description provided for @minAgeLabel.
   ///
   /// In ar, this message translates to:

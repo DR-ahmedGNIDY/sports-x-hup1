@@ -334,6 +334,12 @@
   "clubPlayerRemoveConfirm": "إزالة",
   "clubPlayerRemovedMessage": "تمت إزالة اللاعب من ناديك.",
 
+  "clubPlayersSearchLabel": "البحث بالاسم أو رقم الهاتف",
+  "clubPlayersAnyFilterOption": "الكل",
+  "clubPlayersSportFilterLabel": "الرياضة",
+  "clubPlayersPositionFilterLabel": "المركز",
+  "clubPlayersNoSearchResults": "لا يوجد لاعبون مطابقون لهذا البحث/الفلاتر.",
+
   "minAgeLabel": "أقل عمر",
   "maxAgeLabel": "أكبر عمر",
   "minHeightLabel": "أقل طول (سم)",

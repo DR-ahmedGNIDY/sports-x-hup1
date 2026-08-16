@@ -23,6 +23,14 @@ const COMPLETION_CHECKS: Record<
   socialLinks: (p) => p.socialLinks.length > 0,
 };
 
+// The single canonical "is this profile complete" check — used by both
+// GET /players/me/stats (the Player's own completion card) and the Club
+// Dashboard summary (GET /club-players/summary), so the two can never
+// silently disagree about what "complete" means.
+export function isProfileComplete(profile: PlayerProfileDocument): boolean {
+  return Object.values(COMPLETION_CHECKS).every((check) => check(profile));
+}
+
 function ageFromDateOfBirth(dateOfBirth?: Date): number | undefined {
   if (!dateOfBirth) return undefined;
   const diffMs = Date.now() - dateOfBirth.getTime();
