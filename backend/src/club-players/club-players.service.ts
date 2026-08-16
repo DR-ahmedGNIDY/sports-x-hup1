@@ -162,6 +162,16 @@ export class ClubPlayersService {
     return { profile, dialCode: ownership.dialCode };
   }
 
+  // Removes only the club's ownership record — the player's User account
+  // and PlayerProfile are untouched and stay fully usable (they can still
+  // log in, their profile stays visible per its own visibility setting).
+  // Deliberately not the same operation as deleting a player's account;
+  // callers must not conflate the two.
+  async removeFromClub(clubId: string, userId: string): Promise<void> {
+    const ownership = await this.requireOwnership(clubId, userId);
+    await this.clubManagedPlayerModel.deleteOne({ _id: ownership._id });
+  }
+
   // Old password is unrecoverable once hashed, so "resend" really means
   // "issue a new one" — used both for a lost first message and for
   // deliberate rotation.

@@ -20,12 +20,13 @@ describe('ClubPlayersService', () => {
         .fn()
         .mockResolvedValue(
           overrides.clubManagedPlayer === undefined
-            ? { clubId: 'club-1', userId: 'player-1' }
+            ? { _id: 'ownership-1', clubId: 'club-1', userId: 'player-1' }
             : overrides.clubManagedPlayer,
         ),
       find: jest.fn().mockReturnValue({
         sort: jest.fn().mockResolvedValue([]),
       }),
+      deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
     };
     const usersService = {
       createClubManagedPlayer: jest
@@ -134,5 +135,26 @@ describe('ClubPlayersService', () => {
     await expect(
       service.resendCredentials('club-1', 'player-1'),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('removes only the ownership record for a club-owned player', async () => {
+    const { service, clubManagedPlayerModel } = buildService();
+
+    await service.removeFromClub('club-1', 'player-1');
+
+    expect(clubManagedPlayerModel.deleteOne).toHaveBeenCalledWith({
+      _id: 'ownership-1',
+    });
+    // The player's own account/profile is never touched by this operation.
+    expect(clubManagedPlayerModel.deleteOne).not.toHaveBeenCalledWith(
+      expect.objectContaining({ userId: expect.anything() }),
+    );
+  });
+
+  it('blocks removing a player another club owns', async () => {
+    const { service } = buildService({ clubManagedPlayer: null });
+    await expect(
+      service.removeFromClub('club-1', 'someone-elses-player'),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });

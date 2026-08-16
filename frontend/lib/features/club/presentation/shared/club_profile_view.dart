@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/club_profile.dart';
+import 'club_level_labels.dart';
 
 /// Read-only rendering of a [ClubProfile] — used by My Club Profile.
 class ClubProfileView extends StatelessWidget {
@@ -69,8 +70,8 @@ class ClubProfileView extends StatelessWidget {
           children: [
             if (profile.foundedYear != null)
               _Stat(label: l10n.foundedStatLabel, value: '${profile.foundedYear}'),
-            if (profile.level != null && profile.level!.isNotEmpty)
-              _Stat(label: l10n.levelLabel, value: profile.level!),
+            if (clubLevelDisplayValue(l10n, profile.level) case final level?)
+              _Stat(label: l10n.levelLabel, value: level),
           ],
         ),
       ],

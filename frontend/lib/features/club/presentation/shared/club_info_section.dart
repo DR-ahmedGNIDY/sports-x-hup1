@@ -6,6 +6,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../player/application/lookup_providers.dart';
 import '../../application/club_profile_controller.dart';
+import '../../domain/entities/club_level.dart';
+import 'club_level_labels.dart';
 
 /// Club identity — name, country, city, description, founded year, level.
 class ClubInfoSection extends ConsumerStatefulWidget {
@@ -20,8 +22,17 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
   final _city = TextEditingController();
   final _description = TextEditingController();
   final _foundedYear = TextEditingController();
-  final _level = TextEditingController();
   String? _country;
+
+  // `null` covers two different cases the save logic must tell apart:
+  // "the club hasn't picked a level yet" and "the stored value is legacy
+  // free text this dropdown doesn't represent" — see [_legacyLevel] for
+  // the second one. Either way, leaving this null means `level` is
+  // omitted from the save request entirely (see `_save`), so a legacy
+  // value already on the profile is never overwritten just because the
+  // club edited an unrelated field.
+  ClubLevel? _level;
+  String? _legacyLevel;
   bool _initialized = false;
   bool _saving = false;
   String? _error;
@@ -32,7 +43,6 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
     _city.dispose();
     _description.dispose();
     _foundedYear.dispose();
-    _level.dispose();
     super.dispose();
   }
 
@@ -43,8 +53,11 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
     _city.text = profile.city ?? '';
     _description.text = profile.description ?? '';
     _foundedYear.text = profile.foundedYear?.toString() ?? '';
-    _level.text = profile.level ?? '';
     _country = profile.country;
+    _level = ClubLevel.fromWire(profile.level);
+    _legacyLevel = (_level == null && profile.level != null && profile.level!.isNotEmpty)
+        ? profile.level
+        : null;
     _initialized = true;
   }
 
@@ -62,8 +75,12 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
             city: _city.text.trim(),
             description: _description.text.trim(),
             foundedYear: int.tryParse(_foundedYear.text),
-            level: _level.text.trim(),
+            // Omitted (not sent as empty/null) when the club never picked
+            // a value from the dropdown — see the `_level` doc comment.
+            level: _level?.wireValue,
           );
+      // A freshly-picked value replaces whatever legacy text was showing.
+      if (_level != null) setState(() => _legacyLevel = null);
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -117,12 +134,19 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
           decoration: InputDecoration(labelText: l10n.foundedYearLabel),
         ),
         const SizedBox(height: 12),
-        TextField(
-          controller: _level,
+        DropdownButtonFormField<ClubLevel>(
+          initialValue: _level,
           decoration: InputDecoration(
             labelText: l10n.levelLabel,
-            hintText: l10n.levelHint,
+            helperText: _legacyLevel != null
+                ? l10n.clubLevelLegacyValueHint(_legacyLevel!)
+                : null,
+            helperMaxLines: 2,
           ),
+          items: ClubLevel.values
+              .map((level) => DropdownMenuItem(value: level, child: Text(clubLevelLabel(l10n, level))))
+              .toList(),
+          onChanged: (value) => setState(() => _level = value),
         ),
         if (_error != null) ...[
           const SizedBox(height: 8),

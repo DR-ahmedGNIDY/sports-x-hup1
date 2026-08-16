@@ -35,6 +35,38 @@ Future<void> _openWhatsApp({
   return launchUrl(uri, mode: LaunchMode.externalApplication);
 }
 
+/// Issues a fresh password for [player] (invalidating any earlier one —
+/// there's no plaintext password on hand outside the create response) and
+/// opens WhatsApp with it. Shared by [ResendCredentialsWhatsAppButton] and
+/// the roster card's overflow-menu "Resend credentials" action, so both
+/// entry points go through the identical flow.
+Future<void> resendCredentialsAndOpenWhatsApp(
+  BuildContext context,
+  WidgetRef ref,
+  ClubManagedPlayer player,
+) async {
+  final l10n = AppLocalizations.of(context)!;
+  try {
+    final credentials = await ref
+        .read(clubPlayersControllerProvider.notifier)
+        .resendCredentials(player.userId);
+    if (!context.mounted) return;
+    final clubName = ref.read(clubProfileControllerProvider).value?.name ?? '';
+    await _openWhatsApp(
+      phone: credentials.username,
+      message: _credentialsMessage(
+        l10n: l10n,
+        firstName: player.profile.firstName ?? '',
+        clubName: clubName,
+        credentials: credentials,
+      ),
+    );
+  } on AppException catch (e) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+  }
+}
+
 /// Right after a player is created, the create response already carries
 /// the one-time plaintext password — this opens WhatsApp with it directly,
 /// no extra request needed.
@@ -86,29 +118,9 @@ class _ResendCredentialsWhatsAppButtonState
   bool _sending = false;
 
   Future<void> _resendAndSend() async {
-    final l10n = AppLocalizations.of(context)!;
     setState(() => _sending = true);
-    try {
-      final credentials = await ref
-          .read(clubPlayersControllerProvider.notifier)
-          .resendCredentials(widget.player.userId);
-      if (!mounted) return;
-      final clubName = ref.read(clubProfileControllerProvider).value?.name ?? '';
-      await _openWhatsApp(
-        phone: credentials.username,
-        message: _credentialsMessage(
-          l10n: l10n,
-          firstName: widget.player.profile.firstName ?? '',
-          clubName: clubName,
-          credentials: credentials,
-        ),
-      );
-    } on AppException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
-    } finally {
-      if (mounted) setState(() => _sending = false);
-    }
+    await resendCredentialsAndOpenWhatsApp(context, ref, widget.player);
+    if (mounted) setState(() => _sending = false);
   }
 
   @override

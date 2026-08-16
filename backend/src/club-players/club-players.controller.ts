@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -90,6 +92,15 @@ export class ClubPlayersController {
       file,
     );
     return { ...toOwnerView(profile), dialCode };
+  }
+
+  @Delete(':playerId')
+  @HttpCode(204)
+  async remove(
+    @CurrentUser() user: JwtPayload,
+    @Param('playerId') playerId: string,
+  ) {
+    await this.clubPlayersService.removeFromClub(user.sub, playerId);
   }
 
   @Post(':playerId/resend-credentials')

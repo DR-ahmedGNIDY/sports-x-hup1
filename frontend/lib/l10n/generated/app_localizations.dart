@@ -1454,11 +1454,29 @@ abstract class AppLocalizations {
   /// **'المستوى'**
   String get levelLabel;
 
-  /// No description provided for @levelHint.
+  /// No description provided for @clubLevelAmateur.
   ///
   /// In ar, this message translates to:
-  /// **'احترافي، هاوٍ، أكاديمية…'**
-  String get levelHint;
+  /// **'هاوٍ'**
+  String get clubLevelAmateur;
+
+  /// No description provided for @clubLevelSemiProfessional.
+  ///
+  /// In ar, this message translates to:
+  /// **'شبه محترف'**
+  String get clubLevelSemiProfessional;
+
+  /// No description provided for @clubLevelProfessional.
+  ///
+  /// In ar, this message translates to:
+  /// **'محترف'**
+  String get clubLevelProfessional;
+
+  /// No description provided for @clubLevelLegacyValueHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'القيمة الحالية: {value}'**
+  String clubLevelLegacyValueHint(String value);
 
   /// No description provided for @foundedStatLabel.
   ///
@@ -1710,6 +1728,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'أُضيف في {date}'**
   String clubDashboardAddedOnLabel(String date);
+
+  /// No description provided for @clubPlayerEditTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل بيانات اللاعب'**
+  String get clubPlayerEditTitle;
+
+  /// No description provided for @clubPlayerViewAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الملف الشخصي'**
+  String get clubPlayerViewAction;
+
+  /// No description provided for @clubPlayerEditAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل'**
+  String get clubPlayerEditAction;
+
+  /// No description provided for @clubPlayerRemoveAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة من النادي'**
+  String get clubPlayerRemoveAction;
+
+  /// No description provided for @clubPlayerRemoveTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة هذا اللاعب من ناديك؟'**
+  String get clubPlayerRemoveTitle;
+
+  /// No description provided for @clubPlayerRemoveContent.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيظل حساب اللاعب متاحًا وملفه الشخصي كما هو — سيفقد ناديك فقط صلاحية إدارته.'**
+  String get clubPlayerRemoveContent;
+
+  /// No description provided for @clubPlayerRemoveConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة'**
+  String get clubPlayerRemoveConfirm;
+
+  /// No description provided for @clubPlayerRemovedMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت إزالة اللاعب من ناديك.'**
+  String get clubPlayerRemovedMessage;
 
   /// No description provided for @minAgeLabel.
   ///

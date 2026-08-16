@@ -48,6 +48,30 @@ class ClubPlayersRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
+  Future<Map<String, dynamic>> update(
+    String accessToken,
+    String userId,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _client.patch(
+      '/club-players/$userId',
+      headers: _bearer(accessToken),
+      body: body,
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
+  Future<void> remove(String accessToken, String userId) async {
+    final response = await _client.delete(
+      '/club-players/$userId',
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw apiExceptionFromResponse(response);
+    }
+  }
+
   Future<Map<String, dynamic>> uploadPhoto(
     String accessToken,
     String userId, {

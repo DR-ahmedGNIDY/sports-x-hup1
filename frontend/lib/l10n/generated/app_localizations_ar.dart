@@ -713,7 +713,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get levelLabel => 'المستوى';
 
   @override
-  String get levelHint => 'احترافي، هاوٍ، أكاديمية…';
+  String get clubLevelAmateur => 'هاوٍ';
+
+  @override
+  String get clubLevelSemiProfessional => 'شبه محترف';
+
+  @override
+  String get clubLevelProfessional => 'محترف';
+
+  @override
+  String clubLevelLegacyValueHint(String value) {
+    return 'القيمة الحالية: $value';
+  }
 
   @override
   String get foundedStatLabel => 'التأسيس';
@@ -853,6 +864,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String clubDashboardAddedOnLabel(String date) {
     return 'أُضيف في $date';
   }
+
+  @override
+  String get clubPlayerEditTitle => 'تعديل بيانات اللاعب';
+
+  @override
+  String get clubPlayerViewAction => 'عرض الملف الشخصي';
+
+  @override
+  String get clubPlayerEditAction => 'تعديل';
+
+  @override
+  String get clubPlayerRemoveAction => 'إزالة من النادي';
+
+  @override
+  String get clubPlayerRemoveTitle => 'إزالة هذا اللاعب من ناديك؟';
+
+  @override
+  String get clubPlayerRemoveContent =>
+      'سيظل حساب اللاعب متاحًا وملفه الشخصي كما هو — سيفقد ناديك فقط صلاحية إدارته.';
+
+  @override
+  String get clubPlayerRemoveConfirm => 'إزالة';
+
+  @override
+  String get clubPlayerRemovedMessage => 'تمت إزالة اللاعب من ناديك.';
 
   @override
   String get minAgeLabel => 'أقل عمر';

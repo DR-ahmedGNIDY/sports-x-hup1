@@ -16,6 +16,7 @@ import '../../features/club/presentation/public_club_profile_page.dart';
 import '../../features/club/presentation/public_clubs_listing_page.dart';
 import '../../features/club_players/presentation/add_club_player_page.dart';
 import '../../features/club_players/presentation/club_players_page.dart';
+import '../../features/club_players/presentation/edit_club_player_page.dart';
 import '../../features/community/presentation/community_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/marketing/presentation/about_page.dart';
@@ -194,6 +195,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/club/players/new',
             builder: (context, state) => const AddClubPlayerPage(),
+          ),
+          GoRoute(
+            path: '/club/players/:userId/edit',
+            builder: (context, state) =>
+                EditClubPlayerPage(userId: state.pathParameters['userId']!),
           ),
           GoRoute(path: '/admin/users', builder: (context, state) => const AdminUsersPage()),
           GoRoute(

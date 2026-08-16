@@ -1,4 +1,13 @@
-import { IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
+import { ClubLevel } from '../club-level.enum';
 
 const MIN_FOUNDED_YEAR = 1800;
 const MAX_FOUNDED_YEAR = 2100;
@@ -30,8 +39,9 @@ export class UpdateClubProfileDto {
   @Max(MAX_FOUNDED_YEAR)
   foundedYear?: number;
 
+  // Controlled values only for new writes — see club-level.enum.ts for why
+  // this doesn't also change the schema/storage type.
   @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  level?: string;
+  @IsEnum(ClubLevel)
+  level?: ClubLevel;
 }

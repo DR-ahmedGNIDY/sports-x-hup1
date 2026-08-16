@@ -11,9 +11,32 @@ import '../../domain/entities/basketball_position.dart';
 import '../../domain/entities/contact_details.dart';
 import '../../domain/entities/football_position.dart';
 import '../../domain/entities/player_enums.dart';
+import '../../domain/entities/player_profile.dart';
 import 'basketball_position_editor_types.dart';
 import 'football_position_editor_types.dart';
 import 'player_enum_labels.dart';
+
+/// Matches [PlayerProfileController.saveProfile]'s signature exactly, so
+/// that notifier method can be passed directly as [ProfileDetailsForm.onSave]
+/// with no wrapper needed.
+typedef ProfileDetailsSaveCallback =
+    Future<void> Function({
+      String? firstName,
+      String? lastName,
+      DateTime? dateOfBirth,
+      String? nationality,
+      String? country,
+      String? city,
+      String? sport,
+      String? position,
+      PreferredFoot? preferredFoot,
+      num? height,
+      num? weight,
+      String? currentStatus,
+      String? currentClub,
+      String? bio,
+      ContactDetails? contact,
+    });
 
 /// Personal info + sports info + bio/contact, merged into one form with a
 /// single Save action instead of three separate section-level "Save"
@@ -29,15 +52,41 @@ import 'player_enum_labels.dart';
 /// never branches on platform itself; it only owns the parsed
 /// `_footballPositions` / `_basketballPositions` state and keeps the
 /// underlying `position` string in sync with whichever sport is active.
+///
+/// [initialProfile]/[onSave]/[onSaved] default to the signed-in Player's
+/// own profile (via [playerProfileControllerProvider]) — the Player's own
+/// Edit Profile page doesn't pass them and behaves exactly as before. The
+/// Club's Edit Managed Player page passes all three so this same form/
+/// validation/position-picker logic edits a specific managed player
+/// instead, without duplicating any of it.
 class ProfileDetailsForm extends ConsumerStatefulWidget {
   const ProfileDetailsForm({
     super.key,
     required this.footballPositionEditorBuilder,
     required this.basketballPositionEditorBuilder,
+    this.initialProfile,
+    this.onSave,
+    this.onSaved,
+    this.saveLabel,
   });
 
   final FootballPositionEditorBuilder footballPositionEditorBuilder;
   final BasketballPositionEditorBuilder basketballPositionEditorBuilder;
+
+  /// Overrides reading the signed-in Player's own profile.
+  final PlayerProfile? initialProfile;
+
+  /// Overrides [PlayerProfileController.saveProfile] as the save action.
+  final ProfileDetailsSaveCallback? onSave;
+
+  /// Overrides navigating to `/player/preview` after a successful save.
+  final VoidCallback? onSaved;
+
+  /// Overrides the Save button's label — the default
+  /// "Save and view profile" wording assumes [onSaved] lands on the
+  /// Player's own profile, which isn't true for the Club's Edit Managed
+  /// Player page.
+  final String? saveLabel;
 
   @override
   ConsumerState<ProfileDetailsForm> createState() => _ProfileDetailsFormState();
@@ -87,7 +136,7 @@ class _ProfileDetailsFormState extends ConsumerState<ProfileDetailsForm> {
   }
 
   void _initFromProfile() {
-    final profile = ref.read(playerProfileControllerProvider).value;
+    final profile = widget.initialProfile ?? ref.read(playerProfileControllerProvider).value;
     if (profile == null || _initialized) return;
     _firstName.text = profile.firstName ?? '';
     _lastName.text = profile.lastName ?? '';
@@ -182,30 +231,35 @@ class _ProfileDetailsFormState extends ConsumerState<ProfileDetailsForm> {
       _error = null;
     });
     try {
-      await ref
-          .read(playerProfileControllerProvider.notifier)
-          .saveProfile(
-            firstName: _firstName.text.trim(),
-            lastName: _lastName.text.trim(),
-            dateOfBirth: _dateOfBirth,
-            nationality: _nationality.text.trim(),
-            country: _country,
-            city: _city.text.trim(),
-            sport: _sport,
-            position: _position.text.trim(),
-            preferredFoot: _preferredFoot,
-            height: num.tryParse(_height.text),
-            weight: num.tryParse(_weight.text),
-            currentStatus: _currentStatus.text.trim(),
-            currentClub: _currentClub.text.trim(),
-            bio: _bio.text.trim(),
-            contact: ContactDetails(
-              phone: _phone.text.trim().isEmpty ? null : _phone.text.trim(),
-              email: _email.text.trim().isEmpty ? null : _email.text.trim(),
-              whatsapp: _whatsapp.text.trim().isEmpty ? null : _whatsapp.text.trim(),
-            ),
-          );
-      if (mounted) context.go('/player/preview');
+      final save = widget.onSave ?? ref.read(playerProfileControllerProvider.notifier).saveProfile;
+      await save(
+        firstName: _firstName.text.trim(),
+        lastName: _lastName.text.trim(),
+        dateOfBirth: _dateOfBirth,
+        nationality: _nationality.text.trim(),
+        country: _country,
+        city: _city.text.trim(),
+        sport: _sport,
+        position: _position.text.trim(),
+        preferredFoot: _preferredFoot,
+        height: num.tryParse(_height.text),
+        weight: num.tryParse(_weight.text),
+        currentStatus: _currentStatus.text.trim(),
+        currentClub: _currentClub.text.trim(),
+        bio: _bio.text.trim(),
+        contact: ContactDetails(
+          phone: _phone.text.trim().isEmpty ? null : _phone.text.trim(),
+          email: _email.text.trim().isEmpty ? null : _email.text.trim(),
+          whatsapp: _whatsapp.text.trim().isEmpty ? null : _whatsapp.text.trim(),
+        ),
+      );
+      if (mounted) {
+        if (widget.onSaved != null) {
+          widget.onSaved!();
+        } else {
+          context.go('/player/preview');
+        }
+      }
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -377,7 +431,7 @@ class _ProfileDetailsFormState extends ConsumerState<ProfileDetailsForm> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.check),
-          label: Text(l10n.saveAndViewProfileLabel),
+          label: Text(widget.saveLabel ?? l10n.saveAndViewProfileLabel),
         ),
       ],
     );

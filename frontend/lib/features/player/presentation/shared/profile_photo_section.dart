@@ -7,13 +7,30 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 
+typedef ProfilePhotoUploadCallback =
+    Future<void> Function({required List<int> bytes, required String filename});
+
 /// Dedicated profile-photo uploader — separate from the general
 /// [MediaSection] gallery so "set my profile picture" is its own obvious
 /// control (mirrors ClubLogoSection) instead of an implicit side effect of
 /// adding a gallery photo. Uploads immediately on pick, like the gallery
 /// and the club logo — there's nothing to "save" here.
+///
+/// [photoUrl]/[onUpload] default to the signed-in Player's own profile
+/// (via [playerProfileControllerProvider]); the Club's Edit Managed
+/// Player page passes both so the same uploader targets a specific
+/// managed player instead.
 class ProfilePhotoSection extends ConsumerStatefulWidget {
-  const ProfilePhotoSection({super.key});
+  const ProfilePhotoSection({super.key, this.photoUrl, this.onUpload});
+
+  /// Overrides reading the signed-in Player's own photo. Only meaningful
+  /// together with [onUpload] — without it, this stays null while the
+  /// widget still reads the Player's own profile as before.
+  final String? photoUrl;
+
+  /// Overrides [PlayerProfileController.uploadProfilePhoto] as the upload
+  /// action.
+  final ProfilePhotoUploadCallback? onUpload;
 
   @override
   ConsumerState<ProfilePhotoSection> createState() => _ProfilePhotoSectionState();
@@ -33,9 +50,9 @@ class _ProfilePhotoSectionState extends ConsumerState<ProfilePhotoSection> {
       _error = null;
     });
     try {
-      await ref
-          .read(playerProfileControllerProvider.notifier)
-          .uploadProfilePhoto(bytes: file.bytes!, filename: file.name);
+      final upload =
+          widget.onUpload ?? ref.read(playerProfileControllerProvider.notifier).uploadProfilePhoto;
+      await upload(bytes: file.bytes!, filename: file.name);
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -45,7 +62,9 @@ class _ProfilePhotoSectionState extends ConsumerState<ProfilePhotoSection> {
 
   @override
   Widget build(BuildContext context) {
-    final photoUrl = ref.watch(playerProfileControllerProvider).value?.profilePhoto?.secureUrl;
+    final photoUrl = widget.onUpload != null
+        ? widget.photoUrl
+        : ref.watch(playerProfileControllerProvider).value?.profilePhoto?.secureUrl;
     final l10n = AppLocalizations.of(context)!;
 
     final colorScheme = Theme.of(context).colorScheme;

@@ -723,7 +723,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get levelLabel => 'Level';
 
   @override
-  String get levelHint => 'Professional, Amateur, Academy…';
+  String get clubLevelAmateur => 'Amateur';
+
+  @override
+  String get clubLevelSemiProfessional => 'Semi-Professional';
+
+  @override
+  String get clubLevelProfessional => 'Professional';
+
+  @override
+  String clubLevelLegacyValueHint(String value) {
+    return 'Current value: $value';
+  }
 
   @override
   String get foundedStatLabel => 'Founded';
@@ -865,6 +876,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String clubDashboardAddedOnLabel(String date) {
     return 'Added on $date';
   }
+
+  @override
+  String get clubPlayerEditTitle => 'Edit Player';
+
+  @override
+  String get clubPlayerViewAction => 'View profile';
+
+  @override
+  String get clubPlayerEditAction => 'Edit';
+
+  @override
+  String get clubPlayerRemoveAction => 'Remove from club';
+
+  @override
+  String get clubPlayerRemoveTitle => 'Remove this player from your club?';
+
+  @override
+  String get clubPlayerRemoveContent =>
+      'The player\'s account and profile stay exactly as they are — your club just loses the ability to manage it.';
+
+  @override
+  String get clubPlayerRemoveConfirm => 'Remove';
+
+  @override
+  String get clubPlayerRemovedMessage => 'Player removed from your club.';
 
   @override
   String get minAgeLabel => 'Min age';

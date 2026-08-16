@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/authorized_request.dart';
 import '../../../../core/storage/session_storage.dart';
 import '../../../../core/storage/session_storage_provider.dart';
+import '../../../player/domain/entities/contact_details.dart';
+import '../../../player/domain/entities/player_enums.dart';
 import '../../domain/entities/club_managed_player.dart';
 import '../../domain/entities/club_player_credentials.dart';
 import '../../domain/entities/create_club_player_input.dart';
@@ -79,6 +81,50 @@ class ClubPlayersRepositoryImpl implements ClubPlayersRepository {
     );
     return ClubManagedPlayerModel.fromJson(json);
   });
+
+  @override
+  Future<ClubManagedPlayer> updatePlayer(
+    String userId, {
+    String? firstName,
+    String? lastName,
+    DateTime? dateOfBirth,
+    String? nationality,
+    String? country,
+    String? city,
+    String? sport,
+    String? position,
+    PreferredFoot? preferredFoot,
+    num? height,
+    num? weight,
+    String? currentStatus,
+    String? currentClub,
+    String? bio,
+    ContactDetails? contact,
+  }) => _authorized((token) async {
+    final body = updateClubPlayerInputToJson(
+      firstName: firstName,
+      lastName: lastName,
+      dateOfBirth: dateOfBirth,
+      nationality: nationality,
+      country: country,
+      city: city,
+      sport: sport,
+      position: position,
+      preferredFoot: preferredFoot?.wireValue,
+      height: height,
+      weight: weight,
+      currentStatus: currentStatus,
+      currentClub: currentClub,
+      bio: bio,
+      contact: contact,
+    );
+    final json = await _remote.update(token, userId, body);
+    return ClubManagedPlayerModel.fromJson(json);
+  });
+
+  @override
+  Future<void> removePlayer(String userId) =>
+      _authorized((token) => _remote.remove(token, userId));
 
   @override
   Future<ClubPlayerCredentials> resendCredentials(String userId) =>

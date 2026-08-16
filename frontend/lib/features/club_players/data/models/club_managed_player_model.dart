@@ -1,4 +1,5 @@
 import '../../../player/data/models/player_profile_model.dart';
+import '../../../player/domain/entities/contact_details.dart';
 import '../../domain/entities/club_managed_player.dart';
 import '../../domain/entities/club_player_credentials.dart';
 
@@ -22,6 +23,54 @@ extension ClubPlayerCredentialsModel on ClubPlayerCredentials {
       password: json['password'] as String,
     );
   }
+}
+
+Map<String, dynamic>? _contactToJson(ContactDetails? contact) {
+  if (contact == null) return null;
+  return {
+    'phone': ?contact.phone,
+    'email': ?contact.email,
+    'whatsapp': ?contact.whatsapp,
+  };
+}
+
+/// Body for `PATCH /club-players/:playerId` — same shape as
+/// `PlayerRepositoryImpl._contactToJson`/`updateMyProfile`'s request, since
+/// both hit the identical `UpdatePlayerProfileDto` on the backend.
+Map<String, dynamic> updateClubPlayerInputToJson({
+  String? firstName,
+  String? lastName,
+  DateTime? dateOfBirth,
+  String? nationality,
+  String? country,
+  String? city,
+  String? sport,
+  String? position,
+  String? preferredFoot,
+  num? height,
+  num? weight,
+  String? currentStatus,
+  String? currentClub,
+  String? bio,
+  ContactDetails? contact,
+}) {
+  return {
+    'firstName': ?firstName,
+    'lastName': ?lastName,
+    'dateOfBirth': ?dateOfBirth?.toIso8601String(),
+    'nationality': ?nationality,
+    'country': ?country,
+    'city': ?city,
+    'sport': ?sport,
+    'position': ?position,
+    'preferredFoot': ?preferredFoot,
+    'height': ?height,
+    'weight': ?weight,
+    'currentStatus': ?currentStatus,
+    'currentClub': ?currentClub,
+    'bio': ?bio,
+    'contact': ?_contactToJson(contact),
+  };
 }
 
 Map<String, dynamic> createClubPlayerInputToJson({
