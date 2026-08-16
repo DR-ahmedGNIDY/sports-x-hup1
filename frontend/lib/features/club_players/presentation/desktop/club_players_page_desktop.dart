@@ -5,9 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_players_controller.dart';
-import '../shared/club_managed_player_card.dart';
 import '../shared/club_players_pagination.dart';
 import '../shared/club_players_toolbar.dart';
+import 'club_players_roster_table.dart';
 
 class ClubPlayersPageDesktop extends ConsumerWidget {
   const ClubPlayersPageDesktop({super.key});
@@ -19,7 +19,7 @@ class ClubPlayersPageDesktop extends ConsumerWidget {
 
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 780),
+        constraints: const BoxConstraints(maxWidth: 960),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
           child: Column(
@@ -61,12 +61,9 @@ class ClubPlayersPageDesktop extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Expanded(
-                            child: ListView.separated(
+                            child: SingleChildScrollView(
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              itemCount: roster.items.length,
-                              separatorBuilder: (_, _) => const SizedBox(height: 12),
-                              itemBuilder: (context, index) =>
-                                  ClubManagedPlayerCard(player: roster.items[index]),
+                              child: ClubPlayersRosterTable(players: roster.items),
                             ),
                           ),
                           Padding(

@@ -70,6 +70,15 @@ New keys (`ar`+`en`): `clubPlayersSearchLabel`, `clubPlayersAnyFilterOption`, `c
   - Re-read the toolbar/pagination widgets for RTL: no hardcoded directional strings; `Icons.chevron_left`/`chevron_right` already auto-mirror in RTL (same reasoning `SearchPagination` already documented).
   - Reasoned through overflow risk: the toolbar's three fields sit in a `Wrap`, which reflows onto new lines on narrow screens rather than overflowing horizontally.
 
+## 12a. Post-Audit Refinement (Desktop Roster Table & Recent-Players Dedup)
+
+A follow-up audit against this phase's own record flagged two Medium findings, since fixed:
+
+- **Desktop roster table.** §7 above ("left as Phase 2 built it") was the audit's second finding — Desktop and Mobile were rendering the identical `ClubManagedPlayerCard` list, so a wide screen never got the higher-density, scannable layout the reference design called for. Desktop now has its own `ClubPlayersRosterTable` (`presentation/desktop/club_players_roster_table.dart`): a Player/Sport/Position/Status/Phone/Actions table with row hover, dividers, and inline Edit/Resend-WhatsApp/overflow(View·Remove) actions — reusing the same `removePlayer`/`resendCredentialsAndOpenWhatsApp` calls the card already used, so ownership checks and behavior are unchanged. Mobile is untouched — it still renders `ClubManagedPlayerCard`. "Status" uses the existing `currentStatus` free-text field (the only per-player status-shaped field the API returns); no new column invents data that doesn't exist. Two new ARB keys were added for the header (`clubPlayersTableColumnPlayer`, `clubPlayersTableColumnActions`); every other header reuses existing keys (`sportLabel`, `positionLabel`, `currentStatusLabel`, `phoneLabel`).
+- **Recent Players deduplication.** The Dashboard's "Recent Players" block (title row + empty-state-or-card-list) was copy-pasted between `dashboard_page_desktop.dart` and `dashboard_page_mobile.dart`. It's now one shared `ClubDashboardRecentPlayersSection` widget in `club_dashboard_widgets.dart`, used by both. The surrounding stat-tile and quick-action layouts — which genuinely differ per platform — were left alone.
+
+No backend, API, or route changes were needed for either fix.
+
 ## 12. Known Limitations
 
 - **No live end-to-end run** — same limitation as Phases 1–2. Recommend a manual QA pass with a club that has 0, a few, and 25+ players (to actually exercise pagination), plus search/filter combinations, in both languages and both breakpoints, before shipping.

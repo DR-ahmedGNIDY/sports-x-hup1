@@ -339,6 +339,8 @@
   "clubPlayersSportFilterLabel": "Sport",
   "clubPlayersPositionFilterLabel": "Position",
   "clubPlayersNoSearchResults": "No players match this search/filters.",
+  "clubPlayersTableColumnPlayer": "Player",
+  "clubPlayersTableColumnActions": "Actions",
 
   "minAgeLabel": "Min age",
   "maxAgeLabel": "Max age",

@@ -167,38 +167,7 @@ class _ClubDashboardBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(l10n.clubDashboardRecentPlayersTitle, style: Theme.of(context).textTheme.titleMedium),
-            if (summary.totalPlayers > 0)
-              TextButton(
-                onPressed: () => context.go('/club/players'),
-                child: Text(l10n.clubDashboardViewAllLabel),
-              ),
-          ],
-        ),
-        if (summary.recentPlayers.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Text(
-              l10n.clubDashboardEmptyStateHint,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          )
-        else
-          Card(
-            margin: EdgeInsets.zero,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Column(
-                children: [
-                  for (final player in summary.recentPlayers)
-                    ClubDashboardRecentPlayerTile(player: player),
-                ],
-              ),
-            ),
-          ),
+        ClubDashboardRecentPlayersSection(summary: summary),
       ],
     );
   }

@@ -919,6 +919,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'No players match this search/filters.';
 
   @override
+  String get clubPlayersTableColumnPlayer => 'Player';
+
+  @override
+  String get clubPlayersTableColumnActions => 'Actions';
+
+  @override
   String get minAgeLabel => 'Min age';
 
   @override

@@ -1807,6 +1807,18 @@ abstract class AppLocalizations {
   /// **'لا يوجد لاعبون مطابقون لهذا البحث/الفلاتر.'**
   String get clubPlayersNoSearchResults;
 
+  /// No description provided for @clubPlayersTableColumnPlayer.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللاعب'**
+  String get clubPlayersTableColumnPlayer;
+
+  /// No description provided for @clubPlayersTableColumnActions.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجراءات'**
+  String get clubPlayersTableColumnActions;
+
   /// No description provided for @minAgeLabel.
   ///
   /// In ar, this message translates to:

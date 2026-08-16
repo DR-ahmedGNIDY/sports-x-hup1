@@ -907,6 +907,12 @@ class AppLocalizationsAr extends AppLocalizations {
       'لا يوجد لاعبون مطابقون لهذا البحث/الفلاتر.';
 
   @override
+  String get clubPlayersTableColumnPlayer => 'اللاعب';
+
+  @override
+  String get clubPlayersTableColumnActions => 'الإجراءات';
+
+  @override
   String get minAgeLabel => 'أقل عمر';
 
   @override

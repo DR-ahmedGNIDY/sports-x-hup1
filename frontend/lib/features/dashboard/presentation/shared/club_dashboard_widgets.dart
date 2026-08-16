@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../club_players/domain/entities/club_dashboard_summary.dart';
 import '../../../club_players/domain/entities/club_managed_player.dart';
 
 /// One stat in the Club Dashboard's summary row (total / complete /
@@ -100,6 +101,61 @@ class ClubDashboardRecentPlayerTile extends StatelessWidget {
             )
           : null,
       onTap: () => context.go('/club/players'),
+    );
+  }
+}
+
+/// The "Recently added players" section body — title row (+ "View all"
+/// once there are players) followed by either the empty-state hint or a
+/// card list of [ClubDashboardRecentPlayerTile]s. Desktop and Mobile were
+/// rendering this identically inside their own `_ClubDashboardBody`, so it
+/// now lives here once; only the surrounding stat-tile/quick-action layout
+/// around it still differs per platform.
+class ClubDashboardRecentPlayersSection extends StatelessWidget {
+  const ClubDashboardRecentPlayersSection({super.key, required this.summary});
+
+  final ClubDashboardSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(l10n.clubDashboardRecentPlayersTitle, style: Theme.of(context).textTheme.titleMedium),
+            if (summary.totalPlayers > 0)
+              TextButton(
+                onPressed: () => context.go('/club/players'),
+                child: Text(l10n.clubDashboardViewAllLabel),
+              ),
+          ],
+        ),
+        if (summary.recentPlayers.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Text(
+              l10n.clubDashboardEmptyStateHint,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          )
+        else
+          Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Column(
+                children: [
+                  for (final player in summary.recentPlayers)
+                    ClubDashboardRecentPlayerTile(player: player),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
