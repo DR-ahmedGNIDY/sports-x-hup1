@@ -241,6 +241,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filtersTooltip => 'Filters';
 
   @override
+  String get playerSearchNameLabel => 'Search player name';
+
+  @override
+  String searchResultsCountLabel(int count) {
+    return '$count players found';
+  }
+
+  @override
   String get clubsListingTitle => 'Clubs on Sport X Hub';
 
   @override

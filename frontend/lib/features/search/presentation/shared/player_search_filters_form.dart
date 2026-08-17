@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../player/application/lookup_providers.dart';
 import '../../../player/domain/entities/player_enums.dart';
+import '../../../player/presentation/shared/player_enum_labels.dart';
 import '../../domain/entities/player_search_filters.dart';
 
 /// The 7 filters from the roadmap (Country, Age, Position, Height, Weight,
@@ -58,6 +60,10 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
   void _apply() {
     widget.onApply(
       PlayerSearchFilters(
+        // Not owned by this form — the toolbar's separate search box sets
+        // it via `PlayerSearchController.updateSearch`; preserve whatever
+        // is currently active so applying other filters doesn't clear it.
+        search: widget.initialFilters.search,
         country: _country,
         minAge: int.tryParse(_minAge.text),
         maxAge: int.tryParse(_maxAge.text),
@@ -73,20 +79,21 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final sports = ref.watch(sportsProvider);
     final countries = ref.watch(countriesProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Filters', style: Theme.of(context).textTheme.titleMedium),
+        Text(l10n.filtersTooltip, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
         sports.when(
           data: (options) => DropdownButtonFormField<String>(
             initialValue: _sport,
-            decoration: const InputDecoration(labelText: 'Sport'),
+            decoration: InputDecoration(labelText: l10n.sportLabel),
             items: [
-              const DropdownMenuItem<String>(child: Text('Any')),
+              DropdownMenuItem<String>(child: Text(l10n.clubPlayersAnyFilterOption)),
               ...options.map((o) => DropdownMenuItem(value: o.name, child: Text(o.name))),
             ],
             onChanged: (value) => setState(() => _sport = value),
@@ -97,15 +104,15 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
         const SizedBox(height: 12),
         TextField(
           controller: _position,
-          decoration: const InputDecoration(labelText: 'Position'),
+          decoration: InputDecoration(labelText: l10n.positionLabel),
         ),
         const SizedBox(height: 12),
         countries.when(
           data: (options) => DropdownButtonFormField<String>(
             initialValue: _country,
-            decoration: const InputDecoration(labelText: 'Country'),
+            decoration: InputDecoration(labelText: l10n.countryLabel),
             items: [
-              const DropdownMenuItem<String>(child: Text('Any')),
+              DropdownMenuItem<String>(child: Text(l10n.clubPlayersAnyFilterOption)),
               ...options.map((o) => DropdownMenuItem(value: o.name, child: Text(o.name))),
             ],
             onChanged: (value) => setState(() => _country = value),
@@ -120,7 +127,7 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
               child: TextField(
                 controller: _minAge,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Min age'),
+                decoration: InputDecoration(labelText: l10n.minAgeLabel),
               ),
             ),
             const SizedBox(width: 12),
@@ -128,7 +135,7 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
               child: TextField(
                 controller: _maxAge,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Max age'),
+                decoration: InputDecoration(labelText: l10n.maxAgeLabel),
               ),
             ),
           ],
@@ -140,7 +147,7 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
               child: TextField(
                 controller: _minHeight,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Min height (cm)'),
+                decoration: InputDecoration(labelText: l10n.minHeightLabel),
               ),
             ),
             const SizedBox(width: 12),
@@ -148,7 +155,7 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
               child: TextField(
                 controller: _maxHeight,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Max height (cm)'),
+                decoration: InputDecoration(labelText: l10n.maxHeightLabel),
               ),
             ),
           ],
@@ -157,22 +164,22 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
         TextField(
           controller: _weight,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(labelText: 'Weight (kg)'),
+          decoration: InputDecoration(labelText: l10n.weightLabel),
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<PreferredFoot>(
           initialValue: _preferredFoot,
-          decoration: const InputDecoration(labelText: 'Preferred foot'),
+          decoration: InputDecoration(labelText: l10n.preferredFootLabel),
           items: [
-            const DropdownMenuItem<PreferredFoot>(child: Text('Any')),
+            DropdownMenuItem<PreferredFoot>(child: Text(l10n.clubPlayersAnyFilterOption)),
             ...PreferredFoot.values.map(
-              (f) => DropdownMenuItem(value: f, child: Text(f.label)),
+              (f) => DropdownMenuItem(value: f, child: Text(preferredFootLabel(l10n, f))),
             ),
           ],
           onChanged: (value) => setState(() => _preferredFoot = value),
         ),
         const SizedBox(height: 16),
-        FilledButton(onPressed: _apply, child: const Text('Apply filters')),
+        FilledButton(onPressed: _apply, child: Text(l10n.applyFiltersLabel)),
       ],
     );
   }

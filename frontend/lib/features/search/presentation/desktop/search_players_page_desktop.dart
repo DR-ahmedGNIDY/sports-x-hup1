@@ -7,6 +7,7 @@ import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../player/presentation/shared/player_search_result_card.dart';
 import '../../application/search_controller.dart';
+import '../shared/player_search_box.dart';
 import '../shared/player_search_filters_form.dart';
 import '../shared/search_pagination.dart';
 
@@ -44,18 +45,30 @@ class SearchPlayersPageDesktop extends ConsumerWidget {
               children: [
                 Text(l10n.dashboardSearchPlayers, style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 16),
+                const PlayerSearchBox(),
+                const SizedBox(height: 8),
+                resultsAsync.maybeWhen(
+                  data: (page) => Text(
+                    l10n.searchResultsCountLabel(page.total),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  ),
+                  orElse: () => const SizedBox.shrink(),
+                ),
+                const SizedBox(height: 8),
                 Expanded(
                   child: resultsAsync.when(
                     data: (page) => page.items.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                EmptyStateIllustration(
+                                const EmptyStateIllustration(
                                   variant: EmptyStateVariant.noResults,
                                 ),
-                                SizedBox(height: AppSpacing.md),
-                                Text('No players match these filters.'),
+                                const SizedBox(height: AppSpacing.md),
+                                Text(l10n.playersNoResults),
                               ],
                             ),
                           )

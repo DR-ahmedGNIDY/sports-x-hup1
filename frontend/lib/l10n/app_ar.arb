@@ -84,6 +84,9 @@
 
   "playersNoResults": "لا يوجد لاعبون مطابقون لهذه الفلاتر.",
   "filtersTooltip": "الفلاتر",
+  "playerSearchNameLabel": "ابحث باسم اللاعب",
+  "searchResultsCountLabel": "{count} لاعب متاح",
+  "@searchResultsCountLabel": { "placeholders": { "count": { "type": "int" } } },
   "clubsListingTitle": "الأندية على Sport X Hub",
   "clubsNoResults": "لا توجد أندية لعرضها حاليًا.",
   "unnamedClub": "نادٍ بدون اسم",

@@ -15,6 +15,7 @@ class SearchRemoteDataSource {
 
   Future<Map<String, dynamic>> search(PlayerSearchFilters filters) async {
     final query = <String, String>{
+      if (filters.search != null && filters.search!.isNotEmpty) 'search': filters.search!,
       if (filters.country != null) 'country': filters.country!,
       if (filters.minAge != null) 'minAge': '${filters.minAge}',
       if (filters.maxAge != null) 'maxAge': '${filters.maxAge}',

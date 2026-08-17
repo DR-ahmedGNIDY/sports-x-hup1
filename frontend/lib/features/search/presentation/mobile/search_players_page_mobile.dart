@@ -7,6 +7,7 @@ import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../player/presentation/shared/player_search_result_card.dart';
 import '../../application/search_controller.dart';
+import '../shared/player_search_box.dart';
 import '../shared/player_search_filters_form.dart';
 import '../shared/search_pagination.dart';
 
@@ -54,25 +55,41 @@ class SearchPlayersPageMobile extends ConsumerWidget {
             children: [
               Text(l10n.dashboardSearchPlayers, style: Theme.of(context).textTheme.headlineSmall),
               IconButton(
-                tooltip: 'Filters',
+                tooltip: l10n.filtersTooltip,
                 onPressed: () => _openFilterSheet(context, ref),
                 icon: const Icon(Icons.filter_list),
               ),
             ],
           ),
         ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: PlayerSearchBox(),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: resultsAsync.maybeWhen(
+            data: (page) => Text(
+              l10n.searchResultsCountLabel(page.total),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
+            orElse: () => const SizedBox.shrink(),
+          ),
+        ),
         Expanded(
           child: resultsAsync.when(
             data: (page) => page.items.isEmpty
-                ? const Center(
+                ? Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        EmptyStateIllustration(
+                        const EmptyStateIllustration(
                           variant: EmptyStateVariant.noResults,
                         ),
-                        SizedBox(height: AppSpacing.md),
-                        Text('No players match these filters.'),
+                        const SizedBox(height: AppSpacing.md),
+                        Text(l10n.playersNoResults),
                       ],
                     ),
                   )

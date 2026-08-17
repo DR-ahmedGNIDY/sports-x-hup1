@@ -144,6 +144,13 @@ export class PlayersService {
     const filter: Record<string, unknown> = {
       visibility: ProfileVisibility.PUBLIC,
     };
+    if (dto.search && dto.search.trim()) {
+      // Name only — this is a public, unauthenticated endpoint, so phone
+      // (private contact data) is never part of the match here, unlike
+      // the Club's own roster search in findManyByUserIdsFiltered.
+      const regex = { $regex: escapeRegex(dto.search.trim()), $options: 'i' };
+      filter.$or = [{ firstName: regex }, { lastName: regex }];
+    }
     if (dto.country) filter.country = dto.country;
     if (dto.position) filter.position = dto.position;
     if (dto.sport) filter.sport = dto.sport;

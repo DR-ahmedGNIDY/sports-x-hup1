@@ -5,6 +5,11 @@ import { PreferredFoot } from '../schemas/player-profile.schema';
 // Query-string params only — every value arrives as a string, so numeric
 // filters go through class-transformer's @Type(() => Number) first.
 export class SearchPlayersDto {
+  // Matches firstName/lastName — see PlayersService.search for the regex.
+  @IsOptional()
+  @IsString()
+  search?: string;
+
   @IsOptional()
   @IsString()
   country?: string;

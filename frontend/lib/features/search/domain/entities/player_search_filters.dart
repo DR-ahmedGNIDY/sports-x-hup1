@@ -2,6 +2,7 @@ import '../../../player/domain/entities/player_enums.dart';
 
 class PlayerSearchFilters {
   const PlayerSearchFilters({
+    this.search,
     this.country,
     this.minAge,
     this.maxAge,
@@ -14,6 +15,7 @@ class PlayerSearchFilters {
     this.page = 1,
   });
 
+  final String? search;
   final String? country;
   final int? minAge;
   final int? maxAge;
@@ -26,6 +28,7 @@ class PlayerSearchFilters {
   final int page;
 
   PlayerSearchFilters copyWith({
+    String? search,
     String? country,
     int? minAge,
     int? maxAge,
@@ -38,6 +41,7 @@ class PlayerSearchFilters {
     int? page,
   }) {
     return PlayerSearchFilters(
+      search: search ?? this.search,
       country: country ?? this.country,
       minAge: minAge ?? this.minAge,
       maxAge: maxAge ?? this.maxAge,

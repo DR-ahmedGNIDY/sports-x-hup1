@@ -243,6 +243,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filtersTooltip => 'الفلاتر';
 
   @override
+  String get playerSearchNameLabel => 'ابحث باسم اللاعب';
+
+  @override
+  String searchResultsCountLabel(int count) {
+    return '$count لاعب متاح';
+  }
+
+  @override
   String get clubsListingTitle => 'الأندية على Sport X Hub';
 
   @override

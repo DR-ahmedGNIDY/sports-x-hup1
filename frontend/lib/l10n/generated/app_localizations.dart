@@ -542,6 +542,18 @@ abstract class AppLocalizations {
   /// **'الفلاتر'**
   String get filtersTooltip;
 
+  /// No description provided for @playerSearchNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث باسم اللاعب'**
+  String get playerSearchNameLabel;
+
+  /// No description provided for @searchResultsCountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} لاعب متاح'**
+  String searchResultsCountLabel(int count);
+
   /// No description provided for @clubsListingTitle.
   ///
   /// In ar, this message translates to:

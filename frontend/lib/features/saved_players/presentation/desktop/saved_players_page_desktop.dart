@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/empty_state_illustration.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../player/presentation/shared/player_search_result_card.dart';
@@ -27,7 +30,21 @@ class SavedPlayersPageDesktop extends ConsumerWidget {
               Expanded(
                 child: savedAsync.when(
                   data: (players) => players.isEmpty
-                      ? const Center(child: Text('You have not saved any players yet.'))
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const EmptyStateIllustration(variant: EmptyStateVariant.noData),
+                              const SizedBox(height: AppSpacing.md),
+                              Text(l10n.noSavedPlayers),
+                              const SizedBox(height: AppSpacing.md),
+                              FilledButton(
+                                onPressed: () => context.go('/search'),
+                                child: Text(l10n.dashboardSearchPlayers),
+                              ),
+                            ],
+                          ),
+                        )
                       : GridView.builder(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

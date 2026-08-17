@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/search_controller.dart';
 import '../../domain/entities/player_search_page.dart';
 
@@ -11,6 +12,7 @@ class SearchPagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final lastPage = ((page.total - 1) / page.pageSize).floor() + 1;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -22,7 +24,7 @@ class SearchPagination extends StatelessWidget {
           // RTL without any extra parameter here.
           icon: const Icon(Icons.chevron_left),
         ),
-        Text('Page ${page.page} of $lastPage'),
+        Text(l10n.pageOfPagesLabel(page.page, lastPage)),
         IconButton(
           onPressed: page.hasNextPage ? () => controller.loadPage(page.page + 1) : null,
           icon: const Icon(Icons.chevron_right),

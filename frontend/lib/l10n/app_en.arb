@@ -84,6 +84,9 @@
 
   "playersNoResults": "No players match these filters.",
   "filtersTooltip": "Filters",
+  "playerSearchNameLabel": "Search player name",
+  "searchResultsCountLabel": "{count} players found",
+  "@searchResultsCountLabel": { "placeholders": { "count": { "type": "int" } } },
   "clubsListingTitle": "Clubs on Sport X Hub",
   "clubsNoResults": "No clubs to show yet.",
   "unnamedClub": "Unnamed club",
