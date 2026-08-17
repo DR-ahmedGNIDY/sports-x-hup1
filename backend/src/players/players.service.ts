@@ -148,6 +148,19 @@ export class PlayersService {
       // Name only — this is a public, unauthenticated endpoint, so phone
       // (private contact data) is never part of the match here, unlike
       // the Club's own roster search in findManyByUserIdsFiltered.
+      //
+      // Performance note (release-audit P1): an unanchored, case-
+      // insensitive $regex like this cannot use a standard B-tree index
+      // regardless of what's indexed on firstName/lastName — MongoDB has
+      // to scan every document the other filter fields (visibility here)
+      // leave as candidates. Fine at the collection sizes expected for
+      // this MVP (visibility: PUBLIC already narrows the scan, and the
+      // 20-item page size bounds the response either way). If this ever
+      // needs to scale past a few thousand PUBLIC profiles, the fix is a
+      // MongoDB text index + $text query — deliberately not done here,
+      // since $text tokenizes on word boundaries and would change
+      // "contains" matching (e.g. "med" no longer matching "Ahmed")
+      // rather than just speeding up the current behavior.
       const regex = { $regex: escapeRegex(dto.search.trim()), $options: 'i' };
       filter.$or = [{ firstName: regex }, { lastName: regex }];
     }
@@ -220,6 +233,10 @@ export class PlayersService {
     if (sport) filter.sport = sport;
     if (position) filter.position = position;
     if (search && search.trim()) {
+      // Same unindexed-regex trade-off as search() above — see that
+      // function's comment. Lower-risk here since this is always scoped
+      // to one club's own roster (`userId: $in userIds`), which is small
+      // by construction, not the whole players collection.
       const regex = { $regex: escapeRegex(search.trim()), $options: 'i' };
       filter.$or = [
         { firstName: regex },

@@ -18,6 +18,14 @@ describe('PlayersService', () => {
       findOneAndUpdate: jest.fn().mockResolvedValue(profile),
       create: jest.fn().mockResolvedValue(profile),
       deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+      // search()'s pagination chain: find(filter).skip(n).limit(n),
+      // resolved separately from countDocuments(filter) via Promise.all.
+      find: jest.fn().mockReturnValue({
+        skip: jest.fn().mockReturnValue({
+          limit: jest.fn().mockResolvedValue([]),
+        }),
+      }),
+      countDocuments: jest.fn().mockResolvedValue(0),
     };
     const savedPlayerModel = {
       countDocuments: jest.fn().mockResolvedValue(savedByClubsCount),
@@ -306,6 +314,117 @@ describe('PlayersService', () => {
       expect(cloudinary.deleteAsset).toHaveBeenCalledWith('old-id', 'image');
       expect(result.profilePhoto).toBeUndefined();
       expect(profile.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('search', () => {
+    it('always scopes to PUBLIC visibility, even with no filters given', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({});
+
+      const filter = model.find.mock.calls[0][0];
+      expect(filter).toEqual({ visibility: ProfileVisibility.PUBLIC });
+    });
+
+    it('matches the search term against firstName or lastName, case-insensitively', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({ search: 'ahmed' });
+
+      const filter = model.find.mock.calls[0][0];
+      expect(filter.$or).toEqual([
+        { firstName: { $regex: 'ahmed', $options: 'i' } },
+        { lastName: { $regex: 'ahmed', $options: 'i' } },
+      ]);
+      // The same filter object is reused for the count query.
+      expect(model.countDocuments).toHaveBeenCalledWith(filter);
+    });
+
+    it('escapes regex metacharacters in the search term instead of treating them as regex syntax', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({ search: 'a.*+(b)' });
+
+      const filter = model.find.mock.calls[0][0];
+      expect(filter.$or[0].firstName.$regex).toBe('a\\.\\*\\+\\(b\\)');
+    });
+
+    it('ignores a search term that is empty or only whitespace', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({ search: '   ' });
+
+      const filter = model.find.mock.calls[0][0];
+      expect(filter.$or).toBeUndefined();
+    });
+
+    it('applies sport/country/position/preferredFoot/weight as exact-match filters', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({
+        sport: 'Football',
+        country: 'EG',
+        position: 'GK',
+        preferredFoot: 'RIGHT' as never,
+        weight: 70,
+      });
+
+      const filter = model.find.mock.calls[0][0];
+      expect(filter).toMatchObject({
+        sport: 'Football',
+        country: 'EG',
+        position: 'GK',
+        preferredFoot: 'RIGHT',
+        weight: 70,
+      });
+    });
+
+    it('translates minHeight/maxHeight into a $gte/$lte range on height', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({ minHeight: 170, maxHeight: 190 });
+
+      const filter = model.find.mock.calls[0][0];
+      expect(filter.height).toEqual({ $gte: 170, $lte: 190 });
+    });
+
+    it('translates minAge/maxAge into a dateOfBirth range (older minimum age -> earlier/equal date)', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({ minAge: 20, maxAge: 25 });
+
+      const filter = model.find.mock.calls[0][0] as {
+        dateOfBirth: { $lte: Date; $gte: Date };
+      };
+      // minAge=20 excludes anyone younger, i.e. born after (today - 20y).
+      expect(filter.dateOfBirth.$lte.getFullYear()).toBe(
+        new Date().getFullYear() - 20,
+      );
+      // maxAge=25 excludes anyone older, i.e. born before (today - 25y).
+      expect(filter.dateOfBirth.$gte.getFullYear()).toBe(
+        new Date().getFullYear() - 25,
+      );
+    });
+
+    it('paginates with the fixed server-side page size and returns items/page/pageSize/total', async () => {
+      const items = [{ firstName: 'A' }, { firstName: 'B' }];
+      const { service, model } = buildService(null);
+      const limitMock = jest.fn().mockResolvedValue(items);
+      const skipMock = jest.fn().mockReturnValue({ limit: limitMock });
+      model.find.mockReturnValue({ skip: skipMock });
+      model.countDocuments.mockResolvedValue(37);
+
+      const result = await service.search({ page: 3 });
+
+      expect(skipMock).toHaveBeenCalledWith(40); // (page 3 - 1) * pageSize 20
+      expect(limitMock).toHaveBeenCalledWith(20);
+      expect(result).toEqual({
+        items,
+        page: 3,
+        pageSize: 20,
+        total: 37,
+      });
     });
   });
 });
