@@ -1664,6 +1664,54 @@ abstract class AppLocalizations {
   /// **'إنشاء الحساب'**
   String get clubPlayerCreateAccountButton;
 
+  /// No description provided for @clubPlayerNextLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التالي'**
+  String get clubPlayerNextLabel;
+
+  /// No description provided for @clubPlayerStepBasicInfoTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المعلومات الأساسية'**
+  String get clubPlayerStepBasicInfoTitle;
+
+  /// No description provided for @clubPlayerStepSportsInfoTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المعلومات الرياضية'**
+  String get clubPlayerStepSportsInfoTitle;
+
+  /// No description provided for @clubPlayerStepContactTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التواصل'**
+  String get clubPlayerStepContactTitle;
+
+  /// No description provided for @clubPlayerStepAccountTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب'**
+  String get clubPlayerStepAccountTitle;
+
+  /// No description provided for @clubPlayerStepIndicatorLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطوة {step} من {total}'**
+  String clubPlayerStepIndicatorLabel(int step, int total);
+
+  /// No description provided for @clubPlayerReviewTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المراجعة وإنشاء الحساب'**
+  String get clubPlayerReviewTitle;
+
+  /// No description provided for @clubPlayerReviewSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'راجع البيانات أدناه، ثم أنشئ حساب اللاعب.'**
+  String get clubPlayerReviewSubtitle;
+
   /// No description provided for @clubPlayerSendWhatsAppButton.
   ///
   /// In ar, this message translates to:
@@ -1866,6 +1914,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الإجراءات'**
   String get clubPlayersTableColumnActions;
+
+  /// No description provided for @clubPlayersTableColumnCompleteness.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف الشخصي'**
+  String get clubPlayersTableColumnCompleteness;
+
+  /// No description provided for @clubPlayerProfileCompleteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتمل'**
+  String get clubPlayerProfileCompleteLabel;
+
+  /// No description provided for @clubPlayerProfilePercentCompleteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتمل بنسبة {percent}%'**
+  String clubPlayerProfilePercentCompleteLabel(int percent);
 
   /// No description provided for @minAgeLabel.
   ///

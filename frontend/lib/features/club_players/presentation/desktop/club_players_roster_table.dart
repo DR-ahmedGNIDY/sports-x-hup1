@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_players_controller.dart';
 import '../../domain/entities/club_managed_player.dart';
+import '../shared/club_player_completeness_chip.dart';
 import '../shared/whatsapp_send_button.dart';
 
 /// Desktop-only roster table: Player / Sport / Position / Status / Phone /
@@ -60,7 +61,7 @@ class _RosterHeaderRow extends StatelessWidget {
           Expanded(flex: 3, child: Text(l10n.clubPlayersTableColumnPlayer, style: style)),
           Expanded(flex: 2, child: Text(l10n.sportLabel, style: style)),
           Expanded(flex: 2, child: Text(l10n.positionLabel, style: style)),
-          Expanded(flex: 2, child: Text(l10n.currentStatusLabel, style: style)),
+          Expanded(flex: 2, child: Text(l10n.clubPlayersTableColumnCompleteness, style: style)),
           Expanded(flex: 2, child: Text(l10n.phoneLabel, style: style)),
           SizedBox(width: 132, child: Text(l10n.clubPlayersTableColumnActions, style: style)),
         ],
@@ -164,7 +165,13 @@ class _RosterRowState extends ConsumerState<_RosterRow> {
               ),
               Expanded(flex: 2, child: _RosterCellText(profile.sport)),
               Expanded(flex: 2, child: _RosterCellText(profile.position)),
-              Expanded(flex: 2, child: _RosterCellText(profile.currentStatus)),
+              Expanded(
+                flex: 2,
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: ClubPlayerCompletenessChip(percent: profile.completionPercent),
+                ),
+              ),
               Expanded(flex: 2, child: _RosterCellText(profile.contact.phone)),
               SizedBox(
                 width: 132,

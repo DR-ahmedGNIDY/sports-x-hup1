@@ -91,6 +91,7 @@ export function toOwnerView(profile: PlayerProfileDocument) {
     userId: profile.userId.toString(),
     contact: profile.contact,
     visibility: profile.visibility,
+    completionPercent: completionPercentFor(profile),
     createdAt: (profile as PlayerProfileDocument & { createdAt: Date })
       .createdAt,
     updatedAt: (profile as PlayerProfileDocument & { updatedAt: Date })

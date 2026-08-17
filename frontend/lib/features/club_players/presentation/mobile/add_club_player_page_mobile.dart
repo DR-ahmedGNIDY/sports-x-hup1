@@ -24,7 +24,7 @@ class AddClubPlayerPageMobile extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        const AddClubPlayerForm(),
+        const AddClubPlayerForm(isDesktop: false),
       ],
     );
   }

@@ -48,6 +48,7 @@ extension PlayerProfileModel on PlayerProfile {
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
           : null,
+      completionPercent: json['completionPercent'] as int?,
     );
   }
 }

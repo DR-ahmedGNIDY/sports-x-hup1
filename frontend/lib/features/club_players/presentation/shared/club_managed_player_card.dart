@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_players_controller.dart';
 import '../../domain/entities/club_managed_player.dart';
+import 'club_player_completeness_chip.dart';
 import 'whatsapp_send_button.dart';
 
 enum _CardAction { view, edit, resend, remove }
@@ -92,6 +93,10 @@ class ClubManagedPlayerCard extends ConsumerWidget {
                         profile.contact.phone!,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
+                    if (profile.completionPercent != null) ...[
+                      const SizedBox(height: 6),
+                      ClubPlayerCompletenessChip(percent: profile.completionPercent),
+                    ],
                   ],
                 ),
               ),

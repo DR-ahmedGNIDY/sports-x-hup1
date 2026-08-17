@@ -103,7 +103,10 @@ export class UsersService {
     );
     return this.userModel.create({
       phone: input.phone,
-      email: input.email,
+      // Omit the key entirely rather than passing `email: undefined` —
+      // the field's sparse unique index only skips documents where the
+      // path is truly unset, not documents that got an explicit `null`.
+      ...(input.email ? { email: input.email } : {}),
       passwordHash,
       role: UserRole.PLAYER,
     });

@@ -31,6 +31,7 @@ class PlayerProfile {
     this.achievements = const [],
     this.socialLinks = const [],
     this.createdAt,
+    this.completionPercent,
   });
 
   final String id;
@@ -60,6 +61,12 @@ class PlayerProfile {
   /// populate it. Used by the Club Dashboard's "recently added players"
   /// section; `null` anywhere that view doesn't apply.
   final DateTime? createdAt;
+
+  /// The same per-field completion check `GET /players/me/stats` computes,
+  /// carried on every owner view (`toOwnerView`) so a roster row can show
+  /// it without a second request. `null` anywhere that view doesn't apply
+  /// (public/search views never populate it).
+  final int? completionPercent;
 
   String get fullName => [
     firstName,

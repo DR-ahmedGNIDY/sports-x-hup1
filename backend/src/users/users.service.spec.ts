@@ -9,6 +9,8 @@ describe('UsersService', () => {
   function buildService(user: Record<string, unknown> | null) {
     const model = {
       findById: jest.fn().mockResolvedValue(user),
+      findOne: jest.fn().mockResolvedValue(null),
+      create: jest.fn().mockImplementation((doc) => Promise.resolve(doc)),
       deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
     };
     const playersService = {
@@ -73,5 +75,32 @@ describe('UsersService', () => {
     expect(playersService.deleteProfileAndMediaByUserId).not.toHaveBeenCalled();
     expect(clubsService.deleteProfileAndLogoByUserId).not.toHaveBeenCalled();
     expect(videosService.deleteUserFootprint).toHaveBeenCalledWith('user-3');
+  });
+
+  describe('createClubManagedPlayer', () => {
+    it('omits the email key entirely when none is given, instead of inserting an explicit null', async () => {
+      const { service, model } = buildService(null);
+
+      await service.createClubManagedPlayer({
+        phone: '+201111111111',
+        password: 'p',
+      });
+
+      const insertedDoc = model.create.mock.calls[0][0];
+      expect('email' in insertedDoc).toBe(false);
+    });
+
+    it('includes the email when one is given', async () => {
+      const { service, model } = buildService(null);
+
+      await service.createClubManagedPlayer({
+        phone: '+201111111111',
+        email: 'player@example.com',
+        password: 'p',
+      });
+
+      const insertedDoc = model.create.mock.calls[0][0];
+      expect(insertedDoc.email).toBe('player@example.com');
+    });
   });
 });

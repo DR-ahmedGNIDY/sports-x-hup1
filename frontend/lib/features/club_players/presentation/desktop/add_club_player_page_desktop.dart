@@ -12,7 +12,7 @@ class AddClubPlayerPageDesktop extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 640),
+        constraints: const BoxConstraints(maxWidth: 720),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
           child: Column(
@@ -33,7 +33,7 @@ class AddClubPlayerPageDesktop extends StatelessWidget {
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
-                  child: const AddClubPlayerForm(),
+                  child: const AddClubPlayerForm(isDesktop: true),
                 ),
               ),
             ],

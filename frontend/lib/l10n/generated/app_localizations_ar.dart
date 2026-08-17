@@ -826,6 +826,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clubPlayerCreateAccountButton => 'إنشاء الحساب';
 
   @override
+  String get clubPlayerNextLabel => 'التالي';
+
+  @override
+  String get clubPlayerStepBasicInfoTitle => 'المعلومات الأساسية';
+
+  @override
+  String get clubPlayerStepSportsInfoTitle => 'المعلومات الرياضية';
+
+  @override
+  String get clubPlayerStepContactTitle => 'التواصل';
+
+  @override
+  String get clubPlayerStepAccountTitle => 'الحساب';
+
+  @override
+  String clubPlayerStepIndicatorLabel(int step, int total) {
+    return 'الخطوة $step من $total';
+  }
+
+  @override
+  String get clubPlayerReviewTitle => 'المراجعة وإنشاء الحساب';
+
+  @override
+  String get clubPlayerReviewSubtitle =>
+      'راجع البيانات أدناه، ثم أنشئ حساب اللاعب.';
+
+  @override
   String get clubPlayerSendWhatsAppButton => 'إرسال عبر واتساب';
 
   @override
@@ -944,6 +971,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get clubPlayersTableColumnActions => 'الإجراءات';
+
+  @override
+  String get clubPlayersTableColumnCompleteness => 'الملف الشخصي';
+
+  @override
+  String get clubPlayerProfileCompleteLabel => 'مكتمل';
+
+  @override
+  String clubPlayerProfilePercentCompleteLabel(int percent) {
+    return 'مكتمل بنسبة $percent%';
+  }
 
   @override
   String get minAgeLabel => 'أقل عمر';
