@@ -180,16 +180,20 @@ deliberately, to avoid growing the ARB files with near-duplicates.
 
 ## 9. Known limitations
 
-- **No new backend test file for `PlayersService.search()`'s new `search`
-  param** — no spec file previously existed for `players.service.ts`
-  covering `search()` (unlike `club-players.service.ts`, which already
-  had full coverage before this project started), and standing up a full
-  new Mongoose-model mocking harness for one small, low-risk addition
+- **No dedicated test coverage for `PlayersService.search()`'s new
+  `search` param at the time this phase shipped** — `players.service.ts`
+  already had a spec file with 20+ tests for its other methods (correction:
+  an earlier version of this note incorrectly said no spec file existed
+  for it at all), but none of them exercised `search()`, old filters
+  included. Standing up coverage for one small, low-risk addition
   (reusing an already-proven `escapeRegex` pattern) was judged
-  disproportionate to the change. Covered instead by the live manual
-  verification in §8 (typed "Ahmed", confirmed the result list correctly
-  narrowed to the one matching player). Worth adding proper coverage if
-  `players.service.ts` gets its own spec file in a future change.
+  disproportionate to this phase's own change at the time. Covered
+  instead by the live manual verification in §8 (typed "Ahmed", confirmed
+  the result list correctly narrowed to the one matching player).
+  **Resolved** in the post-launch release audit
+  (`docs/CLUB_EXPERIENCE_2_RELEASE_AUDIT.md`), which added 8 tests
+  covering visibility scoping, name matching/escaping, exact-match
+  filters, height/age ranges, and pagination.
 - **`PlayerSearchResultCard` was not visually redesigned** — see §5 for
   the reasoning (shared across 3 screens, disproportionate risk).
 - **Desktop viewport verification relied on code review**, same

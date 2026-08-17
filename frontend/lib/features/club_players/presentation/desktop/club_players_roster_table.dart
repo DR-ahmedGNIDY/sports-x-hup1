@@ -10,12 +10,24 @@ import '../../domain/entities/club_managed_player.dart';
 import '../shared/club_player_completeness_chip.dart';
 import '../shared/whatsapp_send_button.dart';
 
+/// Below this rendered table width, the Phone column is dropped (release-
+/// audit P2: at the 900px Desktop breakpoint floor — minus the sidebar and
+/// page padding — 5 flex columns plus a 132px actions column left every
+/// column too narrow to read comfortably). Phone is the lowest-priority
+/// column to drop: it's still one tap away via the row's own WhatsApp
+/// action and the player's profile. This is a `LayoutBuilder` reacting to
+/// the table's own available width, not a `MediaQuery`/`AppBreakpoints`
+/// check — it doesn't decide Desktop vs. Mobile (this widget is already
+/// Desktop-only), just how dense *this* table gets within Desktop.
+const _phoneColumnMinWidth = 700.0;
+
 /// Desktop-only roster table: Player / Sport / Position / Status / Phone /
-/// Actions columns. Mobile keeps [ClubManagedPlayerCard] — this is the
-/// dedicated wide-screen presentation the roster card list didn't provide.
-/// Header and rows share the same column widths so they stay aligned
-/// without reaching for [DataTable] (whose fixed row height and lack of
-/// hover styling don't fit an avatar + name + icon-action row well).
+/// Actions columns (Phone hidden below [_phoneColumnMinWidth]). Mobile
+/// keeps [ClubManagedPlayerCard] — this is the dedicated wide-screen
+/// presentation the roster card list didn't provide. Header and rows share
+/// the same column widths so they stay aligned without reaching for
+/// [DataTable] (whose fixed row height and lack of hover styling don't fit
+/// an avatar + name + icon-action row well).
 class ClubPlayersRosterTable extends StatelessWidget {
   const ClubPlayersRosterTable({super.key, required this.players});
 
@@ -25,27 +37,34 @@ class ClubPlayersRosterTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const _RosterHeaderRow(),
-          Divider(height: 1, thickness: 1, color: colorScheme.outlineVariant),
-          for (var i = 0; i < players.length; i++) ...[
-            _RosterRow(player: players[i]),
-            if (i < players.length - 1)
-              Divider(height: 1, color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
-          ],
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final showPhone = constraints.maxWidth >= _phoneColumnMinWidth;
+        return Card(
+          margin: EdgeInsets.zero,
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _RosterHeaderRow(showPhone: showPhone),
+              Divider(height: 1, thickness: 1, color: colorScheme.outlineVariant),
+              for (var i = 0; i < players.length; i++) ...[
+                _RosterRow(player: players[i], showPhone: showPhone),
+                if (i < players.length - 1)
+                  Divider(height: 1, color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
 class _RosterHeaderRow extends StatelessWidget {
-  const _RosterHeaderRow();
+  const _RosterHeaderRow({required this.showPhone});
+
+  final bool showPhone;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +81,7 @@ class _RosterHeaderRow extends StatelessWidget {
           Expanded(flex: 2, child: Text(l10n.sportLabel, style: style)),
           Expanded(flex: 2, child: Text(l10n.positionLabel, style: style)),
           Expanded(flex: 2, child: Text(l10n.clubPlayersTableColumnCompleteness, style: style)),
-          Expanded(flex: 2, child: Text(l10n.phoneLabel, style: style)),
+          if (showPhone) Expanded(flex: 2, child: Text(l10n.phoneLabel, style: style)),
           SizedBox(width: 132, child: Text(l10n.clubPlayersTableColumnActions, style: style)),
         ],
       ),
@@ -73,9 +92,10 @@ class _RosterHeaderRow extends StatelessWidget {
 enum _RowAction { view, remove }
 
 class _RosterRow extends ConsumerStatefulWidget {
-  const _RosterRow({required this.player});
+  const _RosterRow({required this.player, required this.showPhone});
 
   final ClubManagedPlayer player;
+  final bool showPhone;
 
   @override
   ConsumerState<_RosterRow> createState() => _RosterRowState();
@@ -172,7 +192,8 @@ class _RosterRowState extends ConsumerState<_RosterRow> {
                   child: ClubPlayerCompletenessChip(percent: profile.completionPercent),
                 ),
               ),
-              Expanded(flex: 2, child: _RosterCellText(profile.contact.phone)),
+              if (widget.showPhone)
+                Expanded(flex: 2, child: _RosterCellText(profile.contact.phone)),
               SizedBox(
                 width: 132,
                 child: Row(

@@ -28,4 +28,8 @@ export class ClubManagedPlayer {
 export const ClubManagedPlayerSchema =
   SchemaFactory.createForClass(ClubManagedPlayer);
 
-ClubManagedPlayerSchema.index({ clubId: 1, userId: 1 }, { unique: true });
+// No separate { clubId, userId } compound index here (release-audit P2):
+// `userId` above is already `unique: true` on its own — a player can be
+// managed by at most one club, ever — so a compound index over the same
+// pair can never reject anything the single-field index wouldn't already
+// reject. It was pure duplicate write overhead.
