@@ -70,6 +70,8 @@ export class ClubPlayersController {
       totalPlayers: result.totalPlayers,
       completeProfiles: result.completeProfiles,
       incompleteProfiles: result.incompleteProfiles,
+      averageCompletionPercent: result.averageCompletionPercent,
+      topMissingFields: result.topMissingFields,
       recentPlayers: result.recentPlayers.map((row) => ({
         ...toOwnerView(row.profile),
         dialCode: row.dialCode,

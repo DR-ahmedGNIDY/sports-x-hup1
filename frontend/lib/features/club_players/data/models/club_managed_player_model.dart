@@ -37,6 +37,9 @@ extension ClubDashboardSummaryModel on ClubDashboardSummary {
       totalPlayers: json['totalPlayers'] as int,
       completeProfiles: json['completeProfiles'] as int,
       incompleteProfiles: json['incompleteProfiles'] as int,
+      averageCompletionPercent: json['averageCompletionPercent'] as int?,
+      topMissingFields: (json['topMissingFields'] as List<dynamic>? ?? [])
+          .cast<String>(),
       recentPlayers: (json['recentPlayers'] as List<dynamic>)
           .map((e) => ClubManagedPlayerModel.fromJson(e as Map<String, dynamic>))
           .toList(),

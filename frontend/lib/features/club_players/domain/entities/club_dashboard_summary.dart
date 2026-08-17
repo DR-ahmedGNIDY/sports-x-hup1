@@ -11,11 +11,21 @@ class ClubDashboardSummary {
     required this.totalPlayers,
     required this.completeProfiles,
     required this.incompleteProfiles,
+    required this.averageCompletionPercent,
+    required this.topMissingFields,
     required this.recentPlayers,
   });
 
   final int totalPlayers;
   final int completeProfiles;
   final int incompleteProfiles;
+
+  /// Roster-wide average of each player's own completion percentage
+  /// (`GET /players/me/stats`'s check) — `null` for an empty roster.
+  final int? averageCompletionPercent;
+
+  /// The most-frequently-missing fields across the roster, keys into
+  /// `missingFieldLabel` — empty when nothing is missing or roster is empty.
+  final List<String> topMissingFields;
   final List<ClubManagedPlayer> recentPlayers;
 }

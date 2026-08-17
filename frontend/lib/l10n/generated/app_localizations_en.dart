@@ -878,6 +878,39 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String clubDashboardFoundedLabel(int year) {
+    return 'Founded $year';
+  }
+
+  @override
+  String get clubDashboardCompletenessTitle => 'Roster profile completeness';
+
+  @override
+  String clubDashboardCompletenessMissingLabel(String fields) {
+    return 'Most commonly missing: $fields';
+  }
+
+  @override
+  String get clubDashboardAddPlayerDescription =>
+      'Create a player account and add them to your roster.';
+
+  @override
+  String get clubDashboardMyPlayersDescription =>
+      'View and manage your club\'s roster.';
+
+  @override
+  String get clubDashboardFindPlayersDescription =>
+      'Discover players available on Sport X Hub.';
+
+  @override
+  String get clubDashboardSavedPlayersDescription =>
+      'Review the players you\'ve shortlisted.';
+
+  @override
+  String get clubDashboardEditProfileDescription =>
+      'Update your club\'s public profile.';
+
+  @override
   String get clubPlayerEditTitle => 'Edit Player';
 
   @override

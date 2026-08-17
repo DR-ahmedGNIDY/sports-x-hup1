@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_state.dart';
+import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
@@ -46,9 +47,11 @@ class DashboardPageDesktop extends ConsumerWidget {
   }
 }
 
-/// The Club's operational home: roster summary, recently added players,
-/// and the 5 daily-use quick actions — see the Club Product Report for
-/// why these replace the old flat button list.
+/// The Club's operational home: identity header, roster stats, profile
+/// completeness, recently added players, and the 5 daily-use quick actions
+/// — see the Club Product Report / Club Experience 2.0 brief for why these
+/// replace the old flat button list. Uses the full available width rather
+/// than a narrow centered column, matching Desktop's data-dense role.
 class _ClubDashboardDesktop extends ConsumerWidget {
   const _ClubDashboardDesktop();
 
@@ -56,27 +59,26 @@ class _ClubDashboardDesktop extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final summaryAsync = ref.watch(clubDashboardSummaryProvider);
-    final clubName = ref.watch(clubProfileControllerProvider).value?.name;
+    final profileAsync = ref.watch(clubProfileControllerProvider);
 
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 880),
+        constraints: const BoxConstraints(maxWidth: 1400),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Text(
-                      (clubName != null && clubName.isNotEmpty)
-                          ? l10n.dashboardWelcomeMessage(clubName)
-                          : l10n.dashboardWelcomeMessageNoName,
-                      style: Theme.of(context).textTheme.headlineSmall,
+                    child: profileAsync.maybeWhen(
+                      data: (profile) => ClubDashboardIdentityHeader(profile: profile),
+                      orElse: () => const SkeletonBox(height: 64),
                     ),
                   ),
+                  const SizedBox(width: 16),
                   OutlinedButton.icon(
                     onPressed: () => CreatePostSheet.show(context, role: UserRole.club),
                     icon: const Icon(Icons.add_a_photo_outlined),
@@ -84,13 +86,10 @@ class _ClubDashboardDesktop extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
               summaryAsync.when(
                 data: (summary) => _ClubDashboardBody(summary: summary),
-                loading: () => const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 48),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+                loading: () => const _ClubDashboardSkeleton(),
                 error: (error, _) => ErrorState(
                   onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
                 ),
@@ -99,6 +98,36 @@ class _ClubDashboardDesktop extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ClubDashboardSkeleton extends StatelessWidget {
+  const _ClubDashboardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            for (var i = 0; i < 4; i++) ...[
+              if (i > 0) const SizedBox(width: 12),
+              const Expanded(child: SkeletonBox(height: 76)),
+            ],
+          ],
+        ),
+        const SizedBox(height: 28),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Expanded(flex: 2, child: SkeletonBox(height: 260)),
+            const SizedBox(width: 24),
+            const Expanded(child: SkeletonBox(height: 260)),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -144,25 +173,36 @@ class _ClubDashboardBody extends StatelessWidget {
                   color: AppColors.warning,
                 ),
               ),
+              const SizedBox(width: 12),
+              const Expanded(child: ClubDashboardSavedPlayersTile()),
             ],
           ),
           const SizedBox(height: 28),
         ],
-        Text(l10n.dashboardQuickActionsTitle, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            for (final action in quickActions)
-              SizedBox(
-                width: 160,
-                child: _QuickActionCard(action: action),
+            Expanded(flex: 2, child: ClubDashboardRecentPlayersSection(summary: summary)),
+            const SizedBox(width: 24),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(l10n.dashboardQuickActionsTitle, style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  for (final action in quickActions) ...[
+                    _QuickActionCard(action: action),
+                    const SizedBox(height: 10),
+                  ],
+                ],
               ),
+            ),
           ],
         ),
-        const SizedBox(height: 28),
-        ClubDashboardRecentPlayersSection(summary: summary),
+        if (summary.totalPlayers > 0) ...[
+          const SizedBox(height: 28),
+          ClubDashboardCompletenessCard(summary: summary),
+        ],
       ],
     );
   }
@@ -175,22 +215,54 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isPrimary = action.emphasis == ClubQuickActionEmphasis.primary;
+    final isTertiary = action.emphasis == ClubQuickActionEmphasis.tertiary;
+
     return Card(
       margin: EdgeInsets.zero,
+      color: isPrimary ? colorScheme.primaryContainer : (isTertiary ? colorScheme.surface : null),
+      elevation: isPrimary ? 0 : null,
+      shape: isTertiary
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: colorScheme.outlineVariant),
+            )
+          : null,
       child: InkWell(
         onTap: () => context.go(action.route),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(action.icon, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(height: 8),
-              Text(
-                action.label,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
+              Icon(
+                action.icon,
+                color: isPrimary ? colorScheme.onPrimaryContainer : colorScheme.primary,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      action.label,
+                      style: textTheme.titleSmall?.copyWith(
+                        color: isPrimary ? colorScheme.onPrimaryContainer : null,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      action.description,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: isPrimary ? colorScheme.onPrimaryContainer : colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

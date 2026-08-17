@@ -866,6 +866,39 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String clubDashboardFoundedLabel(int year) {
+    return 'تأسس عام $year';
+  }
+
+  @override
+  String get clubDashboardCompletenessTitle => 'اكتمال الملفات الشخصية للاعبين';
+
+  @override
+  String clubDashboardCompletenessMissingLabel(String fields) {
+    return 'الأكثر نقصًا: $fields';
+  }
+
+  @override
+  String get clubDashboardAddPlayerDescription =>
+      'أنشئ حساب لاعب وأضفه إلى قائمة ناديك.';
+
+  @override
+  String get clubDashboardMyPlayersDescription =>
+      'اعرض قائمة لاعبي ناديك وأدرها.';
+
+  @override
+  String get clubDashboardFindPlayersDescription =>
+      'اكتشف اللاعبين المتاحين على Sport X Hub.';
+
+  @override
+  String get clubDashboardSavedPlayersDescription =>
+      'راجع اللاعبين الذين قمت بحفظهم.';
+
+  @override
+  String get clubDashboardEditProfileDescription =>
+      'حدّث الملف التعريفي العام لناديك.';
+
+  @override
   String get clubPlayerEditTitle => 'تعديل بيانات اللاعب';
 
   @override

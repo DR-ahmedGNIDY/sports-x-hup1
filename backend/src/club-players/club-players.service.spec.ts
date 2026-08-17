@@ -218,6 +218,8 @@ describe('ClubPlayersService', () => {
         totalPlayers: 0,
         completeProfiles: 0,
         incompleteProfiles: 0,
+        averageCompletionPercent: null,
+        topMissingFields: [],
         recentPlayers: [],
       });
     });
@@ -239,7 +241,15 @@ describe('ClubPlayersService', () => {
         achievements: [{ title: 't', year: 2020 }],
         socialLinks: [{ platform: 'x', url: 'y' }],
       };
-      const incompleteProfile = { userId: 'player-2' };
+      // Mirrors a real freshly-created PlayerProfile document: unset scalar
+      // fields, but array fields still default to `[]` (Mongoose schema
+      // defaults), not `undefined` — matches the fixture in
+      // players.mapper.spec.ts.
+      const incompleteProfile = {
+        userId: 'player-2',
+        achievements: [],
+        socialLinks: [],
+      };
       const { service } = buildService({
         ownerships: [
           { userId: 'player-1', dialCode: '+20' },
@@ -253,6 +263,15 @@ describe('ClubPlayersService', () => {
       expect(summary.totalPlayers).toBe(2);
       expect(summary.completeProfiles).toBe(1);
       expect(summary.incompleteProfiles).toBe(1);
+      // One profile is 100% complete, the other 0% (misses every check).
+      expect(summary.averageCompletionPercent).toBe(50);
+      // The incomplete profile misses every check; the top 3 (by frequency,
+      // ties broken by COMPLETION_CHECKS order) are its first 3 fields.
+      expect(summary.topMissingFields).toEqual([
+        'firstName',
+        'lastName',
+        'dateOfBirth',
+      ]);
       // Newest-first per the ownerships order, capped at 5 — both fit here.
       expect(summary.recentPlayers.map((r) => r.profile.userId)).toEqual([
         'player-1',

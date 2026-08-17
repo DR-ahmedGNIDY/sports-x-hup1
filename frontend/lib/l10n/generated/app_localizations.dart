@@ -1729,6 +1729,54 @@ abstract class AppLocalizations {
   /// **'أُضيف في {date}'**
   String clubDashboardAddedOnLabel(String date);
 
+  /// No description provided for @clubDashboardFoundedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأسس عام {year}'**
+  String clubDashboardFoundedLabel(int year);
+
+  /// No description provided for @clubDashboardCompletenessTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتمال الملفات الشخصية للاعبين'**
+  String get clubDashboardCompletenessTitle;
+
+  /// No description provided for @clubDashboardCompletenessMissingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأكثر نقصًا: {fields}'**
+  String clubDashboardCompletenessMissingLabel(String fields);
+
+  /// No description provided for @clubDashboardAddPlayerDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنشئ حساب لاعب وأضفه إلى قائمة ناديك.'**
+  String get clubDashboardAddPlayerDescription;
+
+  /// No description provided for @clubDashboardMyPlayersDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعرض قائمة لاعبي ناديك وأدرها.'**
+  String get clubDashboardMyPlayersDescription;
+
+  /// No description provided for @clubDashboardFindPlayersDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتشف اللاعبين المتاحين على Sport X Hub.'**
+  String get clubDashboardFindPlayersDescription;
+
+  /// No description provided for @clubDashboardSavedPlayersDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'راجع اللاعبين الذين قمت بحفظهم.'**
+  String get clubDashboardSavedPlayersDescription;
+
+  /// No description provided for @clubDashboardEditProfileDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدّث الملف التعريفي العام لناديك.'**
+  String get clubDashboardEditProfileDescription;
+
   /// No description provided for @clubPlayerEditTitle.
   ///
   /// In ar, this message translates to:

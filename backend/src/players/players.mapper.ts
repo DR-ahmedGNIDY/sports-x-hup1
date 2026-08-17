@@ -31,6 +31,22 @@ export function isProfileComplete(profile: PlayerProfileDocument): boolean {
   return Object.values(COMPLETION_CHECKS).every((check) => check(profile));
 }
 
+// Keys of every failed check, in COMPLETION_CHECKS order — the same stable
+// identifiers `toStatsView` returns as `missingFields`, reused wherever
+// something needs to know *which* fields are missing rather than just
+// complete/incomplete (e.g. the Club Dashboard's aggregate completeness).
+export function missingFieldsFor(profile: PlayerProfileDocument): string[] {
+  return Object.entries(COMPLETION_CHECKS)
+    .filter(([, check]) => !check(profile))
+    .map(([key]) => key);
+}
+
+export function completionPercentFor(profile: PlayerProfileDocument): number {
+  const totalChecks = Object.keys(COMPLETION_CHECKS).length;
+  const completedChecks = totalChecks - missingFieldsFor(profile).length;
+  return Math.round((completedChecks / totalChecks) * 100);
+}
+
 function ageFromDateOfBirth(dateOfBirth?: Date): number | undefined {
   if (!dateOfBirth) return undefined;
   const diffMs = Date.now() - dateOfBirth.getTime();
@@ -118,14 +134,10 @@ export function toStatsView(
   profile: PlayerProfileDocument,
   savedByClubsCount: number,
 ) {
-  const missingFields = Object.entries(COMPLETION_CHECKS)
-    .filter(([, check]) => !check(profile))
-    .map(([key]) => key);
-  const totalChecks = Object.keys(COMPLETION_CHECKS).length;
-  const completedChecks = totalChecks - missingFields.length;
+  const missingFields = missingFieldsFor(profile);
 
   return {
-    completionPercent: Math.round((completedChecks / totalChecks) * 100),
+    completionPercent: completionPercentFor(profile),
     missingFields,
     visibility: profile.visibility,
     mediaCount: profile.media.length,

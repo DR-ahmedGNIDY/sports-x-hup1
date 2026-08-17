@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_state.dart';
+import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
@@ -55,36 +56,31 @@ class DashboardPageMobile extends ConsumerWidget {
 }
 
 /// The Club's operational home on mobile — same data as Desktop
-/// ([ClubDashboardSummary]), but stacked single-column: 2-per-row stat
-/// tiles, a vertical quick-action list, then recent players. Not a
-/// shrunk copy of the Desktop grid layout.
+/// ([ClubDashboardSummary]), but stacked single-column: compact identity
+/// header, 2-per-row stat tiles, a vertical quick-action list with
+/// descriptions, profile completeness, then recent players. Not a shrunk
+/// copy of the Desktop grid layout.
 class _ClubDashboardMobile extends ConsumerWidget {
   const _ClubDashboardMobile();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
     final summaryAsync = ref.watch(clubDashboardSummaryProvider);
-    final clubName = ref.watch(clubProfileControllerProvider).value?.name;
+    final profileAsync = ref.watch(clubProfileControllerProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            (clubName != null && clubName.isNotEmpty)
-                ? l10n.dashboardWelcomeMessage(clubName)
-                : l10n.dashboardWelcomeMessageNoName,
-            style: Theme.of(context).textTheme.headlineSmall,
+          profileAsync.maybeWhen(
+            data: (profile) => ClubDashboardIdentityHeader(profile: profile, logoSize: 52),
+            orElse: () => const SkeletonBox(height: 52),
           ),
           const SizedBox(height: 16),
           summaryAsync.when(
             data: (summary) => _ClubDashboardBody(summary: summary),
-            loading: () => const Padding(
-              padding: EdgeInsets.symmetric(vertical: 40),
-              child: Center(child: CircularProgressIndicator()),
-            ),
+            loading: () => const _ClubDashboardSkeleton(),
             error: (error, _) => ErrorState(
               onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
             ),
@@ -93,10 +89,40 @@ class _ClubDashboardMobile extends ConsumerWidget {
           OutlinedButton.icon(
             onPressed: () => CreatePostSheet.show(context, role: UserRole.club),
             icon: const Icon(Icons.add_a_photo_outlined),
-            label: Text(l10n.homeFeedNewPostTitle),
+            label: Text(AppLocalizations.of(context)!.homeFeedNewPostTitle),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ClubDashboardSkeleton extends StatelessWidget {
+  const _ClubDashboardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: const [
+            Expanded(child: SkeletonBox(height: 68)),
+            SizedBox(width: 8),
+            Expanded(child: SkeletonBox(height: 68)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: const [
+            Expanded(child: SkeletonBox(height: 68)),
+            SizedBox(width: 8),
+            Expanded(child: SkeletonBox(height: 68)),
+          ],
+        ),
+        const SizedBox(height: 20),
+        const SkeletonBox(height: 220),
+      ],
     );
   }
 }
@@ -124,11 +150,7 @@ class _ClubDashboardBody extends StatelessWidget {
                   value: summary.totalPlayers,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
+              const SizedBox(width: 8),
               Expanded(
                 child: ClubDashboardStatTile(
                   icon: Icons.check_circle_outline,
@@ -137,7 +159,11 @@ class _ClubDashboardBody extends StatelessWidget {
                   color: AppColors.success,
                 ),
               ),
-              const SizedBox(width: 8),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
               Expanded(
                 child: ClubDashboardStatTile(
                   icon: Icons.error_outline,
@@ -146,8 +172,12 @@ class _ClubDashboardBody extends StatelessWidget {
                   color: AppColors.warning,
                 ),
               ),
+              const SizedBox(width: 8),
+              const Expanded(child: ClubDashboardSavedPlayersTile()),
             ],
           ),
+          const SizedBox(height: 20),
+          ClubDashboardCompletenessCard(summary: summary),
           const SizedBox(height: 20),
         ],
         Text(l10n.dashboardQuickActionsTitle, style: Theme.of(context).textTheme.titleMedium),
@@ -160,6 +190,7 @@ class _ClubDashboardBody extends StatelessWidget {
                 ListTile(
                   leading: Icon(action.icon, color: Theme.of(context).colorScheme.primary),
                   title: Text(action.label),
+                  subtitle: Text(action.description),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.go(action.route),
                 ),

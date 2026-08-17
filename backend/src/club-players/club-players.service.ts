@@ -7,7 +7,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { generateStrongPassword } from '../common/password-generator';
 import { getDialCode } from '../countries/dial-codes';
-import { isProfileComplete } from '../players/players.mapper';
+import {
+  completionPercentFor,
+  isProfileComplete,
+  missingFieldsFor,
+} from '../players/players.mapper';
 import { UpdatePlayerProfileDto } from '../players/dto/update-player-profile.dto';
 import { PlayerSearchResult, PlayersService } from '../players/players.service';
 import {
@@ -39,11 +43,20 @@ export interface ClubPlayersSummary {
   totalPlayers: number;
   completeProfiles: number;
   incompleteProfiles: number;
+  // Roster-wide average of the same per-player completion percentage
+  // `GET /players/me/stats` uses — `null` for an empty roster (nothing to
+  // average), never fabricated.
+  averageCompletionPercent: number | null;
+  // The 3 most-frequently-missing fields across the roster (keys into the
+  // same `missingFieldLabel` lookup the Player Dashboard already uses) —
+  // omits fields nobody is missing rather than padding to a fixed length.
+  topMissingFields: string[];
   // Newest-first, capped — a Dashboard summary tile, not a roster page.
   recentPlayers: Array<{ profile: PlayerProfileDocument; dialCode: string }>;
 }
 
 const RECENT_PLAYERS_LIMIT = 5;
+const TOP_MISSING_FIELDS_LIMIT = 3;
 
 @Injectable()
 export class ClubPlayersService {
@@ -189,6 +202,8 @@ export class ClubPlayersService {
         totalPlayers: 0,
         completeProfiles: 0,
         incompleteProfiles: 0,
+        averageCompletionPercent: null,
+        topMissingFields: [],
         recentPlayers: [],
       };
     }
@@ -202,6 +217,20 @@ export class ClubPlayersService {
     );
 
     const completeProfiles = profiles.filter(isProfileComplete).length;
+    const averageCompletionPercent = Math.round(
+      profiles.reduce((sum, p) => sum + completionPercentFor(p), 0) /
+        profiles.length,
+    );
+    const missingFieldCounts = new Map<string, number>();
+    for (const profile of profiles) {
+      for (const field of missingFieldsFor(profile)) {
+        missingFieldCounts.set(field, (missingFieldCounts.get(field) ?? 0) + 1);
+      }
+    }
+    const topMissingFields = [...missingFieldCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, TOP_MISSING_FIELDS_LIMIT)
+      .map(([field]) => field);
     // `ownerships` is already newest-first; not every ownership row is
     // guaranteed to have a matching profile (defensive, same as the old
     // listForClub's null-profile filter).
@@ -218,6 +247,8 @@ export class ClubPlayersService {
       totalPlayers: userIds.length,
       completeProfiles,
       incompleteProfiles: userIds.length - completeProfiles,
+      averageCompletionPercent,
+      topMissingFields,
       recentPlayers,
     };
   }
