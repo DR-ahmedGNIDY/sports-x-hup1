@@ -1266,6 +1266,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeFeedPostSuccessMessage => 'Posted successfully.';
 
   @override
+  String get homeFeedComposerPlaceholder =>
+      'What do you want to share with your club?';
+
+  @override
+  String get homeFeedCreateFirstPostCta => 'Create your first post';
+
+  @override
+  String get homeFeedTabAll => 'All';
+
+  @override
+  String get homeFeedTabPhotos => 'Photos';
+
+  @override
+  String get homeFeedTabVideos => 'Videos';
+
+  @override
+  String get homeFeedFilteredEmptyState => 'Nothing of this type yet.';
+
+  @override
+  String get moreNavLabel => 'More';
+
+  @override
   String get allCategoryLabel => 'All';
 
   @override

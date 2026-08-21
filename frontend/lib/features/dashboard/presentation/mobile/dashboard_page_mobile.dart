@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -10,10 +11,13 @@ import '../../../auth/domain/entities/user_role.dart';
 import '../../../club/application/club_profile_controller.dart';
 import '../../../club_players/application/club_players_controller.dart';
 import '../../../club_players/domain/entities/club_dashboard_summary.dart';
+import '../../../home_feed/domain/entities/feed_item.dart';
 import '../../../home_feed/presentation/mobile/home_feed_page_mobile.dart';
 import '../../../home_feed/presentation/shared/create_post_sheet.dart';
 import '../../../home_feed/presentation/shared/home_feed_body.dart';
+import '../shared/club_composer_card.dart';
 import '../shared/club_dashboard_widgets.dart';
+import '../shared/club_feed_tabs.dart';
 
 /// Content-only — the top bar/bottom nav chrome that used to live here now
 /// lives in `AppShell` (mounted once by the `/dashboard` ShellRoute), so
@@ -57,14 +61,21 @@ class DashboardPageMobile extends ConsumerWidget {
 
 /// The Club's operational home on mobile — same data as Desktop
 /// ([ClubDashboardSummary]), but stacked single-column: compact identity
-/// header, the news feed, 2-per-row stat tiles, profile completeness, then
-/// recent players. Quick Actions moved to the Club Profile page. Not a
-/// shrunk copy of the Desktop grid layout.
-class _ClubDashboardMobile extends ConsumerWidget {
+/// header, composer, content-type tabs, the news feed, then 2-per-row stat
+/// tiles, profile completeness, and recent players below. Quick Actions
+/// moved to the Club Profile page. Not a shrunk copy of the Desktop layout.
+class _ClubDashboardMobile extends ConsumerStatefulWidget {
   const _ClubDashboardMobile();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ClubDashboardMobile> createState() => _ClubDashboardMobileState();
+}
+
+class _ClubDashboardMobileState extends ConsumerState<_ClubDashboardMobile> {
+  FeedItemKind? _filter;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final summaryAsync = ref.watch(clubDashboardSummaryProvider);
     final profileAsync = ref.watch(clubProfileControllerProvider);
@@ -78,18 +89,22 @@ class _ClubDashboardMobile extends ConsumerWidget {
             data: (profile) => ClubDashboardIdentityHeader(profile: profile, logoSize: 52),
             orElse: () => const SkeletonBox(height: 52),
           ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => CreatePostSheet.show(context, role: UserRole.club),
-            icon: const Icon(Icons.add_a_photo_outlined),
-            label: Text(l10n.homeFeedNewPostTitle),
+          const SizedBox(height: AppSpacing.md),
+          ClubComposerCard(
+            logoUrl: profileAsync.maybeWhen(data: (profile) => profile.logoUrl, orElse: () => null),
+            onTap: () => CreatePostSheet.show(context, role: UserRole.club),
           ),
-          const SizedBox(height: 16),
-          Text(l10n.dashboardLatestNewsTitle, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.md),
+          ClubFeedTabs(value: _filter, onChanged: (kind) => setState(() => _filter = kind)),
+          const SizedBox(height: AppSpacing.sm),
           SizedBox(
-            height: 600,
-            child: HomeFeedBody(role: UserRole.club, showComposerFab: false),
+            height: 700,
+            child: HomeFeedBody(
+              role: UserRole.club,
+              showComposerFab: false,
+              kindFilter: _filter,
+              onCreatePost: () => CreatePostSheet.show(context, role: UserRole.club),
+            ),
           ),
           const SizedBox(height: 20),
           Text(l10n.dashboardStatsTitle, style: Theme.of(context).textTheme.titleMedium),

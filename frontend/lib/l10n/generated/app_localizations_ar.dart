@@ -1252,6 +1252,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeFeedPostSuccessMessage => 'تم النشر بنجاح.';
 
   @override
+  String get homeFeedComposerPlaceholder => 'بماذا تريد مشاركة النادي؟';
+
+  @override
+  String get homeFeedCreateFirstPostCta => 'أنشئ أول منشور';
+
+  @override
+  String get homeFeedTabAll => 'الكل';
+
+  @override
+  String get homeFeedTabPhotos => 'الصور';
+
+  @override
+  String get homeFeedTabVideos => 'الفيديوهات';
+
+  @override
+  String get homeFeedFilteredEmptyState => 'لا يوجد شيء من هذا النوع بعد.';
+
+  @override
+  String get moreNavLabel => 'المزيد';
+
+  @override
   String get allCategoryLabel => 'الكل';
 
   @override

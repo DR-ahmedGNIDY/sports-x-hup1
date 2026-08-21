@@ -2425,6 +2425,48 @@ abstract class AppLocalizations {
   /// **'تم النشر بنجاح.'**
   String get homeFeedPostSuccessMessage;
 
+  /// No description provided for @homeFeedComposerPlaceholder.
+  ///
+  /// In ar, this message translates to:
+  /// **'بماذا تريد مشاركة النادي؟'**
+  String get homeFeedComposerPlaceholder;
+
+  /// No description provided for @homeFeedCreateFirstPostCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنشئ أول منشور'**
+  String get homeFeedCreateFirstPostCta;
+
+  /// No description provided for @homeFeedTabAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get homeFeedTabAll;
+
+  /// No description provided for @homeFeedTabPhotos.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصور'**
+  String get homeFeedTabPhotos;
+
+  /// No description provided for @homeFeedTabVideos.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفيديوهات'**
+  String get homeFeedTabVideos;
+
+  /// No description provided for @homeFeedFilteredEmptyState.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد شيء من هذا النوع بعد.'**
+  String get homeFeedFilteredEmptyState;
+
+  /// No description provided for @moreNavLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المزيد'**
+  String get moreNavLabel;
+
   /// No description provided for @allCategoryLabel.
   ///
   /// In ar, this message translates to:

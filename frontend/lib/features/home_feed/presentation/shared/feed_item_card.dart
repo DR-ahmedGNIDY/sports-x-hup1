@@ -7,10 +7,60 @@ import 'package:intl/intl.dart' show DateFormat;
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/skeleton_box.dart';
 import '../../../videos/presentation/shared/video_player_screen.dart';
 import '../../domain/entities/feed_author.dart';
 import '../../domain/entities/feed_item.dart';
 import 'feed_like_button.dart';
+
+/// A [FeedItemCard]-shaped placeholder for the feed's initial loading
+/// state — same card shell (author row, media rectangle, action row) so
+/// the loading → loaded transition doesn't visually jump.
+class FeedItemCardSkeleton extends StatelessWidget {
+  const FeedItemCardSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.profileSurface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Row(
+              children: [
+                const SkeletonBox(width: 36, height: 36, borderRadius: BorderRadius.all(Radius.circular(18))),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      SkeletonBox(width: 120, height: 12),
+                      SizedBox(height: 6),
+                      SkeletonBox(width: 70, height: 10),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const AspectRatio(aspectRatio: 16 / 9, child: SkeletonBox()),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+            child: SkeletonBox(width: 90, height: 20),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 /// One Home-feed post — full-width vertical card (author row, media,
 /// caption, like/comment row), the "one social feed, mixed content types"

@@ -8,6 +8,7 @@ import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/domain/entities/user_role.dart';
 import '../../application/home_feed_controller.dart';
+import '../../domain/entities/feed_item.dart';
 import 'create_post_sheet.dart';
 import 'feed_comments_sheet.dart';
 import 'feed_item_card.dart';
@@ -22,6 +23,8 @@ class HomeFeedBody extends ConsumerStatefulWidget {
     this.maxWidth = 640,
     this.role = UserRole.player,
     this.showComposerFab = true,
+    this.kindFilter,
+    this.onCreatePost,
   });
 
   final double maxWidth;
@@ -34,6 +37,16 @@ class HomeFeedBody extends ConsumerStatefulWidget {
   /// Hide the floating "new post" button when the embedding screen already
   /// has its own compose entry point (e.g. the Club dashboard header).
   final bool showComposerFab;
+
+  /// Restricts the rendered list to one content type — a purely
+  /// client-side filter over the already-loaded page (see [ClubFeedTabs]);
+  /// `null` shows everything, same as before this existed.
+  final FeedItemKind? kindFilter;
+
+  /// Shown as a CTA under the empty state when the feed is genuinely empty
+  /// (not just filtered down to nothing) — omit to fall back to plain text,
+  /// same as before this existed.
+  final VoidCallback? onCreatePost;
 
   @override
   ConsumerState<HomeFeedBody> createState() => _HomeFeedBodyState();
@@ -84,8 +97,12 @@ class _HomeFeedBodyState extends ConsumerState<HomeFeedBody> {
           constraints: BoxConstraints(maxWidth: widget.maxWidth),
           child: feedAsync.when(
             data: (state) {
-              final items = state.page.items;
-              if (items.isEmpty) {
+              final allItems = state.page.items;
+              final items = widget.kindFilter == null
+                  ? allItems
+                  : allItems.where((i) => i.kind == widget.kindFilter).toList();
+
+              if (allItems.isEmpty) {
                 return RefreshIndicator(
                   onRefresh: controller.refresh,
                   child: ListView(
@@ -107,6 +124,14 @@ class _HomeFeedBodyState extends ConsumerState<HomeFeedBody> {
                                 color: AppColors.greyLight,
                               ),
                             ),
+                            if (widget.onCreatePost != null) ...[
+                              const SizedBox(height: AppSpacing.lg),
+                              FilledButton.icon(
+                                onPressed: widget.onCreatePost,
+                                icon: const Icon(Icons.add_photo_alternate_outlined),
+                                label: Text(l10n.homeFeedCreateFirstPostCta),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -114,6 +139,26 @@ class _HomeFeedBodyState extends ConsumerState<HomeFeedBody> {
                   ),
                 );
               }
+
+              // The underlying page isn't empty, but the current tab
+              // (Photos/Videos) filtered every loaded item out.
+              if (items.isEmpty) {
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  children: [
+                    const SizedBox(height: 60),
+                    Center(
+                      child: Text(
+                        l10n.homeFeedFilteredEmptyState,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: AppColors.greyLight),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
               return RefreshIndicator(
                 onRefresh: controller.refresh,
                 child: ListView.builder(
@@ -147,7 +192,11 @@ class _HomeFeedBodyState extends ConsumerState<HomeFeedBody> {
                 ),
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => ListView.builder(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              itemCount: 3,
+              itemBuilder: (context, _) => const FeedItemCardSkeleton(),
+            ),
             error: (error, _) => ErrorState(
               onRetry: () => ref.invalidate(homeFeedControllerProvider),
             ),

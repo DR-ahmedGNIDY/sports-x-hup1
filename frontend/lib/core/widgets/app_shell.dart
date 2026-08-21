@@ -286,8 +286,24 @@ class _UserIdentity extends ConsumerWidget {
   }
 }
 
+/// A sentinel "route" that never matches a real `GoRoute` — tapping this
+/// destination opens the More sheet instead of navigating.
+const _moreSentinel = '#more';
+
 class _MobileNavDestination {
   const _MobileNavDestination({required this.icon, required this.label, required this.route});
+
+  final IconData icon;
+  final String label;
+  final String route;
+
+  bool get isMore => route == _moreSentinel;
+}
+
+/// One entry inside the More sheet — always a real route, opened via
+/// `context.go` same as a top-level destination would be.
+class _MoreSheetItem {
+  const _MoreSheetItem({required this.icon, required this.label, required this.route});
 
   final IconData icon;
   final String label;
@@ -322,12 +338,17 @@ class _MobileShell extends ConsumerWidget {
       route: '/settings',
     );
     if (role == UserRole.club) {
-      // Manage Players and Discover Players are the Club's daily jobs —
-      // the Club Experience 2.0 brief is explicit that Community must not
-      // outrank them, so My Players/Find Players/Saved Players come first
-      // and Community/Settings trail behind, not the other way around.
+      // Home, Club Profile, Club Players, Search — the Club's 4 daily
+      // screens get their own tab; everything else (Saved Players,
+      // Community, Settings) lives inside the More sheet instead of
+      // crowding a 6th/7th bottom-nav slot.
       return [
         home,
+        _MobileNavDestination(
+          icon: Icons.shield_outlined,
+          label: l10n.dashboardMyClub,
+          route: '/club/preview',
+        ),
         _MobileNavDestination(
           icon: Icons.groups_outlined,
           label: l10n.clubPlayersTitle,
@@ -338,13 +359,7 @@ class _MobileShell extends ConsumerWidget {
           label: l10n.dashboardSearchPlayers,
           route: '/search',
         ),
-        _MobileNavDestination(
-          icon: Icons.bookmark_outline,
-          label: l10n.dashboardSavedPlayers,
-          route: '/saved-players',
-        ),
-        community,
-        settings,
+        _MobileNavDestination(icon: Icons.more_horiz, label: l10n.moreNavLabel, route: _moreSentinel),
       ];
     }
     if (role != UserRole.player) {
@@ -367,11 +382,62 @@ class _MobileShell extends ConsumerWidget {
     ];
   }
 
+  // Routes tucked inside the More sheet (Club only) — visited from there,
+  // so the bottom nav should still show More as "active" rather than
+  // falling back to Home while one of them is open.
+  static const _moreGroupedRoutes = ['/saved-players', '/community', '/settings'];
+
   int _indexFor(List<_MobileNavDestination> destinations, String path) {
     final index = destinations.indexWhere(
-      (d) => d.route != '/dashboard' && path.startsWith(d.route),
+      (d) => d.route != '/dashboard' && !d.isMore && path.startsWith(d.route),
     );
-    return index == -1 ? 0 : index;
+    if (index != -1) return index;
+    final moreIndex = destinations.indexWhere((d) => d.isMore);
+    if (moreIndex != -1 && _moreGroupedRoutes.any(path.startsWith)) return moreIndex;
+    return 0;
+  }
+
+  void _showMoreSheet(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+    final items = [
+      _MoreSheetItem(
+        icon: Icons.bookmark_outline,
+        label: l10n.dashboardSavedPlayers,
+        route: '/saved-players',
+      ),
+      _MoreSheetItem(icon: Icons.groups_2_outlined, label: l10n.communityNavLabel, route: '/community'),
+      _MoreSheetItem(icon: Icons.settings_outlined, label: l10n.dashboardNavSettings, route: '/settings'),
+    ];
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final item in items)
+              ListTile(
+                leading: Icon(item.icon),
+                title: Text(item.label),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.go(item.route);
+                },
+              ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.logout_outlined),
+              title: Text(l10n.logoutTooltip),
+              onTap: () {
+                Navigator.of(sheetContext).pop();
+                ref.read(sessionControllerProvider.notifier).logout();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -402,7 +468,14 @@ class _MobileShell extends ConsumerWidget {
       body: child,
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
-        onDestinationSelected: (index) => context.go(destinations[index].route),
+        onDestinationSelected: (index) {
+          final destination = destinations[index];
+          if (destination.isMore) {
+            _showMoreSheet(context, ref, l10n);
+          } else {
+            context.go(destination.route);
+          }
+        },
         destinations: [
           for (final d in destinations) NavigationDestination(icon: Icon(d.icon), label: d.label),
         ],
