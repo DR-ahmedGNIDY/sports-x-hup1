@@ -635,7 +635,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardMyClub.
   ///
   /// In ar, this message translates to:
-  /// **'ناديّ'**
+  /// **'ملف النادي'**
   String get dashboardMyClub;
 
   /// No description provided for @dashboardEditClubProfile.

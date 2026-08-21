@@ -294,7 +294,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboardAdminPlayersClubs => 'الأدمن — اللاعبون والأندية';
 
   @override
-  String get dashboardMyClub => 'ناديّ';
+  String get dashboardMyClub => 'ملف النادي';
 
   @override
   String get dashboardEditClubProfile => 'تعديل ملف النادي';

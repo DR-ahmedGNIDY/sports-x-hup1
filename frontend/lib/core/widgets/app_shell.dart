@@ -78,12 +78,17 @@ final List<_NavItem> _navItems = [
   _settingsNavItem,
 ];
 
-/// Club sidebar order — Manage Players, then Discover, then Club/Settings,
-/// with Community placed after the Club's daily-use tools rather than
-/// above them (the Club Experience 2.0 brief is explicit: Community must
-/// not outrank Players in the Club's navigation).
+/// Club sidebar order — Home, then Club Profile right underneath it, then
+/// Manage Players, then Discover, then Community/Settings (the Club
+/// Experience 2.0 brief is explicit: Community must not outrank Players in
+/// the Club's navigation).
 final List<_NavItem> _clubNavItems = [
   _dashboardNavItem,
+  _NavItem(
+    icon: Icons.shield_outlined,
+    label: (l10n) => l10n.dashboardMyClub,
+    route: '/club/preview',
+  ),
   _NavItem(
     icon: Icons.groups_outlined,
     label: (l10n) => l10n.clubPlayersTitle,
@@ -105,11 +110,6 @@ final List<_NavItem> _clubNavItems = [
     route: '/saved-players',
   ),
   _communityNavItem,
-  _NavItem(
-    icon: Icons.shield_outlined,
-    label: (l10n) => l10n.dashboardMyClub,
-    route: '/club/preview',
-  ),
   _NavItem(
     icon: Icons.edit_outlined,
     label: (l10n) => l10n.dashboardEditClubProfile,

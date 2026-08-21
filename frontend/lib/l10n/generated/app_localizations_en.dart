@@ -292,7 +292,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardAdminPlayersClubs => 'Admin — Players & Clubs';
 
   @override
-  String get dashboardMyClub => 'My Club';
+  String get dashboardMyClub => 'Club Profile';
 
   @override
   String get dashboardEditClubProfile => 'Edit Club Profile';
