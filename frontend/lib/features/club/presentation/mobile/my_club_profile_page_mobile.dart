@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../dashboard/presentation/shared/club_dashboard_widgets.dart';
 import '../../application/club_profile_controller.dart';
 import '../shared/club_profile_view.dart';
 
@@ -34,6 +35,13 @@ class MyClubProfilePageMobile extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             ClubProfileView(profile: profile),
+            const SizedBox(height: 24),
+            Text(l10n.dashboardQuickActionsTitle, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            for (final action in clubDashboardQuickActions(l10n)) ...[
+              ClubQuickActionCard(action: action),
+              const SizedBox(height: 10),
+            ],
           ],
         ),
       ),

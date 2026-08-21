@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_state.dart';
@@ -58,9 +57,9 @@ class DashboardPageMobile extends ConsumerWidget {
 
 /// The Club's operational home on mobile — same data as Desktop
 /// ([ClubDashboardSummary]), but stacked single-column: compact identity
-/// header, 2-per-row stat tiles, a vertical quick-action list with
-/// descriptions, profile completeness, then recent players. Not a shrunk
-/// copy of the Desktop grid layout.
+/// header, the news feed, 2-per-row stat tiles, profile completeness, then
+/// recent players. Quick Actions moved to the Club Profile page. Not a
+/// shrunk copy of the Desktop grid layout.
 class _ClubDashboardMobile extends ConsumerWidget {
   const _ClubDashboardMobile();
 
@@ -146,7 +145,6 @@ class _ClubDashboardBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final quickActions = clubDashboardQuickActions(l10n);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -191,24 +189,6 @@ class _ClubDashboardBody extends StatelessWidget {
           ClubDashboardCompletenessCard(summary: summary),
           const SizedBox(height: 20),
         ],
-        Text(l10n.dashboardQuickActionsTitle, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        Card(
-          margin: EdgeInsets.zero,
-          child: Column(
-            children: [
-              for (final action in quickActions)
-                ListTile(
-                  leading: Icon(action.icon, color: Theme.of(context).colorScheme.primary),
-                  title: Text(action.label),
-                  subtitle: Text(action.description),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.go(action.route),
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
         ClubDashboardRecentPlayersSection(summary: summary),
       ],
     );

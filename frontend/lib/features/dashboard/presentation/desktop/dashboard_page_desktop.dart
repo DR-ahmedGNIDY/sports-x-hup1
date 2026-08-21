@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_state.dart';
@@ -48,11 +47,11 @@ class DashboardPageDesktop extends ConsumerWidget {
   }
 }
 
-/// The Club's operational home: identity header, roster stats, profile
-/// completeness, recently added players, and the 5 daily-use quick actions
-/// — see the Club Product Report / Club Experience 2.0 brief for why these
-/// replace the old flat button list. Uses the full available width rather
-/// than a narrow centered column, matching Desktop's data-dense role.
+/// The Club's operational home: identity header, the news feed, roster
+/// stats, profile completeness, and recently added players. Quick Actions
+/// moved to the Club Profile page (see [ClubQuickActionCard]) — Home is now
+/// the feed. Uses the full available width rather than a narrow centered
+/// column, matching Desktop's data-dense role.
 class _ClubDashboardDesktop extends ConsumerWidget {
   const _ClubDashboardDesktop();
 
@@ -129,14 +128,7 @@ class _ClubDashboardSkeleton extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 28),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Expanded(flex: 2, child: SkeletonBox(height: 260)),
-            const SizedBox(width: 24),
-            const Expanded(child: SkeletonBox(height: 260)),
-          ],
-        ),
+        const SkeletonBox(height: 260),
       ],
     );
   }
@@ -150,7 +142,6 @@ class _ClubDashboardBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final quickActions = clubDashboardQuickActions(l10n);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -189,95 +180,12 @@ class _ClubDashboardBody extends StatelessWidget {
           ),
           const SizedBox(height: 28),
         ],
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(flex: 2, child: ClubDashboardRecentPlayersSection(summary: summary)),
-            const SizedBox(width: 24),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(l10n.dashboardQuickActionsTitle, style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 12),
-                  for (final action in quickActions) ...[
-                    _QuickActionCard(action: action),
-                    const SizedBox(height: 10),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
+        ClubDashboardRecentPlayersSection(summary: summary),
         if (summary.totalPlayers > 0) ...[
           const SizedBox(height: 28),
           ClubDashboardCompletenessCard(summary: summary),
         ],
       ],
-    );
-  }
-}
-
-class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({required this.action});
-
-  final ClubQuickAction action;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    final isPrimary = action.emphasis == ClubQuickActionEmphasis.primary;
-    final isTertiary = action.emphasis == ClubQuickActionEmphasis.tertiary;
-
-    return Card(
-      margin: EdgeInsets.zero,
-      color: isPrimary ? colorScheme.primaryContainer : (isTertiary ? colorScheme.surface : null),
-      elevation: isPrimary ? 0 : null,
-      shape: isTertiary
-          ? RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: colorScheme.outlineVariant),
-            )
-          : null,
-      child: InkWell(
-        onTap: () => context.go(action.route),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                action.icon,
-                color: isPrimary ? colorScheme.onPrimaryContainer : colorScheme.primary,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      action.label,
-                      style: textTheme.titleSmall?.copyWith(
-                        color: isPrimary ? colorScheme.onPrimaryContainer : null,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      action.description,
-                      style: textTheme.bodySmall?.copyWith(
-                        color: isPrimary ? colorScheme.onPrimaryContainer : colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

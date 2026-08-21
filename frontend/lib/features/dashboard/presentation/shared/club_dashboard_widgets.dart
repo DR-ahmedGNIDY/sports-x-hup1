@@ -346,6 +346,72 @@ class ClubQuickAction {
 /// The 5 daily Club actions this dashboard exists to surface, per the
 /// Club Product Report: Add Player, Club Players, Search Players, Saved
 /// Players, Edit Club Profile — in priority order.
+/// A single Quick Action, rendered as a tappable card — used on the Club
+/// Profile page's "Quick Actions" section (Desktop grid / Mobile list).
+class ClubQuickActionCard extends StatelessWidget {
+  const ClubQuickActionCard({super.key, required this.action});
+
+  final ClubQuickAction action;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isPrimary = action.emphasis == ClubQuickActionEmphasis.primary;
+    final isTertiary = action.emphasis == ClubQuickActionEmphasis.tertiary;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      color: isPrimary ? colorScheme.primaryContainer : (isTertiary ? colorScheme.surface : null),
+      elevation: isPrimary ? 0 : null,
+      shape: isTertiary
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: colorScheme.outlineVariant),
+            )
+          : null,
+      child: InkWell(
+        onTap: () => context.go(action.route),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                action.icon,
+                color: isPrimary ? colorScheme.onPrimaryContainer : colorScheme.primary,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      action.label,
+                      style: textTheme.titleSmall?.copyWith(
+                        color: isPrimary ? colorScheme.onPrimaryContainer : null,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      action.description,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: isPrimary ? colorScheme.onPrimaryContainer : colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 List<ClubQuickAction> clubDashboardQuickActions(AppLocalizations l10n) => [
   ClubQuickAction(
     icon: Icons.person_add_outlined,
