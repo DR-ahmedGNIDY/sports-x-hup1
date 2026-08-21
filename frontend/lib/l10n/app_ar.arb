@@ -114,6 +114,7 @@
   "dashboardMyClub": "ملف النادي",
   "dashboardEditClubProfile": "تعديل ملف النادي",
   "dashboardSearchPlayers": "البحث عن اللاعبين",
+  "mobileSearchNavLabel": "البحث",
   "dashboardSavedPlayers": "اللاعبون المحفوظون",
   "dashboardAccountSettings": "إعدادات الحساب",
   "dashboardAdminMobileHint": "أدوات الأدمن متاحة على الحاسوب فقط.",

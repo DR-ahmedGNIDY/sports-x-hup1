@@ -650,6 +650,12 @@ abstract class AppLocalizations {
   /// **'البحث عن اللاعبين'**
   String get dashboardSearchPlayers;
 
+  /// No description provided for @mobileSearchNavLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث'**
+  String get mobileSearchNavLabel;
+
   /// No description provided for @dashboardSavedPlayers.
   ///
   /// In ar, this message translates to:

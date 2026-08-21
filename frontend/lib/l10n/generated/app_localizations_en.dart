@@ -301,6 +301,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardSearchPlayers => 'Search Players';
 
   @override
+  String get mobileSearchNavLabel => 'Search';
+
+  @override
   String get dashboardSavedPlayers => 'Saved Players';
 
   @override

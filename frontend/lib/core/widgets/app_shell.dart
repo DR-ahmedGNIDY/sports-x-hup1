@@ -356,7 +356,7 @@ class _MobileShell extends ConsumerWidget {
         ),
         _MobileNavDestination(
           icon: Icons.search_outlined,
-          label: l10n.dashboardSearchPlayers,
+          label: l10n.mobileSearchNavLabel,
           route: '/search',
         ),
         _MobileNavDestination(icon: Icons.more_horiz, label: l10n.moreNavLabel, route: _moreSentinel),

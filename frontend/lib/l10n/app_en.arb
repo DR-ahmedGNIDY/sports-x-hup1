@@ -114,6 +114,7 @@
   "dashboardMyClub": "Club Profile",
   "dashboardEditClubProfile": "Edit Club Profile",
   "dashboardSearchPlayers": "Search Players",
+  "mobileSearchNavLabel": "Search",
   "dashboardSavedPlayers": "Saved Players",
   "dashboardAccountSettings": "Account Settings",
   "dashboardAdminMobileHint": "Admin tooling is available on Desktop.",

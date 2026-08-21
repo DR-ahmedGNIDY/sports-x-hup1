@@ -303,6 +303,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboardSearchPlayers => 'البحث عن اللاعبين';
 
   @override
+  String get mobileSearchNavLabel => 'البحث';
+
+  @override
   String get dashboardSavedPlayers => 'اللاعبون المحفوظون';
 
   @override
