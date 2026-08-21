@@ -1278,6 +1278,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeFeedFilteredEmptyState => 'لا يوجد شيء من هذا النوع بعد.';
 
   @override
+  String get feedSharePostLabel => 'مشاركة';
+
+  @override
+  String get feedSharePostLinkCopied => 'تم نسخ رابط المنشور';
+
+  @override
   String get moreNavLabel => 'المزيد';
 
   @override
@@ -1360,6 +1366,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get videoPlaybackRetryLabel => 'إعادة المحاولة';
+
+  @override
+  String get videoPlaybackMuteTooltip => 'كتم الصوت';
+
+  @override
+  String get videoPlaybackUnmuteTooltip => 'تشغيل الصوت';
 
   @override
   String get videoCommentsTitle => 'التعليقات';

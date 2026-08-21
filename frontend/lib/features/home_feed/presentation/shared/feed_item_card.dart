@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // `intl` exports its own `TextDirection` (for Bidi) that otherwise shadows
 // Flutter's — this file needs Flutter's `TextDirection.ltr` below, so only
 // bring in the one intl symbol actually used here.
@@ -8,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/skeleton_box.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../videos/presentation/shared/video_player_screen.dart';
 import '../../domain/entities/feed_author.dart';
 import '../../domain/entities/feed_item.dart';
@@ -82,6 +84,21 @@ class FeedItemCard extends StatelessWidget {
     Navigator.of(
       context,
     ).push(MaterialPageRoute<void>(builder: (_) => VideoPlayerScreen(videoUrl: item.secureUrl)));
+  }
+
+  // No public per-post page exists to link to, so — same honest approach
+  // as ShareProfileButton — this copies the direct media URL (the one
+  // real, working link available) instead of a fabricated share target.
+  Future<void> _share(BuildContext context) async {
+    final text = [
+      if (item.caption != null && item.caption!.isNotEmpty) item.caption!,
+      item.secureUrl,
+    ].join('\n');
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.feedSharePostLinkCopied)));
   }
 
   @override
@@ -164,6 +181,12 @@ class FeedItemCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                ),
+                const Spacer(),
+                IconButton(
+                  tooltip: AppLocalizations.of(context)!.feedSharePostLabel,
+                  icon: const Icon(Icons.ios_share_outlined, size: 18, color: AppColors.greyLight),
+                  onPressed: () => _share(context),
                 ),
               ],
             ),

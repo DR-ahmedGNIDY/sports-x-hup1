@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/empty_state_illustration.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/repositories/video_repository_impl.dart';
 import '../../domain/entities/video_comment.dart';
+import 'comment_tile.dart';
 
 /// Opens the comments sheet for [videoId]. [onCommentCountChanged] lets the
 /// caller's own list controller (My Videos / Public Videos / Community
@@ -207,9 +209,17 @@ class _VideoCommentsSheetState extends ConsumerState<_VideoCommentsSheet> {
                   ? ErrorState(message: _initialLoadError, onRetry: _load)
                   : _comments.isEmpty
                   ? Center(
-                      child: Text(
-                        l10n.videoCommentsEmptyState,
-                        style: const TextStyle(color: AppColors.greyLight),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const EmptyStateIllustration(variant: EmptyStateVariant.noData),
+                          const SizedBox(height: 12),
+                          Text(
+                            l10n.videoCommentsEmptyState,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: AppColors.greyLight),
+                          ),
+                        ],
                       ),
                     )
                   : ListView.separated(
@@ -232,43 +242,10 @@ class _VideoCommentsSheetState extends ConsumerState<_VideoCommentsSheet> {
                           );
                         }
                         final comment = _comments[index];
-                        return Row(
+                        return CommentTile(
                           key: ValueKey(comment.id),
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    comment.authorDisplayName,
-                                    style: const TextStyle(
-                                      color: AppColors.profileText,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    comment.text,
-                                    style: const TextStyle(
-                                      color: AppColors.greyLight,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (comment.isMine)
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete_outline,
-                                  size: 18,
-                                  color: AppColors.greyLight,
-                                ),
-                                onPressed: () => _confirmDelete(comment),
-                              ),
-                          ],
+                          comment: comment,
+                          onDelete: comment.isMine ? () => _confirmDelete(comment) : null,
                         );
                       },
                     ),

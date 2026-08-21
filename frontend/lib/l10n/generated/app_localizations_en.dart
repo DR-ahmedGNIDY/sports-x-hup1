@@ -1293,6 +1293,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeFeedFilteredEmptyState => 'Nothing of this type yet.';
 
   @override
+  String get feedSharePostLabel => 'Share';
+
+  @override
+  String get feedSharePostLinkCopied => 'Post link copied';
+
+  @override
   String get moreNavLabel => 'More';
 
   @override
@@ -1376,6 +1382,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get videoPlaybackRetryLabel => 'Retry';
+
+  @override
+  String get videoPlaybackMuteTooltip => 'Mute';
+
+  @override
+  String get videoPlaybackUnmuteTooltip => 'Unmute';
 
   @override
   String get videoCommentsTitle => 'Comments';

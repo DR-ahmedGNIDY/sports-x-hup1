@@ -19,6 +19,14 @@ class VideoPlayerScreen extends StatefulWidget {
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   late VideoPlayerController _controller;
   late Future<void> _initialize;
+  bool _muted = false;
+
+  void _toggleMute() {
+    setState(() {
+      _muted = !_muted;
+      _controller.setVolume(_muted ? 0 : 1);
+    });
+  }
 
   @override
   void initState() {
@@ -30,6 +38,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
     _initialize = _controller.initialize().then((_) {
       if (mounted) {
+        _controller.setVolume(_muted ? 0 : 1);
         setState(() {});
         _controller.play();
       }
@@ -112,6 +121,22 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: VideoProgressIndicator(_controller, allowScrubbing: true),
+                  ),
+                  Align(
+                    alignment: AlignmentDirectional.bottomEnd,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: IconButton(
+                        tooltip: _muted
+                            ? l10n.videoPlaybackUnmuteTooltip
+                            : l10n.videoPlaybackMuteTooltip,
+                        icon: Icon(
+                          _muted ? Icons.volume_off : Icons.volume_up,
+                          color: Colors.white.withValues(alpha: 0.85),
+                        ),
+                        onPressed: _toggleMute,
+                      ),
+                    ),
                   ),
                 ],
               ),

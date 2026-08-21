@@ -2473,6 +2473,18 @@ abstract class AppLocalizations {
   /// **'لا يوجد شيء من هذا النوع بعد.'**
   String get homeFeedFilteredEmptyState;
 
+  /// No description provided for @feedSharePostLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاركة'**
+  String get feedSharePostLabel;
+
+  /// No description provided for @feedSharePostLinkCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم نسخ رابط المنشور'**
+  String get feedSharePostLinkCopied;
+
   /// No description provided for @moreNavLabel.
   ///
   /// In ar, this message translates to:
@@ -2628,6 +2640,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إعادة المحاولة'**
   String get videoPlaybackRetryLabel;
+
+  /// No description provided for @videoPlaybackMuteTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'كتم الصوت'**
+  String get videoPlaybackMuteTooltip;
+
+  /// No description provided for @videoPlaybackUnmuteTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'تشغيل الصوت'**
+  String get videoPlaybackUnmuteTooltip;
 
   /// No description provided for @videoCommentsTitle.
   ///
