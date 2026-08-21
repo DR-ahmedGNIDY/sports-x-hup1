@@ -181,7 +181,7 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   l10n.videoCommentsTitle,
                   style: const TextStyle(

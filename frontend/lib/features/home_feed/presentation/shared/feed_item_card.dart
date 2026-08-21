@@ -167,18 +167,21 @@ class FeedItemCard extends StatelessWidget {
                 InkWell(
                   onTap: onCommentTap,
                   borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AppSpacing.xs),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.mode_comment_outlined, size: 18, color: AppColors.greyLight),
-                        const SizedBox(width: AppSpacing.xs),
-                        Text(
-                          '${item.commentCount}',
-                          style: AppTextStyles.statNumber.copyWith(color: AppColors.greyLight, fontSize: 13),
-                        ),
-                      ],
+                  child: Tooltip(
+                    message: AppLocalizations.of(context)!.feedCommentsTooltip,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: AppSpacing.xs),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.mode_comment_outlined, size: 18, color: AppColors.greyLight),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text(
+                            '${item.commentCount}',
+                            style: AppTextStyles.statNumber.copyWith(color: AppColors.greyLight, fontSize: 13),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

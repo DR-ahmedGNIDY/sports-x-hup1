@@ -1299,6 +1299,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedSharePostLinkCopied => 'Post link copied';
 
   @override
+  String get feedLikeTooltip => 'Like';
+
+  @override
+  String get feedUnlikeTooltip => 'Unlike';
+
+  @override
+  String get feedCommentsTooltip => 'Comments';
+
+  @override
   String get moreNavLabel => 'More';
 
   @override

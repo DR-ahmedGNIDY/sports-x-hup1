@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/feed_item.dart';
 
 /// Mirrors videos/presentation/shared/video_like_button.dart's icon
@@ -63,36 +64,40 @@ class _FeedLikeButtonState extends State<FeedLikeButton> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final liked = widget.item.isLikedByMe;
+    final l10n = AppLocalizations.of(context)!;
     return InkWell(
       onTap: _handleTap,
       borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ScaleTransition(
-              scale: _scaleAnimation,
-              child: AnimatedSwitcher(
-                duration: AppMotion.fast,
-                child: Icon(
-                  liked ? Icons.favorite : Icons.favorite_border,
-                  key: ValueKey(liked),
-                  size: 18,
-                  color: liked ? AppColors.error : AppColors.greyLight,
+      child: Tooltip(
+        message: liked ? l10n.feedUnlikeTooltip : l10n.feedLikeTooltip,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ScaleTransition(
+                scale: _scaleAnimation,
+                child: AnimatedSwitcher(
+                  duration: AppMotion.fast,
+                  child: Icon(
+                    liked ? Icons.favorite : Icons.favorite_border,
+                    key: ValueKey(liked),
+                    size: 18,
+                    color: liked ? AppColors.error : AppColors.greyLight,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 4),
-            AnimatedDefaultTextStyle(
-              duration: AppMotion.fast,
-              style: AppTextStyles.statNumber.copyWith(
-                color: liked ? AppColors.error : AppColors.greyLight,
-                fontSize: 13,
+              const SizedBox(width: 4),
+              AnimatedDefaultTextStyle(
+                duration: AppMotion.fast,
+                style: AppTextStyles.statNumber.copyWith(
+                  color: liked ? AppColors.error : AppColors.greyLight,
+                  fontSize: 13,
+                ),
+                child: Text('${widget.item.likeCount}'),
               ),
-              child: Text('${widget.item.likeCount}'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

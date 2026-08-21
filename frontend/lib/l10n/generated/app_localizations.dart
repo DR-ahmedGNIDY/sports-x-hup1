@@ -2485,6 +2485,24 @@ abstract class AppLocalizations {
   /// **'تم نسخ رابط المنشور'**
   String get feedSharePostLinkCopied;
 
+  /// No description provided for @feedLikeTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعجاب'**
+  String get feedLikeTooltip;
+
+  /// No description provided for @feedUnlikeTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الإعجاب'**
+  String get feedUnlikeTooltip;
+
+  /// No description provided for @feedCommentsTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'التعليقات'**
+  String get feedCommentsTooltip;
+
   /// No description provided for @moreNavLabel.
   ///
   /// In ar, this message translates to:

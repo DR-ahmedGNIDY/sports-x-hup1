@@ -1284,6 +1284,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get feedSharePostLinkCopied => 'تم نسخ رابط المنشور';
 
   @override
+  String get feedLikeTooltip => 'إعجاب';
+
+  @override
+  String get feedUnlikeTooltip => 'إلغاء الإعجاب';
+
+  @override
+  String get feedCommentsTooltip => 'التعليقات';
+
+  @override
   String get moreNavLabel => 'المزيد';
 
   @override
