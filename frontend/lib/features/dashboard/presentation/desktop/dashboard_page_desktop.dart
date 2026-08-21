@@ -55,20 +55,21 @@ class DashboardPageDesktop extends ConsumerWidget {
 
 /// The Club's operational home — Dashboard **and** Feed, not one instead
 /// of the other. Top to bottom: identity (full width), roster metrics
-/// (full width), roster health + quick actions (full width, sized to
-/// their own content — no forced stretching), then a bottom row splitting
-/// the feed (main, ~68% width) from Recent Players (secondary, ~32%).
+/// (full width), roster completeness (full width — Quick Actions live on
+/// the Club Profile page instead, not duplicated here), then a bottom row
+/// splitting the feed (main, ~68% width) from Recent Players (secondary,
+/// ~32%).
 ///
-/// The whole page is one scroll (`SingleChildScrollView`) — the earlier
+/// The whole page is one scroll (`SingleChildScrollView`) — an earlier
 /// version made only the bottom row `Expanded` inside a *non-scrolling*
 /// Column, so on any viewport where the fixed chrome above it (identity +
-/// stats + health/quick-actions) added up to more than the available
-/// height, that `Expanded` was squeezed toward zero and the feed
-/// effectively vanished. The bottom row now gets an explicit height
-/// computed from the real available viewport height (via `LayoutBuilder`,
-/// captured before the scroll view so it reflects the actual window, not
-/// "whatever's left"), clamped to a sensible range — generous on tall
-/// screens, never smaller than enough room for feed cards on short ones.
+/// stats + completeness) added up to more than the available height, that
+/// `Expanded` was squeezed toward zero and the feed effectively vanished.
+/// The bottom row now gets an explicit height computed from the real
+/// available viewport height (via `LayoutBuilder`, captured before the
+/// scroll view so it reflects the actual window, not "whatever's left"),
+/// clamped to a sensible range — generous on tall screens, never smaller
+/// than enough room for feed cards on short ones.
 class _ClubDashboardDesktop extends ConsumerStatefulWidget {
   const _ClubDashboardDesktop();
 
@@ -114,10 +115,17 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
                       onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
                   summaryAsync.maybeWhen(
-                    data: (summary) => _ClubHomeHealthRow(summary: summary),
-                    orElse: () => const SkeletonBox(height: 140),
+                    data: (summary) => summary.averageCompletionPercent == null
+                        ? const SizedBox.shrink()
+                        : Padding(
+                            padding: const EdgeInsets.only(top: AppSpacing.lg),
+                            child: ClubDashboardCompletenessCard(summary: summary),
+                          ),
+                    orElse: () => const Padding(
+                      padding: EdgeInsets.only(top: AppSpacing.lg),
+                      child: SkeletonBox(height: 100),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   Text(
@@ -289,65 +297,6 @@ class _StatsRowSkeleton extends StatelessWidget {
           if (i > 0) const SizedBox(width: AppSpacing.md),
           const Expanded(child: SkeletonBox(height: 86)),
         ],
-      ],
-    );
-  }
-}
-
-/// Roster completeness ("how healthy is my roster?") beside Quick Actions
-/// — the two secondary-but-important panels grouped into one row instead
-/// of scattered. When there's no completeness data yet (empty roster),
-/// Quick Actions takes the full row instead of leaving half of it blank.
-///
-/// Each panel sizes itself naturally (`CrossAxisAlignment.start`, no
-/// `IntrinsicHeight`) — forcing them to match heights previously stretched
-/// the shorter panel's cards until they were mostly blank space.
-class _ClubHomeHealthRow extends StatelessWidget {
-  const _ClubHomeHealthRow({required this.summary});
-
-  final ClubDashboardSummary summary;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final quickActions = _QuickActionsGrid(l10n: l10n);
-
-    if (summary.averageCompletionPercent == null) {
-      return quickActions;
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: ClubDashboardCompletenessCard(summary: summary)),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(child: quickActions),
-      ],
-    );
-  }
-}
-
-class _QuickActionsGrid extends StatelessWidget {
-  const _QuickActionsGrid({required this.l10n});
-
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: AppSpacing.sm,
-      crossAxisSpacing: AppSpacing.sm,
-      // This grid sits in a ~half-dashboard-width column (much wider than
-      // the Club Profile page's single-column version), so it needs a
-      // taller aspect ratio to land on the same actual card height —
-      // otherwise each cell is far taller than its icon+title+description
-      // content needs, showing as empty space inside every card.
-      childAspectRatio: 4.3,
-      children: [
-        for (final action in clubDashboardQuickActions(l10n)) ClubQuickActionCard(action: action),
       ],
     );
   }

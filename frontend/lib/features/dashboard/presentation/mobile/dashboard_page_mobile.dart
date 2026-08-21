@@ -63,10 +63,11 @@ class DashboardPageMobile extends ConsumerWidget {
 
 /// The Club's operational home on mobile — its own composition, not a
 /// collapsed copy of Desktop's 2-column layout. Order: identity header,
-/// roster metrics, Quick Actions, the post composer, feed tabs, the feed
-/// itself, then completeness/recent players as trailing "more detail"
-/// content — the feed and its immediate controls sit together as one
-/// visual unit instead of being split apart by the stats block.
+/// roster metrics, the post composer, feed tabs, the feed itself, then
+/// completeness/recent players as trailing "more detail" content — the
+/// feed and its immediate controls sit together as one visual unit
+/// instead of being split apart by the stats block. Quick Actions live on
+/// the Club Profile page instead, not duplicated here.
 class _ClubDashboardMobile extends ConsumerStatefulWidget {
   const _ClubDashboardMobile();
 
@@ -102,13 +103,6 @@ class _ClubDashboardMobileState extends ConsumerState<_ClubDashboardMobile> {
                 ErrorState(onRetry: () => ref.invalidate(clubDashboardSummaryProvider)),
           ),
           const SizedBox(height: AppSpacing.lg),
-          Text(l10n.dashboardQuickActionsTitle, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.sm),
-          for (final action in clubDashboardQuickActions(l10n)) ...[
-            ClubQuickActionCard(action: action),
-            const SizedBox(height: AppSpacing.sm),
-          ],
-          const SizedBox(height: AppSpacing.sm),
           Text(l10n.dashboardLatestNewsTitle, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: AppSpacing.sm),
           ClubComposerCard(
