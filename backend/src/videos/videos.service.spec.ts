@@ -49,6 +49,7 @@ describe('VideosService', () => {
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockResolvedValue([]),
       }),
+      countDocuments: jest.fn().mockResolvedValue(0),
       deleteMany: jest.fn().mockResolvedValue({ deletedCount: 0 }),
     };
     const playerProfileModel = {

@@ -491,24 +491,33 @@ export class VideosService {
   async listComments(userId: string, videoId: string, page = 1) {
     const video = await this.findVideoOrThrow(videoId);
     this.assertViewable(video, userId);
-    const comments = await this.videoCommentModel
-      .find({ videoId: video._id })
-      .sort({ createdAt: 1 })
-      .skip((page - 1) * COMMENTS_PAGE_SIZE)
-      .limit(COMMENTS_PAGE_SIZE);
+    const filter = { videoId: video._id };
+    const [comments, total] = await Promise.all([
+      this.videoCommentModel
+        .find(filter)
+        .sort({ createdAt: 1 })
+        .skip((page - 1) * COMMENTS_PAGE_SIZE)
+        .limit(COMMENTS_PAGE_SIZE),
+      this.videoCommentModel.countDocuments(filter),
+    ]);
 
     const uniqueAuthorIds = [
       ...new Set(comments.map((comment) => comment.userId.toString())),
     ];
     const authorInfoById = await this.resolveDisplayNames(uniqueAuthorIds);
 
-    return comments.map((comment) => {
-      const info = authorInfoById.get(comment.userId.toString()) ?? {
-        displayName: 'Unknown',
-        role: 'UNKNOWN',
-      };
-      return toCommentView(comment, info.displayName, info.role, userId);
-    });
+    return {
+      items: comments.map((comment) => {
+        const info = authorInfoById.get(comment.userId.toString()) ?? {
+          displayName: 'Unknown',
+          role: 'UNKNOWN',
+        };
+        return toCommentView(comment, info.displayName, info.role, userId);
+      }),
+      page,
+      pageSize: COMMENTS_PAGE_SIZE,
+      total,
+    };
   }
 
   async addComment(userId: string, videoId: string, dto: CreateCommentDto) {

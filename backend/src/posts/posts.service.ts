@@ -376,24 +376,33 @@ export class PostsService {
   async listComments(userId: string, photoId: string, page = 1) {
     const photo = await this.findPhotoOrThrow(photoId);
     this.assertViewable();
-    const comments = await this.photoCommentModel
-      .find({ photoId: photo._id })
-      .sort({ createdAt: 1 })
-      .skip((page - 1) * COMMENTS_PAGE_SIZE)
-      .limit(COMMENTS_PAGE_SIZE);
+    const filter = { photoId: photo._id };
+    const [comments, total] = await Promise.all([
+      this.photoCommentModel
+        .find(filter)
+        .sort({ createdAt: 1 })
+        .skip((page - 1) * COMMENTS_PAGE_SIZE)
+        .limit(COMMENTS_PAGE_SIZE),
+      this.photoCommentModel.countDocuments(filter),
+    ]);
 
     const uniqueAuthorIds = [
       ...new Set(comments.map((c) => c.userId.toString())),
     ];
     const authorInfoById = await this.resolveDisplayNames(uniqueAuthorIds);
 
-    return comments.map((comment) => {
-      const info = authorInfoById.get(comment.userId.toString()) ?? {
-        displayName: 'Unknown',
-        role: 'UNKNOWN',
-      };
-      return toCommentView(comment, info.displayName, info.role, userId);
-    });
+    return {
+      items: comments.map((comment) => {
+        const info = authorInfoById.get(comment.userId.toString()) ?? {
+          displayName: 'Unknown',
+          role: 'UNKNOWN',
+        };
+        return toCommentView(comment, info.displayName, info.role, userId);
+      }),
+      page,
+      pageSize: COMMENTS_PAGE_SIZE,
+      total,
+    };
   }
 
   async addComment(userId: string, photoId: string, dto: CreateCommentDto) {
