@@ -53,15 +53,22 @@ class DashboardPageDesktop extends ConsumerWidget {
   }
 }
 
-/// The Club's operational home — a real Club Management Dashboard, not a
-/// feed with some cards bolted on. Top to bottom: identity (full width),
-/// roster metrics (full width), roster health + quick actions (full
-/// width), then a bottom row splitting the feed (main, flexible) from
-/// Recent Players (secondary, fixed width) — the only two things that
-/// genuinely belong side by side, since both are "browse a list" content.
-/// The bottom row is the only flexible/scrolling region: everything above
-/// it is fixed, compact chrome, so the feed gets real height instead of an
-/// arbitrary guess.
+/// The Club's operational home — Dashboard **and** Feed, not one instead
+/// of the other. Top to bottom: identity (full width), roster metrics
+/// (full width), roster health + quick actions (full width, sized to
+/// their own content — no forced stretching), then a bottom row splitting
+/// the feed (main, ~68% width) from Recent Players (secondary, ~32%).
+///
+/// The whole page is one scroll (`SingleChildScrollView`) — the earlier
+/// version made only the bottom row `Expanded` inside a *non-scrolling*
+/// Column, so on any viewport where the fixed chrome above it (identity +
+/// stats + health/quick-actions) added up to more than the available
+/// height, that `Expanded` was squeezed toward zero and the feed
+/// effectively vanished. The bottom row now gets an explicit height
+/// computed from the real available viewport height (via `LayoutBuilder`,
+/// captured before the scroll view so it reflects the actual window, not
+/// "whatever's left"), clamped to a sensible range — generous on tall
+/// screens, never smaller than enough room for feed cards on short ones.
 class _ClubDashboardDesktop extends ConsumerStatefulWidget {
   const _ClubDashboardDesktop();
 
@@ -78,94 +85,103 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
     final summaryAsync = ref.watch(clubDashboardSummaryProvider);
     final profileAsync = ref.watch(clubProfileControllerProvider);
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1600),
-        child: Padding(
-          padding: const EdgeInsets.all(28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              profileAsync.when(
-                data: (profile) => _ClubHomeHeader(profile: profile),
-                loading: () => const SkeletonBox(height: 72),
-                error: (error, _) => ErrorState(
-                  onRetry: () => ref.invalidate(clubProfileControllerProvider),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              summaryAsync.when(
-                data: (summary) => _ClubHomeStatsRow(summary: summary),
-                loading: () => const _StatsRowSkeleton(),
-                error: (error, _) => ErrorState(
-                  onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              summaryAsync.maybeWhen(
-                data: (summary) => _ClubHomeHealthRow(summary: summary),
-                orElse: () => const SkeletonBox(height: 176),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            l10n.dashboardLatestNewsTitle,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          ClubComposerCard(
-                            logoUrl: profileAsync.maybeWhen(
-                              data: (profile) => profile.logoUrl,
-                              orElse: () => null,
-                            ),
-                            onTap: () => CreatePostSheet.show(context, role: UserRole.club),
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          ClubFeedTabs(
-                            value: _filter,
-                            onChanged: (kind) => setState(() => _filter = kind),
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          Expanded(
-                            child: HomeFeedBody(
-                              role: UserRole.club,
-                              maxWidth: double.infinity,
-                              showComposerFab: false,
-                              kindFilter: _filter,
-                              onCreatePost: () => CreatePostSheet.show(context, role: UserRole.club),
-                            ),
-                          ),
-                        ],
-                      ),
+    return LayoutBuilder(
+      builder: (context, outer) {
+        final feedRowHeight = outer.hasBoundedHeight
+            ? (outer.maxHeight * 0.8).clamp(600.0, 980.0)
+            : 720.0;
+
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1600),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  profileAsync.when(
+                    data: (profile) => _ClubHomeHeader(profile: profile),
+                    loading: () => const SkeletonBox(height: 72),
+                    error: (error, _) => ErrorState(
+                      onRetry: () => ref.invalidate(clubProfileControllerProvider),
                     ),
-                    const SizedBox(width: AppSpacing.xl),
-                    SizedBox(
-                      width: 340,
-                      child: summaryAsync.when(
-                        data: (summary) => SingleChildScrollView(
-                          child: ClubDashboardRecentPlayersSection(summary: summary),
-                        ),
-                        loading: () => const SkeletonBox(height: 300),
-                        error: (error, _) => ErrorState(
-                          onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
-                        ),
-                      ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  summaryAsync.when(
+                    data: (summary) => _ClubHomeStatsRow(summary: summary),
+                    loading: () => const _StatsRowSkeleton(),
+                    error: (error, _) => ErrorState(
+                      onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  summaryAsync.maybeWhen(
+                    data: (summary) => _ClubHomeHealthRow(summary: summary),
+                    orElse: () => const SkeletonBox(height: 140),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  Text(
+                    l10n.dashboardLatestNewsTitle,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(
+                    height: feedRowHeight,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ClubComposerCard(
+                                logoUrl: profileAsync.maybeWhen(
+                                  data: (profile) => profile.logoUrl,
+                                  orElse: () => null,
+                                ),
+                                onTap: () => CreatePostSheet.show(context, role: UserRole.club),
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+                              ClubFeedTabs(
+                                value: _filter,
+                                onChanged: (kind) => setState(() => _filter = kind),
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+                              Expanded(
+                                child: HomeFeedBody(
+                                  role: UserRole.club,
+                                  maxWidth: double.infinity,
+                                  showComposerFab: false,
+                                  kindFilter: _filter,
+                                  onCreatePost: () =>
+                                      CreatePostSheet.show(context, role: UserRole.club),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.xl),
+                        Expanded(
+                          child: summaryAsync.when(
+                            data: (summary) => SingleChildScrollView(
+                              child: ClubDashboardRecentPlayersSection(summary: summary),
+                            ),
+                            loading: () => const SkeletonBox(height: 300),
+                            error: (error, _) => ErrorState(
+                              onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -282,6 +298,10 @@ class _StatsRowSkeleton extends StatelessWidget {
 /// — the two secondary-but-important panels grouped into one row instead
 /// of scattered. When there's no completeness data yet (empty roster),
 /// Quick Actions takes the full row instead of leaving half of it blank.
+///
+/// Each panel sizes itself naturally (`CrossAxisAlignment.start`, no
+/// `IntrinsicHeight`) — forcing them to match heights previously stretched
+/// the shorter panel's cards until they were mostly blank space.
 class _ClubHomeHealthRow extends StatelessWidget {
   const _ClubHomeHealthRow({required this.summary});
 
@@ -296,15 +316,13 @@ class _ClubHomeHealthRow extends StatelessWidget {
       return quickActions;
     }
 
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(child: ClubDashboardCompletenessCard(summary: summary)),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(child: quickActions),
-        ],
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: ClubDashboardCompletenessCard(summary: summary)),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(child: quickActions),
+      ],
     );
   }
 }
@@ -322,7 +340,12 @@ class _QuickActionsGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: AppSpacing.sm,
       crossAxisSpacing: AppSpacing.sm,
-      childAspectRatio: 2.8,
+      // This grid sits in a ~half-dashboard-width column (much wider than
+      // the Club Profile page's single-column version), so it needs a
+      // taller aspect ratio to land on the same actual card height —
+      // otherwise each cell is far taller than its icon+title+description
+      // content needs, showing as empty space inside every card.
+      childAspectRatio: 4.3,
       children: [
         for (final action in clubDashboardQuickActions(l10n)) ClubQuickActionCard(action: action),
       ],

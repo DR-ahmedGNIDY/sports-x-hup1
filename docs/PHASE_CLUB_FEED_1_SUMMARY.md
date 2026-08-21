@@ -118,3 +118,41 @@ the "% of roster" text); fully backward-compatible, existing callers unaffected.
 review pass performed (confirmed bounded-height propagation through the new `Expanded` chain,
 switched the public-profile action from `context.go` to `context.push` to match the existing
 Player "view public profile" navigation convention). No commit was made — awaiting approval.
+
+## Regression fix — feed had disappeared from Desktop
+
+The refinement pass above introduced a real regression: on Desktop, the feed could render at
+near-zero height and effectively vanish. Root cause and fix, no backend changes, still Phase 1.
+
+**Root cause:** the page had become a *non-scrolling* `Column` where only the final row (feed +
+Recent Players) was wrapped in `Expanded`, with everything above it (identity, stats, the
+health/quick-actions row) sized to its own intrinsic height. Two compounding bugs made that fixed
+portion much taller than intended, starving the `Expanded` feed row of space (down to ~0px on
+common viewport heights):
+1. `_ClubHomeHealthRow` wrapped the completeness card and the Quick Actions grid in
+   `IntrinsicHeight`, forcing both panels to match the taller one's height.
+2. The Quick Actions `GridView`'s `childAspectRatio` (2.8, later checked against 2.6) was tuned for
+   a much narrower column than the ~half-dashboard-width column it actually renders in — at that
+   width it produced ~130–145px-tall cells for ~80px-tall content, both inflating the row's own
+   height *and* leaving visible empty space inside every Quick Action card (exactly what showed up
+   in the screenshot).
+
+**Fix:**
+- The whole page is one `SingleChildScrollView` again (as in the original Phase 1), so the fixed
+  chrome above the feed can never starve it.
+- The feed+Recent-Players row now gets an explicit height computed from the real viewport height
+  via `LayoutBuilder` (`maxHeight * 0.8`, clamped to `[600, 980]`) — captured *before* the scroll
+  view, so it reflects the actual window rather than "whatever's left". Generous on tall screens,
+  a guaranteed usable minimum on short ones.
+- `IntrinsicHeight` removed from `_ClubHomeHealthRow` — each panel now sizes to its own content.
+- Quick Actions `childAspectRatio` changed to `4.3`, tuned for its actual (wide) column width so
+  each card fits its icon/title/description without excess padding.
+- Recent Players changed from a fixed `SizedBox(width: 340)` to `Expanded` (flex 1, vs. the feed
+  column's flex 2 — a ~68/32 split), per the "responsive constraints, not hardcoded pixel widths"
+  requirement.
+- Confirmed exactly one `HomeFeedBody` instance exists on the page (no duplicate feed introduced).
+
+**Verification:** `flutter analyze` (whole project) — no issues. `flutter test` — 9/9 passed.
+Mobile was checked and was never affected (its feed already sat in a fixed-height box inside a
+normal scrolling column, not competing with an `Expanded` sibling). No commit was made — awaiting
+visual approval.
