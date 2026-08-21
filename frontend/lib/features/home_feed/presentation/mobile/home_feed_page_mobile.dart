@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../shared/home_feed_body.dart';
 
 class HomeFeedPageMobile extends StatelessWidget {
@@ -8,9 +8,9 @@ class HomeFeedPageMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ColoredBox(
-      color: AppColors.profileBg,
-      child: HomeFeedBody(maxWidth: double.infinity),
+    return ColoredBox(
+      color: context.profileColors.bg,
+      child: const HomeFeedBody(maxWidth: double.infinity),
     );
   }
 }

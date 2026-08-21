@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../player/application/lookup_providers.dart';
 import '../../../player/domain/entities/lookup_option.dart';
 import '../../../videos/application/skill_categories_provider.dart';
@@ -37,6 +38,7 @@ class CommunityFiltersBar extends ConsumerWidget {
     final sportsAsync = ref.watch(sportsProvider);
     final controller = ref.read(communityFeedControllerProvider.notifier);
     final categoriesAsync = ref.watch(skillCategoriesProvider(sport));
+    final colors = context.profileColors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -57,13 +59,13 @@ class CommunityFiltersBar extends ConsumerWidget {
                     label: Text(option.name),
                     selected: selected,
                     onSelected: (_) => controller.updateSport(option.name),
-                    backgroundColor: AppColors.profileSurface,
+                    backgroundColor: colors.surface,
                     selectedColor: AppColors.brandBlue,
                     labelStyle: TextStyle(
-                      color: selected ? AppColors.white : AppColors.greyLight,
+                      color: selected ? AppColors.white : colors.textMuted,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                     ),
-                    side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+                    side: BorderSide(color: colors.borderOnSurface.withValues(alpha: 0.08)),
                     shape: const StadiumBorder(),
                   );
                 },

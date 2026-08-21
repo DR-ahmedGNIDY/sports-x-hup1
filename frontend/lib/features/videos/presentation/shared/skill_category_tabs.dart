@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/skill_category.dart';
 
@@ -24,6 +25,7 @@ class SkillCategoryTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.profileColors;
     final tabs = [kAllSkillCategory, ...categories];
     return SizedBox(
       height: 40,
@@ -41,13 +43,13 @@ class SkillCategoryTabs extends StatelessWidget {
             ),
             selected: selected,
             onSelected: (_) => onSelected(tab.id),
-            backgroundColor: AppColors.profileSurface,
+            backgroundColor: colors.surface,
             selectedColor: AppColors.profileSecondary,
             labelStyle: AppTextStyles.eyebrow.copyWith(
-              color: selected ? AppColors.white : AppColors.greyLight,
+              color: selected ? AppColors.white : colors.textMuted,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
             ),
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+            side: BorderSide(color: colors.borderOnSurface.withValues(alpha: 0.08)),
             shape: const StadiumBorder(),
           );
         },

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/empty_state_illustration.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -31,9 +31,10 @@ class CommunityPageMobile extends ConsumerWidget {
     final feedAsync = ref.watch(communityFeedControllerProvider);
     final controller = ref.read(communityFeedControllerProvider.notifier);
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.profileColors;
 
     return ColoredBox(
-      color: AppColors.profileBg,
+      color: colors.bg,
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -43,7 +44,7 @@ class CommunityPageMobile extends ConsumerWidget {
               l10n.communityNavLabel,
               style: Theme.of(
                 context,
-              ).textTheme.headlineSmall?.copyWith(color: AppColors.profileText),
+              ).textTheme.headlineSmall?.copyWith(color: colors.text),
             ),
             const SizedBox(height: AppSpacing.md),
             CommunityFiltersBar(
@@ -66,7 +67,7 @@ class CommunityPageMobile extends ConsumerWidget {
                             const SizedBox(height: AppSpacing.md),
                             Text(
                               l10n.communityEmptyState,
-                              style: const TextStyle(color: AppColors.greyLight),
+                              style: TextStyle(color: colors.textMuted),
                             ),
                           ],
                         ),
@@ -83,7 +84,7 @@ class CommunityPageMobile extends ConsumerWidget {
                                   )
                                   .toUpperCase(),
                               style: AppTextStyles.eyebrow.copyWith(
-                                color: AppColors.profileAccent,
+                                color: colors.accent,
                               ),
                             ),
                           ),

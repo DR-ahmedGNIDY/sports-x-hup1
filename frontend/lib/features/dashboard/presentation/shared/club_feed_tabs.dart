@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../home_feed/domain/entities/feed_item.dart';
 
@@ -17,6 +18,7 @@ class ClubFeedTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.profileColors;
     final tabs = <(FeedItemKind?, String)>[
       (null, l10n.homeFeedTabAll),
       (FeedItemKind.photo, l10n.homeFeedTabPhotos),
@@ -36,14 +38,14 @@ class ClubFeedTabs extends StatelessWidget {
             label: Text(label),
             selected: selected,
             onSelected: (_) => onChanged(kind),
-            backgroundColor: AppColors.profileSurface,
+            backgroundColor: colors.surface,
             selectedColor: AppColors.brandBlue,
             labelStyle: TextStyle(
-              color: selected ? AppColors.white : AppColors.greyLight,
+              color: selected ? AppColors.white : colors.textMuted,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
               fontSize: 13,
             ),
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+            side: BorderSide(color: colors.borderOnSurface.withValues(alpha: 0.08)),
             shape: const StadiumBorder(),
           );
         },

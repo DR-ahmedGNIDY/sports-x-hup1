@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../domain/entities/video.dart';
 
 /// Icon + count matching this app's existing icon language (outline/filled
@@ -77,6 +78,7 @@ class _VideoLikeButtonState extends State<VideoLikeButton>
   @override
   Widget build(BuildContext context) {
     final liked = widget.video.isLikedByMe;
+    final unlikedColor = context.profileColors.textMuted;
     return InkWell(
       onTap: _handleTap,
       borderRadius: BorderRadius.circular(8),
@@ -93,7 +95,7 @@ class _VideoLikeButtonState extends State<VideoLikeButton>
                   liked ? Icons.favorite : Icons.favorite_border,
                   key: ValueKey(liked),
                   size: 18,
-                  color: liked ? AppColors.error : AppColors.greyLight,
+                  color: liked ? AppColors.error : unlikedColor,
                 ),
               ),
             ),
@@ -101,7 +103,7 @@ class _VideoLikeButtonState extends State<VideoLikeButton>
             AnimatedDefaultTextStyle(
               duration: AppMotion.fast,
               style: AppTextStyles.statNumber.copyWith(
-                color: liked ? AppColors.error : AppColors.greyLight,
+                color: liked ? AppColors.error : unlikedColor,
                 fontSize: 13,
               ),
               child: Text('${widget.video.likeCount}'),

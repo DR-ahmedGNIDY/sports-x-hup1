@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/domain/entities/user_role.dart';
 import '../../../player/application/lookup_providers.dart';
@@ -29,7 +30,7 @@ class CreatePostSheet extends ConsumerStatefulWidget {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.profileSurface,
+      backgroundColor: context.profileColors.surface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => CreatePostSheet(role: role),
     );
@@ -126,7 +127,11 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
         children: [
           Text(
             l10n.homeFeedNewPostTitle,
-            style: const TextStyle(color: AppColors.profileText, fontSize: 18, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              color: context.profileColors.text,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 16),
           OutlinedButton.icon(
@@ -140,7 +145,7 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
             enabled: !_posting,
             maxLength: 500,
             maxLines: 3,
-            style: const TextStyle(color: AppColors.profileText),
+            style: TextStyle(color: context.profileColors.text),
             decoration: InputDecoration(labelText: l10n.homeFeedCaptionLabel),
           ),
           if (_isClub)

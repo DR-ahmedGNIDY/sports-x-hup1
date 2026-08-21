@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../domain/entities/video.dart';
 import '../../domain/entities/video_author.dart';
 import 'video_player_screen.dart';
@@ -56,6 +57,7 @@ class _VideoCardState extends State<VideoCard> {
     final trailing = widget.trailing;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
     final hovered = _hovered && !reduceMotion;
+    final colors = context.profileColors;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -67,12 +69,12 @@ class _VideoCardState extends State<VideoCard> {
           ..scaleByDouble(hovered ? 1.02 : 1.0, hovered ? 1.02 : 1.0, 1.0, 1.0),
         transformAlignment: Alignment.center,
         decoration: BoxDecoration(
-          color: AppColors.profileSurface,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: hovered
-                ? AppColors.profileAccent.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.06),
+                ? colors.accent.withValues(alpha: 0.5)
+                : colors.borderOnSurface.withValues(alpha: 0.06),
           ),
           boxShadow: hovered
               ? [
@@ -102,10 +104,10 @@ class _VideoCardState extends State<VideoCard> {
                             video.thumbnailUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
-                                const ColoredBox(color: AppColors.profileBg),
+                                ColoredBox(color: colors.bg),
                           )
                         else
-                          const ColoredBox(color: AppColors.profileBg),
+                          ColoredBox(color: colors.bg),
                         const ColoredBox(color: Colors.black26),
                         const Center(
                           child: Icon(
@@ -150,8 +152,8 @@ class _VideoCardState extends State<VideoCard> {
                       video.title!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.profileText,
+                      style: TextStyle(
+                        color: colors.text,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -173,16 +175,16 @@ class _VideoCardState extends State<VideoCard> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.mode_comment_outlined,
                                 size: 18,
-                                color: AppColors.greyLight,
+                                color: colors.textMuted,
                               ),
                               const SizedBox(width: AppSpacing.xs),
                               Text(
                                 '${commentCount ?? video.commentCount}',
                                 style: AppTextStyles.statNumber.copyWith(
-                                  color: AppColors.greyLight,
+                                  color: colors.textMuted,
                                   fontSize: 13,
                                 ),
                               ),
@@ -235,14 +237,15 @@ class _AuthorRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = author.fullName;
     final photoUrl = author.profilePhotoUrl;
+    final colors = context.profileColors;
     return Row(
       children: [
         CircleAvatar(
           radius: 12,
-          backgroundColor: AppColors.profileBg,
+          backgroundColor: colors.bg,
           backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
           child: photoUrl == null
-              ? const Icon(Icons.person, size: 14, color: AppColors.greyLight)
+              ? Icon(Icons.person, size: 14, color: colors.textMuted)
               : null,
         ),
         const SizedBox(width: AppSpacing.sm),
@@ -250,8 +253,8 @@ class _AuthorRow extends StatelessWidget {
           child: Text(
             name.isEmpty ? 'Player' : name,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: AppColors.profileText,
+            style: TextStyle(
+              color: colors.text,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),

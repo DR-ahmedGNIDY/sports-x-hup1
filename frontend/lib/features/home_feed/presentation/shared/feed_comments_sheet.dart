@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/empty_state_illustration.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -25,7 +26,7 @@ Future<void> showFeedCommentsSheet(
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.profileSurface,
+    backgroundColor: context.profileColors.surface,
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
     builder: (context) =>
         _FeedCommentsSheet(kind: kind, id: id, onCommentCountChanged: onCommentCountChanged),
@@ -163,6 +164,8 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final viewInsets = MediaQuery.of(context).viewInsets;
+    final colors = context.profileColors;
+    final hairline = colors.borderOnSurface.withValues(alpha: 0.12);
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       child: SizedBox(
@@ -174,7 +177,7 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: colors.borderOnSurface.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -184,15 +187,15 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   l10n.videoCommentsTitle,
-                  style: const TextStyle(
-                    color: AppColors.profileText,
+                  style: TextStyle(
+                    color: colors.text,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ),
-            const Divider(height: 1, color: Colors.white12),
+            Divider(height: 1, color: hairline),
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.all(12),
@@ -213,7 +216,7 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
                           Text(
                             l10n.videoCommentsEmptyState,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: AppColors.greyLight),
+                            style: TextStyle(color: colors.textMuted),
                           ),
                         ],
                       ),
@@ -221,7 +224,7 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
                   : ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       itemCount: _comments.length + (_hasNextPage ? 1 : 0),
-                      separatorBuilder: (_, _) => const Divider(height: 20, color: Colors.white12),
+                      separatorBuilder: (_, _) => Divider(height: 20, color: hairline),
                       itemBuilder: (context, index) {
                         if (index >= _comments.length) {
                           return Center(
@@ -243,7 +246,7 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
                       },
                     ),
             ),
-            const Divider(height: 1, color: Colors.white12),
+            Divider(height: 1, color: hairline),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
               child: Row(
@@ -251,10 +254,10 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
                   Expanded(
                     child: TextField(
                       controller: _controller,
-                      style: const TextStyle(color: AppColors.profileText),
+                      style: TextStyle(color: colors.text),
                       decoration: InputDecoration(
                         hintText: l10n.videoCommentHint,
-                        hintStyle: const TextStyle(color: AppColors.greyLight),
+                        hintStyle: TextStyle(color: colors.textMuted),
                         border: InputBorder.none,
                       ),
                       onSubmitted: (_) => _send(),
@@ -263,7 +266,7 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
                   IconButton(
                     icon: _sending
                         ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Icon(Icons.send, color: AppColors.profileAccent),
+                        : Icon(Icons.send, color: colors.accent),
                     onPressed: _sending ? null : _send,
                   ),
                 ],

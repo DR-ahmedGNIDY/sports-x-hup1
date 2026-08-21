@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/empty_state_illustration.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -120,8 +120,8 @@ class _HomeFeedBodyState extends ConsumerState<HomeFeedBody> {
                             Text(
                               l10n.homeFeedEmptyState,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColors.greyLight,
+                              style: TextStyle(
+                                color: context.profileColors.textMuted,
                               ),
                             ),
                             if (widget.onCreatePost != null) ...[
@@ -152,7 +152,7 @@ class _HomeFeedBodyState extends ConsumerState<HomeFeedBody> {
                       child: Text(
                         l10n.homeFeedFilteredEmptyState,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: AppColors.greyLight),
+                        style: TextStyle(color: context.profileColors.textMuted),
                       ),
                     ),
                   ],

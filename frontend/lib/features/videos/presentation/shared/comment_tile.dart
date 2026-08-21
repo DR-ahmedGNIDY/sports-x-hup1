@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/video_comment.dart';
 
@@ -30,16 +30,17 @@ class CommentTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final name = comment.authorDisplayName;
     final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    final colors = context.profileColors;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
           radius: 16,
-          backgroundColor: AppColors.profileBg,
+          backgroundColor: colors.bg,
           child: Text(
             initial,
-            style: const TextStyle(color: AppColors.greyLight, fontSize: 13, fontWeight: FontWeight.w700),
+            style: TextStyle(color: colors.textMuted, fontSize: 13, fontWeight: FontWeight.w700),
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
@@ -53,8 +54,8 @@ class CommentTile extends StatelessWidget {
                     child: Text(
                       name,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.profileText,
+                      style: TextStyle(
+                        color: colors.text,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -64,12 +65,12 @@ class CommentTile extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                     decoration: BoxDecoration(
-                      color: AppColors.profileBg,
+                      color: colors.bg,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
                       _roleLabel(l10n),
-                      style: const TextStyle(color: AppColors.greyLight, fontSize: 10),
+                      style: TextStyle(color: colors.textMuted, fontSize: 10),
                     ),
                   ),
                   const Spacer(),
@@ -78,18 +79,18 @@ class CommentTile extends StatelessWidget {
                     // Force LTR — see FeedItemCard's _AuthorRow for why an
                     // RTL layout otherwise scrambles this date string.
                     textDirection: TextDirection.ltr,
-                    style: const TextStyle(color: AppColors.greyLight, fontSize: 10),
+                    style: TextStyle(color: colors.textMuted, fontSize: 10),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
-              Text(comment.text, style: const TextStyle(color: AppColors.greyLight, fontSize: 14)),
+              Text(comment.text, style: TextStyle(color: colors.textMuted, fontSize: 14)),
             ],
           ),
         ),
         if (onDelete != null)
           IconButton(
-            icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.greyLight),
+            icon: Icon(Icons.delete_outline, size: 18, color: colors.textMuted),
             onPressed: onDelete,
           ),
       ],

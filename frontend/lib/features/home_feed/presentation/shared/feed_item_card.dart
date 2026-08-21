@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../videos/presentation/shared/video_player_screen.dart';
@@ -26,9 +27,9 @@ class FeedItemCardSkeleton extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.profileSurface,
+        color: context.profileColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+        border: Border.all(color: context.profileColors.borderOnSurface.withValues(alpha: 0.06)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -103,12 +104,13 @@ class FeedItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.profileColors;
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.profileSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+        border: Border.all(color: colors.borderOnSurface.withValues(alpha: 0.06)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -126,7 +128,7 @@ class FeedItemCard extends StatelessWidget {
           if (item.caption != null && item.caption!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.sm),
-              child: Text(item.caption!, style: const TextStyle(color: AppColors.profileText, fontSize: 14)),
+              child: Text(item.caption!, style: TextStyle(color: colors.text, fontSize: 14)),
             ),
           AspectRatio(
             aspectRatio: 16 / 9,
@@ -141,10 +143,10 @@ class FeedItemCard extends StatelessWidget {
                             item.thumbnailUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
-                                const ColoredBox(color: AppColors.profileBg),
+                                ColoredBox(color: colors.bg),
                           )
                         else
-                          const ColoredBox(color: AppColors.profileBg),
+                          ColoredBox(color: colors.bg),
                         const ColoredBox(color: Colors.black26),
                         const Center(
                           child: Icon(Icons.play_circle_fill, color: AppColors.white, size: 48),
@@ -155,7 +157,7 @@ class FeedItemCard extends StatelessWidget {
                 : Image.network(
                     item.secureUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const ColoredBox(color: AppColors.profileBg),
+                    errorBuilder: (context, error, stackTrace) => ColoredBox(color: colors.bg),
                   ),
           ),
           Padding(
@@ -174,11 +176,11 @@ class FeedItemCard extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.mode_comment_outlined, size: 18, color: AppColors.greyLight),
+                          Icon(Icons.mode_comment_outlined, size: 18, color: colors.textMuted),
                           const SizedBox(width: AppSpacing.xs),
                           Text(
                             '${item.commentCount}',
-                            style: AppTextStyles.statNumber.copyWith(color: AppColors.greyLight, fontSize: 13),
+                            style: AppTextStyles.statNumber.copyWith(color: colors.textMuted, fontSize: 13),
                           ),
                         ],
                       ),
@@ -188,7 +190,7 @@ class FeedItemCard extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   tooltip: AppLocalizations.of(context)!.feedSharePostLabel,
-                  icon: const Icon(Icons.ios_share_outlined, size: 18, color: AppColors.greyLight),
+                  icon: Icon(Icons.ios_share_outlined, size: 18, color: colors.textMuted),
                   onPressed: () => _share(context),
                 ),
               ],
@@ -211,17 +213,18 @@ class _AuthorRow extends StatelessWidget {
     final name = author?.displayName;
     final photoUrl = author?.profilePhotoUrl;
     final isClub = author?.isClub ?? false;
+    final colors = context.profileColors;
     return Row(
       children: [
         CircleAvatar(
           radius: 18,
-          backgroundColor: AppColors.profileBg,
+          backgroundColor: colors.bg,
           backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
           child: photoUrl == null
               ? Icon(
                   isClub ? Icons.shield_outlined : Icons.person,
                   size: 18,
-                  color: AppColors.greyLight,
+                  color: colors.textMuted,
                 )
               : null,
         ),
@@ -233,7 +236,7 @@ class _AuthorRow extends StatelessWidget {
               Text(
                 (name == null || name.isEmpty) ? (isClub ? 'Club' : 'Player') : name,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: AppColors.profileText, fontSize: 13, fontWeight: FontWeight.w700),
+                style: TextStyle(color: colors.text, fontSize: 13, fontWeight: FontWeight.w700),
               ),
               Text(
                 DateFormat('d MMM, HH:mm').format(createdAt.toLocal()),
@@ -241,7 +244,7 @@ class _AuthorRow extends StatelessWidget {
                 // algorithm otherwise reorders this date/time string into
                 // nonsense ("Aug, 19:57 14" instead of "14 Aug, 19:57").
                 textDirection: TextDirection.ltr,
-                style: const TextStyle(color: AppColors.greyLight, fontSize: 11),
+                style: TextStyle(color: colors.textMuted, fontSize: 11),
               ),
             ],
           ),
