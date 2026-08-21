@@ -74,3 +74,47 @@ Player/Admin bottom navs are unchanged.
 - Share action (native share sheet over caption/media — client-only, no backend change needed).
 - Improved comments sheet presentation, video fullscreen/mute controls, post more-menu — all
   candidates for Phase 2, pending approval.
+
+## Refinement pass (still Phase 1 — visual/layout only, no new features)
+
+After a visual review of the first pass, the Club Home composition was reworked. No backend
+changes; no commit made for this pass (pending explicit approval).
+
+**Problem addressed:** the layout read as "a feed with some cards next to it" rather than a real
+Club Management Dashboard — a narrow, sparse right sidebar with big vertical gaps between short
+stat tiles, a feed boxed into an arbitrary fixed height that left large empty areas whenever a
+club had few posts, and roster stats/identity that felt bolted on rather than integrated.
+
+**Desktop** (`dashboard_page_desktop.dart`) — restructured top to bottom into an actual dashboard:
+- Full-width identity header (`_ClubHomeHeader`, larger 72px logo, a divider closing the block)
+  with two real actions: **View Public Profile** (`context.push('/clubs/:id')`, matching the
+  existing Player pattern for "peek at your own public page") and **Edit Profile** (existing
+  `/club/edit` route).
+- Full-width roster-metrics row (`_ClubHomeStatsRow`) — the same 4 real stats as before (Total,
+  Complete, Incomplete, Saved), now spanning the whole dashboard width instead of stacked 2×2 in a
+  320px column, each with a "X% of roster" subtitle computed from the existing counts (no new
+  metric).
+- A "roster health" row (`_ClubHomeHealthRow`) pairing the existing completeness card with Quick
+  Actions (`clubDashboardQuickActions` + `ClubQuickActionCard`, already built for the Club Profile
+  page — reused, not duplicated logic) side by side. When a club has no roster yet (no
+  completeness data), Quick Actions takes the full row instead of leaving half of it blank.
+- Only the bottom section — feed (composer, tabs, posts) beside Recent Players — scrolls/flexes:
+  it sits in an `Expanded` `Row`, so the feed gets exactly the real remaining viewport height
+  instead of a guessed constant, and widens to use the actual column width
+  (`HomeFeedBody(maxWidth: double.infinity)`) instead of being capped at 640px.
+
+**Mobile** (`dashboard_page_mobile.dart`) — reordered to match the requested hierarchy: identity
+header (with the same two actions, as icon buttons) → roster metrics (2-per-row) → Quick Actions →
+composer → feed tabs → feed → completeness/Recent Players as trailing detail. Own composition,
+not the desktop layout scaled down.
+
+**Shared widget change** — `ClubDashboardStatTile` gained an optional `subtitle` line (used for
+the "% of roster" text); fully backward-compatible, existing callers unaffected.
+
+**New localized strings** (`app_ar.arb`/`app_en.arb`, regenerated): `clubDashboardPercentOfRosterLabel`,
+`clubHomeViewPublicProfileLabel`.
+
+**Verification:** `flutter analyze` (whole project) — no issues. `flutter test` — 9/9 passed. One
+review pass performed (confirmed bounded-height propagation through the new `Expanded` chain,
+switched the public-profile action from `context.go` to `context.push` to match the existing
+Player "view public profile" navigation convention). No commit was made — awaiting approval.

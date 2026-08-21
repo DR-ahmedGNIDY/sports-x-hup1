@@ -893,6 +893,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clubDashboardIncompleteProfilesLabel => 'ملفات غير مكتملة';
 
   @override
+  String clubDashboardPercentOfRosterLabel(int percent) {
+    return '$percent% من الإجمالي';
+  }
+
+  @override
+  String get clubHomeViewPublicProfileLabel => 'عرض الملف العام';
+
+  @override
   String get clubDashboardRecentPlayersTitle => 'أحدث اللاعبين المضافين';
 
   @override

@@ -1777,6 +1777,18 @@ abstract class AppLocalizations {
   /// **'ملفات غير مكتملة'**
   String get clubDashboardIncompleteProfilesLabel;
 
+  /// No description provided for @clubDashboardPercentOfRosterLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{percent}% من الإجمالي'**
+  String clubDashboardPercentOfRosterLabel(int percent);
+
+  /// No description provided for @clubHomeViewPublicProfileLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الملف العام'**
+  String get clubHomeViewPublicProfileLabel;
+
   /// No description provided for @clubDashboardRecentPlayersTitle.
   ///
   /// In ar, this message translates to:

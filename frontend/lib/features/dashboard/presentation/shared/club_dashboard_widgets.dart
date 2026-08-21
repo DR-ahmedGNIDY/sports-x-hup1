@@ -22,12 +22,18 @@ class ClubDashboardStatTile extends StatelessWidget {
     required this.label,
     required this.value,
     this.color,
+    this.subtitle,
   });
 
   final IconData icon;
   final String label;
   final int value;
   final Color? color;
+
+  /// Small supporting line under the label (e.g. "77% of roster") — omitted
+  /// when there's nothing meaningful to show (an empty roster, or a metric
+  /// with no natural percentage-of-total reading).
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +46,9 @@ class ClubDashboardStatTile extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              radius: 20,
+              radius: 22,
               backgroundColor: tint.withValues(alpha: 0.12),
-              child: Icon(icon, color: tint, size: 20),
+              child: Icon(icon, color: tint, size: 22),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -50,12 +56,27 @@ class ClubDashboardStatTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('$value', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(
+                    '$value',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                  ),
                   Text(
                     label,
                     style: Theme.of(context).textTheme.bodySmall,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ],
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -9,6 +10,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
 import '../../../club/application/club_profile_controller.dart';
+import '../../../club/domain/entities/club_profile.dart';
 import '../../../club_players/application/club_players_controller.dart';
 import '../../../club_players/domain/entities/club_dashboard_summary.dart';
 import '../../../home_feed/domain/entities/feed_item.dart';
@@ -51,13 +53,15 @@ class DashboardPageDesktop extends ConsumerWidget {
   }
 }
 
-/// The Club's operational home — a 3-column social-feed layout (the app
-/// shell already provides column 1, the persistent left sidebar):
-/// column 2 is the feed itself (composer, content-type tabs, posts),
-/// column 3 is a compact "at a glance" summary (identity, roster stats,
-/// completeness, recently added players). Quick Actions live on the Club
-/// Profile page instead (see [ClubQuickActionCard]) — this column stays
-/// secondary to the feed, not a second copy of the dashboard.
+/// The Club's operational home — a real Club Management Dashboard, not a
+/// feed with some cards bolted on. Top to bottom: identity (full width),
+/// roster metrics (full width), roster health + quick actions (full
+/// width), then a bottom row splitting the feed (main, flexible) from
+/// Recent Players (secondary, fixed width) — the only two things that
+/// genuinely belong side by side, since both are "browse a list" content.
+/// The bottom row is the only flexible/scrolling region: everything above
+/// it is fixed, compact chrome, so the feed gets real height instead of an
+/// arbitrary guess.
 class _ClubDashboardDesktop extends ConsumerStatefulWidget {
   const _ClubDashboardDesktop();
 
@@ -70,67 +74,92 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final summaryAsync = ref.watch(clubDashboardSummaryProvider);
     final profileAsync = ref.watch(clubProfileControllerProvider);
 
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1400),
+        constraints: const BoxConstraints(maxWidth: 1600),
         child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 680),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        profileAsync.maybeWhen(
-                          data: (profile) => ClubDashboardIdentityHeader(profile: profile),
-                          orElse: () => const SkeletonBox(height: 64),
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        ClubComposerCard(
-                          logoUrl: profileAsync.maybeWhen(
-                            data: (profile) => profile.logoUrl,
-                            orElse: () => null,
-                          ),
-                          onTap: () => CreatePostSheet.show(context, role: UserRole.club),
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        ClubFeedTabs(
-                          value: _filter,
-                          onChanged: (kind) => setState(() => _filter = kind),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        SizedBox(
-                          height: 900,
-                          child: HomeFeedBody(
-                            role: UserRole.club,
-                            showComposerFab: false,
-                            kindFilter: _filter,
-                            onCreatePost: () => CreatePostSheet.show(context, role: UserRole.club),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              profileAsync.when(
+                data: (profile) => _ClubHomeHeader(profile: profile),
+                loading: () => const SkeletonBox(height: 72),
+                error: (error, _) => ErrorState(
+                  onRetry: () => ref.invalidate(clubProfileControllerProvider),
                 ),
               ),
-              const SizedBox(width: AppSpacing.xl),
-              SizedBox(
-                width: 320,
-                child: SingleChildScrollView(
-                  child: summaryAsync.when(
-                    data: (summary) => _ClubHomeSidebar(summary: summary),
-                    loading: () => const _ClubHomeSidebarSkeleton(),
-                    error: (error, _) => ErrorState(
-                      onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
+              const SizedBox(height: AppSpacing.lg),
+              summaryAsync.when(
+                data: (summary) => _ClubHomeStatsRow(summary: summary),
+                loading: () => const _StatsRowSkeleton(),
+                error: (error, _) => ErrorState(
+                  onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              summaryAsync.maybeWhen(
+                data: (summary) => _ClubHomeHealthRow(summary: summary),
+                orElse: () => const SkeletonBox(height: 176),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            l10n.dashboardLatestNewsTitle,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          ClubComposerCard(
+                            logoUrl: profileAsync.maybeWhen(
+                              data: (profile) => profile.logoUrl,
+                              orElse: () => null,
+                            ),
+                            onTap: () => CreatePostSheet.show(context, role: UserRole.club),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          ClubFeedTabs(
+                            value: _filter,
+                            onChanged: (kind) => setState(() => _filter = kind),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Expanded(
+                            child: HomeFeedBody(
+                              role: UserRole.club,
+                              maxWidth: double.infinity,
+                              showComposerFab: false,
+                              kindFilter: _filter,
+                              onCreatePost: () => CreatePostSheet.show(context, role: UserRole.club),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: AppSpacing.xl),
+                    SizedBox(
+                      width: 340,
+                      child: summaryAsync.when(
+                        data: (summary) => SingleChildScrollView(
+                          child: ClubDashboardRecentPlayersSection(summary: summary),
+                        ),
+                        loading: () => const SkeletonBox(height: 300),
+                        error: (error, _) => ErrorState(
+                          onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -141,95 +170,161 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
   }
 }
 
-/// Column 3's content: roster stats (2x2), profile completeness, and
-/// recently added players — the same real data the old single-column
-/// dashboard showed, just laid out for a narrow column instead of a wide
-/// row.
-class _ClubHomeSidebar extends StatelessWidget {
-  const _ClubHomeSidebar({required this.summary});
+/// Full-width identity block: logo/name/location/founded/level (unchanged
+/// data, just given more presence — a larger logo and a divider to close
+/// the block off) plus the two profile actions that already exist
+/// elsewhere in the app (Edit Profile, View Public Profile), surfaced here
+/// since this is the page that should announce "this is your Club".
+class _ClubHomeHeader extends StatelessWidget {
+  const _ClubHomeHeader({required this.profile});
+
+  final ClubProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(child: ClubDashboardIdentityHeader(profile: profile, logoSize: 72)),
+            const SizedBox(width: AppSpacing.md),
+            OutlinedButton.icon(
+              onPressed: () => context.push('/clubs/${profile.id}'),
+              icon: const Icon(Icons.visibility_outlined),
+              label: Text(l10n.clubHomeViewPublicProfileLabel),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            FilledButton.icon(
+              onPressed: () => context.go('/club/edit'),
+              icon: const Icon(Icons.edit_outlined),
+              label: Text(l10n.dashboardEditClubProfile),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
+      ],
+    );
+  }
+}
+
+/// The 4 roster metrics as one full-width row — a dashboard metrics strip,
+/// not a narrow stack. Complete/Incomplete each get a "% of roster"
+/// subtitle (a simple ratio of already-known counts, not a new metric).
+class _ClubHomeStatsRow extends StatelessWidget {
+  const _ClubHomeStatsRow({required this.summary});
 
   final ClubDashboardSummary summary;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final total = summary.totalPlayers;
+    String? percentLabel(int value) =>
+        total > 0 ? l10n.clubDashboardPercentOfRosterLabel((value / total * 100).round()) : null;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Row(
       children: [
-        Text(l10n.dashboardStatsTitle, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: AppSpacing.sm),
-        if (summary.totalPlayers > 0) ...[
-          Row(
-            children: [
-              Expanded(
-                child: ClubDashboardStatTile(
-                  icon: Icons.groups_outlined,
-                  label: l10n.clubDashboardTotalPlayersLabel,
-                  value: summary.totalPlayers,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: ClubDashboardStatTile(
-                  icon: Icons.check_circle_outline,
-                  label: l10n.clubDashboardCompleteProfilesLabel,
-                  value: summary.completeProfiles,
-                  color: AppColors.success,
-                ),
-              ),
-            ],
+        Expanded(
+          child: ClubDashboardStatTile(
+            icon: Icons.groups_outlined,
+            label: l10n.clubDashboardTotalPlayersLabel,
+            value: total,
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: ClubDashboardStatTile(
-                  icon: Icons.error_outline,
-                  label: l10n.clubDashboardIncompleteProfilesLabel,
-                  value: summary.incompleteProfiles,
-                  color: AppColors.warning,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              const Expanded(child: ClubDashboardSavedPlayersTile()),
-            ],
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: ClubDashboardStatTile(
+            icon: Icons.check_circle_outline,
+            label: l10n.clubDashboardCompleteProfilesLabel,
+            value: summary.completeProfiles,
+            color: AppColors.success,
+            subtitle: percentLabel(summary.completeProfiles),
           ),
-          const SizedBox(height: AppSpacing.lg),
-          ClubDashboardCompletenessCard(summary: summary),
-          const SizedBox(height: AppSpacing.lg),
-        ],
-        ClubDashboardRecentPlayersSection(summary: summary),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: ClubDashboardStatTile(
+            icon: Icons.error_outline,
+            label: l10n.clubDashboardIncompleteProfilesLabel,
+            value: summary.incompleteProfiles,
+            color: AppColors.warning,
+            subtitle: percentLabel(summary.incompleteProfiles),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        const Expanded(child: ClubDashboardSavedPlayersTile()),
       ],
     );
   }
 }
 
-class _ClubHomeSidebarSkeleton extends StatelessWidget {
-  const _ClubHomeSidebarSkeleton();
+class _StatsRowSkeleton extends StatelessWidget {
+  const _StatsRowSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Row(
       children: [
-        Row(
-          children: const [
-            Expanded(child: SkeletonBox(height: 76)),
-            SizedBox(width: AppSpacing.sm),
-            Expanded(child: SkeletonBox(height: 76)),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Row(
-          children: const [
-            Expanded(child: SkeletonBox(height: 76)),
-            SizedBox(width: AppSpacing.sm),
-            Expanded(child: SkeletonBox(height: 76)),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        const SkeletonBox(height: 220),
+        for (var i = 0; i < 4; i++) ...[
+          if (i > 0) const SizedBox(width: AppSpacing.md),
+          const Expanded(child: SkeletonBox(height: 86)),
+        ],
+      ],
+    );
+  }
+}
+
+/// Roster completeness ("how healthy is my roster?") beside Quick Actions
+/// — the two secondary-but-important panels grouped into one row instead
+/// of scattered. When there's no completeness data yet (empty roster),
+/// Quick Actions takes the full row instead of leaving half of it blank.
+class _ClubHomeHealthRow extends StatelessWidget {
+  const _ClubHomeHealthRow({required this.summary});
+
+  final ClubDashboardSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final quickActions = _QuickActionsGrid(l10n: l10n);
+
+    if (summary.averageCompletionPercent == null) {
+      return quickActions;
+    }
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: ClubDashboardCompletenessCard(summary: summary)),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(child: quickActions),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickActionsGrid extends StatelessWidget {
+  const _QuickActionsGrid({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: AppSpacing.sm,
+      crossAxisSpacing: AppSpacing.sm,
+      childAspectRatio: 2.8,
+      children: [
+        for (final action in clubDashboardQuickActions(l10n)) ClubQuickActionCard(action: action),
       ],
     );
   }
