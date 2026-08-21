@@ -13,6 +13,7 @@ import '../../../club_players/application/club_players_controller.dart';
 import '../../../club_players/domain/entities/club_dashboard_summary.dart';
 import '../../../home_feed/presentation/desktop/home_feed_page_desktop.dart';
 import '../../../home_feed/presentation/shared/create_post_sheet.dart';
+import '../../../home_feed/presentation/shared/home_feed_body.dart';
 import '../shared/club_dashboard_widgets.dart';
 
 /// Content-only — the sidebar/top bar chrome that used to live here now
@@ -87,6 +88,15 @@ class _ClubDashboardDesktop extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 28),
+              Text(l10n.dashboardLatestNewsTitle, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 700,
+                child: HomeFeedBody(role: UserRole.club, showComposerFab: false),
+              ),
+              const SizedBox(height: 28),
+              Text(l10n.dashboardStatsTitle, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 12),
               summaryAsync.when(
                 data: (summary) => _ClubDashboardBody(summary: summary),
                 loading: () => const _ClubDashboardSkeleton(),

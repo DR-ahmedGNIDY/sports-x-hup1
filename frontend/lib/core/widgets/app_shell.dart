@@ -32,7 +32,7 @@ class _NavItem {
 }
 
 final _dashboardNavItem = _NavItem(
-  icon: Icons.dashboard_outlined,
+  icon: Icons.home_outlined,
   label: (l10n) => l10n.dashboardSidebarTitle,
   route: '/dashboard',
 );

@@ -13,6 +13,7 @@ import '../../../club_players/application/club_players_controller.dart';
 import '../../../club_players/domain/entities/club_dashboard_summary.dart';
 import '../../../home_feed/presentation/mobile/home_feed_page_mobile.dart';
 import '../../../home_feed/presentation/shared/create_post_sheet.dart';
+import '../../../home_feed/presentation/shared/home_feed_body.dart';
 import '../shared/club_dashboard_widgets.dart';
 
 /// Content-only — the top bar/bottom nav chrome that used to live here now
@@ -65,6 +66,7 @@ class _ClubDashboardMobile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final summaryAsync = ref.watch(clubDashboardSummaryProvider);
     final profileAsync = ref.watch(clubProfileControllerProvider);
 
@@ -77,19 +79,28 @@ class _ClubDashboardMobile extends ConsumerWidget {
             data: (profile) => ClubDashboardIdentityHeader(profile: profile, logoSize: 52),
             orElse: () => const SkeletonBox(height: 52),
           ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => CreatePostSheet.show(context, role: UserRole.club),
+            icon: const Icon(Icons.add_a_photo_outlined),
+            label: Text(l10n.homeFeedNewPostTitle),
+          ),
           const SizedBox(height: 16),
+          Text(l10n.dashboardLatestNewsTitle, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 600,
+            child: HomeFeedBody(role: UserRole.club, showComposerFab: false),
+          ),
+          const SizedBox(height: 20),
+          Text(l10n.dashboardStatsTitle, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
           summaryAsync.when(
             data: (summary) => _ClubDashboardBody(summary: summary),
             loading: () => const _ClubDashboardSkeleton(),
             error: (error, _) => ErrorState(
               onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
             ),
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => CreatePostSheet.show(context, role: UserRole.club),
-            icon: const Icon(Icons.add_a_photo_outlined),
-            label: Text(AppLocalizations.of(context)!.homeFeedNewPostTitle),
           ),
         ],
       ),

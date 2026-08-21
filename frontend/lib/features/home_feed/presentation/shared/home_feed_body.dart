@@ -17,9 +17,23 @@ import 'feed_item_card.dart';
 /// Mobile (only the surrounding chrome/width differs, same pattern as
 /// PlayerDashboardContent used to follow).
 class HomeFeedBody extends ConsumerStatefulWidget {
-  const HomeFeedBody({super.key, this.maxWidth = 640});
+  const HomeFeedBody({
+    super.key,
+    this.maxWidth = 640,
+    this.role = UserRole.player,
+    this.showComposerFab = true,
+  });
 
   final double maxWidth;
+
+  /// Which role's composer [CreatePostSheet.show] opens for — a Club
+  /// embedding this feed (e.g. on its own Home) posts as a Club, not a
+  /// Player.
+  final UserRole role;
+
+  /// Hide the floating "new post" button when the embedding screen already
+  /// has its own compose entry point (e.g. the Club dashboard header).
+  final bool showComposerFab;
 
   @override
   ConsumerState<HomeFeedBody> createState() => _HomeFeedBodyState();
@@ -58,11 +72,13 @@ class _HomeFeedBodyState extends ConsumerState<HomeFeedBody> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      floatingActionButton: FloatingActionButton(
-        tooltip: l10n.homeFeedNewPostTooltip,
-        onPressed: () => CreatePostSheet.show(context, role: UserRole.player),
-        child: const Icon(Icons.add_a_photo_outlined),
-      ),
+      floatingActionButton: widget.showComposerFab
+          ? FloatingActionButton(
+              tooltip: l10n.homeFeedNewPostTooltip,
+              onPressed: () => CreatePostSheet.show(context, role: widget.role),
+              child: const Icon(Icons.add_a_photo_outlined),
+            )
+          : null,
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: widget.maxWidth),

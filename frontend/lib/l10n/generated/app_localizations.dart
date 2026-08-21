@@ -593,8 +593,20 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardSidebarTitle.
   ///
   /// In ar, this message translates to:
-  /// **'لوحة التحكم'**
+  /// **'الرئيسية'**
   String get dashboardSidebarTitle;
+
+  /// No description provided for @dashboardLatestNewsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر الأخبار'**
+  String get dashboardLatestNewsTitle;
+
+  /// No description provided for @dashboardStatsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إحصائيات النادي'**
+  String get dashboardStatsTitle;
 
   /// No description provided for @dashboardMyProfile.
   ///

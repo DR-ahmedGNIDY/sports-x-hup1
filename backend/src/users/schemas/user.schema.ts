@@ -18,7 +18,13 @@ export type UserDocument = HydratedDocument<User>;
 export class User {
   // Optional: self-registered users always have one (enforced by
   // RegisterDto), but a club-created player account may only have a phone.
-  @Prop({ required: false, unique: true, sparse: true, lowercase: true, trim: true })
+  @Prop({
+    required: false,
+    unique: true,
+    sparse: true,
+    lowercase: true,
+    trim: true,
+  })
   email?: string;
 
   // Optional: only set for club-created player accounts, which log in with

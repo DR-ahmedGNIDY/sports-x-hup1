@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
-import { ClubProfile, ClubProfileSchema } from '../clubs/schemas/club-profile.schema';
+import {
+  ClubProfile,
+  ClubProfileSchema,
+} from '../clubs/schemas/club-profile.schema';
 import {
   PlayerProfile,
   PlayerProfileSchema,
@@ -10,7 +13,10 @@ import { SportsModule } from '../sports/sports.module';
 import { User, UserSchema } from '../users/schemas/user.schema';
 import { VideosController } from './videos.controller';
 import { VideosService } from './videos.service';
-import { VideoComment, VideoCommentSchema } from './schemas/video-comment.schema';
+import {
+  VideoComment,
+  VideoCommentSchema,
+} from './schemas/video-comment.schema';
 import { VideoLike, VideoLikeSchema } from './schemas/video-like.schema';
 import { Video, VideoSchema } from './schemas/video.schema';
 

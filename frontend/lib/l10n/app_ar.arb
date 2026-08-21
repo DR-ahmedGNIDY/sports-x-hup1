@@ -104,7 +104,9 @@
       "role": { "type": "String" }
     }
   },
-  "dashboardSidebarTitle": "لوحة التحكم",
+  "dashboardSidebarTitle": "الرئيسية",
+  "dashboardLatestNewsTitle": "آخر الأخبار",
+  "dashboardStatsTitle": "إحصائيات النادي",
   "dashboardMyProfile": "ملفي الشخصي",
   "dashboardEditProfile": "تعديل الملف الشخصي",
   "dashboardAdminUsers": "الأدمن — المستخدمون",

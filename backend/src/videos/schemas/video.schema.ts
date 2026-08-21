@@ -10,7 +10,12 @@ export type VideoDocument = HydratedDocument<Video>;
 
 @Schema({ timestamps: true, collection: 'videos' })
 export class Video {
-  @Prop({ type: Types.ObjectId, required: true, ref: 'PlayerProfile', index: true })
+  @Prop({
+    type: Types.ObjectId,
+    required: true,
+    ref: 'PlayerProfile',
+    index: true,
+  })
   playerId: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, required: true, ref: 'User' })

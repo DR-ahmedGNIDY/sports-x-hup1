@@ -273,7 +273,13 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get dashboardSidebarTitle => 'لوحة التحكم';
+  String get dashboardSidebarTitle => 'الرئيسية';
+
+  @override
+  String get dashboardLatestNewsTitle => 'آخر الأخبار';
+
+  @override
+  String get dashboardStatsTitle => 'إحصائيات النادي';
 
   @override
   String get dashboardMyProfile => 'ملفي الشخصي';

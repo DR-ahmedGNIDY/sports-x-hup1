@@ -48,10 +48,7 @@ export class VideosController {
   @Get('me')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.PLAYER)
-  async listMine(
-    @CurrentUser() user: JwtPayload,
-    @Query() dto: ListVideosDto,
-  ) {
+  async listMine(@CurrentUser() user: JwtPayload, @Query() dto: ListVideosDto) {
     return this.videosService.listMine(user.sub, dto.category);
   }
 

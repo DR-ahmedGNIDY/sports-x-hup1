@@ -104,7 +104,9 @@
       "role": { "type": "String" }
     }
   },
-  "dashboardSidebarTitle": "Dashboard",
+  "dashboardSidebarTitle": "Home",
+  "dashboardLatestNewsTitle": "Latest News",
+  "dashboardStatsTitle": "Club Stats",
   "dashboardMyProfile": "My Profile",
   "dashboardEditProfile": "Edit Profile",
   "dashboardAdminUsers": "Admin — Users",

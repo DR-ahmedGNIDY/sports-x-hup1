@@ -178,11 +178,18 @@ describe('VideosService', () => {
     const videoId = new Types.ObjectId();
     const authorAId = new Types.ObjectId();
     const authorBId = new Types.ObjectId();
-    const { service, videoModel, videoCommentModel, userModel, playerProfileModel } =
-      buildService({});
-    videoModel.findById = jest
-      .fn()
-      .mockResolvedValue({ _id: videoId, visibility: VideoVisibility.PUBLIC, userId: 'someone' });
+    const {
+      service,
+      videoModel,
+      videoCommentModel,
+      userModel,
+      playerProfileModel,
+    } = buildService({});
+    videoModel.findById = jest.fn().mockResolvedValue({
+      _id: videoId,
+      visibility: VideoVisibility.PUBLIC,
+      userId: 'someone',
+    });
     const comments = [
       { _id: new Types.ObjectId(), userId: authorAId, text: 'a' },
       { _id: new Types.ObjectId(), userId: authorBId, text: 'b' },
@@ -210,8 +217,13 @@ describe('VideosService', () => {
   it('cascade-deletes a player video plus its Cloudinary asset, likes and comments', async () => {
     const playerId = new Types.ObjectId().toString();
     const videoId = new Types.ObjectId();
-    const { service, videoModel, videoLikeModel, videoCommentModel, cloudinary } =
-      buildService({});
+    const {
+      service,
+      videoModel,
+      videoLikeModel,
+      videoCommentModel,
+      cloudinary,
+    } = buildService({});
     videoModel.find = jest
       .fn()
       .mockResolvedValue([{ _id: videoId, publicId: 'video-1' }]);

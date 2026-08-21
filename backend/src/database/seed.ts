@@ -19,12 +19,15 @@ const SPORTS = [
 const SKILL_CATEGORIES: Record<string, string[]> = {
   Football: [
     'Passing',
-    'Receiving',
+    'Ball Control',
     'Shooting',
-    'Dribbling',
-    'Defending',
+    'Crossing',
+    'Tackling',
     'Heading',
+    'Defending',
+    'Positioning',
     'Set Pieces',
+    'Goalkeeping',
   ],
   Basketball: [
     'Passing',
@@ -131,6 +134,11 @@ async function seed() {
       );
       categoryCount += 1;
     }
+    // Drop stale categories no longer listed for this sport.
+    await SkillCategoryModel.deleteMany({
+      sport,
+      name: { $nin: categories },
+    });
   }
   // Keep skill categories consistent with the current sport roster.
   await SkillCategoryModel.deleteMany({ sport: { $nin: SPORTS } });

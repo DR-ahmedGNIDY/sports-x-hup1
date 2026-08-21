@@ -271,7 +271,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dashboardSidebarTitle => 'Dashboard';
+  String get dashboardSidebarTitle => 'Home';
+
+  @override
+  String get dashboardLatestNewsTitle => 'Latest News';
+
+  @override
+  String get dashboardStatsTitle => 'Club Stats';
 
   @override
   String get dashboardMyProfile => 'My Profile';
