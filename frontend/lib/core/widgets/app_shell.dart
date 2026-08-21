@@ -81,7 +81,9 @@ final List<_NavItem> _navItems = [
 /// Club sidebar order — Home, then Club Profile right underneath it, then
 /// Manage Players, then Discover, then Community/Settings (the Club
 /// Experience 2.0 brief is explicit: Community must not outrank Players in
-/// the Club's navigation).
+/// the Club's navigation). Add Player and Edit Club Profile aren't listed
+/// separately — they're already reachable from Club Players and Club
+/// Profile respectively (see clubDashboardQuickActions).
 final List<_NavItem> _clubNavItems = [
   _dashboardNavItem,
   _NavItem(
@@ -95,11 +97,6 @@ final List<_NavItem> _clubNavItems = [
     route: '/club/players',
   ),
   _NavItem(
-    icon: Icons.person_add_outlined,
-    label: (l10n) => l10n.clubPlayersAddPlayerLabel,
-    route: '/club/players/new',
-  ),
-  _NavItem(
     icon: Icons.search_outlined,
     label: (l10n) => l10n.dashboardSearchPlayers,
     route: '/search',
@@ -110,11 +107,6 @@ final List<_NavItem> _clubNavItems = [
     route: '/saved-players',
   ),
   _communityNavItem,
-  _NavItem(
-    icon: Icons.edit_outlined,
-    label: (l10n) => l10n.dashboardEditClubProfile,
-    route: '/club/edit',
-  ),
   _settingsNavItem,
 ];
 
