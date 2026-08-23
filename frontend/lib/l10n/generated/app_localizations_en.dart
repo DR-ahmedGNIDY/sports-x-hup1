@@ -1311,6 +1311,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedCommentsTooltip => 'Comments';
 
   @override
+  String get feedLikeActionLabel => 'Like';
+
+  @override
+  String get feedCommentActionLabel => 'Comment';
+
+  @override
+  String feedLikesCountLabel(int count) {
+    return '$count likes';
+  }
+
+  @override
+  String feedCommentsCountLabel(int count) {
+    return '$count comments';
+  }
+
+  @override
+  String get feedCaptionShowMoreLabel => 'See more';
+
+  @override
+  String get feedCaptionShowLessLabel => 'See less';
+
+  @override
+  String get feedPostOptionsTooltip => 'Post options';
+
+  @override
+  String get feedCopyPostLinkLabel => 'Copy post link';
+
+  @override
+  String get feedPlayVideoLabel => 'Play video';
+
+  @override
   String get moreNavLabel => 'More';
 
   @override

@@ -2,21 +2,34 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/feed_item.dart';
+import 'feed_action_button.dart';
 
-/// Mirrors videos/presentation/shared/video_like_button.dart's icon
-/// language and micro-animation, just typed against [FeedItem] instead of
-/// `Video` — kept as its own small widget rather than a generic
+/// The Like control in a [FeedItemCard]'s action bar — icon + label (the
+/// count itself lives in the card's engagement summary above the divider,
+/// so it isn't repeated here). Keeps the like-pop micro-animation this
+/// button has always had; the only structural change is that it now
+/// renders as one of three equal-width action-bar buttons instead of a
+/// standalone icon+count pill.
+///
+/// Kept as its own small widget rather than a generic
 /// `<T extends {likeCount,isLikedByMe}>` since Dart has no structural
 /// typing to make that generic clean.
 class FeedLikeButton extends StatefulWidget {
-  const FeedLikeButton({super.key, required this.item, required this.onToggle});
+  const FeedLikeButton({
+    super.key,
+    required this.item,
+    required this.onToggle,
+    this.compact = false,
+  });
 
   final FeedItem item;
   final Future<void> Function() onToggle;
+
+  /// Narrow-card density — see [FeedActionButton.compact].
+  final bool compact;
 
   @override
   State<FeedLikeButton> createState() => _FeedLikeButtonState();
@@ -66,39 +79,25 @@ class _FeedLikeButtonState extends State<FeedLikeButton> with SingleTickerProvid
   Widget build(BuildContext context) {
     final liked = widget.item.isLikedByMe;
     final l10n = AppLocalizations.of(context)!;
-    final unlikedColor = context.profileColors.textMuted;
-    return InkWell(
+    final activeColor = AppColors.error;
+    final idleColor = context.profileColors.textMuted;
+
+    return FeedActionButton(
       onTap: _handleTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Tooltip(
-        message: liked ? l10n.feedUnlikeTooltip : l10n.feedLikeTooltip,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: AnimatedSwitcher(
-                  duration: AppMotion.fast,
-                  child: Icon(
-                    liked ? Icons.favorite : Icons.favorite_border,
-                    key: ValueKey(liked),
-                    size: 18,
-                    color: liked ? AppColors.error : unlikedColor,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              AnimatedDefaultTextStyle(
-                duration: AppMotion.fast,
-                style: AppTextStyles.statNumber.copyWith(
-                  color: liked ? AppColors.error : unlikedColor,
-                  fontSize: 13,
-                ),
-                child: Text('${widget.item.likeCount}'),
-              ),
-            ],
+      compact: widget.compact,
+      active: liked,
+      activeColor: activeColor,
+      tooltip: liked ? l10n.feedUnlikeTooltip : l10n.feedLikeTooltip,
+      label: l10n.feedLikeActionLabel,
+      icon: ScaleTransition(
+        scale: _scaleAnimation,
+        child: AnimatedSwitcher(
+          duration: AppMotion.fast,
+          child: Icon(
+            liked ? Icons.favorite : Icons.favorite_border,
+            key: ValueKey(liked),
+            size: widget.compact ? 18 : 19,
+            color: liked ? activeColor : idleColor,
           ),
         ),
       ),

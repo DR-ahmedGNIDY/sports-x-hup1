@@ -2509,6 +2509,60 @@ abstract class AppLocalizations {
   /// **'التعليقات'**
   String get feedCommentsTooltip;
 
+  /// No description provided for @feedLikeActionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أعجبني'**
+  String get feedLikeActionLabel;
+
+  /// No description provided for @feedCommentActionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعليق'**
+  String get feedCommentActionLabel;
+
+  /// No description provided for @feedLikesCountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} إعجاب'**
+  String feedLikesCountLabel(int count);
+
+  /// No description provided for @feedCommentsCountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} تعليق'**
+  String feedCommentsCountLabel(int count);
+
+  /// No description provided for @feedCaptionShowMoreLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض المزيد'**
+  String get feedCaptionShowMoreLabel;
+
+  /// No description provided for @feedCaptionShowLessLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض أقل'**
+  String get feedCaptionShowLessLabel;
+
+  /// No description provided for @feedPostOptionsTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'خيارات المنشور'**
+  String get feedPostOptionsTooltip;
+
+  /// No description provided for @feedCopyPostLinkLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ رابط المنشور'**
+  String get feedCopyPostLinkLabel;
+
+  /// No description provided for @feedPlayVideoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تشغيل الفيديو'**
+  String get feedPlayVideoLabel;
+
   /// No description provided for @moreNavLabel.
   ///
   /// In ar, this message translates to:

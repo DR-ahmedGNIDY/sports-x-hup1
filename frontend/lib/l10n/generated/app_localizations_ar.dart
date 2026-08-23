@@ -1296,6 +1296,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get feedCommentsTooltip => 'التعليقات';
 
   @override
+  String get feedLikeActionLabel => 'أعجبني';
+
+  @override
+  String get feedCommentActionLabel => 'تعليق';
+
+  @override
+  String feedLikesCountLabel(int count) {
+    return '$count إعجاب';
+  }
+
+  @override
+  String feedCommentsCountLabel(int count) {
+    return '$count تعليق';
+  }
+
+  @override
+  String get feedCaptionShowMoreLabel => 'عرض المزيد';
+
+  @override
+  String get feedCaptionShowLessLabel => 'عرض أقل';
+
+  @override
+  String get feedPostOptionsTooltip => 'خيارات المنشور';
+
+  @override
+  String get feedCopyPostLinkLabel => 'نسخ رابط المنشور';
+
+  @override
+  String get feedPlayVideoLabel => 'تشغيل الفيديو';
+
+  @override
   String get moreNavLabel => 'المزيد';
 
   @override

@@ -16,10 +16,12 @@ import '../../../club_players/domain/entities/club_dashboard_summary.dart';
 import '../../../home_feed/domain/entities/feed_item.dart';
 import '../../../home_feed/presentation/desktop/home_feed_page_desktop.dart';
 import '../../../home_feed/presentation/shared/create_post_sheet.dart';
-import '../../../home_feed/presentation/shared/home_feed_body.dart';
+import '../../../home_feed/presentation/shared/feed_layout.dart';
+import '../../../home_feed/presentation/shared/home_feed_slivers.dart';
 import '../shared/club_composer_card.dart';
 import '../shared/club_dashboard_widgets.dart';
 import '../shared/club_feed_tabs.dart';
+import '../shared/club_news_columns.dart';
 
 /// Content-only — the sidebar/top bar chrome that used to live here now
 /// lives in `AppShell` (mounted once by the `/dashboard` ShellRoute), so
@@ -53,23 +55,30 @@ class DashboardPageDesktop extends ConsumerWidget {
   }
 }
 
+/// Page gutter and content cap for the Club's Home. Capped rather than
+/// full-bleed so the two columns stay a readable width on a wide monitor —
+/// and, like every other width on this page, expressed in logical pixels
+/// so the whole layout scales together under browser zoom.
+const double _pageMaxWidth = 1160;
+const double _pageGutter = 28;
+
 /// The Club's operational home — Dashboard **and** Feed, not one instead
 /// of the other. Top to bottom: identity (full width), roster metrics
 /// (full width), roster completeness (full width — Quick Actions live on
-/// the Club Profile page instead, not duplicated here), then a bottom row
-/// splitting the feed (main, ~68% width) from Recent Players (secondary,
-/// ~32%).
+/// the Club Profile page instead, not duplicated here), then the news
+/// section: the feed (main column, capped at [FeedLayout.columnMaxWidth])
+/// beside Recent Players (secondary column).
 ///
-/// The whole page is one scroll (`SingleChildScrollView`) — an earlier
-/// version made only the bottom row `Expanded` inside a *non-scrolling*
-/// Column, so on any viewport where the fixed chrome above it (identity +
-/// stats + completeness) added up to more than the available height, that
-/// `Expanded` was squeezed toward zero and the feed effectively vanished.
-/// The bottom row now gets an explicit height computed from the real
-/// available viewport height (via `LayoutBuilder`, captured before the
-/// scroll view so it reflects the actual window, not "whatever's left"),
-/// clamped to a sensible range — generous on tall screens, never smaller
-/// than enough room for feed cards on short ones.
+/// The page is one scroll, all the way down, built from slivers. Earlier
+/// versions gave the feed row an explicit height — first `Expanded` inside
+/// a non-scrolling Column (which squeezed the feed to nothing on short
+/// viewports), then a height computed from the viewport and clamped. Both
+/// are the same mistake in different clothes: an embedded feed with a
+/// height of its own is a second scroll view inside the page, and a height
+/// derived from the viewport is a constraint that doesn't scale with the
+/// content around it. `SliverCrossAxisGroup` gives the two columns their
+/// side-by-side layout *within* the page's own scroll, so neither column
+/// needs a height at all.
 class _ClubDashboardDesktop extends ConsumerStatefulWidget {
   const _ClubDashboardDesktop();
 
@@ -86,110 +95,103 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
     final summaryAsync = ref.watch(clubDashboardSummaryProvider);
     final profileAsync = ref.watch(clubProfileControllerProvider);
 
-    return LayoutBuilder(
-      builder: (context, outer) {
-        final feedRowHeight = outer.hasBoundedHeight
-            ? (outer.maxHeight * 0.8).clamp(600.0, 980.0)
-            : 720.0;
-
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1600),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(28),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  profileAsync.when(
-                    data: (profile) => _ClubHomeHeader(profile: profile),
-                    loading: () => const SkeletonBox(height: 72),
-                    error: (error, _) => ErrorState(
-                      onRetry: () => ref.invalidate(clubProfileControllerProvider),
-                    ),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _pageMaxWidth),
+        child: FeedRefreshIndicator(
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(_pageGutter, _pageGutter, _pageGutter, 0),
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      profileAsync.when(
+                        data: (profile) => _ClubHomeHeader(profile: profile),
+                        loading: () => const SkeletonBox(height: 72),
+                        error: (error, _) => ErrorState(
+                          onRetry: () => ref.invalidate(clubProfileControllerProvider),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      summaryAsync.when(
+                        data: (summary) => _ClubHomeStatsRow(summary: summary),
+                        loading: () => const _StatsRowSkeleton(),
+                        error: (error, _) => ErrorState(
+                          onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
+                        ),
+                      ),
+                      summaryAsync.maybeWhen(
+                        data: (summary) => summary.averageCompletionPercent == null
+                            ? const SizedBox.shrink()
+                            : Padding(
+                                padding: const EdgeInsets.only(top: AppSpacing.lg),
+                                child: ClubDashboardCompletenessCard(summary: summary),
+                              ),
+                        orElse: () => const Padding(
+                          padding: EdgeInsets.only(top: AppSpacing.lg),
+                          child: SkeletonBox(height: 100),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                      Text(
+                        l10n.dashboardLatestNewsTitle,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                    ],
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  summaryAsync.when(
-                    data: (summary) => _ClubHomeStatsRow(summary: summary),
-                    loading: () => const _StatsRowSkeleton(),
-                    error: (error, _) => ErrorState(
-                      onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
-                    ),
-                  ),
-                  summaryAsync.maybeWhen(
-                    data: (summary) => summary.averageCompletionPercent == null
-                        ? const SizedBox.shrink()
-                        : Padding(
-                            padding: const EdgeInsets.only(top: AppSpacing.lg),
-                            child: ClubDashboardCompletenessCard(summary: summary),
-                          ),
-                    orElse: () => const Padding(
-                      padding: EdgeInsets.only(top: AppSpacing.lg),
-                      child: SkeletonBox(height: 100),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  Text(
-                    l10n.dashboardLatestNewsTitle,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  SizedBox(
-                    height: feedRowHeight,
-                    child: Row(
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(_pageGutter, 0, _pageGutter, _pageGutter),
+                // Two columns inside the page's own scroll: no heights, no
+                // nested scroll views. The feed column is flexible but
+                // capped, so it scales down with the window and stops
+                // growing once it reaches a readable width.
+                sliver: ClubNewsColumns(
+                  // Composer, tabs and cards share one cap, so they line
+                  // up edge to edge instead of the cards sitting inset
+                  // inside their own column.
+                  feed: FeedColumnSliver(
+                    kindFilter: _filter,
+                    onCreatePost: () => CreatePostSheet.show(context, role: UserRole.club),
+                    header: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ClubComposerCard(
-                                logoUrl: profileAsync.maybeWhen(
-                                  data: (profile) => profile.logoUrl,
-                                  orElse: () => null,
-                                ),
-                                onTap: () => CreatePostSheet.show(context, role: UserRole.club),
-                              ),
-                              const SizedBox(height: AppSpacing.sm),
-                              ClubFeedTabs(
-                                value: _filter,
-                                onChanged: (kind) => setState(() => _filter = kind),
-                              ),
-                              const SizedBox(height: AppSpacing.sm),
-                              Expanded(
-                                child: HomeFeedBody(
-                                  role: UserRole.club,
-                                  maxWidth: double.infinity,
-                                  showComposerFab: false,
-                                  kindFilter: _filter,
-                                  onCreatePost: () =>
-                                      CreatePostSheet.show(context, role: UserRole.club),
-                                ),
-                              ),
-                            ],
+                        ClubComposerCard(
+                          logoUrl: profileAsync.maybeWhen(
+                            data: (profile) => profile.logoUrl,
+                            orElse: () => null,
                           ),
+                          onTap: () => CreatePostSheet.show(context, role: UserRole.club),
                         ),
-                        const SizedBox(width: AppSpacing.xl),
-                        Expanded(
-                          child: summaryAsync.when(
-                            data: (summary) => SingleChildScrollView(
-                              child: ClubDashboardRecentPlayersSection(summary: summary),
-                            ),
-                            loading: () => const SkeletonBox(height: 300),
-                            error: (error, _) => ErrorState(
-                              onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
-                            ),
-                          ),
+                        const SizedBox(height: AppSpacing.md),
+                        ClubFeedTabs(
+                          value: _filter,
+                          onChanged: (kind) => setState(() => _filter = kind),
                         ),
+                        const SizedBox(height: AppSpacing.lg),
                       ],
                     ),
                   ),
-                ],
+                  secondary: SliverToBoxAdapter(
+                    child: summaryAsync.when(
+                      data: (summary) => ClubDashboardRecentPlayersSection(summary: summary),
+                      loading: () => const SkeletonBox(height: 300),
+                      error: (error, _) => ErrorState(
+                        onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
