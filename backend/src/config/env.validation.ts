@@ -28,15 +28,90 @@ export const envValidationSchema = Joi.object({
   CLOUDINARY_API_SECRET: Joi.string().allow('').default(''),
 
   // Comma-separated list of allowed frontend origins (e.g.
-  // "https://app.sportxhub.com,https://sportxhub.com"). Optional locally —
-  // an empty value falls back to allowing any origin, which is fine for
-  // local development but must never happen in production, so it's
-  // required whenever NODE_ENV=production.
+  // "https://app.sportxhub.com,https://sportxhub.com"). Optional in
+  // development/test — an empty value there falls back to reflecting the
+  // request origin, which is a convenience for local dev only. Both
+  // production AND staging (a real, internet-reachable deployment) must
+  // set this explicitly; a wildcard is rejected outright since
+  // `credentials: true` is always on and CORS forbids combining the two
+  // safely (CWE-346, OWASP ASVS 14.5).
   CORS_ORIGINS: Joi.string()
     .allow('')
     .default('')
     .when('NODE_ENV', {
-      is: 'production',
+      is: Joi.valid('production', 'staging'),
+      then: Joi.string()
+        .min(1)
+        .required()
+        .custom((value: string, helpers) => {
+          const origins = value.split(',').map((origin) => origin.trim());
+          if (origins.includes('*')) {
+            return helpers.error('any.invalid');
+          }
+          return value;
+        }, 'no wildcard origin')
+        .messages({
+          'any.invalid':
+            'CORS_ORIGINS cannot be "*" in production/staging — list explicit origins instead.',
+        }),
+    }),
+
+  // Password-reset email provider (Phase 0.5). "console" only logs that an
+  // email would have been sent (no token, see mail.service.ts) and is
+  // rejected outside development/test — a real deployment must be able to
+  // actually deliver the reset email, not silently drop it.
+  // NOTE: the enum restriction lives entirely inside the `when()` branches
+  // (not also chained on the base schema) — Joi's `.when()` does not fully
+  // replace a base `.valid(...)` list with the matched branch's list, so
+  // combining both would let a value the `then` branch was meant to reject
+  // (e.g. "console" in production) slip through as still-valid-by-base.
+  MAIL_PROVIDER: Joi.string()
+    .default('console')
+    .when('NODE_ENV', {
+      is: Joi.valid('production', 'staging'),
+      then: Joi.string().valid('smtp').required().messages({
+        'any.only':
+          'MAIL_PROVIDER must be "smtp" in production/staging — "console" never sends a real email.',
+      }),
+      otherwise: Joi.string().valid('smtp', 'console'),
+    }),
+  SMTP_HOST: Joi.string()
+    .allow('')
+    .default('')
+    .when('MAIL_PROVIDER', {
+      is: 'smtp',
       then: Joi.string().min(1).required(),
     }),
+  SMTP_PORT: Joi.number().default(587),
+  SMTP_SECURE: Joi.boolean().default(false),
+  SMTP_USER: Joi.string()
+    .allow('')
+    .default('')
+    .when('MAIL_PROVIDER', {
+      is: 'smtp',
+      then: Joi.string().min(1).required(),
+    }),
+  SMTP_PASSWORD: Joi.string()
+    .allow('')
+    .default('')
+    .when('MAIL_PROVIDER', {
+      is: 'smtp',
+      then: Joi.string().min(1).required(),
+    }),
+  SMTP_FROM: Joi.string()
+    .allow('')
+    .default('')
+    .when('MAIL_PROVIDER', {
+      is: 'smtp',
+      then: Joi.string().min(1).required(),
+    }),
+
+  // Base URL used to build the password-reset link embedded in the email.
+  // Required whenever an email is actually sent (i.e. MAIL_PROVIDER=smtp);
+  // the console provider only logs a placeholder and doesn't need it.
+  FRONTEND_URL: Joi.string()
+    .uri()
+    .allow('')
+    .default('')
+    .when('MAIL_PROVIDER', { is: 'smtp', then: Joi.string().uri().required() }),
 });

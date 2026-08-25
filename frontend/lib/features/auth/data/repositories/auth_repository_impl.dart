@@ -37,7 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    final refreshToken = _storage.refreshToken;
+    final refreshToken = await _storage.refreshToken;
     if (refreshToken != null) {
       try {
         await _remote.logout(refreshToken);
@@ -51,7 +51,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<AppUser?> restoreSession() async {
-    final accessToken = _storage.accessToken;
+    final accessToken = await _storage.accessToken;
     if (accessToken == null) return null;
 
     try {
@@ -64,7 +64,8 @@ class AuthRepositoryImpl implements AuthRepository {
         return null;
       }
       try {
-        final json = await _remote.getCurrentUser(_storage.accessToken!);
+        final refreshedAccessToken = await _storage.accessToken;
+        final json = await _remote.getCurrentUser(refreshedAccessToken!);
         return AppUserModel.fromJson(json);
       } on AppException {
         await _storage.clear();
@@ -87,8 +88,9 @@ class AuthRepositoryImpl implements AuthRepository {
     String? newPassword,
   }) async {
     Future<AppUser> attempt() async {
+      final accessToken = await _storage.accessToken;
       final json = await _remote.updateCurrentUser(
-        _storage.accessToken!,
+        accessToken!,
         email: email,
         currentPassword: currentPassword,
         newPassword: newPassword,
@@ -115,7 +117,7 @@ class AuthRepositoryImpl implements AuthRepository {
   /// Attempts one refresh using the stored refresh token. Returns whether
   /// it succeeded; on success the new tokens are already persisted.
   Future<bool> _tryRefresh() async {
-    final refreshToken = _storage.refreshToken;
+    final refreshToken = await _storage.refreshToken;
     if (refreshToken == null) return false;
     try {
       final json = await _remote.refresh(refreshToken);

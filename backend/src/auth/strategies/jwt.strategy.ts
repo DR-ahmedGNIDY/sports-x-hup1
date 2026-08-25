@@ -17,6 +17,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       // Joi validation (env.validation.ts) guarantees this is set and non-empty.
       secretOrKey: config.get<string>('JWT_SECRET') as string,
+      // Explicitly pin the accepted signing algorithm rather than relying on
+      // jsonwebtoken's default behavior — closes off any future library
+      // change that might otherwise widen what a symmetric secret can
+      // validate (CWE-347, OWASP ASVS 3.5/6.2 "algorithm confusion").
+      algorithms: ['HS256'],
     });
   }
 

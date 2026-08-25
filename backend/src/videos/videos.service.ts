@@ -10,6 +10,7 @@ import { Model, Types } from 'mongoose';
 import { ClubProfile } from '../clubs/schemas/club-profile.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ALLOWED_VIDEO_MIME_TYPES } from '../common/upload.config';
+import { assertFileContentMatchesMimeType } from '../common/file-signature';
 import { PlayerProfile } from '../players/schemas/player-profile.schema';
 import { SportsService } from '../sports/sports.service';
 import { User } from '../users/schemas/user.schema';
@@ -120,6 +121,7 @@ export class VideosService {
         `A video upload must be one of: ${ALLOWED_VIDEO_MIME_TYPES.join(', ')}.`,
       );
     }
+    assertFileContentMatchesMimeType(file, 'video');
     const profile = await this.getOwnPlayerProfileOrThrow(userId);
     // `Video.sport` is required, but `PlayerProfile.sport` is optional —
     // without this check a player who never set a sport would hit an

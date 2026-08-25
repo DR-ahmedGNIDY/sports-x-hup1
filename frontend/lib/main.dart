@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/config/env.dart';
@@ -19,10 +20,16 @@ Future<void> main() async {
   await Env.load();
   final prefs = await SharedPreferences.getInstance();
 
+  final sessionStorage = SessionStorage(const FlutterSecureStorage());
+  // Upgrades any install still holding tokens from the previous
+  // SharedPreferences-based SessionStorage — see its doc comment. A no-op
+  // for every install created after this change.
+  await sessionStorage.migrateFromSharedPreferences(prefs);
+
   runApp(
     ProviderScope(
       overrides: [
-        sessionStorageProvider.overrideWithValue(SessionStorage(prefs)),
+        sessionStorageProvider.overrideWithValue(sessionStorage),
         localeStorageProvider.overrideWithValue(LocaleStorage(prefs)),
       ],
       child: const SportXHubApp(),

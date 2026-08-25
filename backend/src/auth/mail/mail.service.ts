@@ -1,31 +1,46 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { EMAIL_PROVIDER, EmailProvider } from './email-provider.interface';
 
 /**
- * MVP has no transactional email provider wired up (none is part of the
- * approved stack). In development/test this logs the reset link so the
- * forgot/reset-password flow is fully exercisable end-to-end without one.
- * Swap the body of `sendPasswordResetEmail` for a real provider (e.g.
- * Nodemailer + SMTP, or a transactional email API) when one is chosen —
- * every caller already goes through this single seam.
+ * Business logic for password-reset email: builds the reset link and
+ * decides what's safe to log. Delivery is delegated to whichever
+ * `EmailProvider` is bound for MAIL_PROVIDER (see mail.module.ts) — this
+ * class never touches SMTP/nodemailer directly, so swapping providers
+ * never requires touching AuthService or this file's callers.
  */
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    @Inject(EMAIL_PROVIDER) private readonly provider: EmailProvider,
+    private readonly config: ConfigService,
+  ) {}
 
-  sendPasswordResetEmail(email: string, resetToken: string): void {
-    const isProduction = this.config.get<string>('NODE_ENV') === 'production';
-    if (isProduction) {
-      this.logger.warn(
-        `No email provider configured — password reset email to ${email} was NOT sent.`,
+  async sendPasswordResetEmail(
+    email: string,
+    resetToken: string,
+    correlationId: string,
+  ): Promise<void> {
+    const frontendUrl = this.config.get<string>('FRONTEND_URL') ?? '';
+    const resetUrl = `${frontendUrl}/reset-password?token=${encodeURIComponent(resetToken)}`;
+
+    try {
+      await this.provider.sendPasswordResetEmail({ to: email, resetUrl });
+      // Never log `resetToken` or `resetUrl` here or in any provider impl —
+      // both carry the raw, single-use credential (CWE-532). `correlationId`
+      // is the persisted reset-token document's own Mongo _id: safe to log
+      // (not reversible to the token, not sensitive) and enough for support
+      // to correlate "was an email attempted for this request" without ever
+      // touching the secret itself.
+      this.logger.log(
+        `Password reset email dispatched (correlationId=${correlationId}).`,
       );
-      return;
+    } catch {
+      this.logger.error(
+        `Password reset email failed to send (correlationId=${correlationId}).`,
+      );
     }
-
-    this.logger.log(
-      `[DEV] Password reset requested for ${email}. Reset token: ${resetToken}`,
-    );
   }
 }

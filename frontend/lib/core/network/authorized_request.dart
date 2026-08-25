@@ -13,14 +13,14 @@ Future<T> runAuthorized<T>(
   SessionStorage storage,
   Future<T> Function(String accessToken) call,
 ) async {
-  final token = storage.accessToken;
+  final token = await storage.accessToken;
   if (token == null) throw const AppException('You are not signed in.');
   try {
     return await call(token);
   } on AppException catch (e) {
     if (e.statusCode != 401) rethrow;
     await ref.read(authRepositoryProvider).restoreSession();
-    final refreshed = storage.accessToken;
+    final refreshed = await storage.accessToken;
     if (refreshed == null) rethrow;
     return call(refreshed);
   }

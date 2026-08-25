@@ -2,9 +2,11 @@ import {
   IsEmail,
   IsOptional,
   IsString,
+  MaxLength,
   MinLength,
   ValidateIf,
 } from 'class-validator';
+import { PASSWORD_MAX_LENGTH } from '../../auth/dto/register.dto';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -19,5 +21,6 @@ export class UpdateUserDto {
   @ValidateIf((dto: UpdateUserDto) => Boolean(dto.currentPassword))
   @IsString()
   @MinLength(8)
+  @MaxLength(PASSWORD_MAX_LENGTH)
   newPassword?: string;
 }

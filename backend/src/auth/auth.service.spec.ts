@@ -26,6 +26,7 @@ describe('AuthService', () => {
     findByEmailOrPhone: jest.Mock;
     findByIdOrThrow: jest.Mock;
     createPlayerOrClub: jest.Mock;
+    findByEmail: jest.Mock;
   };
   let service: AuthService;
 
@@ -50,6 +51,7 @@ describe('AuthService', () => {
       findByEmailOrPhone: jest.fn().mockResolvedValue(fakeUser),
       findByIdOrThrow: jest.fn().mockResolvedValue(fakeUser),
       createPlayerOrClub: jest.fn().mockResolvedValue(fakeUser),
+      findByEmail: jest.fn().mockResolvedValue(fakeUser),
     };
 
     service = new AuthService(
@@ -119,5 +121,38 @@ describe('AuthService', () => {
     // The raw token is never what gets stored — only its HMAC.
     expect(stored.tokenHash).not.toBe(result.refreshToken);
     expect(stored.tokenHash).toHaveLength(64); // sha256 hex digest
+  });
+
+  describe('forgotPassword', () => {
+    it('does nothing observable when the email is not registered (no enumeration signal)', async () => {
+      fakeUsersService.findByEmail.mockResolvedValueOnce(null);
+
+      await expect(
+        service.forgotPassword('nobody@example.com'),
+      ).resolves.toBeUndefined();
+      expect(fakePasswordResetTokenModel.create).not.toHaveBeenCalled();
+      expect(fakeMailService.sendPasswordResetEmail).not.toHaveBeenCalled();
+    });
+
+    it('creates a hashed, single-use reset token and passes the DB id — never the raw token — to MailService as the correlation id', async () => {
+      fakePasswordResetTokenModel.create.mockResolvedValueOnce({
+        _id: { toString: () => 'reset-token-doc-id' },
+      });
+
+      await service.forgotPassword('player@example.com');
+
+      expect(fakePasswordResetTokenModel.create).toHaveBeenCalledTimes(1);
+      const created = fakePasswordResetTokenModel.create.mock.calls[0][0] as {
+        tokenHash: string;
+      };
+      expect(created.tokenHash).toHaveLength(64); // HMAC-SHA256 hex digest
+
+      expect(fakeMailService.sendPasswordResetEmail).toHaveBeenCalledTimes(1);
+      const [emailArg, tokenArg, correlationArg] =
+        fakeMailService.sendPasswordResetEmail.mock.calls[0];
+      expect(emailArg).toBe('player@example.com');
+      expect(tokenArg).not.toBe(created.tokenHash);
+      expect(correlationArg).toBe('reset-token-doc-id');
+    });
   });
 });

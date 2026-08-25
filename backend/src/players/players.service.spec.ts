@@ -5,6 +5,13 @@ import { VideosService } from '../videos/videos.service';
 import { PlayersService } from './players.service';
 import { MediaType, ProfileVisibility } from './schemas/player-profile.schema';
 
+// A real PNG signature — Phase 0.5 added magic-byte content validation
+// (common/file-signature.ts), so mock upload files must carry genuine
+// image bytes rather than an arbitrary placeholder buffer.
+const PNG_SIGNATURE = Buffer.from([
+  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0,
+]);
+
 describe('PlayersService', () => {
   function buildService(
     profile: Record<string, unknown> | null,
@@ -191,6 +198,22 @@ describe('PlayersService', () => {
     ).rejects.toThrow(BadRequestException);
   });
 
+  it('rejects a photo upload larger than the 5MB image size limit', async () => {
+    const { service, cloudinary } = buildService({
+      media: [],
+      save: jest.fn(),
+    });
+
+    await expect(
+      service.addMedia('user-1', {
+        buffer: PNG_SIGNATURE,
+        mimetype: 'image/png',
+        size: 6 * 1024 * 1024, // over the 5MB IMAGE_SIZE_LIMIT_BYTES cap
+      } as Express.Multer.File),
+    ).rejects.toThrow(BadRequestException);
+    expect(cloudinary.uploadBuffer).not.toHaveBeenCalled();
+  });
+
   it('rejects adding media once the profile already has 30 items', async () => {
     const media = Array.from({ length: 30 }, () => ({
       publicId: 'p',
@@ -203,7 +226,7 @@ describe('PlayersService', () => {
 
     await expect(
       service.addMedia('user-1', {
-        buffer: Buffer.from('x'),
+        buffer: PNG_SIGNATURE,
         mimetype: 'image/png',
         size: 10,
       } as Express.Multer.File),
@@ -221,7 +244,7 @@ describe('PlayersService', () => {
 
     await expect(
       service.addMedia('user-1', {
-        buffer: Buffer.from('x'),
+        buffer: PNG_SIGNATURE,
         mimetype: 'image/png',
         size: 10,
       } as Express.Multer.File),
@@ -232,7 +255,7 @@ describe('PlayersService', () => {
 
   describe('setProfilePhoto', () => {
     const file = {
-      buffer: Buffer.from('x'),
+      buffer: PNG_SIGNATURE,
       mimetype: 'image/png',
       size: 10,
     } as Express.Multer.File;

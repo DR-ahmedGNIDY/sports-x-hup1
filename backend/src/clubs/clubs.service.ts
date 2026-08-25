@@ -6,6 +6,8 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { ALLOWED_IMAGE_MIME_TYPES } from '../common/upload.config';
+import { assertFileContentMatchesMimeType } from '../common/file-signature';
 import { UpdateClubProfileDto } from './dto/update-club-profile.dto';
 import {
   ClubProfile,
@@ -87,6 +89,17 @@ export class ClubsService {
     if (!file) {
       throw new BadRequestException('A file is required.');
     }
+    // Defensive re-check, matching the pattern already used for player
+    // media/video/post-image uploads: `imageUploadOptions`' fileFilter
+    // already rejects non-image mimetypes, but don't trust the interceptor
+    // was the only gate, and confirm the content is actually an image
+    // (CWE-434) — this endpoint previously had no service-layer re-check.
+    if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype)) {
+      throw new BadRequestException(
+        `A club logo must be one of: ${ALLOWED_IMAGE_MIME_TYPES.join(', ')}.`,
+      );
+    }
+    assertFileContentMatchesMimeType(file, 'image');
     const profile = await this.getOrCreateForUser(userId);
     if (profile.logo) {
       await this.cloudinary.deleteAsset(profile.logo.publicId, 'image');

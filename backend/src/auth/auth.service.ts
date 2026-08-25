@@ -115,7 +115,7 @@ export class AuthService {
     }
 
     const rawToken = generateOpaqueToken();
-    await this.passwordResetTokenModel.create({
+    const stored = await this.passwordResetTokenModel.create({
       userId: user._id,
       tokenHash: this.hashToken(rawToken),
       expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS),
@@ -123,8 +123,19 @@ export class AuthService {
 
     // `user` was found by this exact email, so it's guaranteed to be set —
     // pass the parameter through rather than `user.email` (now optional on
-    // the schema for phone-only club-created players).
-    this.mailService.sendPasswordResetEmail(email, rawToken);
+    // the schema for phone-only club-created players). The stored token
+    // document's own _id is passed as a safe, non-reversible correlation id
+    // so MailService's logs never need the raw token (CWE-532). Awaited but
+    // MailService itself swallows delivery failures, so a broken mail
+    // provider never turns into a different response here — that would let
+    // an attacker distinguish "email exists but send failed" from "email
+    // doesn't exist" (the same account-enumeration risk this method already
+    // guards against above).
+    await this.mailService.sendPasswordResetEmail(
+      email,
+      rawToken,
+      stored._id.toString(),
+    );
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {

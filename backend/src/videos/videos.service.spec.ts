@@ -99,8 +99,15 @@ describe('VideosService', () => {
     };
   }
 
+  // A real ISO-BMFF ("ftyp" box) signature — Phase 0.5 added magic-byte
+  // content validation (common/file-signature.ts), so this mock upload
+  // must carry genuine MP4 bytes rather than an arbitrary placeholder.
+  const MP4_SIGNATURE = Buffer.from([
+    0, 0, 0, 0x18, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d,
+  ]);
+
   const validFile = {
-    buffer: Buffer.from('x'),
+    buffer: MP4_SIGNATURE,
     mimetype: 'video/mp4',
     size: 10,
   } as Express.Multer.File;

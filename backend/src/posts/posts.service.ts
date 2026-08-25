@@ -13,6 +13,7 @@ import {
 } from '../clubs/schemas/club-profile.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../common/upload.config';
+import { assertFileContentMatchesMimeType } from '../common/file-signature';
 import {
   PlayerProfile,
   PlayerProfileDocument,
@@ -90,6 +91,7 @@ export class PostsService {
         `A post image must be one of: ${ALLOWED_IMAGE_MIME_TYPES.join(', ')}.`,
       );
     }
+    assertFileContentMatchesMimeType(file, 'image');
 
     let sport: string;
     let authorRole: PostAuthorRole;

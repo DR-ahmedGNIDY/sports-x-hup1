@@ -15,6 +15,7 @@ import {
   IMAGE_SIZE_LIMIT_BYTES,
   VIDEO_SIZE_LIMIT_BYTES,
 } from '../common/upload.config';
+import { assertFileContentMatchesMimeType } from '../common/file-signature';
 import { SavedPlayer } from '../saved-players/schemas/saved-player.schema';
 import { VideosService } from '../videos/videos.service';
 import {
@@ -57,6 +58,7 @@ function validateMediaFile(type: MediaType, file: Express.Multer.File): void {
         `Photo exceeds the ${IMAGE_SIZE_LIMIT_BYTES / (1024 * 1024)}MB limit.`,
       );
     }
+    assertFileContentMatchesMimeType(file, 'image');
     return;
   }
   if (!ALLOWED_VIDEO_MIME_TYPES.includes(file.mimetype)) {
@@ -69,6 +71,7 @@ function validateMediaFile(type: MediaType, file: Express.Multer.File): void {
       `Video exceeds the ${VIDEO_SIZE_LIMIT_BYTES / (1024 * 1024)}MB limit.`,
     );
   }
+  assertFileContentMatchesMimeType(file, 'video');
 }
 
 const SEARCH_PAGE_SIZE = 20;
