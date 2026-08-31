@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../club/domain/entities/club_profile.dart';
 import '../../../club/presentation/shared/club_level_labels.dart';
@@ -120,7 +121,7 @@ class ClubDashboardIdentityHeader extends StatelessWidget {
           height: logoSize,
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.sm),
             image: profile.logoUrl != null
                 ? DecorationImage(image: NetworkImage(profile.logoUrl!), fit: BoxFit.cover)
                 : null,
@@ -210,7 +211,7 @@ class ClubDashboardCompletenessCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppRadius.xs),
                     child: LinearProgressIndicator(
                       value: percent / 100,
                       minHeight: 8,
@@ -387,13 +388,13 @@ class ClubQuickActionCard extends StatelessWidget {
       elevation: isPrimary ? 0 : null,
       shape: isTertiary
           ? RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppRadius.sm),
               side: BorderSide(color: colorScheme.outlineVariant),
             )
           : null,
       child: InkWell(
         onTap: () => context.go(action.route),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(

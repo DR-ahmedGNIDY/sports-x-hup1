@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 
 /// The dark "SaaS scouting platform" card that houses the pitch: a near-
 /// black gradient with two soft stadium-floodlight glows in the top
@@ -15,7 +16,7 @@ class FootballPitchFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(AppRadius.lg),
       child: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

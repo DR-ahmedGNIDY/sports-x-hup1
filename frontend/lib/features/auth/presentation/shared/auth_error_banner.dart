@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 
 /// Leaf atom with no layout decisions of its own — shared by every auth
 /// screen on both platforms rather than duplicated per screen/platform.
@@ -18,7 +19,7 @@ class AuthErrorBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.error.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppRadius.xs),
         border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
       ),
       child: Text(message!, style: const TextStyle(color: AppColors.error)),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/club_profile.dart';
 
@@ -30,7 +31,7 @@ class PublicClubCard extends StatelessWidget {
                 height: 56,
                 decoration: BoxDecoration(
                   color: AppColors.slate,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppRadius.xs),
                   image: club.logoUrl != null
                       ? DecorationImage(image: NetworkImage(club.logoUrl!), fit: BoxFit.cover)
                       : null,

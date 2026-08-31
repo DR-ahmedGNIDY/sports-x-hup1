@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/football_position.dart';
 import 'football_pitch_painter.dart';
@@ -41,7 +42,7 @@ class FootballPitchCanvas extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         boxShadow: [
           BoxShadow(
             color: AppColors.brandBlue.withValues(alpha: 0.12),
@@ -51,7 +52,7 @@ class FootballPitchCanvas extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final size = constraints.biggest;

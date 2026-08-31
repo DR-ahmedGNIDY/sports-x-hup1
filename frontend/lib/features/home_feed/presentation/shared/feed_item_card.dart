@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/profile_colors.dart';
@@ -38,7 +39,7 @@ class FeedItemCardSkeleton extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: AppSpacing.lg),
           decoration: BoxDecoration(
             color: colors.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(color: colors.borderOnSurface.withValues(alpha: 0.06)),
           ),
           clipBehavior: Clip.antiAlias,
@@ -166,7 +167,7 @@ class FeedItemCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: AppSpacing.lg),
           decoration: BoxDecoration(
             color: colors.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(color: colors.borderOnSurface.withValues(alpha: 0.06)),
           ),
           clipBehavior: Clip.antiAlias,
@@ -432,7 +433,7 @@ class _FeedCaptionState extends State<_FeedCaption> {
                 padding: const EdgeInsets.only(top: AppSpacing.xs),
                 child: InkWell(
                   onTap: () => setState(() => _expanded = !_expanded),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(AppRadius.xs),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 2),
                     child: Text(
@@ -501,7 +502,7 @@ class _EngagementSummary extends StatelessWidget {
         if (commentCount > 0)
           InkWell(
             onTap: onCommentTap,
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(AppRadius.xs),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 2),
               child: Text(l10n.feedCommentsCountLabel(commentCount), style: countStyle),

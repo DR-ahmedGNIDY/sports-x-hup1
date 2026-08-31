@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
 
 /// The premium card shell used throughout the redesigned Player Profile —
@@ -36,7 +37,7 @@ class ProfileSectionCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: profileColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(color: accent.withValues(alpha: 0.14)),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.28), blurRadius: 20, offset: const Offset(0, 8)),

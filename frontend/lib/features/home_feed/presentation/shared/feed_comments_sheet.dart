@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/empty_state_illustration.dart';
 import '../../../../core/widgets/error_state.dart';
@@ -27,7 +28,7 @@ Future<void> showFeedCommentsSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: context.profileColors.surface,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg))),
     builder: (context) =>
         _FeedCommentsSheet(kind: kind, id: id, onCommentCountChanged: onCommentCountChanged),
   );
@@ -178,7 +179,7 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
               height: 4,
               decoration: BoxDecoration(
                 color: colors.borderOnSurface.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(AppRadius.xxs),
               ),
             ),
             Padding(

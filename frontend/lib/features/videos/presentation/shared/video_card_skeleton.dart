@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 
 /// Loading placeholder shaped like [VideoCard]: a 16:9 thumbnail block over
@@ -14,7 +15,7 @@ class VideoCardSkeleton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       clipBehavior: Clip.antiAlias,
@@ -29,7 +30,7 @@ class VideoCardSkeleton extends StatelessWidget {
               children: [
                 const SkeletonBox(width: 90, height: 12),
                 const SizedBox(height: 8),
-                SkeletonBox(width: 50, height: 12, borderRadius: BorderRadius.circular(4)),
+                SkeletonBox(width: 50, height: 12, borderRadius: BorderRadius.circular(AppRadius.xxs)),
               ],
             ),
           ),

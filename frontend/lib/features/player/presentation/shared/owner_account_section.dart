@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
@@ -103,7 +104,7 @@ class _CompletionCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppRadius.xs),
             child: LinearProgressIndicator(
               value: stats.completionPercent / 100,
               minHeight: 8,
@@ -202,7 +203,7 @@ class _OwnerSectionSkeleton extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SkeletonBox(height: 8, borderRadius: BorderRadius.circular(8)),
+          SkeletonBox(height: 8, borderRadius: BorderRadius.circular(AppRadius.xs)),
           const SizedBox(height: 14),
           const SkeletonBox(width: double.infinity, height: 14),
         ],

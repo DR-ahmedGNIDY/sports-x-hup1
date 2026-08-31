@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_motion.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/profile_colors.dart';
@@ -47,7 +48,7 @@ class FeedActionButton extends StatelessWidget {
 
     final button = InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(AppRadius.sm),
       child: AnimatedContainer(
         duration: AppMotion.fast,
         // Floor the height at a real touch target rather than letting the
@@ -61,7 +62,7 @@ class FeedActionButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: active ? tint.withValues(alpha: 0.10) : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_motion.dart';
+import '../theme/app_radius.dart';
 
 /// A subtly animated placeholder box for whole-screen/whole-section loading
 /// states — an opacity pulse over a tinted [Container], no external shimmer
@@ -42,7 +43,7 @@ class _SkeletonBoxState extends State<SkeletonBox> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final radius = widget.borderRadius ?? BorderRadius.circular(8);
+    final radius = widget.borderRadius ?? BorderRadius.circular(AppRadius.xs);
     final baseColor = colorScheme.surfaceContainerHighest;
 
     if (MediaQuery.of(context).disableAnimations) {

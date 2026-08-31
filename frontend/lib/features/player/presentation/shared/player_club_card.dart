@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_profile.dart';
@@ -30,7 +31,7 @@ Widget buildCurrentClubCard(BuildContext context, PlayerProfile profile) {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: profileColors.bg,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
                   border: Border.all(color: profileColors.borderOnSurface.withValues(alpha: 0.08)),
                 ),
                 child: Icon(Icons.shield_outlined, color: profileColors.accent, size: 22),
@@ -76,7 +77,7 @@ class _NoClubState extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: profileColors.bg,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(AppRadius.sm),
             border: Border.all(
               color: profileColors.borderOnSurface.withValues(alpha: 0.08),
               style: BorderStyle.solid,

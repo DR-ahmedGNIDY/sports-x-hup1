@@ -8,6 +8,7 @@ import '../../features/club/application/club_profile_controller.dart';
 import '../../features/player/application/player_profile_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../locale/language_toggle_button.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/theme_mode_provider.dart';
 import '../utils/breakpoints.dart';
@@ -410,7 +411,7 @@ class _MobileShell extends ConsumerWidget {
     showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
       ),
       builder: (sheetContext) => SafeArea(
         child: Column(

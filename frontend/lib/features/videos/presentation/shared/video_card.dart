@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/profile_colors.dart';
@@ -70,7 +71,7 @@ class _VideoCardState extends State<VideoCard> {
         transformAlignment: Alignment.center,
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.md),
           border: Border.all(
             color: hovered
                 ? colors.accent.withValues(alpha: 0.5)
@@ -166,7 +167,7 @@ class _VideoCardState extends State<VideoCard> {
                       const SizedBox(width: AppSpacing.xs),
                       InkWell(
                         onTap: onCommentTap,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(AppRadius.xs),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 6,
@@ -218,7 +219,7 @@ class _CategoryChip extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
       child: Text(
         label.toUpperCase(),

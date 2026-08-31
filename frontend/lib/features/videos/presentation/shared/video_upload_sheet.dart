@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/my_videos_controller.dart';
 import '../../application/skill_categories_provider.dart';
@@ -30,7 +31,7 @@ class VideoUploadSheet extends ConsumerStatefulWidget {
       isScrollControlled: true,
       backgroundColor: AppColors.profileSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
       ),
       builder: (context) => VideoUploadSheet(sport: sport),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_enums.dart';
@@ -184,7 +185,7 @@ class _MediaTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileColors = context.profileColors;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(AppRadius.sm),
       child: Material(
         color: profileColors.bg,
         child: InkWell(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../domain/entities/achievement.dart';
 
@@ -20,7 +21,7 @@ class AchievementBadgeCard extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: profileColors.bg,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(color: profileColors.gold.withValues(alpha: 0.28)),
         boxShadow: [
           BoxShadow(color: profileColors.gold.withValues(alpha: 0.06), blurRadius: 16, spreadRadius: -4),

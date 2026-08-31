@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_stats_controller.dart';
 
@@ -31,7 +32,7 @@ class ProfileCompletionBar extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(AppRadius.xs),
                       child: LinearProgressIndicator(
                         value: stats.completionPercent / 100,
                         minHeight: 6,

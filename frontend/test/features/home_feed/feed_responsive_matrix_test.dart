@@ -145,6 +145,12 @@ void main() {
   });
 
   group('phone widths', () {
+    // These run under `AppTheme.compact`, not the base theme: below the
+    // Desktop breakpoint the real app re-types itself one step up the scale
+    // (16px body instead of 14 — see AppTheme.compact), and a card that only
+    // fits at the smaller size isn't actually passing this test.
+    final phoneTheme = AppTheme.compact(AppTheme.dark);
+
     // Smallest widely-used phone width up to a large one.
     for (final width in <double>[320, 360, 390, 430]) {
       testWidgets('renders without overflow at ${width}px', (tester) async {
@@ -152,6 +158,7 @@ void main() {
           tester,
           viewport: Size(width, 780),
           controller: () => _StubController([_item(kind: FeedItemKind.video)]),
+          theme: phoneTheme,
           locale: const Locale('ar'),
         );
 
@@ -165,6 +172,7 @@ void main() {
         tester,
         viewport: const Size(320, 780),
         controller: () => _StubController([_item()]),
+        theme: phoneTheme,
       );
 
       for (final label in ['Like', 'Comment', 'Share']) {

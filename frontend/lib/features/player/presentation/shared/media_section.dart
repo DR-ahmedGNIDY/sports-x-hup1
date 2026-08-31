@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 import '../../domain/entities/player_enums.dart';
@@ -109,7 +110,7 @@ class _MediaTile extends StatelessWidget {
           height: 100,
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppRadius.xs),
             image: item.type == PlayerMediaType.photo
                 ? DecorationImage(image: NetworkImage(item.secureUrl), fit: BoxFit.cover)
                 : null,
