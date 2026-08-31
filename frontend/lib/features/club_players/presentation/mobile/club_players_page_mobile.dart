@@ -22,16 +22,15 @@ class ClubPlayersPageMobile extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(l10n.clubPlayersTitle, style: Theme.of(context).textTheme.headlineSmall),
-              IconButton(
-                onPressed: () => context.go('/club/players/new'),
-                icon: const Icon(Icons.person_add_outlined),
-                tooltip: l10n.clubPlayersAddPlayerLabel,
-              ),
-            ],
+          // Titled by the shell's app bar; the action stays, labelled rather
+          // than a bare icon now that no adjacent title lends it context.
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton.icon(
+              onPressed: () => context.go('/club/players/new'),
+              icon: const Icon(Icons.person_add_outlined),
+              label: Text(l10n.clubPlayersAddPlayerLabel),
+            ),
           ),
         ),
         Padding(

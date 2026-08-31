@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../l10n/generated/app_localizations.dart';
 import '../shared/add_club_player_form.dart';
 
 class AddClubPlayerPageMobile extends StatelessWidget {
@@ -9,23 +7,12 @@ class AddClubPlayerPageMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.all(16),
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(l10n.clubPlayersAddPlayerLabel, style: Theme.of(context).textTheme.headlineSmall),
-            IconButton(
-              onPressed: () => context.go('/club/players'),
-              icon: const Icon(Icons.arrow_back_outlined),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        const AddClubPlayerForm(isDesktop: false),
-      ],
+      // No heading or back button here: the shell's app bar names this screen
+      // and owns its back affordance (see AppRouteMeta), so repeating either
+      // would be two titles and two ways back on one screen.
+      children: const [AddClubPlayerForm(isDesktop: false)],
     );
   }
 }

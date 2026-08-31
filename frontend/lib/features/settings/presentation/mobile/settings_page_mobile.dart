@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/backend_status_indicator.dart';
-import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../shared/change_email_form.dart';
 import '../shared/change_password_form.dart';
@@ -13,7 +12,6 @@ class SettingsPageMobile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(sessionControllerProvider);
-    final l10n = AppLocalizations.of(context)!;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -21,8 +19,7 @@ class SettingsPageMobile extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l10n.dashboardAccountSettings, style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 16),
+            // The screen's name lives in the shell's app bar now.
             Text('Signed in as ${session.user?.email ?? ''}'),
             const SizedBox(height: 24),
             const ChangeEmailForm(),

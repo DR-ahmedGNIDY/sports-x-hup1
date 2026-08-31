@@ -33,7 +33,9 @@ import '../../features/search/presentation/public_players_listing_page.dart';
 import '../../features/search/presentation/search_players_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/splash/presentation/splash_page.dart';
+import '../navigation/app_branches.dart';
 import '../widgets/app_shell.dart';
+import 'app_page_transitions.dart';
 import 'go_router_refresh_notifier.dart';
 
 // Guest-only auth pages — an authenticated user is bounced away from these.
@@ -150,64 +152,142 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             PublicClubProfilePage(clubId: state.pathParameters['id']!),
       ),
-      // The 10 authenticated app routes share one persistent shell
-      // (sidebar/topbar on desktop, bottom-nav/topbar on mobile) so
-      // navigating between them never loses the app chrome.
-      ShellRoute(
-        builder: (context, state, child) => AppShell(child: child),
-        routes: [
-          GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
-          GoRoute(path: '/community', builder: (context, state) => const CommunityPage()),
-          GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
-          GoRoute(
-            path: '/player/edit',
-            builder: (context, state) => const EditProfilePage(),
-          ),
-          GoRoute(
-            path: '/player/preview',
-            builder: (context, state) => const MyProfilePreviewPage(),
-          ),
-          GoRoute(
-            path: '/player/skills',
-            builder: (context, state) => const MySkillsPage(),
-          ),
-          GoRoute(
-            path: '/player/traits',
-            builder: (context, state) => const MyTraitsPage(),
-          ),
-          GoRoute(
-            path: '/club/edit',
-            builder: (context, state) => const EditClubProfilePage(),
-          ),
-          GoRoute(
-            path: '/club/preview',
-            builder: (context, state) => const MyClubProfilePage(),
-          ),
-          GoRoute(path: '/search', builder: (context, state) => const SearchPlayersPage()),
-          GoRoute(
-            path: '/saved-players',
-            builder: (context, state) => const SavedPlayersPage(),
-          ),
-          GoRoute(
-            path: '/club/players',
-            builder: (context, state) => const ClubPlayersPage(),
-          ),
-          GoRoute(
-            path: '/club/players/new',
-            builder: (context, state) => const AddClubPlayerPage(),
-          ),
-          GoRoute(
-            path: '/club/players/:userId/edit',
-            builder: (context, state) =>
-                EditClubPlayerPage(userId: state.pathParameters['userId']!),
-          ),
-          GoRoute(path: '/admin/users', builder: (context, state) => const AdminUsersPage()),
-          GoRoute(
-            path: '/admin/players-clubs',
-            builder: (context, state) => const AdminPlayersClubsPage(),
-          ),
-        ],
+      // The authenticated app shares one persistent shell (sidebar/topbar on
+      // desktop, bottom-nav/topbar on mobile) so navigating between screens
+      // never loses the app chrome.
+      //
+      // It's a *stateful* shell: each branch below owns a Navigator and keeps
+      // its own state and scroll position, so switching tabs returns you to
+      // what you were looking at instead of rebuilding the screen. That's the
+      // difference between "the app remembered where I was" and "the page
+      // reloaded", and it is why the branch list is derived from
+      // [AppBranch.values] — the shell reads `currentIndex` back out of it.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [for (final branch in AppBranch.values) _branchFor(branch)],
       ),
     ],
   );
 });
+
+/// The routes belonging to [branch]. Every authenticated route lives in
+/// exactly one branch; a screen reached *from* another screen (an edit form,
+/// an add form) belongs to the same branch as the screen that owns it, so
+/// opening it keeps the tab you were on selected.
+///
+/// The routes within a branch are declared flat rather than nested, which
+/// keeps every URL exactly as it was — `/player/edit` did not become
+/// `/player/preview/edit`. The trade is that there is no navigator stack to
+/// pop, so a detail screen declares where its back button goes via
+/// [AppRouteMeta.parentPath] instead.
+StatefulShellBranch _branchFor(AppBranch branch) {
+  return StatefulShellBranch(
+    routes: switch (branch) {
+      AppBranch.home => [
+        GoRoute(
+          path: '/dashboard',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const DashboardPage()),
+        ),
+      ],
+      AppBranch.playerProfile => [
+        GoRoute(
+          path: '/player/preview',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const MyProfilePreviewPage()),
+        ),
+        GoRoute(
+          path: '/player/edit',
+          pageBuilder: (context, state) =>
+              slidePage(state: state, child: const EditProfilePage()),
+        ),
+      ],
+      AppBranch.playerSkills => [
+        GoRoute(
+          path: '/player/skills',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const MySkillsPage()),
+        ),
+        GoRoute(
+          path: '/player/traits',
+          pageBuilder: (context, state) =>
+              slidePage(state: state, child: const MyTraitsPage()),
+        ),
+      ],
+      AppBranch.clubProfile => [
+        GoRoute(
+          path: '/club/preview',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const MyClubProfilePage()),
+        ),
+        GoRoute(
+          path: '/club/edit',
+          pageBuilder: (context, state) =>
+              slidePage(state: state, child: const EditClubProfilePage()),
+        ),
+      ],
+      AppBranch.clubPlayers => [
+        GoRoute(
+          path: '/club/players',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const ClubPlayersPage()),
+        ),
+        GoRoute(
+          path: '/club/players/new',
+          pageBuilder: (context, state) =>
+              slidePage(state: state, child: const AddClubPlayerPage()),
+        ),
+        GoRoute(
+          path: '/club/players/:userId/edit',
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: EditClubPlayerPage(userId: state.pathParameters['userId']!),
+          ),
+        ),
+      ],
+      AppBranch.search => [
+        GoRoute(
+          path: '/search',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const SearchPlayersPage()),
+        ),
+      ],
+      AppBranch.savedPlayers => [
+        GoRoute(
+          path: '/saved-players',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const SavedPlayersPage()),
+        ),
+      ],
+      AppBranch.community => [
+        GoRoute(
+          path: '/community',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const CommunityPage()),
+        ),
+      ],
+      AppBranch.adminUsers => [
+        GoRoute(
+          path: '/admin/users',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const AdminUsersPage()),
+        ),
+      ],
+      AppBranch.adminPlayersClubs => [
+        GoRoute(
+          path: '/admin/players-clubs',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const AdminPlayersClubsPage()),
+        ),
+      ],
+      AppBranch.settings => [
+        GoRoute(
+          path: '/settings',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const SettingsPage()),
+        ),
+      ],
+    },
+  );
+}

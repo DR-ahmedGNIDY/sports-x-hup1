@@ -60,16 +60,16 @@ class _EditProfilePageMobileState extends ConsumerState<EditProfilePageMobile> {
           if (index == 0) {
             return Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(l10n.dashboardEditProfile, style: Theme.of(context).textTheme.headlineSmall),
-                  IconButton(
-                    tooltip: l10n.previewLabel,
-                    onPressed: () => context.go('/player/preview'),
-                    icon: const Icon(Icons.visibility_outlined),
-                  ),
-                ],
+              // Titled by the shell's app bar, which also owns the way back
+              // to the profile; what stays here is Preview, labelled rather
+              // than a bare icon now that no adjacent title lends it context.
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  onPressed: () => context.go('/player/preview'),
+                  icon: const Icon(Icons.visibility_outlined),
+                  label: Text(l10n.previewLabel),
+                ),
               ),
             );
           }

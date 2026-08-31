@@ -22,16 +22,16 @@ class MyClubProfilePageMobile extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(l10n.dashboardMyClub, style: Theme.of(context).textTheme.headlineSmall),
-                IconButton(
-                  tooltip: l10n.dashboardEditClubProfile,
-                  onPressed: () => context.go('/club/edit'),
-                  icon: const Icon(Icons.edit_outlined),
-                ),
-              ],
+            // Titled by the shell's app bar; the action stays, labelled
+            // rather than a bare icon now that no adjacent title lends it
+            // context.
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: TextButton.icon(
+                onPressed: () => context.go('/club/edit'),
+                icon: const Icon(Icons.edit_outlined),
+                label: Text(l10n.dashboardEditClubProfile),
+              ),
             ),
             const SizedBox(height: 8),
             ClubProfileView(profile: profile),

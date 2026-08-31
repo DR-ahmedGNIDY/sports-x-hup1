@@ -50,16 +50,16 @@ class SearchPlayersPageMobile extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 8, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(l10n.dashboardSearchPlayers, style: Theme.of(context).textTheme.headlineSmall),
-              IconButton(
-                tooltip: l10n.filtersTooltip,
-                onPressed: () => _openFilterSheet(context, ref),
-                icon: const Icon(Icons.filter_list),
-              ),
-            ],
+          // The screen's name moved to the shell's app bar; what stays is its
+          // action, now labelled rather than a bare icon — with no adjacent
+          // title to lend it context, a lone glyph here reads as decoration.
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton.icon(
+              onPressed: () => _openFilterSheet(context, ref),
+              icon: const Icon(Icons.filter_list),
+              label: Text(l10n.filtersTooltip),
+            ),
           ),
         ),
         const Padding(

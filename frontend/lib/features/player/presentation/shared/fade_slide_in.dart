@@ -31,10 +31,21 @@ class _FadeSlideInState extends State<FadeSlideIn> with SingleTickerProviderStat
     end: Offset.zero,
   ).animate(CurvedAnimation(parent: _controller, curve: AppMotion.enter));
 
+  bool _started = false;
+
+  // Not `initState`: reading MediaQuery there registers an inherited
+  // dependency before the element is ready for one, which trips a framework
+  // assertion in debug. `didChangeDependencies` is the first callback where
+  // an inherited widget may legally be read, and the `_started` guard keeps
+  // this a one-shot entrance rather than replaying it every time an ancestor
+  // changes.
   @override
-  void initState() {
-    super.initState();
-    if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_started) return;
+    _started = true;
+
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
       _controller.value = 1;
       return;
     }

@@ -31,17 +31,8 @@ class EditClubPlayerPageMobile extends ConsumerWidget {
       data: (player) => ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(l10n.clubPlayerEditTitle, style: Theme.of(context).textTheme.headlineSmall),
-              IconButton(
-                onPressed: () => context.go('/club/players'),
-                icon: const Icon(Icons.arrow_back_outlined),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
+          // The title and back button that used to sit here are both the
+          // shell app bar's job now — see AppRouteMeta.
           ProfilePhotoSection(
             photoUrl: player.profile.profilePhoto?.secureUrl,
             onUpload: ({required bytes, required filename}) =>

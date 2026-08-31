@@ -20,10 +20,7 @@ class SavedPlayersPageMobile extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-          child: Text(l10n.dashboardSavedPlayers, style: Theme.of(context).textTheme.headlineSmall),
-        ),
+        // Titled by the shell's app bar.
         Expanded(
           child: savedAsync.when(
             data: (players) => players.isEmpty
