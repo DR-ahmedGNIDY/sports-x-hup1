@@ -2,9 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/widgets/mobile/app_sheet.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/domain/entities/user_role.dart';
@@ -28,11 +28,9 @@ class CreatePostSheet extends ConsumerStatefulWidget {
   final UserRole role;
 
   static Future<void> show(BuildContext context, {required UserRole role}) {
-    return showModalBottomSheet<void>(
+    return AppSheet.show<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.profileColors.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg))),
       builder: (context) => CreatePostSheet(role: role),
     );
   }

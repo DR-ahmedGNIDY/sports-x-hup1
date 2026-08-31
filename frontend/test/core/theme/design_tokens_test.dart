@@ -111,6 +111,31 @@ void main() {
       expect(compact.cardTheme.shape, base.cardTheme.shape);
     });
 
+    test('the primary button looks the same whichever widget raised it', () {
+      // FilledButton is what 31 files actually use; ElevatedButton is what
+      // the theme used to style. Leaving the two unequal meant most of the
+      // app's submit buttons wore Material's seeded onPrimary — dark navy on
+      // brand blue — instead of the brand pairing.
+      for (final theme in [AppTheme.dark, AppTheme.light]) {
+        final filled = theme.filledButtonTheme.style!;
+        final elevated = theme.elevatedButtonTheme.style!;
+
+        expect(
+          filled.foregroundColor?.resolve({}),
+          AppColors.white,
+          reason: '${theme.brightness}',
+        );
+        expect(
+          filled.backgroundColor?.resolve({}),
+          AppColors.brandBlue,
+          reason: '${theme.brightness}',
+        );
+        expect(filled.foregroundColor, elevated.foregroundColor);
+        expect(filled.backgroundColor, elevated.backgroundColor);
+        expect(filled.shape, elevated.shape);
+      }
+    });
+
     test('raises text/outlined buttons to the minimum touch target', () {
       // Material sizes these at 40 tall, below AppTouch.minTarget. The base
       // theme is left alone: a 40px target is fine under a cursor, and this

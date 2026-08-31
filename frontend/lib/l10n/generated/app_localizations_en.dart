@@ -1039,6 +1039,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noSavedPlayers => 'You have not saved any players yet.';
 
   @override
+  String get settingsAccountGroup => 'Account';
+
+  @override
+  String get settingsAppearanceGroup => 'Appearance & language';
+
+  @override
   String signedInAs(String email) {
     return 'Signed in as $email';
   }

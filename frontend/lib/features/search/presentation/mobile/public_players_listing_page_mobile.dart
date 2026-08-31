@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/locale/language_toggle_button.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/mobile/app_sheet.dart';
+import '../../../../core/locale/language_toggle_button.dart';
 import '../../../../core/theme/theme_mode_provider.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/empty_state_illustration.dart';
@@ -21,24 +22,22 @@ class PublicPlayersListingPageMobile extends ConsumerWidget {
 
   void _openFilterSheet(BuildContext context, WidgetRef ref) {
     final controller = ref.read(searchControllerProvider.notifier);
-    showModalBottomSheet(
+    AppSheet.show<void>(
       context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+      title: AppLocalizations.of(context)!.filtersTooltip,
+      builder: (context) => SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          0,
+          AppSpacing.lg,
+          AppSpacing.lg,
         ),
-        child: SingleChildScrollView(
-          child: PlayerSearchFiltersForm(
-            initialFilters: controller.filters,
-            onApply: (filters) {
-              controller.applyFilters(filters);
-              Navigator.of(context).pop();
-            },
-          ),
+        child: PlayerSearchFiltersForm(
+          initialFilters: controller.filters,
+          onApply: (filters) {
+            controller.applyFilters(filters);
+            Navigator.of(context).pop();
+          },
         ),
       ),
     );

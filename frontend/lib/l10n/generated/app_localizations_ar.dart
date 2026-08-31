@@ -1027,6 +1027,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noSavedPlayers => 'لم تحفظ أي لاعبين بعد.';
 
   @override
+  String get settingsAccountGroup => 'الحساب';
+
+  @override
+  String get settingsAppearanceGroup => 'المظهر واللغة';
+
+  @override
   String signedInAs(String email) {
     return 'تم تسجيل الدخول باسم $email';
   }

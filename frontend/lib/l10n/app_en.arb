@@ -382,6 +382,8 @@
 
   "noSavedPlayers": "You have not saved any players yet.",
 
+  "settingsAccountGroup": "Account",
+  "settingsAppearanceGroup": "Appearance & language",
   "signedInAs": "Signed in as {email}",
   "@signedInAs": { "placeholders": { "email": { "type": "String" } } },
   "emailSectionTitle": "Email",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 
 /// Leaf form atom shared by both Settings layouts — see auth's
@@ -45,18 +46,24 @@ class _ChangeEmailFormState extends ConsumerState<ChangeEmailForm> {
     final currentEmail = ref.watch(sessionControllerProvider).user?.email ?? '';
     final error = ref.watch(sessionControllerProvider).errorMessage;
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Email', style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.emailSectionTitle, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
           TextFormField(
             controller: _email,
-            decoration: InputDecoration(labelText: 'New email', hintText: currentEmail),
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              labelText: l10n.newEmailLabel,
+              hintText: currentEmail,
+            ),
             validator: (v) => (v == null || v.isEmpty || !v.contains('@'))
-                ? 'Enter a valid email'
+                ? l10n.authEmailValidation
                 : null,
           ),
           if (error != null) ...[
@@ -65,7 +72,10 @@ class _ChangeEmailFormState extends ConsumerState<ChangeEmailForm> {
           ],
           if (_success) ...[
             const SizedBox(height: 8),
-            const Text('Email updated.', style: TextStyle(color: AppColors.success)),
+            Text(
+              l10n.emailUpdatedMessage,
+              style: const TextStyle(color: AppColors.success),
+            ),
           ],
           const SizedBox(height: 12),
           Align(
@@ -78,7 +88,7 @@ class _ChangeEmailFormState extends ConsumerState<ChangeEmailForm> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Save email'),
+                  : Text(l10n.saveEmailLabel),
             ),
           ),
         ],

@@ -9,12 +9,14 @@ import '../../features/player/application/player_profile_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../locale/language_toggle_button.dart';
 import '../navigation/app_branches.dart';
+import '../theme/app_blur.dart';
 import '../theme/app_motion.dart';
-import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/theme_mode_provider.dart';
 import '../utils/breakpoints.dart';
 import 'app_logo.dart';
+import 'mobile/app_scaffold_mobile.dart';
+import 'mobile/app_sheet.dart';
 
 /// Persistent chrome mounted by the router's `StatefulShellRoute` around
 /// every authenticated app page — desktop sidebar + top bar, or mobile top
@@ -295,14 +297,8 @@ class _MobileShellState extends ConsumerState<_MobileShell> {
 
   void _openAccountSheet(List<AppBranch> overflow) {
     final l10n = AppLocalizations.of(context)!;
-    showModalBottomSheet<void>(
+    AppSheet.show<void>(
       context: context,
-      showDragHandle: true,
-      useSafeArea: true,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
-      ),
       builder: (sheetContext) => _AccountSheet(
         branches: overflow,
         l10n: l10n,
@@ -339,13 +335,22 @@ class _MobileShellState extends ConsumerState<_MobileShell> {
     final selectedTab = tabs.indexWhere((b) => b.index == currentIndex);
     final isOverflowActive = selectedTab == -1;
 
+    // A migrated screen draws its own collapsing, blurred bar (see
+    // AppScaffoldMobile), so the shell stands down and lets its content run
+    // edge to edge under the tab bar. Screens that haven't moved over yet
+    // keep the fixed bar below.
+    final ownsChrome = meta?.ownsChrome ?? false;
+
     return Scaffold(
-      appBar: _MobileAppBar(
-        meta: meta,
-        onBack: meta?.parentPath == null
-            ? null
-            : () => context.go(meta!.parentPath!),
-      ),
+      extendBody: ownsChrome,
+      appBar: ownsChrome
+          ? null
+          : _MobileAppBar(
+              meta: meta,
+              onBack: meta?.parentPath == null
+                  ? null
+                  : () => context.go(meta!.parentPath!),
+            ),
       body: _EdgeSwipeBack(
         onBack: meta?.parentPath == null
             ? null
@@ -358,6 +363,7 @@ class _MobileShellState extends ConsumerState<_MobileShell> {
       bottomNavigationBar: _MobileTabBar(
         tabs: tabs,
         l10n: l10n,
+        translucent: ownsChrome,
         selectedTab: isOverflowActive ? null : selectedTab,
         onSelect: (index) =>
             _selectBranch(
@@ -482,6 +488,7 @@ class _MobileTabBar extends StatelessWidget {
   const _MobileTabBar({
     required this.tabs,
     required this.l10n,
+    required this.translucent,
     required this.selectedTab,
     required this.onSelect,
     required this.accountSlot,
@@ -489,6 +496,11 @@ class _MobileTabBar extends StatelessWidget {
 
   final List<AppBranch> tabs;
   final AppLocalizations l10n;
+
+  /// Blurs and lets content show through, but only on screens that scroll
+  /// their content underneath it. On a screen that stops at the bar, a
+  /// translucent bar has nothing to reveal and just looks washed out.
+  final bool translucent;
 
   /// `null` while a screen behind the account slot is showing.
   final int? selectedTab;
@@ -498,14 +510,12 @@ class _MobileTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Material(
-      color: theme.colorScheme.surface,
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            children: [
+    final bar = SafeArea(
+      top: false,
+      child: SizedBox(
+        height: AppScaffoldMobile.tabBarHeight,
+        child: Row(
+          children: [
               for (var i = 0; i < tabs.length; i++)
                 Expanded(
                   child: _TabSlot(
@@ -515,11 +525,19 @@ class _MobileTabBar extends StatelessWidget {
                     onTap: () => onSelect(i),
                   ),
                 ),
-              if (accountSlot != null) Expanded(child: accountSlot!),
-            ],
-          ),
+          if (accountSlot != null) Expanded(child: accountSlot!),
+        ],
         ),
       ),
+    );
+
+    // Material either way — the tab slots' ink and the bar's own hairline
+    // both need one — but only translucent where content runs underneath.
+    return Material(
+      color: translucent ? Colors.transparent : theme.colorScheme.surface,
+      child: translucent
+          ? BlurredSurface(color: theme.colorScheme.surface, child: bar)
+          : bar,
     );
   }
 }

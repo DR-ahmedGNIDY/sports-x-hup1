@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/presentation/shared/password_field.dart';
 
@@ -55,30 +56,31 @@ class _ChangePasswordFormState extends ConsumerState<ChangePasswordForm> {
   @override
   Widget build(BuildContext context) {
     final error = ref.watch(sessionControllerProvider).errorMessage;
+    final l10n = AppLocalizations.of(context)!;
 
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Password', style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.passwordLabel, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
           PasswordField(
             controller: _currentPassword,
-            label: 'Current password',
-            validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+            label: l10n.currentPasswordLabel,
+            validator: (v) => (v == null || v.isEmpty) ? l10n.authPasswordValidation : null,
           ),
           const SizedBox(height: 12),
           PasswordField(
             controller: _newPassword,
-            label: 'New password',
-            validator: (v) => (v == null || v.length < 8) ? 'At least 8 characters' : null,
+            label: l10n.newPasswordLabel,
+            validator: (v) => (v == null || v.length < 8) ? l10n.authPasswordMinLength : null,
           ),
           const SizedBox(height: 12),
           PasswordField(
             controller: _confirmPassword,
-            label: 'Confirm new password',
-            validator: (v) => v != _newPassword.text ? 'Passwords do not match' : null,
+            label: l10n.confirmNewPasswordLabel,
+            validator: (v) => v != _newPassword.text ? l10n.authPasswordMismatch : null,
           ),
           if (error != null) ...[
             const SizedBox(height: 8),
@@ -86,7 +88,7 @@ class _ChangePasswordFormState extends ConsumerState<ChangePasswordForm> {
           ],
           if (_success) ...[
             const SizedBox(height: 8),
-            const Text('Password updated.', style: TextStyle(color: AppColors.success)),
+            Text(l10n.passwordUpdatedMessage, style: const TextStyle(color: AppColors.success)),
           ],
           const SizedBox(height: 12),
           Align(
@@ -99,7 +101,7 @@ class _ChangePasswordFormState extends ConsumerState<ChangePasswordForm> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Change password'),
+                  : Text(l10n.changePasswordLabel),
             ),
           ),
         ],

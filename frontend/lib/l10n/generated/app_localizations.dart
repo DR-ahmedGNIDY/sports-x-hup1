@@ -2011,6 +2011,18 @@ abstract class AppLocalizations {
   /// **'لم تحفظ أي لاعبين بعد.'**
   String get noSavedPlayers;
 
+  /// No description provided for @settingsAccountGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب'**
+  String get settingsAccountGroup;
+
+  /// No description provided for @settingsAppearanceGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'المظهر واللغة'**
+  String get settingsAppearanceGroup;
+
   /// No description provided for @signedInAs.
   ///
   /// In ar, this message translates to:

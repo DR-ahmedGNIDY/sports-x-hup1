@@ -110,7 +110,20 @@ enum AppBranch {
 
 /// What the app bar shows for one route, and where its back button goes.
 class AppRouteMeta {
-  const AppRouteMeta({required this.title, this.parentPath});
+  const AppRouteMeta({
+    required this.title,
+    this.parentPath,
+    this.ownsChrome = false,
+  });
+
+  /// `true` once the screen has moved to `AppScaffoldMobile` and draws its own
+  /// collapsing, blurred app bar. The shell then stands down: it renders no
+  /// app bar of its own, and lets content scroll under the tab bar.
+  ///
+  /// Flipping this without migrating the screen leaves it with no app bar at
+  /// all; migrating without flipping it leaves two. Both are silent rather
+  /// than loud, which is why a test checks the two against each other.
+  final bool ownsChrome;
 
   /// `null` on a branch root that shows the app logo instead of a title —
   /// only Home does, the way a phone app puts its wordmark on the first tab
@@ -155,7 +168,10 @@ final Map<String, AppRouteMeta> _routeMeta = {
   '/admin/players-clubs': AppRouteMeta(
     title: (l10n) => l10n.dashboardAdminPlayersClubs,
   ),
-  '/settings': AppRouteMeta(title: (l10n) => l10n.dashboardAccountSettings),
+  '/settings': AppRouteMeta(
+    title: (l10n) => l10n.dashboardAccountSettings,
+    ownsChrome: true,
+  ),
 };
 
 /// Metadata for [path], or `null` if it isn't an authenticated app route
@@ -163,6 +179,13 @@ final Map<String, AppRouteMeta> _routeMeta = {
 AppRouteMeta? routeMetaFor(String path) {
   final exact = _routeMeta[path];
   if (exact != null) return exact;
+
+  // The gallery's Settings preview borrows the real screen's metadata, so
+  // what it renders is the real bar rather than an approximation of one.
+  // Compiled out unless built with --dart-define=SXH_GALLERY=true.
+  if (const bool.fromEnvironment('SXH_GALLERY') && path == '/dev/settings') {
+    return _routeMeta['/settings'];
+  }
 
   // The one parameterised route in the shell.
   if (path.startsWith('/club/players/') && path.endsWith('/edit')) {

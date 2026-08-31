@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/mobile/app_sheet.dart';
 import '../../../../core/widgets/empty_state_illustration.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -16,24 +17,25 @@ class SearchPlayersPageMobile extends ConsumerWidget {
 
   void _openFilterSheet(BuildContext context, WidgetRef ref) {
     final controller = ref.read(searchControllerProvider.notifier);
-    showModalBottomSheet(
+    // The hand-rolled keyboard inset this used to carry is AppSheet's job
+    // now, and it applies it to every sheet rather than only the two that
+    // remembered to.
+    AppSheet.show<void>(
       context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+      title: AppLocalizations.of(context)!.filtersTooltip,
+      builder: (context) => SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          0,
+          AppSpacing.lg,
+          AppSpacing.lg,
         ),
-        child: SingleChildScrollView(
-          child: PlayerSearchFiltersForm(
-            initialFilters: controller.filters,
-            onApply: (filters) {
-              controller.applyFilters(filters);
-              Navigator.of(context).pop();
-            },
-          ),
+        child: PlayerSearchFiltersForm(
+          initialFilters: controller.filters,
+          onApply: (filters) {
+            controller.applyFilters(filters);
+            Navigator.of(context).pop();
+          },
         ),
       ),
     );

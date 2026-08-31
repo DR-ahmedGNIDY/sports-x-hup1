@@ -31,10 +31,12 @@ import '../../features/player/presentation/public_player_profile_page.dart';
 import '../../features/saved_players/presentation/saved_players_page.dart';
 import '../../features/search/presentation/public_players_listing_page.dart';
 import '../../features/search/presentation/search_players_page.dart';
+import '../../features/settings/presentation/mobile/settings_page_mobile.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/splash/presentation/splash_page.dart';
 import '../navigation/app_branches.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/mobile/component_gallery_page.dart';
 import 'app_page_transitions.dart';
 import 'go_router_refresh_notifier.dart';
 
@@ -57,6 +59,13 @@ bool _isMarketingRoute(String path) =>
     _marketingRoutes.contains(path) ||
     _isPublicPlayerProfile(path) ||
     _isPublicClubProfile(path);
+
+/// Compiled in only when built with `--dart-define=SXH_GALLERY=true`. Guards
+/// the component gallery (see [ComponentGalleryPage]) — a preview surface for
+/// components that otherwise only exist behind a login, and one that has no
+/// business in a production bundle.
+const _galleryEnabled = bool.fromEnvironment('SXH_GALLERY');
+const _galleryRoute = '/dev/gallery';
 
 bool _isAdminRoute(String path) => path.startsWith('/admin/');
 
@@ -81,6 +90,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // cold load renders the page directly instead of being forced through
       // '/' and losing the requested path once restore() resolves.
       if (_isMarketingRoute(path)) return null;
+
+      // Session-independent for the same reason: it renders components, not
+      // anyone's data.
+      if (_galleryEnabled && path.startsWith('/dev/')) return null;
 
       // Force every cold load through splash first, so it can call
       // SessionController.restore() before any protected/public route
@@ -119,6 +132,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashPage()),
+      if (_galleryEnabled) ...[
+        GoRoute(
+          path: _galleryRoute,
+          builder: (context, state) => const ComponentGalleryPage(),
+        ),
+        // The real Settings screen, previewed without the shell around it —
+        // enough to see AppScaffoldMobile's collapsing blurred bar and the
+        // grouped rows. The session is whatever the browser has, so the
+        // account email is blank here rather than stubbed.
+        GoRoute(
+          path: '/dev/settings',
+          builder: (context, state) => const SettingsPageMobile(),
+        ),
+      ],
       GoRoute(path: '/home', builder: (context, state) => const HomePage()),
       GoRoute(path: '/about', builder: (context, state) => const AboutPage()),
       GoRoute(path: '/pricing', builder: (context, state) => const PricingPage()),

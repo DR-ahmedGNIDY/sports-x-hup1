@@ -60,6 +60,19 @@ abstract final class AppTheme {
     );
   }
 
+  /// Shared by [ElevatedButton] and [FilledButton] so the app's primary
+  /// action looks the same whichever widget a screen reached for. Brightness
+  /// independent: a filled brand-blue button reads the same in both themes,
+  /// and white on brand blue is the pairing the logo already establishes.
+  static final ButtonStyle _primaryButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: AppColors.brandBlue,
+    foregroundColor: AppColors.white,
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppRadius.sm),
+    ),
+  );
+
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
 
@@ -134,15 +147,14 @@ abstract final class AppTheme {
         indicatorColor: AppColors.brandBlue.withValues(alpha: 0.15),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.brandBlue,
-          foregroundColor: AppColors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.sm),
-          ),
-        ),
+        style: _primaryButtonStyle,
       ),
+      // The app's actual primary button is FilledButton — 31 files use it,
+      // against a handful using ElevatedButton — and until now only
+      // ElevatedButton was themed. FilledButton fell through to Material 3's
+      // seeded `onPrimary`, a dark navy that sat on brand blue at a contrast
+      // ratio no one would have chosen, on every form's submit button.
+      filledButtonTheme: FilledButtonThemeData(style: _primaryButtonStyle),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: isDark ? AppColors.slate : AppColors.white,

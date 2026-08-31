@@ -382,6 +382,8 @@
 
   "noSavedPlayers": "لم تحفظ أي لاعبين بعد.",
 
+  "settingsAccountGroup": "الحساب",
+  "settingsAppearanceGroup": "المظهر واللغة",
   "signedInAs": "تم تسجيل الدخول باسم {email}",
   "@signedInAs": { "placeholders": { "email": { "type": "String" } } },
   "emailSectionTitle": "البريد الإلكتروني",
