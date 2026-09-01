@@ -168,6 +168,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'WhatsApp, email, or phone — a Club reaches out directly, the moment they find the right fit.';
 
   @override
+  String get installAppLabel => 'Install the app';
+
+  @override
+  String get installAppIosTitle => 'Add to Home Screen';
+
+  @override
+  String get installAppIosStep1 => 'Tap the Share button in Safari\'s toolbar.';
+
+  @override
+  String get installAppIosStep2 => 'Choose \"Add to Home Screen\".';
+
+  @override
+  String get installAppIosStep3 => 'Tap Add — the app then opens full screen.';
+
+  @override
   String get aboutTitle => 'About Sport X Hub';
 
   @override

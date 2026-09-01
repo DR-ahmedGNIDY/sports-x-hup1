@@ -404,6 +404,36 @@ abstract class AppLocalizations {
   /// **'واتساب، بريد إلكتروني، أو هاتف — النادي يتواصل معك مباشرة في اللحظة التي يجدك فيها.'**
   String get homeFeatureContactedBody;
 
+  /// No description provided for @installAppLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تثبيت التطبيق'**
+  String get installAppLabel;
+
+  /// No description provided for @installAppIosTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التثبيت على الشاشة الرئيسية'**
+  String get installAppIosTitle;
+
+  /// No description provided for @installAppIosStep1.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط زر المشاركة في شريط Safari.'**
+  String get installAppIosStep1;
+
+  /// No description provided for @installAppIosStep2.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر «إضافة إلى الشاشة الرئيسية».'**
+  String get installAppIosStep2;
+
+  /// No description provided for @installAppIosStep3.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط «إضافة» — سيفتح التطبيق بملء الشاشة بعدها.'**
+  String get installAppIosStep3;
+
   /// No description provided for @aboutTitle.
   ///
   /// In ar, this message translates to:

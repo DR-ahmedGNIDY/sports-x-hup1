@@ -58,6 +58,11 @@
   "homeFeatureContactedTitle": "Get contacted",
   "homeFeatureContactedBody": "WhatsApp, email, or phone — a Club reaches out directly, the moment they find the right fit.",
 
+  "installAppLabel": "Install the app",
+  "installAppIosTitle": "Add to Home Screen",
+  "installAppIosStep1": "Tap the Share button in Safari's toolbar.",
+  "installAppIosStep2": "Choose \"Add to Home Screen\".",
+  "installAppIosStep3": "Tap Add — the app then opens full screen.",
   "aboutTitle": "About Sport X Hub",
   "aboutBody1": "Sport X Hub is a professional sports talent marketplace connecting Players and Clubs. Our platform exists to validate one loop: a Player builds a credible profile, a Club finds that player through search, and a Club contacts them directly.",
   "aboutBody2": "No noise, no middleman, no bloated feature set — just the fastest path from a real profile to a real conversation.",

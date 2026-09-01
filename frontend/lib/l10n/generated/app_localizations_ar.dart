@@ -168,6 +168,22 @@ class AppLocalizationsAr extends AppLocalizations {
       'واتساب، بريد إلكتروني، أو هاتف — النادي يتواصل معك مباشرة في اللحظة التي يجدك فيها.';
 
   @override
+  String get installAppLabel => 'تثبيت التطبيق';
+
+  @override
+  String get installAppIosTitle => 'التثبيت على الشاشة الرئيسية';
+
+  @override
+  String get installAppIosStep1 => 'اضغط زر المشاركة في شريط Safari.';
+
+  @override
+  String get installAppIosStep2 => 'اختر «إضافة إلى الشاشة الرئيسية».';
+
+  @override
+  String get installAppIosStep3 =>
+      'اضغط «إضافة» — سيفتح التطبيق بملء الشاشة بعدها.';
+
+  @override
   String get aboutTitle => 'عن Sport X Hub';
 
   @override

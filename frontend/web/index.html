@@ -236,6 +236,46 @@
         document.addEventListener('DOMContentLoaded', attach);
       }
 
+      // Install prompt. Chromium fires `beforeinstallprompt` once, early, and
+      // only lets the prompt be shown from a user gesture — so the event has
+      // to be captured here, before Dart is running, and replayed later from
+      // a tap. Dart asks `sxhCanInstall()` whether there is one to replay.
+      //
+      // Safari fires nothing: iOS installs are a manual Share-sheet action,
+      // which the app explains instead of prompting for.
+      var installPrompt = null;
+      window.addEventListener('beforeinstallprompt', function (event) {
+        event.preventDefault();
+        installPrompt = event;
+      });
+      window.addEventListener('appinstalled', function () {
+        installPrompt = null;
+      });
+
+      window.sxhCanInstall = function () {
+        return installPrompt !== null;
+      };
+
+      /// Shows the captured prompt. Resolves to true if the app was
+      /// installed. The event is single-use, so it is cleared either way.
+      window.sxhPromptInstall = async function () {
+        if (installPrompt === null) return false;
+        var event = installPrompt;
+        installPrompt = null;
+        event.prompt();
+        var choice = await event.userChoice;
+        return choice.outcome === 'accepted';
+      };
+
+      /// True when the app is already running as an installed PWA, in which
+      /// case there is nothing to offer.
+      window.sxhIsInstalled = function () {
+        return (
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true
+        );
+      };
+
       // Returns "top,right,bottom,left" in CSS pixels. A string rather than an
       // object keeps the Dart side to a single `external String` binding with
       // no JS interop type plumbing. Read on every MediaQuery rebuild, so

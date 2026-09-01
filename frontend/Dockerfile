@@ -14,7 +14,12 @@ COPY . .
 # container startup (docker-entrypoint.sh), so the API base URL can change
 # without rebuilding the Flutter app.
 RUN cp .env.example .env
-RUN flutter build web --release
+# --no-web-resources-cdn: without it Flutter fetches CanvasKit — the rendering
+# engine, several MB — from gstatic.com at runtime, even though the build
+# already emits a local copy. That makes first paint depend on a third-party
+# CDN being reachable, and makes offline impossible however good the service
+# worker is, since the engine itself is never same-origin to cache.
+RUN flutter build web --release --no-web-resources-cdn
 
 # Stage 2 — serve the static build with nginx.
 FROM nginx:alpine

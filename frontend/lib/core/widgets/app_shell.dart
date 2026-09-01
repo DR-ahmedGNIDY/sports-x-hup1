@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-
 import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/domain/entities/user_role.dart';
 import '../../features/club/application/club_profile_controller.dart';
@@ -16,6 +15,7 @@ import '../theme/app_spacing.dart';
 import '../theme/theme_mode_provider.dart';
 import '../utils/app_haptics.dart';
 import '../utils/app_image.dart';
+import '../utils/app_install.dart';
 import '../utils/breakpoints.dart';
 import 'app_logo.dart';
 import 'mobile/app_scaffold_mobile.dart';
@@ -732,6 +732,7 @@ class _AccountSheet extends StatelessWidget {
               onTap: () => onSelect(branch),
             ),
           const _ThemeAndLanguageRow(),
+          const _InstallAppRow(),
           const Divider(height: 1),
           ListTile(
             leading: Icon(Icons.logout_outlined, color: theme.colorScheme.error),
@@ -741,6 +742,83 @@ class _AccountSheet extends StatelessWidget {
             ),
             onTap: onLogout,
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Offers to install the app, but only where that means something.
+///
+/// Chromium hands over a prompt that installs in one tap. Safari hands over
+/// nothing — an iOS install is a manual Share-sheet action — so there the row
+/// opens the three steps instead. Everywhere else, and once the app is
+/// already installed, the row isn't there at all: a row that does nothing is
+/// worse than no row.
+class _InstallAppRow extends StatelessWidget {
+  const _InstallAppRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final offer = installOffer();
+    if (offer == InstallOffer.none) return const SizedBox.shrink();
+
+    final l10n = AppLocalizations.of(context)!;
+    return ListTile(
+      leading: const Icon(Icons.install_mobile_outlined),
+      title: Text(l10n.installAppLabel),
+      onTap: () {
+        // Called straight from the tap, with no await before it: the browser
+        // only accepts the prompt from inside a user gesture.
+        if (offer == InstallOffer.prompt) {
+          promptInstall();
+          return;
+        }
+        AppSheet.show<void>(
+          context: context,
+          title: l10n.installAppIosTitle,
+          builder: (_) => _IosInstallSteps(l10n: l10n),
+        );
+      },
+    );
+  }
+}
+
+class _IosInstallSteps extends StatelessWidget {
+  const _IosInstallSteps({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final steps = [
+      (Icons.ios_share, l10n.installAppIosStep1),
+      (Icons.add_box_outlined, l10n.installAppIosStep2),
+      (Icons.check_circle_outline, l10n.installAppIosStep3),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.xl,
+        0,
+        AppSpacing.xl,
+        AppSpacing.xl,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final (icon, text) in steps)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(icon, size: 20),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(child: Text(text)),
+                ],
+              ),
+            ),
         ],
       ),
     );
