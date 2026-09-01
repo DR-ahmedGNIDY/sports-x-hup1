@@ -29,7 +29,7 @@ BACKGROUND = (0x0B, 0x0E, 0x14, 255)
 LOGO_RATIO = 0.42
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE_LOGO = ROOT / "assets" / "images" / "logo.png"
+SOURCE_LOGO = ROOT / "assets" / "brand" / "logo_master.png"
 OUTPUT_DIR = ROOT / "web" / "splash"
 
 # (css_width, css_height, device_pixel_ratio) for every iPhone/iPad still

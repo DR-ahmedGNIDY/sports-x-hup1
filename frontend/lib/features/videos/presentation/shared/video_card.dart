@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../domain/entities/video.dart';
 import '../../domain/entities/video_author.dart';
 import 'video_player_screen.dart';
@@ -101,8 +103,12 @@ class _VideoCardState extends State<VideoCard> {
                       fit: StackFit.expand,
                       children: [
                         if (video.thumbnailUrl != null)
-                          Image.network(
-                            video.thumbnailUrl!,
+                          Image(
+                            image: appImageProvider(
+                              video.thumbnailUrl!,
+                              context: context,
+                              decodeWidth: AppImageSize.thumbnail,
+                            ),
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
                                 ColoredBox(color: colors.bg),
@@ -244,7 +250,7 @@ class _AuthorRow extends StatelessWidget {
         CircleAvatar(
           radius: 12,
           backgroundColor: colors.bg,
-          backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+          backgroundImage: photoUrl != null ? appImageProvider(photoUrl, context: context, decodeWidth: AppImageSize.avatarSmall) : null,
           child: photoUrl == null
               ? Icon(Icons.person, size: 14, color: colors.textMuted)
               : null,

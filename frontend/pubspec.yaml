@@ -47,6 +47,7 @@ dependencies:
   intl: any
   video_player: ^2.10.0
   flutter_secure_storage: ^10.3.1
+  cached_network_image: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -62,14 +63,16 @@ dev_dependencies:
   mocktail: ^1.0.5
 
 flutter_launcher_icons:
-  image_path: "assets/images/logo.png"
+  # The brand master, not the bundled variant: launcher icons are generated
+  # at up to 1024px and the shipped logo.png is 96px tall by design.
+  image_path: "assets/brand/logo_master.png"
   android: true
   min_sdk_android: 21
   adaptive_icon_background: "#0B0E14"
-  adaptive_icon_foreground: "assets/images/logo.png"
+  adaptive_icon_foreground: "assets/brand/logo_master.png"
   web:
     generate: true
-    image_path: "assets/images/logo.png"
+    image_path: "assets/brand/logo_master.png"
     background_color: "#0B0E14"
     theme_color: "#0B0E14"
 

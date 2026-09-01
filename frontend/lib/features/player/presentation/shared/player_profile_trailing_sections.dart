@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_media.dart';
@@ -175,7 +176,14 @@ class _MediaTile extends StatelessWidget {
         insetPadding: const EdgeInsets.all(24),
         child: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
-          child: InteractiveViewer(child: Image.network(item.secureUrl, fit: BoxFit.contain)),
+          // Full resolution on purpose: this is the zoomable viewer, and a
+          // decode cap would put a ceiling on how far it can zoom.
+          child: InteractiveViewer(
+            child: Image(
+              image: appImageProvider(item.secureUrl, context: context),
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
       ),
     );
@@ -194,7 +202,14 @@ class _MediaTile extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               if (item.type == PlayerMediaType.photo)
-                Image.network(item.secureUrl, fit: BoxFit.cover)
+                Image(
+                  image: appImageProvider(
+                    item.secureUrl,
+                    context: context,
+                    decodeWidth: AppImageSize.thumbnail,
+                  ),
+                  fit: BoxFit.cover,
+                )
               else
                 Center(
                   child: Icon(Icons.play_circle_outline, color: profileColors.textMuted, size: 36),

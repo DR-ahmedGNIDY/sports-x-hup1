@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/club_profile.dart';
 
@@ -33,7 +34,7 @@ class PublicClubCard extends StatelessWidget {
                   color: AppColors.slate,
                   borderRadius: BorderRadius.circular(AppRadius.xs),
                   image: club.logoUrl != null
-                      ? DecorationImage(image: NetworkImage(club.logoUrl!), fit: BoxFit.cover)
+                      ? DecorationImage(image: appImageProvider(club.logoUrl!, context: context, decodeWidth: AppImageSize.avatarSmall), fit: BoxFit.cover)
                       : null,
                 ),
                 child: club.logoUrl == null

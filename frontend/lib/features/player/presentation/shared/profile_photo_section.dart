@@ -2,8 +2,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 
@@ -78,7 +80,9 @@ class _ProfilePhotoSectionState extends ConsumerState<ProfilePhotoSection> {
             CircleAvatar(
               radius: 40,
               backgroundColor: colorScheme.surfaceContainerHighest,
-              backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+              backgroundImage: photoUrl != null
+                  ? appImageProvider(photoUrl, context: context, decodeWidth: AppImageSize.avatarLarge)
+                  : null,
               child: photoUrl == null
                   ? Icon(Icons.person, size: 40, color: colorScheme.onSurfaceVariant)
                   : null,

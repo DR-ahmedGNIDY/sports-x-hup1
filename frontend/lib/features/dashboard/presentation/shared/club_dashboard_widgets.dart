@@ -5,6 +5,7 @@ import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../club/domain/entities/club_profile.dart';
 import '../../../club/presentation/shared/club_level_labels.dart';
@@ -123,7 +124,7 @@ class ClubDashboardIdentityHeader extends StatelessWidget {
             color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(AppRadius.sm),
             image: profile.logoUrl != null
-                ? DecorationImage(image: NetworkImage(profile.logoUrl!), fit: BoxFit.cover)
+                ? DecorationImage(image: appImageProvider(profile.logoUrl!, context: context, decodeWidth: AppImageSize.avatarLarge), fit: BoxFit.cover)
                 : null,
           ),
           child: profile.logoUrl == null
@@ -267,7 +268,7 @@ class ClubDashboardRecentPlayerTile extends StatelessWidget {
         radius: 20,
         backgroundColor: colorScheme.surfaceContainerHighest,
         backgroundImage: profile.profilePhoto != null
-            ? NetworkImage(profile.profilePhoto!.secureUrl)
+            ? appImageProvider(profile.profilePhoto!.secureUrl, context: context, decodeWidth: AppImageSize.avatarSmall)
             : null,
         child: profile.profilePhoto == null
             ? Icon(Icons.person, color: colorScheme.onSurfaceVariant)

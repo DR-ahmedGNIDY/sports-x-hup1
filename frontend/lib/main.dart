@@ -62,6 +62,20 @@ class _SportXHubAppState extends ConsumerState<SportXHubApp> {
     );
   }
 
+  bool _precached = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_precached) return;
+    _precached = true;
+    // The logo is in the app bar of every authenticated screen and on every
+    // auth and marketing page, so it is always the next thing needed after
+    // the boot screen clears. Decoding it during startup rather than during
+    // the first frame that wants it removes a visible pop-in.
+    precacheImage(const AssetImage('assets/images/logo.png'), context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);

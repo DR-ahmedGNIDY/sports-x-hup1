@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_profile.dart';
 import 'player_profile_data.dart';
@@ -51,7 +53,14 @@ class PlayerHeroCard extends StatelessWidget {
         child: AspectRatio(
           aspectRatio: 3 / 4,
           child: photo != null
-              ? Image.network(photo.secureUrl, fit: BoxFit.cover)
+              ? Image(
+                  image: appImageProvider(
+                    photo.secureUrl,
+                    context: context,
+                    decodeWidth: AppImageSize.fullWidth,
+                  ),
+                  fit: BoxFit.cover,
+                )
               : ColoredBox(
                   color: profileColors.bg,
                   child: Icon(Icons.person, size: compact ? 40 : 88, color: profileColors.textMuted),

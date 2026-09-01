@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/club_profile.dart';
 import 'club_level_labels.dart';
@@ -34,7 +36,7 @@ class ClubProfileView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.xs),
                 image: profile.logoUrl != null
                     ? DecorationImage(
-                        image: NetworkImage(profile.logoUrl!),
+                        image: appImageProvider(profile.logoUrl!, context: context, decodeWidth: AppImageSize.avatarLarge),
                         fit: BoxFit.cover,
                       )
                     : null,

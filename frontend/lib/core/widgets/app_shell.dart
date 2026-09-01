@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+
 import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/domain/entities/user_role.dart';
 import '../../features/club/application/club_profile_controller.dart';
@@ -14,6 +15,7 @@ import '../theme/app_motion.dart';
 import '../theme/app_spacing.dart';
 import '../theme/theme_mode_provider.dart';
 import '../utils/app_haptics.dart';
+import '../utils/app_image.dart';
 import '../utils/breakpoints.dart';
 import 'app_logo.dart';
 import 'mobile/app_scaffold_mobile.dart';
@@ -251,7 +253,7 @@ class _UserIdentity extends ConsumerWidget {
     final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
     final avatar = CircleAvatar(
       radius: radius,
-      backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+      backgroundImage: photoUrl != null ? appImageProvider(photoUrl, context: context, decodeWidth: AppImageSize.avatarLarge) : null,
       child: photoUrl == null
           ? Text(initial, style: TextStyle(fontSize: radius * 0.9))
           : null,

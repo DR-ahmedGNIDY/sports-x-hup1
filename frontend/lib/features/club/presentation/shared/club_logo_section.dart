@@ -2,9 +2,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_profile_controller.dart';
 
@@ -60,7 +62,7 @@ class _ClubLogoSectionState extends ConsumerState<ClubLogoSection> {
             color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(AppRadius.xs),
             image: logoUrl != null
-                ? DecorationImage(image: NetworkImage(logoUrl), fit: BoxFit.cover)
+                ? DecorationImage(image: appImageProvider(logoUrl, context: context, decodeWidth: AppImageSize.avatarLarge), fit: BoxFit.cover)
                 : null,
           ),
           child: logoUrl == null

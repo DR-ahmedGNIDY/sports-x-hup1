@@ -7,15 +7,52 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # Single-page app: unknown paths fall back to index.html so client-side
-    # routing (go_router) handles them, instead of nginx 404ing.
+    # Compression. Without this the app shipped `main.dart.js` raw: 4.3 MB
+    # over the wire where gzip brings it to roughly a quarter of that. It is
+    # by a wide margin the largest thing a first-time visitor downloads, and
+    # nginx does not compress anything by default.
+    gzip on;
+    gzip_vary on;
+    # Nothing below ~1 KB is worth a compression pass; the header overhead
+    # and CPU cost outweigh the saving.
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        application/javascript
+        application/json
+        application/manifest+json
+        application/wasm
+        image/svg+xml;
+
+    # Caching policy: revalidate, don't pin.
+    #
+    # `flutter build web` does not content-hash its output — main.dart.js is
+    # always main.dart.js — so a long max-age would serve a stale bundle to
+    # returning visitors until it expired, with no way to bust it. nginx
+    # sends an ETag for every static file, so `no-cache` (which means
+    # "revalidate", not "don't store") gives a 304 for anything unchanged:
+    # nearly all of the saving, none of the staleness.
     location / {
+        # Single-page app: unknown paths fall back to index.html so
+        # client-side routing (go_router) handles them, instead of 404ing.
         try_files $uri $uri/ /index.html;
+        add_header Cache-Control "no-cache";
     }
 
     # The runtime-generated .env asset must never be cached by the browser —
     # it's rewritten on every container start (see docker-entrypoint.sh).
     location = /assets/.env {
+        add_header Cache-Control "no-store";
+    }
+
+    # The service worker decides when everything else updates, so it is the
+    # one file that must never be served from cache. A stale copy pins the
+    # whole app to the deploy it shipped with.
+    location = /flutter_service_worker.js {
         add_header Cache-Control "no-store";
     }
 }

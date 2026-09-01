@@ -28,7 +28,14 @@ class _HeroVideoBackgroundState extends State<HeroVideoBackground> {
   @override
   void initState() {
     super.initState();
-    _initVideo();
+    // Deferred to after the first frame rather than started here. The asset
+    // is 1.5 MB, this is the public landing page, and a phone on mobile data
+    // was fetching it in competition with the page it decorates. Waiting
+    // costs nothing visually — the hero already opens on the dark background
+    // this fades in over — and it takes the video off the critical path.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _initVideo();
+    });
   }
 
   @override

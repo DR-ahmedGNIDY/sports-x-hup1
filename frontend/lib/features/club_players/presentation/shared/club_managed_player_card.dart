@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_players_controller.dart';
 import '../../domain/entities/club_managed_player.dart';
@@ -74,7 +76,7 @@ class ClubManagedPlayerCard extends ConsumerWidget {
                 radius: 28,
                 backgroundColor: colorScheme.surfaceContainerHighest,
                 backgroundImage: profile.profilePhoto != null
-                    ? NetworkImage(profile.profilePhoto!.secureUrl)
+                    ? appImageProvider(profile.profilePhoto!.secureUrl, context: context, decodeWidth: AppImageSize.avatarSmall)
                     : null,
                 child: profile.profilePhoto == null
                     ? Icon(Icons.person, color: colorScheme.onSurfaceVariant)

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/feed_item.dart';
 import 'feed_layout.dart';
@@ -86,7 +88,10 @@ class _FeedMediaState extends State<FeedMedia> {
   void _resolveIntrinsicAspect() {
     final url = _imageUrl;
     if (url == null) return;
-    final provider = NetworkImage(url);
+    // Cached like every other remote image, but deliberately not resized:
+    // this provider exists to read the photo's *intrinsic* dimensions, and
+    // a ResizeImage would report the resized ones.
+    final provider = appImageProvider(url, context: context);
     final stream = provider.resolve(createLocalImageConfiguration(context));
     // Same image as last time (a plain rebuild) — keep the live listener
     // rather than tearing it down and re-resolving.

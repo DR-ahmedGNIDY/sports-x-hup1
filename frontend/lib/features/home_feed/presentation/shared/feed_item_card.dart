@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 // bring in the one intl symbol actually used here.
 import 'package:intl/intl.dart' show DateFormat;
 
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../videos/presentation/shared/video_player_screen.dart';
@@ -302,7 +304,7 @@ class _AuthorRow extends StatelessWidget {
         CircleAvatar(
           radius: radius,
           backgroundColor: colors.bg,
-          backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+          backgroundImage: photoUrl != null ? appImageProvider(photoUrl, context: context, decodeWidth: AppImageSize.avatarSmall) : null,
           child: photoUrl == null
               ? Icon(
                   isClub ? Icons.shield_outlined : Icons.person,

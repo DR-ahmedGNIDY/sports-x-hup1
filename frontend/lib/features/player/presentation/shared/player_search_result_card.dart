@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
@@ -45,7 +47,7 @@ class PlayerSearchResultCard extends ConsumerWidget {
         leading: CircleAvatar(
           backgroundColor: colorScheme.surfaceContainerHighest,
           backgroundImage: player.profilePhotoUrl != null
-              ? NetworkImage(player.profilePhotoUrl!)
+              ? appImageProvider(player.profilePhotoUrl!, context: context, decodeWidth: AppImageSize.avatarSmall)
               : null,
           child: player.profilePhotoUrl == null
               ? Icon(Icons.person, color: colorScheme.onSurfaceVariant)

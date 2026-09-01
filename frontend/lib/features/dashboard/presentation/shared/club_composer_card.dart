@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 /// The Home feed's post composer entry point — a tappable pill (opens
@@ -35,7 +37,7 @@ class ClubComposerCard extends StatelessWidget {
           CircleAvatar(
             radius: 20,
             backgroundColor: colors.bg,
-            backgroundImage: logoUrl != null ? NetworkImage(logoUrl!) : null,
+            backgroundImage: logoUrl != null ? appImageProvider(logoUrl!, context: context, decodeWidth: AppImageSize.avatarSmall) : null,
             child: logoUrl == null
                 ? Icon(Icons.shield_outlined, color: colors.textMuted, size: 20)
                 : null,
