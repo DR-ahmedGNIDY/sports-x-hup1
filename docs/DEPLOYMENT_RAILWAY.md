@@ -42,10 +42,27 @@ so do it in this order:
 | `FRONTEND_URL` | the same URL — used in password-reset emails |
 | `CLOUDINARY_CLOUD_NAME` / `_API_KEY` / `_API_SECRET` | from your Cloudinary dashboard |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | the seeded admin account |
-| `MAIL_PROVIDER`, `SMTP_*` | your mail provider's settings |
+| `MAIL_PROVIDER` | **`brevo`** — see below |
+| `BREVO_API_KEY` | from your Brevo account |
 
-Three of these are enforced by `src/config/env.validation.ts` and the service
-will refuse to start without them:
+### Use `brevo`, not `smtp`
+
+**Railway's trial plan blocks outbound ports 25, 465, 587 and 2525.** With
+`MAIL_PROVIDER=smtp` every send dies on a TCP connection timeout before it ever
+authenticates — and it fails *quietly*, in a background send, so the first
+symptom is a user who never receives a password-reset email.
+
+The codebase already anticipates this: `BrevoApiEmailProvider` sends the
+identical message over ordinary HTTPS on 443, which no host blocks. Set
+`MAIL_PROVIDER=brevo` and `BREVO_API_KEY`, and leave the `SMTP_*` variables
+unset.
+
+`MAIL_PROVIDER=console` is rejected outright in production — it never sends a
+real email.
+
+### What the service refuses to start without
+
+Enforced by `src/config/env.validation.ts`:
 
 - **`JWT_SECRET` and `JWT_REFRESH_SECRET` must be at least 32 characters.**
   Generate them fresh rather than reusing whatever is in your local `.env` — a
