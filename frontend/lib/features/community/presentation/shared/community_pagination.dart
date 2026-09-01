@@ -21,11 +21,13 @@ class CommunityPagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final lastPage = ((page.total - 1) / page.pageSize).floor() + 1;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
+          tooltip: l10n.previousPageLabel,
           onPressed: page.page > 1
               ? () => controller.loadPage(page.page - 1)
               : null,
@@ -38,6 +40,7 @@ class CommunityPagination extends StatelessWidget {
           ),
         ),
         IconButton(
+          tooltip: l10n.nextPageLabel,
           onPressed: page.hasNextPage
               ? () => controller.loadPage(page.page + 1)
               : null,

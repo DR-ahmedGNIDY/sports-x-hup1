@@ -346,6 +346,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteLabel => 'حذف';
 
   @override
+  String get previousPageLabel => 'الصفحة السابقة';
+
+  @override
+  String get nextPageLabel => 'الصفحة التالية';
+
+  @override
+  String get showPasswordLabel => 'إظهار كلمة المرور';
+
+  @override
+  String get hidePasswordLabel => 'إخفاء كلمة المرور';
+
+  @override
+  String get clearSearchLabel => 'مسح البحث';
+
+  @override
+  String get editLabel => 'تعديل';
+
+  @override
+  String get sendLabel => 'إرسال';
+
+  @override
+  String get playLabel => 'تشغيل';
+
+  @override
+  String get pauseLabel => 'إيقاف مؤقت';
+
+  @override
   String get removeLabel => 'إزالة';
 
   @override

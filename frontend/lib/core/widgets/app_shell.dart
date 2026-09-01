@@ -209,7 +209,8 @@ class _TopBar extends ConsumerWidget {
         const LanguageToggleButton(),
         IconButton(
           tooltip: l10n.logoutTooltip,
-          onPressed: () => ref.read(sessionControllerProvider.notifier).logout(),
+          onPressed: () =>
+              ref.read(sessionControllerProvider.notifier).logout(),
           icon: const Icon(Icons.logout_outlined),
         ),
       ],
@@ -244,7 +245,9 @@ class _UserIdentity extends ConsumerWidget {
       case UserRole.club:
         final profile = ref.watch(clubProfileControllerProvider).value;
         photoUrl = profile?.logoUrl;
-        displayName = (profile?.name?.isNotEmpty ?? false) ? profile!.name! : email;
+        displayName = (profile?.name?.isNotEmpty ?? false)
+            ? profile!.name!
+            : email;
       case UserRole.admin:
       case null:
         displayName = email;
@@ -253,7 +256,13 @@ class _UserIdentity extends ConsumerWidget {
     final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
     final avatar = CircleAvatar(
       radius: radius,
-      backgroundImage: photoUrl != null ? appImageProvider(photoUrl, context: context, decodeWidth: AppImageSize.avatarLarge) : null,
+      backgroundImage: photoUrl != null
+          ? appImageProvider(
+              photoUrl,
+              context: context,
+              decodeWidth: AppImageSize.avatarLarge,
+            )
+          : null,
       child: photoUrl == null
           ? Text(initial, style: TextStyle(fontSize: radius * 0.9))
           : null,
@@ -373,12 +382,11 @@ class _MobileShellState extends ConsumerState<_MobileShell> {
         l10n: l10n,
         translucent: ownsChrome,
         selectedTab: isOverflowActive ? null : selectedTab,
-        onSelect: (index) =>
-            _selectBranch(
-              widget.navigationShell,
-              tabs[index].index,
-              scrollController: _scrollControllers[tabs[index].index],
-            ),
+        onSelect: (index) => _selectBranch(
+          widget.navigationShell,
+          tabs[index].index,
+          scrollController: _scrollControllers[tabs[index].index],
+        ),
         accountSlot: overflow.isEmpty
             ? null
             : _AccountTabSlot(
@@ -522,19 +530,32 @@ class _MobileTabBar extends StatelessWidget {
       top: false,
       child: SizedBox(
         height: AppScaffoldMobile.tabBarHeight,
-        child: Row(
-          children: [
+        // The bar is a fixed height, so its labels cannot be. At the system
+        // maximum of 2x on a 320px phone this overflowed by 5 pixels —
+        // measured, not guessed. Clamping the label is the standard trade
+        // both platforms make for a tab bar and the right one here: the icon
+        // carries the same meaning at any size, the Semantics label is read
+        // aloud at any size, and the alternative is a navigation bar eating a
+        // third of a small screen. Only this subtree is clamped; nothing else
+        // in the app is.
+        child: MediaQuery.withClampedTextScaling(
+          maxScaleFactor: 1.3,
+          child: Row(
+            children: [
               for (var i = 0; i < tabs.length; i++)
                 Expanded(
                   child: _TabSlot(
-                    icon: selectedTab == i ? tabs[i].selectedIcon : tabs[i].icon,
+                    icon: selectedTab == i
+                        ? tabs[i].selectedIcon
+                        : tabs[i].icon,
                     label: tabs[i].label(l10n),
                     selected: selectedTab == i,
                     onTap: () => onSelect(i),
                   ),
                 ),
-          if (accountSlot != null) Expanded(child: accountSlot!),
-        ],
+              if (accountSlot != null) Expanded(child: accountSlot!),
+            ],
+          ),
         ),
       ),
     );
@@ -621,7 +642,9 @@ class _TabSlotState extends State<_TabSlot> {
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: color,
                   fontSize: 11,
-                  fontWeight: widget.selected ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight: widget.selected
+                      ? FontWeight.w600
+                      : FontWeight.w400,
                 ),
               ),
             ],
@@ -735,7 +758,10 @@ class _AccountSheet extends StatelessWidget {
           const _InstallAppRow(),
           const Divider(height: 1),
           ListTile(
-            leading: Icon(Icons.logout_outlined, color: theme.colorScheme.error),
+            leading: Icon(
+              Icons.logout_outlined,
+              color: theme.colorScheme.error,
+            ),
             title: Text(
               l10n.logoutTooltip,
               style: TextStyle(color: theme.colorScheme.error),

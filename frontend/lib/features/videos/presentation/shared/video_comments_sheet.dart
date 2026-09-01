@@ -286,6 +286,7 @@ class _VideoCommentsSheetState extends ConsumerState<_VideoCommentsSheet> {
                 ),
               ),
               IconButton(
+                tooltip: l10n.sendLabel,
                 icon: _sending
                     ? const SizedBox(
                         width: 18,

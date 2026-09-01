@@ -63,24 +63,30 @@ class _ChangePasswordFormState extends ConsumerState<ChangePasswordForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(l10n.passwordLabel, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            l10n.passwordLabel,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 12),
           PasswordField(
             controller: _currentPassword,
             label: l10n.currentPasswordLabel,
-            validator: (v) => (v == null || v.isEmpty) ? l10n.authPasswordValidation : null,
+            validator: (v) =>
+                (v == null || v.isEmpty) ? l10n.authPasswordValidation : null,
           ),
           const SizedBox(height: 12),
           PasswordField(
             controller: _newPassword,
             label: l10n.newPasswordLabel,
-            validator: (v) => (v == null || v.length < 8) ? l10n.authPasswordMinLength : null,
+            validator: (v) =>
+                (v == null || v.length < 8) ? l10n.authPasswordMinLength : null,
           ),
           const SizedBox(height: 12),
           PasswordField(
             controller: _confirmPassword,
             label: l10n.confirmNewPasswordLabel,
-            validator: (v) => v != _newPassword.text ? l10n.authPasswordMismatch : null,
+            validator: (v) =>
+                v != _newPassword.text ? l10n.authPasswordMismatch : null,
           ),
           if (error != null) ...[
             const SizedBox(height: 8),
@@ -88,11 +94,16 @@ class _ChangePasswordFormState extends ConsumerState<ChangePasswordForm> {
           ],
           if (_success) ...[
             const SizedBox(height: 8),
-            Text(l10n.passwordUpdatedMessage, style: const TextStyle(color: AppColors.success)),
+            Text(
+              l10n.passwordUpdatedMessage,
+              style: const TextStyle(color: AppColors.success),
+            ),
           ],
           const SizedBox(height: 12),
           Align(
-            alignment: Alignment.centerLeft,
+            // Directional: in Arabic the submit button belongs at the reading
+            // start, which is the right edge.
+            alignment: AlignmentDirectional.centerStart,
             child: FilledButton(
               onPressed: _loading ? null : _submit,
               child: _loading

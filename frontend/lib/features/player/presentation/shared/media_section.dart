@@ -2,7 +2,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
@@ -26,7 +25,10 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
   String? _error;
 
   Future<void> _pickAndUpload() async {
-    final result = await FilePicker.pickFiles(withData: true, type: FileType.image);
+    final result = await FilePicker.pickFiles(
+      withData: true,
+      type: FileType.image,
+    );
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null) return;
 
@@ -37,7 +39,11 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
     try {
       await ref
           .read(playerProfileControllerProvider.notifier)
-          .uploadMedia(bytes: file.bytes!, filename: file.name, type: PlayerMediaType.photo);
+          .uploadMedia(
+            bytes: file.bytes!,
+            filename: file.name,
+            type: PlayerMediaType.photo,
+          );
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -55,19 +61,25 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
 
   @override
   Widget build(BuildContext context) {
-    final media = ref.watch(playerProfileControllerProvider).value?.media ?? const [];
+    final media =
+        ref.watch(playerProfileControllerProvider).value?.media ?? const [];
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.photosVideosTitle, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          l10n.photosVideosTitle,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const SizedBox(height: 12),
         if (media.isNotEmpty)
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: media.map((item) => _MediaTile(item: item, onDelete: _delete)).toList(),
+            children: media
+                .map((item) => _MediaTile(item: item, onDelete: _delete))
+                .toList(),
           ),
         if (_error != null) ...[
           const SizedBox(height: 8),
@@ -114,18 +126,31 @@ class _MediaTile extends StatelessWidget {
             color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(AppRadius.xs),
             image: item.type == PlayerMediaType.photo
-                ? DecorationImage(image: appImageProvider(item.secureUrl, context: context, decodeWidth: AppImageSize.thumbnail), fit: BoxFit.cover)
+                ? DecorationImage(
+                    image: appImageProvider(
+                      item.secureUrl,
+                      context: context,
+                      decodeWidth: AppImageSize.thumbnail,
+                    ),
+                    fit: BoxFit.cover,
+                  )
                 : null,
           ),
           child: item.type == PlayerMediaType.video
               ? Center(
-                  child: Icon(Icons.play_circle_outline, color: colorScheme.onSurfaceVariant, size: 32),
+                  child: Icon(
+                    Icons.play_circle_outline,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 32,
+                  ),
                 )
               : null,
         ),
-        Positioned(
+        PositionedDirectional(
           top: 2,
-          right: 2,
+          // Mirrors in Arabic: an affordance pinned to the same visual corner
+          // in both directions ends up over different content.
+          end: 2,
           child: InkWell(
             onTap: () => onDelete(item.id),
             child: const CircleAvatar(

@@ -286,6 +286,7 @@ class _FeedCommentsSheetState extends ConsumerState<_FeedCommentsSheet> {
                 ),
               ),
               IconButton(
+                tooltip: l10n.sendLabel,
                 icon: _sending
                     ? const SizedBox(
                         width: 18,

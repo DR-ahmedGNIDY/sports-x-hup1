@@ -80,6 +80,7 @@ class _ClubPlayersToolbarState extends ConsumerState<ClubPlayersToolbar> {
               suffixIcon: _search.text.isEmpty
                   ? null
                   : IconButton(
+                      tooltip: l10n.clearSearchLabel,
                       icon: const Icon(Icons.close_outlined),
                       onPressed: () {
                         _search.clear();

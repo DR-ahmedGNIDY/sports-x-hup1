@@ -344,6 +344,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteLabel => 'Delete';
 
   @override
+  String get previousPageLabel => 'Previous page';
+
+  @override
+  String get nextPageLabel => 'Next page';
+
+  @override
+  String get showPasswordLabel => 'Show password';
+
+  @override
+  String get hidePasswordLabel => 'Hide password';
+
+  @override
+  String get clearSearchLabel => 'Clear search';
+
+  @override
+  String get editLabel => 'Edit';
+
+  @override
+  String get sendLabel => 'Send';
+
+  @override
+  String get playLabel => 'Play';
+
+  @override
+  String get pauseLabel => 'Pause';
+
+  @override
   String get removeLabel => 'Remove';
 
   @override

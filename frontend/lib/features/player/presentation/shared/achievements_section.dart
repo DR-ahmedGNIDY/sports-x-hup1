@@ -52,10 +52,12 @@ class AchievementsSection extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
+                  tooltip: l10n.editLabel,
                   icon: const Icon(Icons.edit_outlined),
                   onPressed: () => _openForm(context, ref, existing: achievement),
                 ),
                 IconButton(
+                  tooltip: l10n.deleteLabel,
                   icon: const Icon(Icons.delete_outline),
                   onPressed: () => ref
                       .read(playerProfileControllerProvider.notifier)

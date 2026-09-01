@@ -53,12 +53,17 @@ class _LoginPageMobileState extends ConsumerState<LoginPageMobile> {
                 const SizedBox(height: 32),
                 const Center(child: AppLogo(height: 64)),
                 const SizedBox(height: 32),
-                Text(l10n.authLogIn, style: Theme.of(context).textTheme.displayLarge),
+                Text(
+                  l10n.authLogIn,
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
                 const SizedBox(height: 20),
                 AuthErrorBanner(message: session.errorMessage),
                 TextFormField(
                   controller: _identifier,
-                  decoration: InputDecoration(labelText: l10n.authIdentifierLabel),
+                  decoration: InputDecoration(
+                    labelText: l10n.authIdentifierLabel,
+                  ),
                   validator: (v) => (v == null || v.trim().isEmpty)
                       ? l10n.authIdentifierValidation
                       : null,
@@ -66,11 +71,14 @@ class _LoginPageMobileState extends ConsumerState<LoginPageMobile> {
                 const SizedBox(height: 16),
                 PasswordField(
                   controller: _password,
-                  validator: (v) =>
-                      (v == null || v.isEmpty) ? l10n.authPasswordValidation : null,
+                  validator: (v) => (v == null || v.isEmpty)
+                      ? l10n.authPasswordValidation
+                      : null,
                 ),
                 Align(
-                  alignment: Alignment.centerRight,
+                  // Directional: the link belongs at the trailing edge of the
+                  // field it follows, which is the left one in Arabic.
+                  alignment: AlignmentDirectional.centerEnd,
                   child: TextButton(
                     onPressed: () => context.go('/forgot-password'),
                     child: Text(l10n.authForgotPassword),

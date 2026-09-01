@@ -91,6 +91,7 @@ class CommentTile extends StatelessWidget {
         ),
         if (onDelete != null)
           IconButton(
+            tooltip: AppLocalizations.of(context)!.deleteLabel,
             icon: Icon(Icons.delete_outline, size: 18, color: colors.textMuted),
             onPressed: onDelete,
           ),

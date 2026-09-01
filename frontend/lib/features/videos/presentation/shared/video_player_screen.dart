@@ -106,6 +106,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   VideoPlayer(_controller),
                   Align(
                     child: IconButton(
+                      tooltip: _controller.value.isPlaying
+                          ? AppLocalizations.of(context)!.pauseLabel
+                          : AppLocalizations.of(context)!.playLabel,
                       iconSize: 56,
                       icon: Icon(
                         _controller.value.isPlaying ? Icons.pause_circle : Icons.play_circle,

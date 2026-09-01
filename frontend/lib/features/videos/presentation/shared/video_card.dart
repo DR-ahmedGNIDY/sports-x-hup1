@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
 import '../../../../core/theme/app_radius.dart';
@@ -127,15 +126,17 @@ class _VideoCardState extends State<VideoCard> {
                     ),
                   ),
                 ),
-                Positioned(
-                  left: AppSpacing.sm,
+                PositionedDirectional(
+                  // The category reads first, so it sits at the leading edge
+                  // and the action opposite it. Both mirror in Arabic.
+                  start: AppSpacing.sm,
                   top: AppSpacing.sm,
                   child: _CategoryChip(label: video.category),
                 ),
                 if (trailing != null)
-                  Positioned(
+                  PositionedDirectional(
                     top: AppSpacing.xs,
-                    right: AppSpacing.xs,
+                    end: AppSpacing.xs,
                     child: trailing,
                   ),
               ],
@@ -250,7 +251,13 @@ class _AuthorRow extends StatelessWidget {
         CircleAvatar(
           radius: 12,
           backgroundColor: colors.bg,
-          backgroundImage: photoUrl != null ? appImageProvider(photoUrl, context: context, decodeWidth: AppImageSize.avatarSmall) : null,
+          backgroundImage: photoUrl != null
+              ? appImageProvider(
+                  photoUrl,
+                  context: context,
+                  decodeWidth: AppImageSize.avatarSmall,
+                )
+              : null,
           child: photoUrl == null
               ? Icon(Icons.person, size: 14, color: colors.textMuted)
               : null,

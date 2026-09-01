@@ -85,7 +85,10 @@ class _LoginPageDesktopState extends ConsumerState<LoginPageDesktop> {
                           ),
                           const SizedBox(height: 8),
                           Align(
-                            alignment: Alignment.centerRight,
+                            // Directional: the link belongs at the trailing
+                            // edge of the field it follows, which is the left
+                            // one in Arabic.
+                            alignment: AlignmentDirectional.centerEnd,
                             child: TextButton(
                               onPressed: () => context.go('/forgot-password'),
                               child: Text(l10n.authForgotPassword),

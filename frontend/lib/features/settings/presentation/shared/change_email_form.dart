@@ -53,7 +53,10 @@ class _ChangeEmailFormState extends ConsumerState<ChangeEmailForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(l10n.emailSectionTitle, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            l10n.emailSectionTitle,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _email,
@@ -79,7 +82,9 @@ class _ChangeEmailFormState extends ConsumerState<ChangeEmailForm> {
           ],
           const SizedBox(height: 12),
           Align(
-            alignment: Alignment.centerLeft,
+            // Directional: in Arabic the submit button belongs at the reading
+            // start, which is the right edge.
+            alignment: AlignmentDirectional.centerStart,
             child: FilledButton(
               onPressed: _loading ? null : _submit,
               child: _loading

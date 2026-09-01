@@ -734,6 +734,60 @@ abstract class AppLocalizations {
   /// **'حذف'**
   String get deleteLabel;
 
+  /// No description provided for @previousPageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصفحة السابقة'**
+  String get previousPageLabel;
+
+  /// No description provided for @nextPageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصفحة التالية'**
+  String get nextPageLabel;
+
+  /// No description provided for @showPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار كلمة المرور'**
+  String get showPasswordLabel;
+
+  /// No description provided for @hidePasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إخفاء كلمة المرور'**
+  String get hidePasswordLabel;
+
+  /// No description provided for @clearSearchLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح البحث'**
+  String get clearSearchLabel;
+
+  /// No description provided for @editLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل'**
+  String get editLabel;
+
+  /// No description provided for @sendLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال'**
+  String get sendLabel;
+
+  /// No description provided for @playLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تشغيل'**
+  String get playLabel;
+
+  /// No description provided for @pauseLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف مؤقت'**
+  String get pauseLabel;
+
   /// No description provided for @removeLabel.
   ///
   /// In ar, this message translates to:

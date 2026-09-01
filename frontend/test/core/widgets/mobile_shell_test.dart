@@ -72,8 +72,10 @@ Future<GoRouterHarness> _pumpShell(
   UserRole role = UserRole.club,
   String at = '/dashboard',
   bool reduceMotion = false,
+  double textScale = 1.0,
+  Size size = _phone,
 }) async {
-  tester.view.physicalSize = _phone;
+  tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
 
@@ -106,9 +108,10 @@ Future<GoRouterHarness> _pumpShell(
         supportedLocales: AppLocalizations.supportedLocales,
         routerConfig: router,
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(disableAnimations: reduceMotion),
+          data: MediaQuery.of(context).copyWith(
+            disableAnimations: reduceMotion,
+            textScaler: TextScaler.linear(textScale),
+          ),
           child: child!,
         ),
       ),
@@ -225,6 +228,22 @@ void main() {
           .duration,
       Duration.zero,
     );
+  });
+
+  testWidgets('the tab bar survives doubled text on the smallest phone', (
+    tester,
+  ) async {
+    // Five slots, each with a label, on 320px, at the text size someone with
+    // low vision actually uses. If any part of this app is going to overflow
+    // it is this bar, so it is checked rather than assumed.
+    await _pumpShell(
+      tester,
+      at: '/dashboard',
+      size: const Size(320, 640),
+      textScale: 2.0,
+    );
+
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('an unmigrated screen still gets the shell bar', (tester) async {

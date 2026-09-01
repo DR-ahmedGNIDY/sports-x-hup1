@@ -35,7 +35,9 @@ class _PlayerSearchBoxState extends ConsumerState<PlayerSearchBox> {
     _debounce?.cancel();
     _debounce = Timer(
       const Duration(milliseconds: 400),
-      () => ref.read(searchControllerProvider.notifier).updateSearch(_controller.text),
+      () => ref
+          .read(searchControllerProvider.notifier)
+          .updateSearch(_controller.text),
     );
   }
 
@@ -56,7 +58,11 @@ class _PlayerSearchBoxState extends ConsumerState<PlayerSearchBox> {
         prefixIcon: const Icon(Icons.search_outlined),
         suffixIcon: _controller.text.isEmpty
             ? null
-            : IconButton(icon: const Icon(Icons.close_outlined), onPressed: _clear),
+            : IconButton(
+                tooltip: l10n.clearSearchLabel,
+                icon: const Icon(Icons.close_outlined),
+                onPressed: _clear,
+              ),
       ),
       onChanged: (_) {
         setState(() {}); // toggles the clear button

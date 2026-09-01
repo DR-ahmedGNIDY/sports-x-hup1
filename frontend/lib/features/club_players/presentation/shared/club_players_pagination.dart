@@ -21,7 +21,10 @@ class ClubPlayersPagination extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          onPressed: page.page > 1 ? () => notifier.loadPage(page.page - 1) : null,
+          tooltip: l10n.previousPageLabel,
+          onPressed: page.page > 1
+              ? () => notifier.loadPage(page.page - 1)
+              : null,
           // Icons.chevron_left/right already have matchTextDirection: true
           // baked into their IconData, so Flutter auto-mirrors them for
           // RTL without any extra parameter here.
@@ -29,7 +32,10 @@ class ClubPlayersPagination extends ConsumerWidget {
         ),
         Text(l10n.pageOfPagesLabel(page.page, lastPage)),
         IconButton(
-          onPressed: page.hasNextPage ? () => notifier.loadPage(page.page + 1) : null,
+          tooltip: l10n.nextPageLabel,
+          onPressed: page.hasNextPage
+              ? () => notifier.loadPage(page.page + 1)
+              : null,
           icon: const Icon(Icons.chevron_right),
         ),
       ],

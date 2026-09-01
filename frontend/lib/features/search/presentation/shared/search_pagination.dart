@@ -5,7 +5,11 @@ import '../../application/search_controller.dart';
 import '../../domain/entities/player_search_page.dart';
 
 class SearchPagination extends StatelessWidget {
-  const SearchPagination({super.key, required this.page, required this.controller});
+  const SearchPagination({
+    super.key,
+    required this.page,
+    required this.controller,
+  });
 
   final PlayerSearchPage page;
   final PlayerSearchController controller;
@@ -18,7 +22,10 @@ class SearchPagination extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          onPressed: page.page > 1 ? () => controller.loadPage(page.page - 1) : null,
+          tooltip: l10n.previousPageLabel,
+          onPressed: page.page > 1
+              ? () => controller.loadPage(page.page - 1)
+              : null,
           // Icons.chevron_left/right already have matchTextDirection: true
           // baked into their IconData, so Flutter auto-mirrors them for
           // RTL without any extra parameter here.
@@ -26,7 +33,10 @@ class SearchPagination extends StatelessWidget {
         ),
         Text(l10n.pageOfPagesLabel(page.page, lastPage)),
         IconButton(
-          onPressed: page.hasNextPage ? () => controller.loadPage(page.page + 1) : null,
+          tooltip: l10n.nextPageLabel,
+          onPressed: page.hasNextPage
+              ? () => controller.loadPage(page.page + 1)
+              : null,
           icon: const Icon(Icons.chevron_right),
         ),
       ],
