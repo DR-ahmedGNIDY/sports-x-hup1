@@ -135,6 +135,10 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<ClubLevel>(
+          // Without this the dropdown sizes itself to its widest label and
+          // overflows the field on a phone — which it started doing once the
+          // compact type scale (M1) put body text at 16 instead of 14.
+          isExpanded: true,
           initialValue: _level,
           decoration: InputDecoration(
             labelText: l10n.levelLabel,

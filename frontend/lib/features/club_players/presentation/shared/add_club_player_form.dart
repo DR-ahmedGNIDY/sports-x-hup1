@@ -127,7 +127,9 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         weight: num.tryParse(_weight.text),
         bio: _emptyToNull(_bio.text),
       );
-      final credentials = await ref.read(clubPlayersActionsProvider).addPlayer(input);
+      final credentials = await ref
+          .read(clubPlayersActionsProvider)
+          .addPlayer(input);
       if (!mounted) return;
       await showDialog<void>(
         context: context,
@@ -166,7 +168,8 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
     }
   }
 
-  String? _emptyToNull(String value) => value.trim().isEmpty ? null : value.trim();
+  String? _emptyToNull(String value) =>
+      value.trim().isEmpty ? null : value.trim();
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +186,11 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
       children: [
         widget.isDesktop
             ? _DesktopStepHeader(step: _step, titles: stepTitles)
-            : _MobileStepHeader(step: _step, total: _stepCount, title: stepTitles[_step]),
+            : _MobileStepHeader(
+                step: _step,
+                total: _stepCount,
+                title: stepTitles[_step],
+              ),
         const SizedBox(height: 24),
         _buildStepContent(l10n),
         if (_error != null) ...[
@@ -210,7 +217,9 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
   }
 
   String? _requiredValidator(String? v, AppLocalizations l10n) =>
-      (v == null || v.trim().isEmpty) ? l10n.clubPlayerFieldRequiredValidation : null;
+      (v == null || v.trim().isEmpty)
+      ? l10n.clubPlayerFieldRequiredValidation
+      : null;
 
   Widget _buildBasicInfoStep(AppLocalizations l10n) {
     final countries = ref.watch(countriesProvider);
@@ -221,13 +230,17 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         children: [
           TextFormField(
             controller: _firstName,
-            decoration: InputDecoration(labelText: l10n.clubPlayerFirstNameLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerFirstNameLabel,
+            ),
             validator: (v) => _requiredValidator(v, l10n),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _lastName,
-            decoration: InputDecoration(labelText: l10n.clubPlayerLastNameLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerLastNameLabel,
+            ),
             validator: (v) => _requiredValidator(v, l10n),
           ),
           const SizedBox(height: 12),
@@ -235,7 +248,9 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
             contentPadding: EdgeInsets.zero,
             title: Text(
               _dateOfBirth != null
-                  ? l10n.clubPlayerDobValueLabel(DateFormat.yMd().format(_dateOfBirth!))
+                  ? l10n.clubPlayerDobValueLabel(
+                      DateFormat.yMd().format(_dateOfBirth!),
+                    )
                   : l10n.clubPlayerDobOptionalLabel,
             ),
             trailing: const Icon(Icons.calendar_today_outlined),
@@ -244,14 +259,20 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
           const SizedBox(height: 12),
           countries.when(
             data: (options) => DropdownButtonFormField<String>(
+              isExpanded: true,
               initialValue: _countryIsoCode,
-              decoration: InputDecoration(labelText: l10n.clubPlayerCountryLabel),
+              decoration: InputDecoration(
+                labelText: l10n.clubPlayerCountryLabel,
+              ),
               items: options
                   .where((o) => o.code != null)
-                  .map((o) => DropdownMenuItem(value: o.code, child: Text(o.name)))
+                  .map(
+                    (o) => DropdownMenuItem(value: o.code, child: Text(o.name)),
+                  )
                   .toList(),
               onChanged: (value) => setState(() => _countryIsoCode = value),
-              validator: (v) => v == null ? l10n.clubPlayerFieldRequiredValidation : null,
+              validator: (v) =>
+                  v == null ? l10n.clubPlayerFieldRequiredValidation : null,
             ),
             loading: () => const LinearProgressIndicator(),
             error: (_, _) => const SizedBox.shrink(),
@@ -259,12 +280,16 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
           const SizedBox(height: 12),
           TextFormField(
             controller: _city,
-            decoration: InputDecoration(labelText: l10n.clubPlayerCityOptionalLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerCityOptionalLabel,
+            ),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _nationality,
-            decoration: InputDecoration(labelText: l10n.clubPlayerNationalityOptionalLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerNationalityOptionalLabel,
+            ),
           ),
         ],
       ),
@@ -278,10 +303,15 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
       children: [
         sports.when(
           data: (options) => DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: _sport,
-            decoration: InputDecoration(labelText: l10n.clubPlayerSportOptionalLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerSportOptionalLabel,
+            ),
             items: options
-                .map((o) => DropdownMenuItem(value: o.name, child: Text(o.name)))
+                .map(
+                  (o) => DropdownMenuItem(value: o.name, child: Text(o.name)),
+                )
                 .toList(),
             onChanged: (value) => setState(() {
               _sport = value;
@@ -295,8 +325,11 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         const SizedBox(height: 12),
         if (isFootballSport(_sport))
           DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: _position,
-            decoration: InputDecoration(labelText: l10n.clubPlayerPositionOptionalLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerPositionOptionalLabel,
+            ),
             items: footballPositionCodes
                 .map(
                   (code) => DropdownMenuItem(
@@ -309,8 +342,11 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
           )
         else if (isBasketballSport(_sport))
           DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: _position,
-            decoration: InputDecoration(labelText: l10n.clubPlayerPositionOptionalLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerPositionOptionalLabel,
+            ),
             items: basketballPositionCodes
                 .map(
                   (code) => DropdownMenuItem(
@@ -324,12 +360,16 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         else
           TextFormField(
             controller: _positionFreeText,
-            decoration: InputDecoration(labelText: l10n.clubPlayerPositionOptionalLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerPositionOptionalLabel,
+            ),
           ),
         const SizedBox(height: 12),
         DropdownButtonFormField<PreferredFoot>(
           initialValue: _preferredFoot,
-          decoration: InputDecoration(labelText: l10n.clubPlayerPreferredFootOptionalLabel),
+          decoration: InputDecoration(
+            labelText: l10n.clubPlayerPreferredFootOptionalLabel,
+          ),
           items: PreferredFoot.values
               .map((f) => DropdownMenuItem(value: f, child: Text(f.label)))
               .toList(),
@@ -342,7 +382,9 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
               child: TextFormField(
                 controller: _height,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: l10n.clubPlayerHeightLabel),
+                decoration: InputDecoration(
+                  labelText: l10n.clubPlayerHeightLabel,
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -350,7 +392,9 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
               child: TextFormField(
                 controller: _weight,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: l10n.clubPlayerWeightLabel),
+                decoration: InputDecoration(
+                  labelText: l10n.clubPlayerWeightLabel,
+                ),
               ),
             ),
           ],
@@ -359,14 +403,18 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         TextFormField(
           controller: _bio,
           maxLines: 3,
-          decoration: InputDecoration(labelText: l10n.clubPlayerBioOptionalLabel),
+          decoration: InputDecoration(
+            labelText: l10n.clubPlayerBioOptionalLabel,
+          ),
         ),
       ],
     );
   }
 
   Widget _buildContactStep(AppLocalizations l10n) {
-    final dialCode = _countryIsoCode != null ? kDialCodes[_countryIsoCode] : null;
+    final dialCode = _countryIsoCode != null
+        ? kDialCodes[_countryIsoCode]
+        : null;
     return Form(
       key: _contactFormKey,
       child: Column(
@@ -382,13 +430,17 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
             ),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? l10n.clubPlayerFieldRequiredValidation
-                : (!RegExp(r'^\d{6,14}$').hasMatch(v.trim()) ? l10n.clubPlayerPhoneInvalid : null),
+                : (!RegExp(r'^\d{6,14}$').hasMatch(v.trim())
+                      ? l10n.clubPlayerPhoneInvalid
+                      : null),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _email,
             keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(labelText: l10n.clubPlayerEmailOptionalLabel),
+            decoration: InputDecoration(
+              labelText: l10n.clubPlayerEmailOptionalLabel,
+            ),
           ),
         ],
       ),
@@ -396,9 +448,13 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
   }
 
   Widget _buildAccountStep(AppLocalizations l10n) {
-    final dialCode = _countryIsoCode != null ? kDialCodes[_countryIsoCode] : null;
+    final dialCode = _countryIsoCode != null
+        ? kDialCodes[_countryIsoCode]
+        : null;
     final fullName = '${_firstName.text} ${_lastName.text}'.trim();
-    final phoneDisplay = dialCode != null ? '$dialCode ${_phone.text}' : _phone.text;
+    final phoneDisplay = dialCode != null
+        ? '$dialCode ${_phone.text}'
+        : _phone.text;
 
     return Card(
       margin: EdgeInsets.zero,
@@ -407,14 +463,23 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.clubPlayerReviewTitle, style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              l10n.clubPlayerReviewTitle,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 4),
-            Text(l10n.clubPlayerReviewSubtitle, style: Theme.of(context).textTheme.bodySmall),
+            Text(
+              l10n.clubPlayerReviewSubtitle,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             const SizedBox(height: 16),
             _ReviewRow(label: l10n.clubPlayerFirstNameLabel, value: fullName),
             _ReviewRow(label: l10n.clubPlayerPhoneLabel, value: phoneDisplay),
             if (_sport != null && _sport!.isNotEmpty)
-              _ReviewRow(label: l10n.clubPlayerSportOptionalLabel, value: _sport!),
+              _ReviewRow(
+                label: l10n.clubPlayerSportOptionalLabel,
+                value: _sport!,
+              ),
           ],
         ),
       ),
@@ -431,7 +496,11 @@ class _AddClubPlayerFormState extends ConsumerState<AddClubPlayerForm> {
               height: 18,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Text(isLastStep ? l10n.clubPlayerCreateAccountButton : l10n.clubPlayerNextLabel),
+          : Text(
+              isLastStep
+                  ? l10n.clubPlayerCreateAccountButton
+                  : l10n.clubPlayerNextLabel,
+            ),
     );
     final backButton = OutlinedButton(
       onPressed: _saving ? null : _goBack,
@@ -473,7 +542,9 @@ class _ReviewRow extends StatelessWidget {
             width: 120,
             child: Text(label, style: Theme.of(context).textTheme.bodySmall),
           ),
-          Expanded(child: Text(value, style: Theme.of(context).textTheme.bodyMedium)),
+          Expanded(
+            child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+          ),
         ],
       ),
     );
@@ -499,11 +570,15 @@ class _DesktopStepHeader extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 14,
-                backgroundColor: i <= step ? colorScheme.primary : colorScheme.surfaceContainerHighest,
+                backgroundColor: i <= step
+                    ? colorScheme.primary
+                    : colorScheme.surfaceContainerHighest,
                 child: Text(
                   '${i + 1}',
                   style: TextStyle(
-                    color: i <= step ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+                    color: i <= step
+                        ? colorScheme.onPrimary
+                        : colorScheme.onSurfaceVariant,
                     fontSize: 12,
                   ),
                 ),
@@ -512,7 +587,9 @@ class _DesktopStepHeader extends StatelessWidget {
               Text(
                 titles[i],
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: i == step ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                  color: i == step
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant,
                   fontWeight: i == step ? FontWeight.w600 : null,
                 ),
               ),
@@ -523,7 +600,9 @@ class _DesktopStepHeader extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Divider(
-                  color: i < step ? colorScheme.primary : colorScheme.outlineVariant,
+                  color: i < step
+                      ? colorScheme.primary
+                      : colorScheme.outlineVariant,
                   thickness: 2,
                 ),
               ),
@@ -538,7 +617,11 @@ class _DesktopStepHeader extends StatelessWidget {
 /// vertical-scan-friendly indicator instead of the Desktop's wide row of
 /// circles, which wouldn't fit a narrow screen without shrinking.
 class _MobileStepHeader extends StatelessWidget {
-  const _MobileStepHeader({required this.step, required this.total, required this.title});
+  const _MobileStepHeader({
+    required this.step,
+    required this.total,
+    required this.title,
+  });
 
   final int step;
   final int total;
@@ -553,7 +636,9 @@ class _MobileStepHeader extends StatelessWidget {
       children: [
         Text(
           l10n.clubPlayerStepIndicatorLabel(step + 1, total),
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 4),
         Text(title, style: Theme.of(context).textTheme.titleMedium),

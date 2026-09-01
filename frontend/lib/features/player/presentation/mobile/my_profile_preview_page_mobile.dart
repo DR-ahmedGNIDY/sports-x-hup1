@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
+import '../../../../core/widgets/mobile/app_scaffold_mobile.dart';
+import '../../../../core/widgets/mobile/app_skeleton_list.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 import '../shared/share_profile_button.dart';
@@ -18,34 +21,48 @@ class MyProfilePreviewPageMobile extends ConsumerWidget {
     final profileAsync = ref.watch(playerProfileControllerProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    return ColoredBox(
-      color: context.profileColors.bg,
-      child: profileAsync.when(
-        data: (profile) => SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: PlayerProfileScoutingLayoutMobile(
-            profile: profile,
-            showContact: true,
-            isOwner: true,
-            heroActions: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _HeroActionButton(
-                  icon: Icons.edit_outlined,
-                  label: l10n.dashboardEditProfile,
-                  onPressed: () => context.go('/player/edit'),
+    return AppScaffoldMobile(
+      // The profile family runs on its own darker palette; the bar takes its
+      // tint from the same value so the two read as one sheet.
+      background: context.profileColors.bg,
+      onRefresh: () =>
+          ref.read(playerProfileControllerProvider.notifier).refresh(),
+      slivers: [
+        profileAsync.when(
+          data: (profile) => SliverPadding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            sliver: SliverToBoxAdapter(
+              child: PlayerProfileScoutingLayoutMobile(
+                profile: profile,
+                showContact: true,
+                isOwner: true,
+                heroActions: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _HeroActionButton(
+                      icon: Icons.edit_outlined,
+                      label: l10n.dashboardEditProfile,
+                      onPressed: () => context.go('/player/edit'),
+                    ),
+                    const SizedBox(width: AppSpacing.sm + 2),
+                    ShareProfileButton(playerId: profile.id, compact: true),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                ShareProfileButton(playerId: profile.id, compact: true),
-              ],
+              ),
+            ),
+          ),
+          loading: () => const SliverToBoxAdapter(
+            child: AppSkeletonList(itemCount: 4, itemHeight: 140),
+          ),
+          error: (error, _) => SliverFillRemaining(
+            hasScrollBody: false,
+            child: ErrorState(
+              onRetry: () =>
+                  ref.read(playerProfileControllerProvider.notifier).refresh(),
             ),
           ),
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => ErrorState(
-          onRetry: () => ref.read(playerProfileControllerProvider.notifier).refresh(),
-        ),
-      ),
+      ],
     );
   }
 }

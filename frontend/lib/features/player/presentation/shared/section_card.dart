@@ -40,32 +40,53 @@ class ProfileSectionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(color: accent.withValues(alpha: 0.14)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.28), blurRadius: 20, offset: const Offset(0, 8)),
-          BoxShadow(color: accent.withValues(alpha: 0.05), blurRadius: 24, spreadRadius: -6),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.28),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: accent.withValues(alpha: 0.05),
+            blurRadius: 24,
+            spreadRadius: -6,
+          ),
         ],
       ),
-      child: Padding(
-        padding: padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, size: 18, color: accent),
-                  const SizedBox(width: 8),
-                ],
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(color: profileColors.text, fontSize: 15, fontWeight: FontWeight.w700),
+      // Transparent Material between the decoration and the content: a
+      // ListTile (or any InkWell) paints its splash on the nearest Material
+      // ancestor, and without one here the decoration above swallowed every
+      // tap ripple in the Achievements, Social Links and Visibility sections
+      // — Flutter says so out loud in debug, and the sections simply felt
+      // dead in release.
+      child: Material(
+        type: MaterialType.transparency,
+        child: Padding(
+          padding: padding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, size: 18, color: accent),
+                    const SizedBox(width: 8),
+                  ],
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: profileColors.text,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            child,
-          ],
+                ],
+              ),
+              const SizedBox(height: 14),
+              child,
+            ],
+          ),
         ),
       ),
     );

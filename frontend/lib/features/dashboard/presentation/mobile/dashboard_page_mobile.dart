@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
+import '../../../../core/widgets/mobile/app_scaffold_mobile.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
@@ -13,6 +14,7 @@ import '../../../club/application/club_profile_controller.dart';
 import '../../../club/domain/entities/club_profile.dart';
 import '../../../club_players/application/club_players_controller.dart';
 import '../../../club_players/domain/entities/club_dashboard_summary.dart';
+import '../../../home_feed/application/home_feed_controller.dart';
 import '../../../home_feed/domain/entities/feed_item.dart';
 import '../../../home_feed/presentation/mobile/home_feed_page_mobile.dart';
 import '../../../home_feed/presentation/shared/create_post_sheet.dart';
@@ -82,7 +84,8 @@ class _ClubDashboardMobile extends ConsumerStatefulWidget {
   const _ClubDashboardMobile();
 
   @override
-  ConsumerState<_ClubDashboardMobile> createState() => _ClubDashboardMobileState();
+  ConsumerState<_ClubDashboardMobile> createState() =>
+      _ClubDashboardMobileState();
 }
 
 class _ClubDashboardMobileState extends ConsumerState<_ClubDashboardMobile> {
@@ -94,87 +97,94 @@ class _ClubDashboardMobileState extends ConsumerState<_ClubDashboardMobile> {
     final summaryAsync = ref.watch(clubDashboardSummaryProvider);
     final profileAsync = ref.watch(clubProfileControllerProvider);
 
-    return FeedRefreshIndicator(
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
-              _mobileGutter,
-              _mobileGutter,
-              _mobileGutter,
-              0,
-            ),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  profileAsync.when(
-                    data: (profile) => _ClubHomeHeaderMobile(profile: profile),
-                    loading: () => const SkeletonBox(height: 52),
-                    error: (error, _) =>
-                        ErrorState(onRetry: () => ref.invalidate(clubProfileControllerProvider)),
+    return AppScaffoldMobile(
+      onRefresh: () => ref.read(homeFeedControllerProvider.notifier).refresh(),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            _mobileGutter,
+            _mobileGutter,
+            _mobileGutter,
+            0,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                profileAsync.when(
+                  data: (profile) => _ClubHomeHeaderMobile(profile: profile),
+                  loading: () => const SkeletonBox(height: 52),
+                  error: (error, _) => ErrorState(
+                    onRetry: () =>
+                        ref.invalidate(clubProfileControllerProvider),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  summaryAsync.when(
-                    data: (summary) => _StatsGridMobile(summary: summary),
-                    loading: () => const _StatsGridSkeleton(),
-                    error: (error, _) =>
-                        ErrorState(onRetry: () => ref.invalidate(clubDashboardSummaryProvider)),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                summaryAsync.when(
+                  data: (summary) => _StatsGridMobile(summary: summary),
+                  loading: () => const _StatsGridSkeleton(),
+                  error: (error, _) => ErrorState(
+                    onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
                   ),
-                  summaryAsync.maybeWhen(
-                    data: (summary) => summary.averageCompletionPercent == null
-                        ? const SizedBox.shrink()
-                        : Padding(
-                            padding: const EdgeInsets.only(top: AppSpacing.lg),
-                            child: ClubDashboardCompletenessCard(summary: summary),
+                ),
+                summaryAsync.maybeWhen(
+                  data: (summary) => summary.averageCompletionPercent == null
+                      ? const SizedBox.shrink()
+                      : Padding(
+                          padding: const EdgeInsets.only(top: AppSpacing.lg),
+                          child: ClubDashboardCompletenessCard(
+                            summary: summary,
                           ),
-                    orElse: () => const SizedBox.shrink(),
+                        ),
+                  orElse: () => const SizedBox.shrink(),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                summaryAsync.when(
+                  data: (summary) =>
+                      ClubDashboardRecentPlayersSection(summary: summary),
+                  loading: () => const SkeletonBox(height: 220),
+                  error: (error, _) => ErrorState(
+                    onRetry: () => ref.invalidate(clubDashboardSummaryProvider),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  summaryAsync.when(
-                    data: (summary) => ClubDashboardRecentPlayersSection(summary: summary),
-                    loading: () => const SkeletonBox(height: 220),
-                    error: (error, _) =>
-                        ErrorState(onRetry: () => ref.invalidate(clubDashboardSummaryProvider)),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text(
+                  l10n.dashboardLatestNewsTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                ClubComposerCard(
+                  logoUrl: profileAsync.maybeWhen(
+                    data: (profile) => profile.logoUrl,
+                    orElse: () => null,
                   ),
-                  const SizedBox(height: AppSpacing.xl),
-                  Text(
-                    l10n.dashboardLatestNewsTitle,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ClubComposerCard(
-                    logoUrl: profileAsync.maybeWhen(
-                      data: (profile) => profile.logoUrl,
-                      orElse: () => null,
-                    ),
-                    onTap: () => CreatePostSheet.show(context, role: UserRole.club),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ClubFeedTabs(
-                    value: _filter,
-                    onChanged: (kind) => setState(() => _filter = kind),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                ],
-              ),
+                  onTap: () =>
+                      CreatePostSheet.show(context, role: UserRole.club),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                ClubFeedTabs(
+                  value: _filter,
+                  onChanged: (kind) => setState(() => _filter = kind),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ],
             ),
           ),
-          // Part of the page's own scroll — the cards sit in the same
-          // gutter as everything above them.
-          HomeFeedSliver(
-            kindFilter: _filter,
-            onCreatePost: () => CreatePostSheet.show(context, role: UserRole.club),
-            padding: const EdgeInsets.fromLTRB(
-              _mobileGutter,
-              0,
-              _mobileGutter,
-              _mobileGutter,
-            ),
+        ),
+        // Part of the page's own scroll — the cards sit in the same
+        // gutter as everything above them.
+        HomeFeedSliver(
+          kindFilter: _filter,
+          onCreatePost: () =>
+              CreatePostSheet.show(context, role: UserRole.club),
+          padding: const EdgeInsets.fromLTRB(
+            _mobileGutter,
+            0,
+            _mobileGutter,
+            _mobileGutter,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -192,7 +202,9 @@ class _ClubHomeHeaderMobile extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
-        Expanded(child: ClubDashboardIdentityHeader(profile: profile, logoSize: 52)),
+        Expanded(
+          child: ClubDashboardIdentityHeader(profile: profile, logoSize: 52),
+        ),
         IconButton(
           tooltip: l10n.clubHomeViewPublicProfileLabel,
           onPressed: () => context.push('/clubs/${profile.id}'),
@@ -219,8 +231,9 @@ class _StatsGridMobile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final total = summary.totalPlayers;
-    String? percentLabel(int value) =>
-        total > 0 ? l10n.clubDashboardPercentOfRosterLabel((value / total * 100).round()) : null;
+    String? percentLabel(int value) => total > 0
+        ? l10n.clubDashboardPercentOfRosterLabel((value / total * 100).round())
+        : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

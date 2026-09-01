@@ -90,6 +90,7 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
         const SizedBox(height: 12),
         sports.when(
           data: (options) => DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: _sport,
             decoration: InputDecoration(labelText: l10n.sportLabel),
             items: [
@@ -109,6 +110,7 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
         const SizedBox(height: 12),
         countries.when(
           data: (options) => DropdownButtonFormField<String>(
+            isExpanded: true,
             initialValue: _country,
             decoration: InputDecoration(labelText: l10n.countryLabel),
             items: [
@@ -168,6 +170,7 @@ class _PlayerSearchFiltersFormState extends ConsumerState<PlayerSearchFiltersFor
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<PreferredFoot>(
+          isExpanded: true,
           initialValue: _preferredFoot,
           decoration: InputDecoration(labelText: l10n.preferredFootLabel),
           items: [

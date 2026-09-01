@@ -52,7 +52,10 @@ class _VideoUploadSheetState extends ConsumerState<VideoUploadSheet> {
   }
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.pickFiles(withData: true, type: FileType.video);
+    final result = await FilePicker.pickFiles(
+      withData: true,
+      type: FileType.video,
+    );
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null) return;
     if (file.bytes!.length > _kMaxVideoBytes) {
@@ -75,7 +78,11 @@ class _VideoUploadSheetState extends ConsumerState<VideoUploadSheet> {
     final file = _file;
     final category = _category;
     if (file == null || file.bytes == null || category == null) {
-      setState(() => _error = AppLocalizations.of(context)!.videoUploadMissingFieldsError);
+      setState(
+        () => _error = AppLocalizations.of(
+          context,
+        )!.videoUploadMissingFieldsError,
+      );
       return;
     }
     setState(() {
@@ -126,7 +133,9 @@ class _VideoUploadSheetState extends ConsumerState<VideoUploadSheet> {
           OutlinedButton.icon(
             onPressed: _uploading ? null : _pickFile,
             icon: const Icon(Icons.video_file_outlined),
-            label: Text(_file == null ? l10n.videoChooseFileLabel : _file!.name),
+            label: Text(
+              _file == null ? l10n.videoChooseFileLabel : _file!.name,
+            ),
           ),
           const SizedBox(height: 16),
           TextField(
@@ -137,12 +146,17 @@ class _VideoUploadSheetState extends ConsumerState<VideoUploadSheet> {
           ),
           categoriesAsync.when(
             data: (categories) => DropdownButtonFormField<String>(
+              isExpanded: true,
               initialValue: _category,
               decoration: InputDecoration(labelText: l10n.videoCategoryLabel),
               items: categories
-                  .map((c) => DropdownMenuItem(value: c.name, child: Text(c.name)))
+                  .map(
+                    (c) => DropdownMenuItem(value: c.name, child: Text(c.name)),
+                  )
                   .toList(),
-              onChanged: _uploading ? null : (value) => setState(() => _category = value),
+              onChanged: _uploading
+                  ? null
+                  : (value) => setState(() => _category = value),
             ),
             loading: () => const LinearProgressIndicator(),
             error: (_, _) => Text(
@@ -180,7 +194,10 @@ class _VideoUploadSheetState extends ConsumerState<VideoUploadSheet> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.white,
+                    ),
                   )
                 : Text(l10n.videoUploadButtonLabel),
           ),

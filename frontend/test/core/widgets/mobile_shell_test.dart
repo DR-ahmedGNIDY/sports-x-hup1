@@ -19,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sport_x_hub/core/locale/locale_storage.dart';
 import 'package:sport_x_hub/core/locale/locale_storage_provider.dart';
+import 'package:sport_x_hub/core/navigation/app_branches.dart';
 import 'package:sport_x_hub/core/router/app_router.dart';
 import 'package:sport_x_hub/core/theme/app_theme.dart';
 import 'package:sport_x_hub/features/auth/application/session_controller.dart';
@@ -142,6 +143,53 @@ void main() {
       find.descendant(of: find.byType(AppBar), matching: find.byType(Image)),
       findsOneWidget,
     );
+  });
+
+  testWidgets('a migrated screen gets exactly one app bar', (tester) async {
+    // The failure mode `ownsChrome` invites: a screen that draws its own bar
+    // while the shell also draws one, or a flag flipped ahead of the
+    // migration leaving a screen with none. Both are silent, so every route
+    // that claims to own its chrome is checked for exactly one bar.
+    for (final path in [
+      '/dashboard',
+      '/club/players',
+      '/club/players/new',
+      '/club/preview',
+      '/club/edit',
+      '/player/preview',
+      '/player/skills',
+      '/search',
+      '/saved-players',
+      '/settings',
+    ]) {
+      expect(routeMetaFor(path)!.ownsChrome, isTrue, reason: path);
+
+      await _pumpShell(tester, at: path);
+      // The Player Profile staggers its sections in with delayed timers
+      // (FadeSlideIn); leaving them pending at teardown fails the test on a
+      // timer rather than on anything it is checking.
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(
+        find.byType(SliverAppBar),
+        findsOneWidget,
+        reason: '$path should draw its own bar',
+      );
+      expect(
+        find.byType(AppBar),
+        findsOneWidget,
+        reason: '$path should not also get the shell bar',
+      );
+    }
+  });
+
+  testWidgets('an unmigrated screen still gets the shell bar', (tester) async {
+    // Community is the last screen still on the shell's fixed bar.
+    await _pumpShell(tester, at: '/community');
+
+    expect(routeMetaFor('/community')!.ownsChrome, isFalse);
+    expect(find.byType(SliverAppBar), findsNothing);
+    expect(find.byType(AppBar), findsOneWidget);
   });
 
   testWidgets('a detail screen offers a back button to its parent', (

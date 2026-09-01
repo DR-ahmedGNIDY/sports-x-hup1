@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/widgets/mobile/app_scaffold_mobile.dart';
 import '../shared/my_traits_page_body.dart';
 
 class MyTraitsPageMobile extends StatelessWidget {
@@ -9,12 +10,14 @@ class MyTraitsPageMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: context.profileColors.bg,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: const MyTraitsPageBody(),
-      ),
+    return AppScaffoldMobile(
+      background: context.profileColors.bg,
+      slivers: const [
+        SliverPadding(
+          padding: EdgeInsets.all(AppSpacing.lg),
+          sliver: SliverToBoxAdapter(child: MyTraitsPageBody()),
+        ),
+      ],
     );
   }
 }

@@ -5,6 +5,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../navigation/app_branches.dart';
 import '../../theme/app_blur.dart';
 import '../../theme/app_spacing.dart';
+import '../app_logo.dart';
 
 /// The page scaffold for a migrated mobile screen: a collapsing app bar the
 /// content scrolls *under*, rather than the fixed opaque bar the shell hands
@@ -30,7 +31,14 @@ class AppScaffoldMobile extends StatelessWidget {
     required this.slivers,
     this.actions,
     this.onRefresh,
+    this.background,
   });
+
+  /// Overrides the page's background, and with it the tint of the blurred
+  /// bar. The Player Profile family runs on its own darker palette
+  /// (`ProfileColors`), and a bar tinted with the app-wide surface over that
+  /// background reads as a seam rather than as the same sheet.
+  final Color? background;
 
   /// The page's content. Plain (non-sliver) content goes in a
   /// `SliverToBoxAdapter`; a list should stay a real sliver so it builds
@@ -72,7 +80,7 @@ class AppScaffoldMobile extends StatelessWidget {
       slivers: [
         SliverAppBar(
           pinned: true,
-          expandedHeight: isDetail ? null : _expandedHeight,
+          expandedHeight: (isDetail || title == null) ? null : _expandedHeight,
           // Transparent so the blur behind it is what you see. Both tints
           // must go: Material 3 otherwise paints a scroll-dependent overlay
           // on top of the blur.
@@ -90,8 +98,14 @@ class AppScaffoldMobile extends StatelessWidget {
                 )
               : null,
           actions: actions,
-          title: isDetail && title != null ? Text(title) : null,
+          // Home has no title — it wears the wordmark instead, the way a
+          // phone app does on its first tab. There is nothing to collapse,
+          // so the bar stays a plain pinned one.
+          title: title == null
+              ? const AppLogo(height: 28)
+              : (isDetail ? Text(title) : null),
           flexibleSpace: _BlurredBarBackground(
+            color: background,
             child: isDetail || title == null
                 ? null
                 : FlexibleSpaceBar(
@@ -123,8 +137,12 @@ class AppScaffoldMobile extends StatelessWidget {
       ],
     );
 
-    if (onRefresh == null) return content;
-    return RefreshIndicator(onRefresh: onRefresh!, child: content);
+    final painted = background == null
+        ? content
+        : ColoredBox(color: background!, child: content);
+
+    if (onRefresh == null) return painted;
+    return RefreshIndicator(onRefresh: onRefresh!, child: painted);
   }
 }
 
@@ -132,14 +150,15 @@ class AppScaffoldMobile extends StatelessWidget {
 /// collapsing title, when there is one — paints *above* the blur rather than
 /// being blurred along with the content underneath.
 class _BlurredBarBackground extends StatelessWidget {
-  const _BlurredBarBackground({this.child});
+  const _BlurredBarBackground({this.child, this.color});
 
   final Widget? child;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return BlurredSurface(
-      color: Theme.of(context).colorScheme.surface,
+      color: color ?? Theme.of(context).colorScheme.surface,
       child: child ?? const SizedBox.expand(),
     );
   }

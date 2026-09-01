@@ -140,29 +140,51 @@ class AppRouteMeta {
 /// Static metadata for every authenticated route. Routes carrying a path
 /// parameter are matched by [routeMetaFor] rather than by exact key.
 final Map<String, AppRouteMeta> _routeMeta = {
-  '/dashboard': const AppRouteMeta(title: null),
-  '/player/preview': AppRouteMeta(title: (l10n) => l10n.dashboardMyProfile),
+  '/dashboard': const AppRouteMeta(title: null, ownsChrome: true),
+  '/player/preview': AppRouteMeta(
+    title: (l10n) => l10n.dashboardMyProfile,
+    ownsChrome: true,
+  ),
   '/player/edit': AppRouteMeta(
     title: (l10n) => l10n.dashboardEditProfile,
     parentPath: AppBranch.playerProfile.rootPath,
+    ownsChrome: true,
   ),
-  '/player/skills': AppRouteMeta(title: (l10n) => l10n.skillsSectionTitle),
+  '/player/skills': AppRouteMeta(
+    title: (l10n) => l10n.skillsSectionTitle,
+    ownsChrome: true,
+  ),
   '/player/traits': AppRouteMeta(
     title: (l10n) => l10n.traitsTitle,
     parentPath: AppBranch.playerSkills.rootPath,
+    ownsChrome: true,
   ),
-  '/club/preview': AppRouteMeta(title: (l10n) => l10n.dashboardMyClub),
+  '/club/preview': AppRouteMeta(
+    title: (l10n) => l10n.dashboardMyClub,
+    ownsChrome: true,
+  ),
   '/club/edit': AppRouteMeta(
     title: (l10n) => l10n.dashboardEditClubProfile,
     parentPath: AppBranch.clubProfile.rootPath,
+    ownsChrome: true,
   ),
-  '/club/players': AppRouteMeta(title: (l10n) => l10n.clubPlayersTitle),
+  '/club/players': AppRouteMeta(
+    title: (l10n) => l10n.clubPlayersTitle,
+    ownsChrome: true,
+  ),
   '/club/players/new': AppRouteMeta(
     title: (l10n) => l10n.clubPlayersAddPlayerLabel,
     parentPath: AppBranch.clubPlayers.rootPath,
+    ownsChrome: true,
   ),
-  '/search': AppRouteMeta(title: (l10n) => l10n.dashboardSearchPlayers),
-  '/saved-players': AppRouteMeta(title: (l10n) => l10n.dashboardSavedPlayers),
+  '/search': AppRouteMeta(
+    title: (l10n) => l10n.dashboardSearchPlayers,
+    ownsChrome: true,
+  ),
+  '/saved-players': AppRouteMeta(
+    title: (l10n) => l10n.dashboardSavedPlayers,
+    ownsChrome: true,
+  ),
   '/community': AppRouteMeta(title: (l10n) => l10n.communityNavLabel),
   '/admin/users': AppRouteMeta(title: (l10n) => l10n.dashboardAdminUsers),
   '/admin/players-clubs': AppRouteMeta(
@@ -192,6 +214,7 @@ AppRouteMeta? routeMetaFor(String path) {
     return AppRouteMeta(
       title: (l10n) => l10n.clubPlayerEditTitle,
       parentPath: AppBranch.clubPlayers.rootPath,
+      ownsChrome: true,
     );
   }
   return null;

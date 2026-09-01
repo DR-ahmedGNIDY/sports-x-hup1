@@ -239,18 +239,24 @@ void main() {
   });
 
   group('route metadata', () {
-    test('a screen that owns its chrome still declares a title', () {
+    test('a screen that owns its chrome declares a title, unless it is Home', () {
       // ownsChrome means the shell stands down and AppScaffoldMobile draws
-      // the bar — from this same metadata. No title here is a blank bar.
+      // the bar from this same metadata, so no title would be a blank bar —
+      // with exactly one exception. Home's title is deliberately null because
+      // it wears the wordmark instead; AppScaffoldMobile special-cases that
+      // and skips the large-title treatment for it. Any *other* untitled
+      // screen owning its chrome is the bug this guards.
       for (final branch in AppBranch.values) {
         final meta = routeMetaFor(branch.rootPath)!;
-        if (!meta.ownsChrome) continue;
+        if (!meta.ownsChrome || branch == AppBranch.home) continue;
         expect(
           meta.title,
           isNotNull,
           reason: '${branch.rootPath} owns its chrome but has no title',
         );
       }
+
+      expect(routeMetaFor(AppBranch.home.rootPath)!.title, isNull);
     });
   });
 }

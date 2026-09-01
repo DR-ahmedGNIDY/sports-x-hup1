@@ -55,14 +55,19 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
   }
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.pickFiles(withData: true, type: FileType.image);
+    final result = await FilePicker.pickFiles(
+      withData: true,
+      type: FileType.image,
+    );
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null) return;
     if (file.bytes!.length > _kMaxImageBytes) {
       if (!mounted) return;
       setState(() {
         _file = null;
-        _error = AppLocalizations.of(context)!.homeFeedPostTooLargeError(_kMaxImageBytes ~/ (1024 * 1024));
+        _error = AppLocalizations.of(
+          context,
+        )!.homeFeedPostTooLargeError(_kMaxImageBytes ~/ (1024 * 1024));
       });
       return;
     }
@@ -88,7 +93,9 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
       _error = null;
     });
     try {
-      final caption = _captionController.text.trim().isEmpty ? null : _captionController.text.trim();
+      final caption = _captionController.text.trim().isEmpty
+          ? null
+          : _captionController.text.trim();
       // A Player publishes straight into their own already-loaded Home
       // feed (see HomeFeedController.publish — it prepends locally rather
       // than refetching); a Club has no Home feed controller mounted
@@ -96,7 +103,12 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
       if (_isClub) {
         await ref
             .read(feedRepositoryProvider)
-            .createPost(bytes: file.bytes!, filename: file.name, caption: caption, sport: _sport);
+            .createPost(
+              bytes: file.bytes!,
+              filename: file.name,
+              caption: caption,
+              sport: _sport,
+            );
       } else {
         await ref
             .read(homeFeedControllerProvider.notifier)
@@ -104,7 +116,9 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
       }
       if (!mounted) return;
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.homeFeedPostSuccessMessage)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.homeFeedPostSuccessMessage)));
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -136,7 +150,9 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
           OutlinedButton.icon(
             onPressed: _posting ? null : _pickFile,
             icon: const Icon(Icons.image_outlined),
-            label: Text(_file == null ? l10n.homeFeedChooseImageLabel : _file!.name),
+            label: Text(
+              _file == null ? l10n.homeFeedChooseImageLabel : _file!.name,
+            ),
           ),
           const SizedBox(height: 16),
           TextField(
@@ -150,12 +166,18 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
           if (_isClub)
             sportsAsync.when(
               data: (options) => DropdownButtonFormField<String>(
+                isExpanded: true,
                 initialValue: _sport,
                 decoration: InputDecoration(labelText: l10n.homeFeedSportLabel),
                 items: options
-                    .map((o) => DropdownMenuItem(value: o.name, child: Text(o.name)))
+                    .map(
+                      (o) =>
+                          DropdownMenuItem(value: o.name, child: Text(o.name)),
+                    )
                     .toList(),
-                onChanged: _posting ? null : (value) => setState(() => _sport = value),
+                onChanged: _posting
+                    ? null
+                    : (value) => setState(() => _sport = value),
               ),
               loading: () => const LinearProgressIndicator(),
               error: (_, _) => const SizedBox.shrink(),
@@ -171,7 +193,10 @@ class _CreatePostSheetState extends ConsumerState<CreatePostSheet> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.white,
+                    ),
                   )
                 : Text(l10n.homeFeedPostButtonLabel),
           ),
