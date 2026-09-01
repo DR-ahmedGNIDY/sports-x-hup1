@@ -6,6 +6,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/utils/app_image.dart';
+import '../../../../core/widgets/mobile/app_empty_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../club/domain/entities/club_profile.dart';
 import '../../../club/presentation/shared/club_level_labels.dart';
@@ -41,49 +42,73 @@ class ClubDashboardStatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final tint = color ?? colorScheme.primary;
+
     return Card(
       margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 22,
-              backgroundColor: tint.withValues(alpha: 0.12),
-              child: Icon(icon, color: tint, size: 22),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$value',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
-                  ),
-                  Text(
-                    label,
-                    style: Theme.of(context).textTheme.bodySmall,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle!,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Two of these per row on a 320px phone leaves each card 144px. The
+          // side-by-side layout spends 76 of that on the avatar, the gap and
+          // the padding, leaving the label under 60px — which is why
+          // "Incomplete profiles" arrived on a real device as "Incomplete…".
+          // Below the threshold the icon moves above the text instead, and
+          // the label gets the card's whole width.
+          final stacked = constraints.maxWidth < 200;
+          final padding = stacked ? 12.0 : 16.0;
+          final avatarRadius = stacked ? 18.0 : 22.0;
+
+          final avatar = CircleAvatar(
+            radius: avatarRadius,
+            backgroundColor: tint.withValues(alpha: 0.12),
+            child: Icon(icon, color: tint, size: avatarRadius),
+          );
+
+          final text = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$value',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
               ),
-            ),
-          ],
-        ),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 2),
+                Text(
+                  subtitle!,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ],
+          );
+
+          return Padding(
+            padding: EdgeInsets.all(padding),
+            child: stacked
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [avatar, const SizedBox(height: 8), text],
+                  )
+                : Row(
+                    children: [
+                      avatar,
+                      const SizedBox(width: 12),
+                      Expanded(child: text),
+                    ],
+                  ),
+          );
+        },
       ),
     );
   }
@@ -94,7 +119,11 @@ class ClubDashboardStatTile extends StatelessWidget {
 /// [ClubProfile] fields are shown; nothing is invented for clubs with a
 /// sparse profile.
 class ClubDashboardIdentityHeader extends StatelessWidget {
-  const ClubDashboardIdentityHeader({super.key, required this.profile, this.logoSize = 64});
+  const ClubDashboardIdentityHeader({
+    super.key,
+    required this.profile,
+    this.logoSize = 64,
+  });
 
   final ClubProfile profile;
   final double logoSize;
@@ -110,7 +139,8 @@ class ClubDashboardIdentityHeader extends StatelessWidget {
     ].where((v) => v != null && v.isNotEmpty).join(', ');
     final metaParts = [
       if (location.isNotEmpty) location,
-      if (profile.foundedYear != null) l10n.clubDashboardFoundedLabel(profile.foundedYear!),
+      if (profile.foundedYear != null)
+        l10n.clubDashboardFoundedLabel(profile.foundedYear!),
       ?clubLevelDisplayValue(l10n, profile.level),
     ];
 
@@ -124,11 +154,22 @@ class ClubDashboardIdentityHeader extends StatelessWidget {
             color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(AppRadius.sm),
             image: profile.logoUrl != null
-                ? DecorationImage(image: appImageProvider(profile.logoUrl!, context: context, decodeWidth: AppImageSize.avatarLarge), fit: BoxFit.cover)
+                ? DecorationImage(
+                    image: appImageProvider(
+                      profile.logoUrl!,
+                      context: context,
+                      decodeWidth: AppImageSize.avatarLarge,
+                    ),
+                    fit: BoxFit.cover,
+                  )
                 : null,
           ),
           child: profile.logoUrl == null
-              ? Icon(Icons.shield_outlined, color: colorScheme.onSurfaceVariant, size: logoSize * 0.4)
+              ? Icon(
+                  Icons.shield_outlined,
+                  color: colorScheme.onSurfaceVariant,
+                  size: logoSize * 0.4,
+                )
               : null,
         ),
         const SizedBox(width: 16),
@@ -138,7 +179,9 @@ class ClubDashboardIdentityHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                profile.name?.isNotEmpty == true ? profile.name! : l10n.unnamedClub,
+                profile.name?.isNotEmpty == true
+                    ? profile.name!
+                    : l10n.unnamedClub,
                 style: textTheme.headlineSmall,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -146,7 +189,9 @@ class ClubDashboardIdentityHeader extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   metaParts.join(' · '),
-                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -168,7 +213,8 @@ class ClubDashboardSavedPlayersTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final savedCount = ref.watch(savedPlayersControllerProvider).value?.length ?? 0;
+    final savedCount =
+        ref.watch(savedPlayersControllerProvider).value?.length ?? 0;
     return ClubDashboardStatTile(
       icon: Icons.bookmark_outline,
       label: l10n.dashboardSavedPlayers,
@@ -194,7 +240,9 @@ class ClubDashboardCompletenessCard extends StatelessWidget {
 
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-    final progressColor = percent >= 100 ? AppColors.success : colorScheme.primary;
+    final progressColor = percent >= 100
+        ? AppColors.success
+        : colorScheme.primary;
     final missingLabels = summary.topMissingFields
         .map((field) => missingFieldLabel(l10n, field))
         .join(', ');
@@ -206,7 +254,10 @@ class ClubDashboardCompletenessCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.clubDashboardCompletenessTitle, style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              l10n.clubDashboardCompletenessTitle,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -224,7 +275,9 @@ class ClubDashboardCompletenessCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   '$percent%',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: progressColor),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: progressColor),
                 ),
               ],
             ),
@@ -255,7 +308,9 @@ class ClubDashboardRecentPlayerTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final profile = player.profile;
-    final fullName = profile.fullName.isEmpty ? profile.contact.phone ?? '' : profile.fullName;
+    final fullName = profile.fullName.isEmpty
+        ? profile.contact.phone ?? ''
+        : profile.fullName;
     final subtitle = [
       profile.sport,
       profile.position,
@@ -268,17 +323,25 @@ class ClubDashboardRecentPlayerTile extends StatelessWidget {
         radius: 20,
         backgroundColor: colorScheme.surfaceContainerHighest,
         backgroundImage: profile.profilePhoto != null
-            ? appImageProvider(profile.profilePhoto!.secureUrl, context: context, decodeWidth: AppImageSize.avatarSmall)
+            ? appImageProvider(
+                profile.profilePhoto!.secureUrl,
+                context: context,
+                decodeWidth: AppImageSize.avatarSmall,
+              )
             : null,
         child: profile.profilePhoto == null
             ? Icon(Icons.person, color: colorScheme.onSurfaceVariant)
             : null,
       ),
       title: Text(fullName, overflow: TextOverflow.ellipsis),
-      subtitle: subtitle.isNotEmpty ? Text(subtitle, overflow: TextOverflow.ellipsis) : null,
+      subtitle: subtitle.isNotEmpty
+          ? Text(subtitle, overflow: TextOverflow.ellipsis)
+          : null,
       trailing: addedAt != null
           ? Text(
-              l10n.clubDashboardAddedOnLabel(DateFormat.MMMd().format(addedAt.toLocal())),
+              l10n.clubDashboardAddedOnLabel(
+                DateFormat.MMMd().format(addedAt.toLocal()),
+              ),
               style: Theme.of(context).textTheme.bodySmall,
             )
           : null,
@@ -308,7 +371,12 @@ class ClubDashboardRecentPlayersSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(l10n.clubDashboardRecentPlayersTitle, style: Theme.of(context).textTheme.titleMedium),
+            Flexible(
+              child: Text(
+                l10n.clubDashboardRecentPlayersTitle,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
             if (summary.totalPlayers > 0)
               TextButton(
                 onPressed: () => context.go('/club/players'),
@@ -317,12 +385,10 @@ class ClubDashboardRecentPlayersSection extends StatelessWidget {
           ],
         ),
         if (summary.recentPlayers.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Text(
-              l10n.clubDashboardEmptyStateHint,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+          AppEmptyState(
+            message: l10n.clubDashboardEmptyStateHint,
+            actionLabel: l10n.clubPlayersAddPlayerLabel,
+            onAction: () => context.go('/club/players/new'),
           )
         else
           Card(
@@ -385,7 +451,9 @@ class ClubQuickActionCard extends StatelessWidget {
 
     return Card(
       margin: EdgeInsets.zero,
-      color: isPrimary ? colorScheme.primaryContainer : (isTertiary ? colorScheme.surface : null),
+      color: isPrimary
+          ? colorScheme.primaryContainer
+          : (isTertiary ? colorScheme.surface : null),
       elevation: isPrimary ? 0 : null,
       shape: isTertiary
           ? RoundedRectangleBorder(
@@ -403,7 +471,9 @@ class ClubQuickActionCard extends StatelessWidget {
             children: [
               Icon(
                 action.icon,
-                color: isPrimary ? colorScheme.onPrimaryContainer : colorScheme.primary,
+                color: isPrimary
+                    ? colorScheme.onPrimaryContainer
+                    : colorScheme.primary,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -414,14 +484,18 @@ class ClubQuickActionCard extends StatelessWidget {
                     Text(
                       action.label,
                       style: textTheme.titleSmall?.copyWith(
-                        color: isPrimary ? colorScheme.onPrimaryContainer : null,
+                        color: isPrimary
+                            ? colorScheme.onPrimaryContainer
+                            : null,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       action.description,
                       style: textTheme.bodySmall?.copyWith(
-                        color: isPrimary ? colorScheme.onPrimaryContainer : colorScheme.onSurfaceVariant,
+                        color: isPrimary
+                            ? colorScheme.onPrimaryContainer
+                            : colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
