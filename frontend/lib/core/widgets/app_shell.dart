@@ -13,6 +13,7 @@ import '../theme/app_blur.dart';
 import '../theme/app_motion.dart';
 import '../theme/app_spacing.dart';
 import '../theme/theme_mode_provider.dart';
+import '../utils/app_haptics.dart';
 import '../utils/breakpoints.dart';
 import 'app_logo.dart';
 import 'mobile/app_scaffold_mobile.dart';
@@ -56,6 +57,11 @@ void _selectBranch(
   int index, {
   ScrollController? scrollController,
 }) {
+  // The lightest feedback in the vocabulary: switching tabs is the most
+  // frequent gesture in the app, and anything stronger turns routine
+  // navigation into a series of thuds.
+  AppHaptics.selection();
+
   final isReselect = index == navigationShell.currentIndex;
   navigationShell.goBranch(index, initialLocation: isReselect);
 
@@ -571,6 +577,7 @@ class _TabSlotState extends State<_TabSlot> {
     final color = widget.selected
         ? theme.colorScheme.primary
         : theme.colorScheme.onSurfaceVariant;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return Semantics(
       button: true,
@@ -582,15 +589,20 @@ class _TabSlotState extends State<_TabSlot> {
         onTapDown: (_) => setState(() => _pressed = true),
         onTapUp: (_) => setState(() => _pressed = false),
         onTapCancel: () => setState(() => _pressed = false),
+        // Both animations below collapse to nothing when the platform asks
+        // for reduced motion. The press scale and the icon cross-fade were
+        // added here without that check; the page transitions had it from
+        // the start, and a setting that silences one and not the other is
+        // worse than either answer applied consistently.
         child: AnimatedScale(
           scale: _pressed ? 0.9 : 1,
-          duration: AppMotion.fast,
+          duration: reduceMotion ? Duration.zero : AppMotion.fast,
           curve: AppMotion.enter,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedSwitcher(
-                duration: AppMotion.fast,
+                duration: reduceMotion ? Duration.zero : AppMotion.fast,
                 child: Icon(
                   widget.icon,
                   key: ValueKey((widget.icon, widget.selected)),

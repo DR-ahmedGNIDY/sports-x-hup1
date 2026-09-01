@@ -5,6 +5,7 @@ import '../../../../core/theme/app_motion.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_haptics.dart';
 import '../../domain/entities/video.dart';
 
 /// Icon + count matching this app's existing icon language (outline/filled
@@ -68,6 +69,10 @@ class _VideoLikeButtonState extends State<VideoLikeButton>
 
   Future<void> _handleTap() async {
     if (_busy) return;
+    // Fired on the tap, not on the server's reply: the feedback acknowledges
+    // the press, and a buzz that arrives after a round trip reads as a
+    // second, unrelated event.
+    AppHaptics.light();
     setState(() => _busy = true);
     try {
       await widget.onToggle();

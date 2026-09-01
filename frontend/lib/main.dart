@@ -12,6 +12,7 @@ import 'core/storage/session_storage.dart';
 import 'core/storage/session_storage_provider.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_provider.dart';
+import 'core/utils/app_scroll_behavior.dart';
 import 'core/utils/breakpoints.dart';
 import 'core/utils/safe_area_insets.dart';
 import 'features/auth/application/session_controller.dart';
@@ -77,6 +78,7 @@ class _SportXHubAppState extends ConsumerState<SportXHubApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,
+      scrollBehavior: const AppScrollBehavior(),
       // `applyWebSafeArea` runs outermost so the injected MediaQuery is in
       // scope for the whole app, including anything Directionality wraps.
       // It's a no-op off the web — see its doc comment.

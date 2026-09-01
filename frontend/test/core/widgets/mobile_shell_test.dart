@@ -71,6 +71,7 @@ Future<GoRouterHarness> _pumpShell(
   WidgetTester tester, {
   UserRole role = UserRole.club,
   String at = '/dashboard',
+  bool reduceMotion = false,
 }) async {
   tester.view.physicalSize = _phone;
   tester.view.devicePixelRatio = 1.0;
@@ -104,6 +105,12 @@ Future<GoRouterHarness> _pumpShell(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         routerConfig: router,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(disableAnimations: reduceMotion),
+          child: child!,
+        ),
       ),
     ),
   );
@@ -181,6 +188,43 @@ void main() {
         reason: '$path should not also get the shell bar',
       );
     }
+  });
+
+  testWidgets('the tab bar stops animating under reduced motion', (
+    tester,
+  ) async {
+    // The press scale and the icon cross-fade were added to this bar without
+    // the check the page transitions already had. A setting that silences
+    // one and not the other is worse than either answer applied
+    // consistently, so it is pinned here.
+    await _pumpShell(tester, at: '/dashboard', reduceMotion: true);
+
+    // Scoped to one tab slot rather than the whole tree: Flutter's own
+    // widgets bring animations of their own, and a blanket assertion would
+    // fail on those instead of on the two this app added.
+    final homeTab = find.text(_en.marketingNavHome);
+
+    expect(
+      tester
+          .widget<AnimatedScale>(
+            find.ancestor(of: homeTab, matching: find.byType(AnimatedScale)),
+          )
+          .duration,
+      Duration.zero,
+    );
+    expect(
+      tester
+          .widget<AnimatedSwitcher>(
+            find
+                .ancestor(
+                  of: find.byIcon(Icons.home),
+                  matching: find.byType(AnimatedSwitcher),
+                )
+                .first,
+          )
+          .duration,
+      Duration.zero,
+    );
   });
 
   testWidgets('an unmigrated screen still gets the shell bar', (tester) async {

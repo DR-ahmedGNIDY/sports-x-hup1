@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/app_haptics.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
@@ -33,7 +34,9 @@ class SavePlayerButton extends ConsumerWidget {
     return IconButton(
       tooltip: saved ? l10n.removeSavedTooltip : l10n.savePlayerTooltip,
       icon: Icon(saved ? Icons.bookmark : Icons.bookmark_outline),
-      onPressed: () => toggleSavedPlayer(
+      onPressed: () {
+        AppHaptics.light();
+        toggleSavedPlayer(
         context,
         ref,
         saved: saved,
@@ -50,7 +53,8 @@ class SavePlayerButton extends ConsumerWidget {
           weight: profile.weight,
           profilePhotoUrl: profile.profilePhoto?.secureUrl,
         ),
-      ),
+        );
+      },
     );
   }
 }

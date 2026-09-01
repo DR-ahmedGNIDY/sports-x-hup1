@@ -24,15 +24,25 @@ class SkeletonBox extends StatefulWidget {
 }
 
 class _SkeletonBoxState extends State<SkeletonBox> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: AppMotion.loop,
-  )..repeat(reverse: true);
+  // Built in initState rather than as a `late final` field. Lazily, the
+  // first thing to touch the controller was `build` — and under reduced
+  // motion `build` returns before reaching it, so the *first* access became
+  // `dispose`. Creating a ticker there means creating it against an element
+  // that is already deactivated, which throws "Looking up a deactivated
+  // widget's ancestor is unsafe". A skeleton is on screen during almost
+  // every load, so with the setting on that was every screen.
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
 
-  late final Animation<double> _opacity = Tween<double>(
-    begin: 0.35,
-    end: 0.75,
-  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: AppMotion.loop)
+      ..repeat(reverse: true);
+    _opacity = Tween<double>(begin: 0.35, end: 0.75).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
 
   @override
   void dispose() {
