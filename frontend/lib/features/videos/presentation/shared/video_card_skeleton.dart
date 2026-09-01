@@ -52,6 +52,20 @@ class VideoGridSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      // Both of these matter, and their absence was a real bug: this grid
+      // always renders *inside* another scroll view (the Skills section, on
+      // the Player Profile and the Skills page), so without them it asks for
+      // unbounded height and its own scroll offset resolves to NaN. A release
+      // build logged `Result of truncating division is NaN` twice on every
+      // authenticated route because of it — the loading state is on screen
+      // before any data arrives, and the Skills section is mounted in more
+      // than one branch at once.
+      //
+      // The two real grids this stands in for already set both; the skeleton
+      // that copies their `gridDelegate` has to copy their scroll behaviour
+      // too, or it doesn't stand in for them.
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: gridDelegate,
       itemCount: itemCount,
       itemBuilder: (context, index) => const VideoCardSkeleton(),
