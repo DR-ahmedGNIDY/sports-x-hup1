@@ -8,7 +8,16 @@ describe('ClubsService', () => {
       findById: jest.fn().mockResolvedValue(profile),
       findOneAndUpdate: jest.fn().mockResolvedValue(profile),
       create: jest.fn().mockResolvedValue(profile),
-      find: jest.fn().mockResolvedValue([]),
+      // findAllPublic's chain: find(filter).sort().skip().limit(), with
+      // countDocuments resolved alongside it.
+      find: jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            limit: jest.fn().mockResolvedValue([]),
+          }),
+        }),
+      }),
+      countDocuments: jest.fn().mockResolvedValue(0),
     };
     const cloudinary = { deleteAsset: jest.fn(), uploadBuffer: jest.fn() };
     const publicCodes = {
@@ -92,6 +101,57 @@ describe('ClubsService', () => {
         service.findByPublicCodeOrThrow('../../etc'),
       ).rejects.toThrow(NotFoundException);
       expect(model.findOne).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('findAllPublic search', () => {
+    it('matches the name case-insensitively', async () => {
+      const { service, model } = buildService(null);
+
+      await service.findAllPublic(1, undefined, 'ahly');
+
+      const [filter] = model.find.mock.calls[0];
+      expect(filter.name['$regex']).toBe('ahly');
+      expect(filter.name['$options']).toBe('i');
+    });
+
+    it('escapes regex syntax so a name is text, not a pattern', async () => {
+      const { service, model } = buildService(null);
+
+      // Unescaped, '(' throws at query time and '.*' would match anything.
+      await service.findAllPublic(1, undefined, 'a.*(');
+
+      const [filter] = model.find.mock.calls[0];
+      expect(filter.name['$regex']).toBe(String.raw`a\.\*\(`);
+    });
+
+    it('ignores a blank search rather than matching everything', async () => {
+      const { service, model } = buildService(null);
+
+      await service.findAllPublic(1, undefined, '   ');
+
+      const [filter] = model.find.mock.calls[0];
+      expect(filter.name).toBeUndefined();
+    });
+
+    it('combines with the country filter', async () => {
+      const { service, model } = buildService(null);
+
+      await service.findAllPublic(1, 'Egypt', 'ahly');
+
+      const [filter] = model.find.mock.calls[0];
+      expect(filter.country).toBe('Egypt');
+      expect(filter.name).toBeDefined();
+    });
+
+    it('counts the same filter it pages over', async () => {
+      const { service, model } = buildService(null);
+
+      await service.findAllPublic(2, undefined, 'ahly');
+
+      expect(model.countDocuments.mock.calls[0][0]).toEqual(
+        model.find.mock.calls[0][0],
+      );
     });
   });
 });

@@ -4,7 +4,7 @@ import '../entities/club_profile.dart';
 /// All methods throw [AppException] (core/errors) on failure.
 abstract class ClubRepository {
   /// Public Clubs listing (Phase 5) — no auth required.
-  Future<ClubListPage> listClubs({int page = 1, String? country});
+  Future<ClubListPage> listClubs({int page = 1, String? country, String? search});
 
   /// Public club profile (Phase 5) — no auth required.
   Future<ClubProfile> getById(String id);

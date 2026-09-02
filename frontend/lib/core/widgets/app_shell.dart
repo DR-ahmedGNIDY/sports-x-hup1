@@ -129,11 +129,13 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
     AppBranch.community,
     AppBranch.settings,
   ],
+  // Same call as the bottom tabs: Skills lives inside the Profile page,
+  // so the sidebar offers Search instead.
   UserRole.player => const [
     AppBranch.home,
     AppBranch.community,
     AppBranch.playerProfile,
-    AppBranch.playerSkills,
+    AppBranch.search,
     AppBranch.settings,
   ],
   UserRole.admin => const [

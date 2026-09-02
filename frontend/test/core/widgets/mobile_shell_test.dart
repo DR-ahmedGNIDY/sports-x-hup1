@@ -389,7 +389,11 @@ void main() {
     await _pumpShell(tester, role: UserRole.player, at: '/settings');
 
     expect(find.text(_en.dashboardMyProfile), findsWidgets);
-    expect(find.text(_en.skillsSectionTitle), findsWidgets);
+    // Search replaced Skills in the Player's tabs: Skills is rendered in
+    // full inside the Profile page, so a tab for it was a second door to
+    // one room, while finding other players and clubs had no door at all.
+    expect(find.text(_en.mobileSearchNavLabel), findsWidgets);
+    expect(find.text(_en.skillsSectionTitle), findsNothing);
     expect(find.text(_en.clubPlayersTitle), findsNothing);
   });
 }

@@ -268,10 +268,15 @@ List<AppBranch> tabBranchesFor(UserRole? role) => switch (role) {
     AppBranch.clubPlayers,
     AppBranch.search,
   ],
+  // Skills is not a tab: it is already rendered in full inside the Profile
+  // page (see SkillsSection), so a tab for it was a second door to one
+  // room. Search took the slot — finding other players and clubs is the
+  // thing a player could not do from anywhere at all. `/player/skills`
+  // stays a route, reachable from the profile.
   UserRole.player => const [
     AppBranch.home,
     AppBranch.playerProfile,
-    AppBranch.playerSkills,
+    AppBranch.search,
     AppBranch.community,
   ],
   _ => const [AppBranch.home, AppBranch.community],

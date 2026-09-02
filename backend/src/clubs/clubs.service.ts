@@ -20,6 +20,14 @@ import {
 
 const CLUB_LIST_PAGE_SIZE = 20;
 
+// Everything a user types reaches the query as literal text, never as
+// pattern syntax. Duplicated from PlayersService rather than shared: one
+// four-line function is a smaller thing to have twice than a utils module
+// two features reach into for it.
+function escapeClubRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export interface ClubPaginatedResult {
   items: ClubProfileDocument[];
   page: number;
@@ -109,9 +117,18 @@ export class ClubsService {
   async findAllPublic(
     page = 1,
     country?: string,
+    search?: string,
   ): Promise<ClubPaginatedResult> {
     const filter: Record<string, unknown> = {};
     if (country) filter.country = country;
+    if (search && search.trim()) {
+      // Same unindexed-regex trade-off the player search documents, and the
+      // same escaping: without it a name containing "(" or "a.*" would be
+      // read as a pattern rather than as text, and an unbalanced group
+      // throws at query time. Clubs are a far smaller collection than
+      // players, so the scan costs less here than it does there.
+      filter.name = { $regex: escapeClubRegex(search.trim()), $options: 'i' };
+    }
     const [items, total] = await Promise.all([
       this.clubProfileModel
         .find(filter)

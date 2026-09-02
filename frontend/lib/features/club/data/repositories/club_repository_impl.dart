@@ -20,8 +20,16 @@ class ClubRepositoryImpl implements ClubRepository {
       runAuthorized(_ref, _storage, call);
 
   @override
-  Future<ClubListPage> listClubs({int page = 1, String? country}) async {
-    final json = await _remote.listClubs(page: page, country: country);
+  Future<ClubListPage> listClubs({
+    int page = 1,
+    String? country,
+    String? search,
+  }) async {
+    final json = await _remote.listClubs(
+      page: page,
+      country: country,
+      search: search,
+    );
     final items = (json['items'] as List<dynamic>)
         .map((e) => ClubProfileModel.fromJson(e as Map<String, dynamic>))
         .toList();

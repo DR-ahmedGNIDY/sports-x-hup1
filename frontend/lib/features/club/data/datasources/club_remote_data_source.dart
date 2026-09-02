@@ -39,8 +39,16 @@ class ClubRemoteDataSource {
   }
 
   /// Public Clubs listing (Phase 5) — GET /clubs, no auth required.
-  Future<Map<String, dynamic>> listClubs({int page = 1, String? country}) async {
-    final query = <String, String>{'page': '$page', 'country': ?country};
+  Future<Map<String, dynamic>> listClubs({
+    int page = 1,
+    String? country,
+    String? search,
+  }) async {
+    final query = <String, String>{
+      'page': '$page',
+      'country': ?country,
+      'search': ?search,
+    };
     final queryString = Uri(queryParameters: query).query;
     final response = await _client.get('/clubs?$queryString');
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);

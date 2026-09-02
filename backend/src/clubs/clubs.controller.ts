@@ -38,6 +38,7 @@ export class ClubsController {
     const result = await this.clubsService.findAllPublic(
       query.page ?? 1,
       query.country,
+      query.search,
     );
     return { ...result, items: result.items.map(toClubView) };
   }
