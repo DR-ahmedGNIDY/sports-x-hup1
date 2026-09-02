@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { BrevoApiEmailProvider } from './mail/brevo-api-email.provider';
 import { ConsoleEmailProvider } from './mail/console-email.provider';
 import { EMAIL_PROVIDER } from './mail/email-provider.interface';
 import { MailService } from './mail/mail.service';
@@ -41,15 +42,34 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MailService,
     JwtStrategy,
     SmtpEmailProvider,
+    BrevoApiEmailProvider,
     ConsoleEmailProvider,
     {
       provide: EMAIL_PROVIDER,
-      inject: [ConfigService, SmtpEmailProvider, ConsoleEmailProvider],
+      inject: [
+        ConfigService,
+        SmtpEmailProvider,
+        BrevoApiEmailProvider,
+        ConsoleEmailProvider,
+      ],
       useFactory: (
         config: ConfigService,
         smtp: SmtpEmailProvider,
+        brevo: BrevoApiEmailProvider,
         console: ConsoleEmailProvider,
-      ) => (config.get<string>('MAIL_PROVIDER') === 'smtp' ? smtp : console),
+      ) => {
+        // env.validation.ts already restricts this to 'smtp' | 'brevo' in
+        // production/staging, so `console` is only ever reachable in
+        // development/test — the same guarantee as before 'brevo' existed.
+        switch (config.get<string>('MAIL_PROVIDER')) {
+          case 'smtp':
+            return smtp;
+          case 'brevo':
+            return brevo;
+          default:
+            return console;
+        }
+      },
     },
   ],
 })

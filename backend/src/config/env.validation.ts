@@ -69,12 +69,26 @@ export const envValidationSchema = Joi.object({
     .default('console')
     .when('NODE_ENV', {
       is: Joi.valid('production', 'staging'),
-      then: Joi.string().valid('smtp').required().messages({
+      then: Joi.string().valid('smtp', 'brevo').required().messages({
         'any.only':
-          'MAIL_PROVIDER must be "smtp" in production/staging — "console" never sends a real email.',
+          'MAIL_PROVIDER must be "smtp" or "brevo" in production/staging — "console" never sends a real email.',
       }),
-      otherwise: Joi.string().valid('smtp', 'console'),
+      otherwise: Joi.string().valid('smtp', 'brevo', 'console'),
     }),
+
+  // Brevo's HTTP API key, required only for MAIL_PROVIDER=brevo. That
+  // provider exists because hosts commonly block outbound SMTP ports —
+  // Railway's trial plan blocks 25/465/587/2525 alike, so SMTP there fails
+  // with a TCP connection timeout no credential change can fix. Sending
+  // over HTTPS on 443 sidesteps the block entirely.
+  BREVO_API_KEY: Joi.string()
+    .allow('')
+    .default('')
+    .when('MAIL_PROVIDER', {
+      is: 'brevo',
+      then: Joi.string().min(1).required(),
+    }),
+
   SMTP_HOST: Joi.string()
     .allow('')
     .default('')
@@ -98,20 +112,26 @@ export const envValidationSchema = Joi.object({
       is: 'smtp',
       then: Joi.string().min(1).required(),
     }),
+  // Both real providers send "from" this address — SmtpEmailProvider hands
+  // it to nodemailer, BrevoApiEmailProvider parses it into Brevo's sender
+  // object — so it is required for either, not just smtp.
   SMTP_FROM: Joi.string()
     .allow('')
     .default('')
     .when('MAIL_PROVIDER', {
-      is: 'smtp',
+      is: Joi.valid('smtp', 'brevo'),
       then: Joi.string().min(1).required(),
     }),
 
   // Base URL used to build the password-reset link embedded in the email.
-  // Required whenever an email is actually sent (i.e. MAIL_PROVIDER=smtp);
-  // the console provider only logs a placeholder and doesn't need it.
+  // Required whenever an email is actually sent (smtp or brevo); the
+  // console provider only logs a placeholder and doesn't need it.
   FRONTEND_URL: Joi.string()
     .uri()
     .allow('')
     .default('')
-    .when('MAIL_PROVIDER', { is: 'smtp', then: Joi.string().uri().required() }),
+    .when('MAIL_PROVIDER', {
+      is: Joi.valid('smtp', 'brevo'),
+      then: Joi.string().uri().required(),
+    }),
 });
