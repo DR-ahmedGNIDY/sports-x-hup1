@@ -3175,6 +3175,60 @@ abstract class AppLocalizations {
   /// **'اللاعبون ({count})'**
   String clubMembersTitle(int count);
 
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإشعارات'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد شيء بعد. عندما يراسلك نادٍ أو لاعب سيظهر هنا.'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsUnreadOnlyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير المقروءة فقط'**
+  String get notificationsUnreadOnlyLabel;
+
+  /// No description provided for @notificationsMarkAllReadLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعليم الكل كمقروء'**
+  String get notificationsMarkAllReadLabel;
+
+  /// No description provided for @notificationsUnreadLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, one{إشعار واحد غير مقروء} two{إشعاران غير مقروءين} few{{count} إشعارات غير مقروءة} many{{count} إشعارًا غير مقروء} other{{count} إشعار غير مقروء}}'**
+  String notificationsUnreadLabel(int count);
+
+  /// No description provided for @notificationInvitationFromClub.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} دعاك للانضمام إلى النادي.'**
+  String notificationInvitationFromClub(String name);
+
+  /// No description provided for @notificationJoinRequestFromPlayer.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} طلب الانضمام إلى ناديك.'**
+  String notificationJoinRequestFromPlayer(String name);
+
+  /// No description provided for @notificationInvitationAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} قَبِل دعوتك.'**
+  String notificationInvitationAccepted(String name);
+
+  /// No description provided for @notificationInvitationRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} رفض دعوتك.'**
+  String notificationInvitationRejected(String name);
+
   /// No description provided for @genericErrorMessage.
   ///
   /// In ar, this message translates to:

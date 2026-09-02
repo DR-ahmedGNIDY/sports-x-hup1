@@ -1659,6 +1659,53 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationsEmpty =>
+      'لا يوجد شيء بعد. عندما يراسلك نادٍ أو لاعب سيظهر هنا.';
+
+  @override
+  String get notificationsUnreadOnlyLabel => 'غير المقروءة فقط';
+
+  @override
+  String get notificationsMarkAllReadLabel => 'تعليم الكل كمقروء';
+
+  @override
+  String notificationsUnreadLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إشعار غير مقروء',
+      many: '$count إشعارًا غير مقروء',
+      few: '$count إشعارات غير مقروءة',
+      two: 'إشعاران غير مقروءين',
+      one: 'إشعار واحد غير مقروء',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notificationInvitationFromClub(String name) {
+    return '$name دعاك للانضمام إلى النادي.';
+  }
+
+  @override
+  String notificationJoinRequestFromPlayer(String name) {
+    return '$name طلب الانضمام إلى ناديك.';
+  }
+
+  @override
+  String notificationInvitationAccepted(String name) {
+    return '$name قَبِل دعوتك.';
+  }
+
+  @override
+  String notificationInvitationRejected(String name) {
+    return '$name رفض دعوتك.';
+  }
+
+  @override
   String get genericErrorMessage => 'حدث خطأ ما. الرجاء المحاولة مرة أخرى.';
 
   @override

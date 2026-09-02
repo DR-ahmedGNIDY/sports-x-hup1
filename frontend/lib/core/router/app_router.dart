@@ -21,6 +21,7 @@ import '../../features/community/presentation/community_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/invitations/presentation/club_invitations_page.dart';
 import '../../features/invitations/presentation/player_invitations_page.dart';
+import '../../features/notifications/presentation/notifications_page.dart';
 import '../../features/marketing/presentation/about_page.dart';
 import '../../features/marketing/presentation/contact_page.dart';
 import '../../features/marketing/presentation/home_page.dart';
@@ -333,6 +334,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
           path: '/admin/players-clubs',
           pageBuilder: (context, state) =>
               fadePage(state: state, child: const AdminPlayersClubsPage()),
+        ),
+      ],
+      AppBranch.notifications => [
+        GoRoute(
+          path: '/notifications',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const NotificationsPage()),
         ),
       ],
       AppBranch.settings => [

@@ -81,6 +81,11 @@ enum AppBranch {
     icon: Icons.manage_accounts_outlined,
     selectedIcon: Icons.manage_accounts,
   ),
+  notifications(
+    rootPath: '/notifications',
+    icon: Icons.notifications_none,
+    selectedIcon: Icons.notifications,
+  ),
   settings(
     rootPath: '/settings',
     icon: Icons.settings_outlined,
@@ -116,6 +121,7 @@ enum AppBranch {
     community => l10n.communityNavLabel,
     adminUsers => l10n.dashboardAdminUsers,
     adminPlayersClubs => l10n.dashboardAdminPlayersClubs,
+    notifications => l10n.notificationsTitle,
     settings => l10n.dashboardNavSettings,
   };
 }
@@ -210,6 +216,10 @@ final Map<String, AppRouteMeta> _routeMeta = {
   '/admin/players-clubs': AppRouteMeta(
     title: (l10n) => l10n.dashboardAdminPlayersClubs,
   ),
+  '/notifications': AppRouteMeta(
+    title: (l10n) => l10n.notificationsTitle,
+    ownsChrome: true,
+  ),
   '/settings': AppRouteMeta(
     title: (l10n) => l10n.dashboardAccountSettings,
     ownsChrome: true,
@@ -276,7 +286,12 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // 320px, and Club Players is the destination a club opens daily. It
     // still gets a Dashboard quick action, which is where a club that has
     // just added players actually goes looking for it.
+    // Notifications is first in every list on purpose: it is the only entry
+    // whose contents change without the user doing anything, so it is the
+    // one worth finding without reading. The badge on the slot that opens
+    // this sheet is what points at it.
     UserRole.club => const [
+      AppBranch.notifications,
       AppBranch.clubInvitations,
       AppBranch.savedPlayers,
       AppBranch.community,
@@ -285,10 +300,12 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // Same call as the Club's: Invitations is an account-sheet entry, not a
     // fourth tab displacing Community.
     UserRole.player => const [
+      AppBranch.notifications,
       AppBranch.playerInvitations,
       AppBranch.settings,
     ],
     UserRole.admin => const [
+      AppBranch.notifications,
       AppBranch.adminUsers,
       AppBranch.adminPlayersClubs,
       AppBranch.settings,

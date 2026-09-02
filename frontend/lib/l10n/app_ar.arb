@@ -632,6 +632,41 @@
     }
   },
 
+  "notificationsTitle": "الإشعارات",
+  "notificationsEmpty": "لا يوجد شيء بعد. عندما يراسلك نادٍ أو لاعب سيظهر هنا.",
+  "notificationsUnreadOnlyLabel": "غير المقروءة فقط",
+  "notificationsMarkAllReadLabel": "تعليم الكل كمقروء",
+  "notificationsUnreadLabel": "{count, plural, one{إشعار واحد غير مقروء} two{إشعاران غير مقروءين} few{{count} إشعارات غير مقروءة} many{{count} إشعارًا غير مقروء} other{{count} إشعار غير مقروء}}",
+  "@notificationsUnreadLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "notificationInvitationFromClub": "{name} دعاك للانضمام إلى النادي.",
+  "@notificationInvitationFromClub": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "notificationJoinRequestFromPlayer": "{name} طلب الانضمام إلى ناديك.",
+  "@notificationJoinRequestFromPlayer": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "notificationInvitationAccepted": "{name} قَبِل دعوتك.",
+  "@notificationInvitationAccepted": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "notificationInvitationRejected": "{name} رفض دعوتك.",
+  "@notificationInvitationRejected": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
   "genericErrorMessage": "حدث خطأ ما. الرجاء المحاولة مرة أخرى.",
   "retryButtonLabel": "إعادة المحاولة"
 }

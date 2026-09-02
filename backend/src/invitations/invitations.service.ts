@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -10,6 +11,13 @@ import { Model, Types } from 'mongoose';
 import { ClubManagedPlayer } from '../club-players/schemas/club-managed-player.schema';
 import { ClubsService } from '../clubs/clubs.service';
 import { ClubProfileDocument } from '../clubs/schemas/club-profile.schema';
+import { NotificationsService } from '../notifications/notifications.service';
+import {
+  NotificationActorRole,
+  NotificationEntityType,
+  NotificationParams,
+  NotificationType,
+} from '../notifications/schemas/notification.schema';
 import { PlayersService } from '../players/players.service';
 import { PlayerProfileDocument } from '../players/schemas/player-profile.schema';
 
@@ -56,6 +64,8 @@ export interface InvitationsSummary {
 
 @Injectable()
 export class InvitationsService {
+  private readonly logger = new Logger(InvitationsService.name);
+
   constructor(
     @InjectModel(ClubPlayerInvitation.name)
     private readonly invitationModel: Model<ClubPlayerInvitation>,
@@ -68,7 +78,93 @@ export class InvitationsService {
     private readonly memberships: MembershipsService,
     private readonly playersService: PlayersService,
     private readonly clubsService: ClubsService,
+    private readonly notifications: NotificationsService,
   ) {}
+
+  // ---------------------------------------------------------- notifying
+  //
+  // Every call below happens *after* the transition it announces has already
+  // committed. A notification that failed to record must not turn a
+  // successful accept into an error: the membership is the fact, this is
+  // only the announcement of it.
+  //
+  // `NotificationsService.emit` already swallows its own failures, and this
+  // catches too. That is deliberate rather than redundant: without it, this
+  // service's correctness would depend on a promise made in another class's
+  // doc comment, and the day someone makes emit() throw, invitations break
+  // instead of notifications. A test pins the behaviour from this side.
+  //
+  // Deliberately not an event bus. This codebase has none, and adding one
+  // for a single producer and a single consumer buys indirection rather than
+  // decoupling — a direct call is honest about what actually happens.
+
+  private async safely(announce: () => Promise<unknown>): Promise<void> {
+    try {
+      await announce();
+    } catch {
+      this.logger.error('Failed to announce an invitation event.');
+    }
+  }
+
+  private async notifyRecipientOfNewInvitation(
+    row: HydratedInvitation,
+  ): Promise<void> {
+    const { invitation } = row;
+    // The recipient is told who wrote to them, which is the *other* side:
+    // a club-to-player invitation names the club, and vice versa.
+    const fromClub = invitation.type === InvitationType.CLUB_TO_PLAYER;
+    await this.safely(() =>
+      this.notifications.emit({
+        userId: invitation.recipientUserId,
+        type: NotificationType.INVITATION_RECEIVED,
+        entityType: NotificationEntityType.INVITATION,
+        entityId: invitation._id,
+        params: fromClub ? this.clubActor(row) : this.playerActor(row),
+      }),
+    );
+  }
+
+  private async notifySenderOfResponse(
+    row: HydratedInvitation,
+    type: NotificationType,
+  ): Promise<void> {
+    const { invitation } = row;
+    // The responder is the recipient of the original invitation, so the
+    // actor here is the opposite side from the one above.
+    const respondedByPlayer =
+      invitation.type === InvitationType.CLUB_TO_PLAYER;
+    await this.safely(() =>
+      this.notifications.emit({
+        userId: invitation.senderUserId,
+        type,
+        entityType: NotificationEntityType.INVITATION,
+        entityId: invitation._id,
+        params: respondedByPlayer ? this.playerActor(row) : this.clubActor(row),
+      }),
+    );
+  }
+
+  private clubActor(row: HydratedInvitation): NotificationParams {
+    return {
+      actorRole: NotificationActorRole.CLUB,
+      actorName: row.clubProfile?.name,
+      actorProfileId: row.clubProfile?._id.toString(),
+      actorPublicCode: row.clubProfile?.publicCode,
+    };
+  }
+
+  private playerActor(row: HydratedInvitation): NotificationParams {
+    const profile = row.playerProfile;
+    const name = [profile?.firstName, profile?.lastName]
+      .filter((part) => part && part.length > 0)
+      .join(' ');
+    return {
+      actorRole: NotificationActorRole.PLAYER,
+      actorName: name.length > 0 ? name : undefined,
+      actorProfileId: profile?._id.toString(),
+      actorPublicCode: profile?.publicCode,
+    };
+  }
 
   // ---------------------------------------------------------------- sending
 
@@ -206,7 +302,9 @@ export class InvitationsService {
         message,
         expiresAt: defaultExpiresAt(),
       });
-      return { invitation, clubProfile, playerProfile };
+      const row = { invitation, clubProfile, playerProfile };
+      await this.notifyRecipientOfNewInvitation(row);
+      return row;
     } catch (error) {
       // Rule 4 — the partial unique index on the pending pair fired. Two
       // simultaneous sends (or a send racing the other side's request) land
@@ -404,6 +502,10 @@ export class InvitationsService {
     );
 
     const [hydrated] = await this.hydrate([invitation]);
+    await this.notifySenderOfResponse(
+      hydrated,
+      NotificationType.INVITATION_ACCEPTED,
+    );
     return hydrated;
   }
 
@@ -415,6 +517,10 @@ export class InvitationsService {
       InvitationStatus.REJECTED,
     );
     const [hydrated] = await this.hydrate([invitation]);
+    await this.notifySenderOfResponse(
+      hydrated,
+      NotificationType.INVITATION_REJECTED,
+    );
     return hydrated;
   }
 

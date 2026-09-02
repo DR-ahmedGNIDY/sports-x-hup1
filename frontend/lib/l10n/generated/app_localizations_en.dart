@@ -1677,6 +1677,50 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty =>
+      'Nothing yet. When a club or a player writes to you, it will show up here.';
+
+  @override
+  String get notificationsUnreadOnlyLabel => 'Unread only';
+
+  @override
+  String get notificationsMarkAllReadLabel => 'Mark all read';
+
+  @override
+  String notificationsUnreadLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unread notifications',
+      one: '1 unread notification',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notificationInvitationFromClub(String name) {
+    return '$name invited you to join their club.';
+  }
+
+  @override
+  String notificationJoinRequestFromPlayer(String name) {
+    return '$name asked to join your club.';
+  }
+
+  @override
+  String notificationInvitationAccepted(String name) {
+    return '$name accepted your invitation.';
+  }
+
+  @override
+  String notificationInvitationRejected(String name) {
+    return '$name declined your invitation.';
+  }
+
+  @override
   String get genericErrorMessage => 'Something went wrong. Please try again.';
 
   @override

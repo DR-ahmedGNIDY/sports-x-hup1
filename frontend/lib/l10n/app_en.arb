@@ -632,6 +632,41 @@
     }
   },
 
+  "notificationsTitle": "Notifications",
+  "notificationsEmpty": "Nothing yet. When a club or a player writes to you, it will show up here.",
+  "notificationsUnreadOnlyLabel": "Unread only",
+  "notificationsMarkAllReadLabel": "Mark all read",
+  "notificationsUnreadLabel": "{count, plural, =1{1 unread notification} other{{count} unread notifications}}",
+  "@notificationsUnreadLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "notificationInvitationFromClub": "{name} invited you to join their club.",
+  "@notificationInvitationFromClub": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "notificationJoinRequestFromPlayer": "{name} asked to join your club.",
+  "@notificationJoinRequestFromPlayer": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "notificationInvitationAccepted": "{name} accepted your invitation.",
+  "@notificationInvitationAccepted": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "notificationInvitationRejected": "{name} declined your invitation.",
+  "@notificationInvitationRejected": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
   "genericErrorMessage": "Something went wrong. Please try again.",
   "retryButtonLabel": "Retry"
 }

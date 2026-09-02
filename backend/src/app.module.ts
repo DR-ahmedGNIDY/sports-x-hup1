@@ -15,6 +15,7 @@ import { ClubsModule } from './clubs/clubs.module';
 import { SavedPlayersModule } from './saved-players/saved-players.module';
 import { ClubPlayersModule } from './club-players/club-players.module';
 import { InvitationsModule } from './invitations/invitations.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { AdminModule } from './admin/admin.module';
 import { ContactModule } from './contact/contact.module';
 import { PostsModule } from './posts/posts.module';
@@ -49,6 +50,7 @@ import { PostsModule } from './posts/posts.module';
     SavedPlayersModule,
     ClubPlayersModule,
     InvitationsModule,
+    NotificationsModule,
     AdminModule,
     ContactModule,
     PostsModule,

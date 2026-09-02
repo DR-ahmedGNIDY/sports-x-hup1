@@ -8,6 +8,7 @@ import '../../features/club/application/club_profile_controller.dart';
 import '../../features/player/application/player_profile_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../locale/language_toggle_button.dart';
+import '../../features/notifications/presentation/shared/notification_badge.dart';
 import '../navigation/app_branches.dart';
 import '../theme/app_blur.dart';
 import '../theme/app_motion.dart';
@@ -694,7 +695,13 @@ class _AccountTabSlot extends StatelessWidget {
                   width: 2,
                 ),
               ),
-              child: const _UserIdentity(showName: false, radius: 11),
+              // The unread count rides on the avatar: the account slot is
+              // what opens the sheet that holds Notifications, so this is
+              // the one place a badge is both visible from every screen and
+              // adjacent to what it wants you to open.
+              child: const NotificationBadge(
+                child: _UserIdentity(showName: false, radius: 11),
+              ),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(

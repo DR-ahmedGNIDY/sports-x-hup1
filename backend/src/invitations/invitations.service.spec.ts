@@ -112,12 +112,20 @@ describe('InvitationsService', () => {
       findManyByUserIds: jest.fn().mockResolvedValue([clubProfile]),
     };
 
+    // The real one never throws (see NotificationsService.emit); this mock
+    // resolves for the same reason, so a test that asserts on an accept is
+    // asserting on the accept and not on the announcement of it.
+    const notifications = {
+      emit: jest.fn().mockResolvedValue({ _id: 'notification-1' }),
+    };
+
     const service = new InvitationsService(
       invitationModel as never,
       clubManagedPlayerModel as never,
       memberships as never,
       playersService as never,
       clubsService as never,
+      notifications as never,
     );
     return {
       service,
@@ -126,6 +134,7 @@ describe('InvitationsService', () => {
       memberships,
       playersService,
       clubsService,
+      notifications,
     };
   }
 
@@ -560,6 +569,112 @@ describe('InvitationsService', () => {
       expect(receivedFilter.recipientUserId).toBe(PLAYER_USER);
       expect(receivedFilter.status).toBe(InvitationStatus.PENDING);
       expect(receivedFilter.expiresAt.$gt).toBeInstanceOf(Date);
+    });
+  });
+
+  // Who gets told what. The direction matters: a notification naming the
+  // wrong side, or sent to the wrong account, is a privacy bug rather than a
+  // cosmetic one.
+  describe('notifications', () => {
+    it('tells the player when a club invites them, naming the club', async () => {
+      const { service, notifications } = buildService();
+
+      await service.sendClubToPlayer(CLUB_USER, { playerCode: 'PLY-000001' });
+
+      expect(notifications.emit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: PLAYER_USER,
+          type: 'INVITATION_RECEIVED',
+          entityId: VALID_ID,
+          params: expect.objectContaining({
+            actorRole: 'CLUB',
+            actorName: 'Al Ahly',
+            actorPublicCode: 'CLB-000001',
+          }),
+        }),
+      );
+    });
+
+    it('tells the club when a player asks to join, naming the player', async () => {
+      const { service, notifications } = buildService({
+        createResult: pendingInvitation({
+          type: InvitationType.PLAYER_TO_CLUB,
+          senderUserId: PLAYER_USER,
+          recipientUserId: CLUB_USER,
+        }),
+      });
+
+      await service.sendPlayerToClub(PLAYER_USER, { clubCode: 'CLB-000001' });
+
+      expect(notifications.emit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: CLUB_USER,
+          type: 'INVITATION_RECEIVED',
+          params: expect.objectContaining({
+            actorRole: 'PLAYER',
+            actorName: 'Ahmed',
+          }),
+        }),
+      );
+    });
+
+    it('tells the sender when their invitation is accepted', async () => {
+      const { service, notifications } = buildService({
+        transitionResult: pendingInvitation(),
+        listItems: [pendingInvitation()],
+      });
+
+      await service.accept(PLAYER_USER, VALID_ID);
+
+      // The club sent it, so the club is told — and the actor named is the
+      // player who responded, not the club itself.
+      expect(notifications.emit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: CLUB_USER,
+          type: 'INVITATION_ACCEPTED',
+          params: expect.objectContaining({ actorRole: 'PLAYER' }),
+        }),
+      );
+    });
+
+    it('tells the sender when their invitation is declined', async () => {
+      const { service, notifications } = buildService({
+        transitionResult: pendingInvitation(),
+      });
+
+      await service.reject(PLAYER_USER, VALID_ID);
+
+      expect(notifications.emit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: CLUB_USER,
+          type: 'INVITATION_REJECTED',
+        }),
+      );
+    });
+
+    it('says nothing when the sender withdraws', async () => {
+      const { service, notifications } = buildService({
+        transitionResult: pendingInvitation(),
+      });
+
+      await service.cancel(CLUB_USER, VALID_ID);
+
+      // The recipient loses nothing and can do nothing about it. Announcing
+      // it would turn a withdrawn thought into an event.
+      expect(notifications.emit).not.toHaveBeenCalled();
+    });
+
+    it('a failed notification does not fail the accept', async () => {
+      const { service, notifications, memberships } = buildService({
+        transitionResult: pendingInvitation(),
+      });
+      notifications.emit.mockRejectedValue(new Error('notifications are down'));
+
+      // The real emit() swallows its own errors; this asserts the caller
+      // does not depend on that being true. The membership is the fact —
+      // it must survive a broken announcement.
+      await expect(service.accept(PLAYER_USER, VALID_ID)).resolves.toBeDefined();
+      expect(memberships.create).toHaveBeenCalled();
     });
   });
 
