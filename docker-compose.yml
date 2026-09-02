@@ -1,0 +1,67 @@
+# Sport X Hub — self-hosted stack.
+#
+# Both services listen on localhost only. The public entry point is the
+# host's own nginx, which terminates TLS for sportxhup.com and
+# api.sportxhup.com and proxies to the ports below — see
+# deploy/nginx/sportxhup.conf and docs/DEPLOYMENT_SELF_HOSTED.md.
+#
+# Binding to 127.0.0.1 rather than 0.0.0.0 is the point: without it Docker
+# writes its own iptables rules that bypass ufw, and both services would be
+# reachable on the server's public IP over plain HTTP no matter what the
+# firewall says.
+
+services:
+  api:
+    build:
+      context: ./backend
+    image: sportxhup-api
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - '127.0.0.1:3000:3000'
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+    image: sportxhup-web
+    restart: unless-stopped
+    environment:
+      # Baked into the served .env asset at container start, not at build
+      # time — see frontend/docker/docker-entrypoint.sh. Changing the API
+      # host is a restart, not a rebuild.
+      API_BASE_URL: https://api.sportxhup.com
+      APP_ENV: production
+      PORT: 80
+    ports:
+      - '127.0.0.1:8080:80'
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    # No published port at all. The API reaches it over the compose network
+    # by hostname; nothing outside this file ever should.
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      # The API starts by connecting to Mongo and exits if it cannot, so
+      # starting it before Mongo is ready would produce a restart loop that
+      # looks like a broken image.
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  # Named, so `docker compose down` does not take the database with it.
+  # `down -v` still does — that flag is the one to be careful with.
+  mongo-data:

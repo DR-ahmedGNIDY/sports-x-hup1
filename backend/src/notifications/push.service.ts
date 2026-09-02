@@ -50,7 +50,7 @@ export class PushService {
     const subject =
       config.get<string>('VAPID_SUBJECT') ??
       config.get<string>('FRONTEND_URL') ??
-      'https://sportxhub.com';
+      'https://sportxhup.com';
 
     this.enabled = Boolean(publicKey && privateKey);
     if (this.enabled) {

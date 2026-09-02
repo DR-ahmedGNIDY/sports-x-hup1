@@ -1,5 +1,4 @@
-# Placeholder — replace the domain below at deploy time to match index.html's
-# canonical tag and this file's own reference to sitemap.xml.
+# The production domain. Must match index.html's canonical tag.
 User-agent: *
 Allow: /
 Disallow: /dashboard
@@ -10,4 +9,4 @@ Disallow: /saved-players
 Disallow: /search
 Disallow: /admin/
 
-Sitemap: https://sportxhub.com/sitemap.xml
+Sitemap: https://sportxhup.com/sitemap.xml

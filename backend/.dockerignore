@@ -1,0 +1,23 @@
+# Keeping these out of the build context is not only about image size: a
+# copied `.env` would bake real secrets into a layer that anyone who can
+# pull the image can read.
+.env
+.env.*
+!.env.example
+
+node_modules
+dist
+coverage
+
+# Tests do not run in the image, and neither does the tooling that lints
+# them. They stay out of the context so a change to a spec file does not
+# invalidate the dependency layer.
+**/*.spec.ts
+.eslintrc.js
+.prettierrc
+
+.git
+.gitignore
+Dockerfile
+.dockerignore
+railway.json

@@ -52,7 +52,14 @@ server {
     # The service worker decides when everything else updates, so it is the
     # one file that must never be served from cache. A stale copy pins the
     # whole app to the deploy it shipped with.
-    location = /flutter_service_worker.js {
+    #
+    # `sxh_service_worker.js`, not Flutter's generated one: flutter_bootstrap.js
+    # registers ours (Flutter's is a tombstone that caches nothing as of 3.44).
+    # This rule named the wrong file until the self-hosted deploy, which meant
+    # the real worker fell through to the `no-cache` rule above — revalidated
+    # rather than never stored, so not a stale-forever bug, but not what was
+    # intended either.
+    location = /sxh_service_worker.js {
         add_header Cache-Control "no-store";
     }
 }
