@@ -15,11 +15,22 @@ import '../../../../l10n/generated/app_localizations.dart';
 /// on a completely different endpoint, so a "Video" chip here would be a
 /// button that always fails. A "Text" chip is omitted for the same reason
 /// — the backend has no text-only post type.
-class ClubComposerCard extends StatelessWidget {
-  const ClubComposerCard({super.key, this.logoUrl, required this.onTap});
+class ComposerCard extends StatelessWidget {
+  const ComposerCard({
+    super.key,
+    this.logoUrl,
+    required this.onTap,
+    this.isClub = true,
+  });
 
   final String? logoUrl;
   final VoidCallback onTap;
+
+  /// Which voice this composer speaks in. The placeholder and the empty
+  /// avatar both name the poster, and a Player asked "what do you want to
+  /// share with the club?" beside a club crest is being handed the wrong
+  /// one entirely.
+  final bool isClub;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +50,11 @@ class ClubComposerCard extends StatelessWidget {
             backgroundColor: colors.bg,
             backgroundImage: logoUrl != null ? appImageProvider(logoUrl!, context: context, decodeWidth: AppImageSize.avatarSmall) : null,
             child: logoUrl == null
-                ? Icon(Icons.shield_outlined, color: colors.textMuted, size: 20)
+                ? Icon(
+                    isClub ? Icons.shield_outlined : Icons.person,
+                    color: colors.textMuted,
+                    size: 20,
+                  )
                 : null,
           ),
           const SizedBox(width: AppSpacing.sm),
@@ -54,7 +69,9 @@ class ClubComposerCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.xl),
                 ),
                 child: Text(
-                  l10n.homeFeedComposerPlaceholder,
+                  isClub
+                      ? l10n.homeFeedComposerPlaceholder
+                      : l10n.homeFeedComposerPlaceholderPlayer,
                   style: TextStyle(color: colors.textMuted, fontSize: 14),
                   overflow: TextOverflow.ellipsis,
                 ),

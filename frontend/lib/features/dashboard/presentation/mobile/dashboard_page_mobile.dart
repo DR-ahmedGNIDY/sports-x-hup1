@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../core/widgets/mobile/app_scaffold_mobile.dart';
@@ -14,14 +16,15 @@ import '../../../club/application/club_profile_controller.dart';
 import '../../../club/domain/entities/club_profile.dart';
 import '../../../club_players/application/club_players_controller.dart';
 import '../../../club_players/domain/entities/club_dashboard_summary.dart';
+import '../../../player/application/player_profile_controller.dart';
+import '../../../player/domain/entities/player_profile.dart';
 import '../../../home_feed/application/home_feed_controller.dart';
 import '../../../home_feed/domain/entities/feed_item.dart';
-import '../../../home_feed/presentation/mobile/home_feed_page_mobile.dart';
 import '../../../home_feed/presentation/shared/create_post_sheet.dart';
 import '../../../home_feed/presentation/shared/home_feed_slivers.dart';
-import '../shared/club_composer_card.dart';
+import '../shared/composer_card.dart';
 import '../shared/club_dashboard_widgets.dart';
-import '../shared/club_feed_tabs.dart';
+import '../shared/feed_tabs.dart';
 
 /// Content-only — the top bar/bottom nav chrome that used to live here now
 /// lives in `AppShell` (mounted once by the `/dashboard` ShellRoute), so
@@ -38,11 +41,14 @@ class DashboardPageMobile extends ConsumerWidget {
       UserRole.admin => l10n.dashboardRoleAdmin,
       _ => l10n.rolePlayer,
     };
-    // Player's Home content used to live here (profile completion, stats,
-    // quick actions) — it moved to the Player Profile page (see
-    // OwnerAccountSection); Home itself is now the activity feed.
+    // A Player's Home used to be the bare feed. The profile numbers that
+    // once lived here still belong on the Player Profile page (see
+    // OwnerAccountSection) and are deliberately not brought back — what was
+    // missing was somewhere to *post* from, and an identity to post as.
+    // So Home now mirrors the Club's shape minus the roster metrics a
+    // player has no equivalent of.
     if (user?.role == UserRole.player) {
-      return const HomeFeedPageMobile();
+      return const _PlayerHomeMobile();
     }
     if (user?.role == UserRole.club) {
       return const _ClubDashboardMobile();
@@ -153,7 +159,7 @@ class _ClubDashboardMobileState extends ConsumerState<_ClubDashboardMobile> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: AppSpacing.md),
-                ClubComposerCard(
+                ComposerCard(
                   logoUrl: profileAsync.maybeWhen(
                     data: (profile) => profile.logoUrl,
                     orElse: () => null,
@@ -162,7 +168,7 @@ class _ClubDashboardMobileState extends ConsumerState<_ClubDashboardMobile> {
                       CreatePostSheet.show(context, role: UserRole.club),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                ClubFeedTabs(
+                FeedTabs(
                   value: _filter,
                   onChanged: (kind) => setState(() => _filter = kind),
                 ),
@@ -183,6 +189,166 @@ class _ClubDashboardMobileState extends ConsumerState<_ClubDashboardMobile> {
             _mobileGutter,
             _mobileGutter,
           ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The Player's Home — the Club's composition with the roster half removed.
+///
+/// Identity, then the news block: title, composer, tabs, feed. No stats
+/// grid and no completeness card; a player's numbers (completion, media,
+/// saved-by-clubs) are already on the Player Profile page, and a second
+/// copy here would be two places to keep telling the same thing.
+///
+/// The feed goes last for the same reason it does on the Club's page: it is
+/// infinite, so anything after it cannot reliably be scrolled to.
+class _PlayerHomeMobile extends ConsumerStatefulWidget {
+  const _PlayerHomeMobile();
+
+  @override
+  ConsumerState<_PlayerHomeMobile> createState() => _PlayerHomeMobileState();
+}
+
+class _PlayerHomeMobileState extends ConsumerState<_PlayerHomeMobile> {
+  FeedItemKind? _filter;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final profileAsync = ref.watch(playerProfileControllerProvider);
+
+    return AppScaffoldMobile(
+      onRefresh: () => ref.read(homeFeedControllerProvider.notifier).refresh(),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            _mobileGutter,
+            _mobileGutter,
+            _mobileGutter,
+            0,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                profileAsync.when(
+                  data: (profile) => _PlayerHomeHeaderMobile(profile: profile),
+                  loading: () => const SkeletonBox(height: 52),
+                  error: (error, _) => ErrorState(
+                    onRetry: () =>
+                        ref.invalidate(playerProfileControllerProvider),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text(
+                  l10n.dashboardLatestNewsTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                ComposerCard(
+                  logoUrl: profileAsync.maybeWhen(
+                    data: (profile) => profile.profilePhoto?.secureUrl,
+                    orElse: () => null,
+                  ),
+                  isClub: false,
+                  onTap: () =>
+                      CreatePostSheet.show(context, role: UserRole.player),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                FeedTabs(
+                  value: _filter,
+                  onChanged: (kind) => setState(() => _filter = kind),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ],
+            ),
+          ),
+        ),
+        HomeFeedSliver(
+          kindFilter: _filter,
+          onCreatePost: () =>
+              CreatePostSheet.show(context, role: UserRole.player),
+          padding: const EdgeInsets.fromLTRB(
+            _mobileGutter,
+            0,
+            _mobileGutter,
+            _mobileGutter,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The Player's counterpart to [_ClubHomeHeaderMobile]: photo, name, and the
+/// same two actions — see the public profile, edit it.
+class _PlayerHomeHeaderMobile extends StatelessWidget {
+  const _PlayerHomeHeaderMobile({required this.profile});
+
+  final PlayerProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.profileColors;
+    final photoUrl = profile.profilePhoto?.secureUrl;
+    final name = profile.fullName.isEmpty ? l10n.unnamedPlayer : profile.fullName;
+    final subtitle = [
+      profile.sport,
+      profile.city,
+      profile.country,
+    ].where((v) => v != null && v.isNotEmpty).join(' · ');
+
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 26,
+          backgroundColor: colors.surface,
+          backgroundImage: photoUrl != null
+              ? appImageProvider(
+                  photoUrl,
+                  context: context,
+                  decodeWidth: AppImageSize.avatarLarge,
+                )
+              : null,
+          child: photoUrl == null
+              ? Icon(Icons.person, color: colors.textMuted)
+              : null,
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              if (subtitle.isNotEmpty)
+                Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colors.textMuted,
+                  ),
+                ),
+            ],
+          ),
+        ),
+        IconButton(
+          tooltip: l10n.previewLabel,
+          onPressed: () => context.push('/players/${profile.id}'),
+          icon: const Icon(Icons.visibility_outlined),
+        ),
+        IconButton(
+          tooltip: l10n.dashboardEditProfile,
+          onPressed: () => context.go('/player/edit'),
+          icon: const Icon(Icons.edit_outlined),
         ),
       ],
     );

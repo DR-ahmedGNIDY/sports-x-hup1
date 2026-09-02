@@ -94,6 +94,7 @@
   "@searchResultsCountLabel": { "placeholders": { "count": { "type": "int" } } },
   "clubsListingTitle": "الأندية على Sport X Hub",
   "clubsNoResults": "لا توجد أندية لعرضها حاليًا.",
+  "clubSearchNameLabel": "ابحث باسم النادي",
   "unnamedClub": "نادٍ بدون اسم",
 
   "dashboardRoleAdmin": "أدمن",
@@ -485,6 +486,7 @@
   "@homeFeedPostTooLargeError": { "placeholders": { "limit": { "type": "int" } } },
   "homeFeedPostSuccessMessage": "تم النشر بنجاح.",
   "homeFeedComposerPlaceholder": "بماذا تريد مشاركة النادي؟",
+  "homeFeedComposerPlaceholderPlayer": "بماذا تريد مشاركته؟",
   "homeFeedCreateFirstPostCta": "أنشئ أول منشور",
   "homeFeedTabAll": "الكل",
   "homeFeedTabPhotos": "الصور",

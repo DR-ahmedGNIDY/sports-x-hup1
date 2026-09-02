@@ -270,6 +270,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clubsNoResults => 'No clubs to show yet.';
 
   @override
+  String get clubSearchNameLabel => 'Search club name';
+
+  @override
   String get unnamedClub => 'Unnamed club';
 
   @override
@@ -1327,6 +1330,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get homeFeedComposerPlaceholder =>
       'What do you want to share with your club?';
+
+  @override
+  String get homeFeedComposerPlaceholderPlayer => 'What do you want to share?';
 
   @override
   String get homeFeedCreateFirstPostCta => 'Create your first post';

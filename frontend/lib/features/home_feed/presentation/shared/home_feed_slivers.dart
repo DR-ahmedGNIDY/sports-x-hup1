@@ -35,7 +35,7 @@ class HomeFeedSliver extends ConsumerWidget {
   });
 
   /// Restricts the rendered list to one content type — a purely
-  /// client-side filter over the already-loaded page (see [ClubFeedTabs]);
+  /// client-side filter over the already-loaded page (see [FeedTabs]);
   /// `null` shows everything.
   final FeedItemKind? kindFilter;
 

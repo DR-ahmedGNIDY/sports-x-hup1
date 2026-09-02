@@ -9,8 +9,8 @@ import '../../../home_feed/domain/entities/feed_item.dart';
 /// whatever page is already loaded (the feed endpoint has no `kind` query
 /// param), so switching tabs never triggers a new request. `null` means
 /// "All".
-class ClubFeedTabs extends StatelessWidget {
-  const ClubFeedTabs({super.key, required this.value, required this.onChanged});
+class FeedTabs extends StatelessWidget {
+  const FeedTabs({super.key, required this.value, required this.onChanged});
 
   final FeedItemKind? value;
   final ValueChanged<FeedItemKind?> onChanged;

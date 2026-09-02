@@ -596,6 +596,12 @@ abstract class AppLocalizations {
   /// **'لا توجد أندية لعرضها حاليًا.'**
   String get clubsNoResults;
 
+  /// No description provided for @clubSearchNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث باسم النادي'**
+  String get clubSearchNameLabel;
+
   /// No description provided for @unnamedClub.
   ///
   /// In ar, this message translates to:
@@ -2544,6 +2550,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'بماذا تريد مشاركة النادي؟'**
   String get homeFeedComposerPlaceholder;
+
+  /// No description provided for @homeFeedComposerPlaceholderPlayer.
+  ///
+  /// In ar, this message translates to:
+  /// **'بماذا تريد مشاركته؟'**
+  String get homeFeedComposerPlaceholderPlayer;
 
   /// No description provided for @homeFeedCreateFirstPostCta.
   ///

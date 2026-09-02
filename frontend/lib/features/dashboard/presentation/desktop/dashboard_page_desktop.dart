@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/utils/app_image.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -11,16 +13,17 @@ import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
 import '../../../club/application/club_profile_controller.dart';
 import '../../../club/domain/entities/club_profile.dart';
+import '../../../player/application/player_profile_controller.dart';
+import '../../../player/domain/entities/player_profile.dart';
 import '../../../club_players/application/club_players_controller.dart';
 import '../../../club_players/domain/entities/club_dashboard_summary.dart';
 import '../../../home_feed/domain/entities/feed_item.dart';
-import '../../../home_feed/presentation/desktop/home_feed_page_desktop.dart';
 import '../../../home_feed/presentation/shared/create_post_sheet.dart';
 import '../../../home_feed/presentation/shared/feed_layout.dart';
 import '../../../home_feed/presentation/shared/home_feed_slivers.dart';
-import '../shared/club_composer_card.dart';
+import '../shared/composer_card.dart';
 import '../shared/club_dashboard_widgets.dart';
-import '../shared/club_feed_tabs.dart';
+import '../shared/feed_tabs.dart';
 import '../shared/club_news_columns.dart';
 
 /// Content-only — the sidebar/top bar chrome that used to live here now
@@ -39,11 +42,10 @@ class DashboardPageDesktop extends ConsumerWidget {
       _ => l10n.rolePlayer,
     };
 
-    // Player's Home content used to live here (profile completion, stats,
-    // quick actions) — it moved to the Player Profile page (see
-    // OwnerAccountSection); Home itself is now the activity feed.
+    // Same split as mobile: the profile numbers stay on the Player Profile
+    // page, and Home gains an identity and somewhere to post from.
     if (user?.role == UserRole.player) {
-      return const HomeFeedPageDesktop();
+      return const _PlayerDashboardDesktop();
     }
     if (user?.role == UserRole.club) {
       return const _ClubDashboardDesktop();
@@ -161,7 +163,7 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
                     header: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ClubComposerCard(
+                        ComposerCard(
                           logoUrl: profileAsync.maybeWhen(
                             data: (profile) => profile.logoUrl,
                             orElse: () => null,
@@ -169,7 +171,7 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
                           onTap: () => CreatePostSheet.show(context, role: UserRole.club),
                         ),
                         const SizedBox(height: AppSpacing.md),
-                        ClubFeedTabs(
+                        FeedTabs(
                           value: _filter,
                           onChanged: (kind) => setState(() => _filter = kind),
                         ),
@@ -192,6 +194,193 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The Player's Home on desktop — the Club's page with the roster half
+/// removed, which on this layout means one column rather than two.
+///
+/// `ClubNewsColumns` exists to put the feed beside the recent-players
+/// panel. A player has nothing to put in that second column, and a
+/// two-column grid with one side empty reads as a layout that failed to
+/// load rather than as a deliberately simpler page — so the feed runs on
+/// its own, centred, at the same column width it has beside the panel.
+class _PlayerDashboardDesktop extends ConsumerStatefulWidget {
+  const _PlayerDashboardDesktop();
+
+  @override
+  ConsumerState<_PlayerDashboardDesktop> createState() =>
+      _PlayerDashboardDesktopState();
+}
+
+class _PlayerDashboardDesktopState
+    extends ConsumerState<_PlayerDashboardDesktop> {
+  FeedItemKind? _filter;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final profileAsync = ref.watch(playerProfileControllerProvider);
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _pageMaxWidth),
+        child: FeedRefreshIndicator(
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  _pageGutter,
+                  _pageGutter,
+                  _pageGutter,
+                  0,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      profileAsync.when(
+                        data: (profile) => _PlayerHomeHeader(profile: profile),
+                        loading: () => const SkeletonBox(height: 72),
+                        error: (error, _) => ErrorState(
+                          onRetry: () =>
+                              ref.invalidate(playerProfileControllerProvider),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                      Text(
+                        l10n.dashboardLatestNewsTitle,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                    ],
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  _pageGutter,
+                  0,
+                  _pageGutter,
+                  _pageGutter,
+                ),
+                sliver: FeedColumnSliver(
+                  kindFilter: _filter,
+                  onCreatePost: () =>
+                      CreatePostSheet.show(context, role: UserRole.player),
+                  header: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ComposerCard(
+                        isClub: false,
+                        logoUrl: profileAsync.maybeWhen(
+                          data: (profile) => profile.profilePhoto?.secureUrl,
+                          orElse: () => null,
+                        ),
+                        onTap: () => CreatePostSheet.show(
+                          context,
+                          role: UserRole.player,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      FeedTabs(
+                        value: _filter,
+                        onChanged: (kind) => setState(() => _filter = kind),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The Player's counterpart to [_ClubHomeHeader]: photo, name, what they
+/// play and where, and the same two actions.
+class _PlayerHomeHeader extends StatelessWidget {
+  const _PlayerHomeHeader({required this.profile});
+
+  final PlayerProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.profileColors;
+    final photoUrl = profile.profilePhoto?.secureUrl;
+    final name = profile.fullName.isEmpty
+        ? l10n.unnamedPlayer
+        : profile.fullName;
+    final subtitle = [
+      profile.sport,
+      profile.city,
+      profile.country,
+    ].where((v) => v != null && v.isNotEmpty).join(' · ');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              radius: 34,
+              backgroundColor: colors.surface,
+              backgroundImage: photoUrl != null
+                  ? appImageProvider(
+                      photoUrl,
+                      context: context,
+                      decodeWidth: AppImageSize.avatarLarge,
+                    )
+                  : null,
+              child: photoUrl == null
+                  ? Icon(Icons.person, color: colors.textMuted, size: 30)
+                  : null,
+            ),
+            const SizedBox(width: AppSpacing.lg),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  if (subtitle.isNotEmpty)
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: colors.textMuted,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () => context.push('/players/${profile.id}'),
+              icon: const Icon(Icons.visibility_outlined),
+              label: Text(l10n.previewLabel),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            TextButton.icon(
+              onPressed: () => context.go('/player/edit'),
+              icon: const Icon(Icons.edit_outlined),
+              label: Text(l10n.dashboardEditProfile),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Divider(color: colors.borderOnSurface.withValues(alpha: 0.08)),
+      ],
     );
   }
 }

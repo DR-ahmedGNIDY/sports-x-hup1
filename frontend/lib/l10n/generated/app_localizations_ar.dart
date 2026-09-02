@@ -273,6 +273,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clubsNoResults => 'لا توجد أندية لعرضها حاليًا.';
 
   @override
+  String get clubSearchNameLabel => 'ابحث باسم النادي';
+
+  @override
   String get unnamedClub => 'نادٍ بدون اسم';
 
   @override
@@ -1313,6 +1316,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeFeedComposerPlaceholder => 'بماذا تريد مشاركة النادي؟';
+
+  @override
+  String get homeFeedComposerPlaceholderPlayer => 'بماذا تريد مشاركته؟';
 
   @override
   String get homeFeedCreateFirstPostCta => 'أنشئ أول منشور';

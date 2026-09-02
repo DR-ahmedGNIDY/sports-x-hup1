@@ -94,6 +94,7 @@
   "@searchResultsCountLabel": { "placeholders": { "count": { "type": "int" } } },
   "clubsListingTitle": "Clubs on Sport X Hub",
   "clubsNoResults": "No clubs to show yet.",
+  "clubSearchNameLabel": "Search club name",
   "unnamedClub": "Unnamed club",
 
   "dashboardRoleAdmin": "Admin",
@@ -485,6 +486,7 @@
   "@homeFeedPostTooLargeError": { "placeholders": { "limit": { "type": "int" } } },
   "homeFeedPostSuccessMessage": "Posted successfully.",
   "homeFeedComposerPlaceholder": "What do you want to share with your club?",
+  "homeFeedComposerPlaceholderPlayer": "What do you want to share?",
   "homeFeedCreateFirstPostCta": "Create your first post",
   "homeFeedTabAll": "All",
   "homeFeedTabPhotos": "Photos",
