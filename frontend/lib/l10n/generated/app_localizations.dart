@@ -2875,6 +2875,306 @@ abstract class AppLocalizations {
   /// **'{total} فيديو في {sport}'**
   String communityActivityLabel(int total, String sport);
 
+  /// No description provided for @invitationsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعوات'**
+  String get invitationsTitle;
+
+  /// No description provided for @invitationsReceivedTab.
+  ///
+  /// In ar, this message translates to:
+  /// **'الواردة'**
+  String get invitationsReceivedTab;
+
+  /// No description provided for @invitationsSentTab.
+  ///
+  /// In ar, this message translates to:
+  /// **'المُرسَلة'**
+  String get invitationsSentTab;
+
+  /// No description provided for @invitationsEmptyReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد دعوات بعد. طلبات الانضمام إلى ناديك ستظهر هنا.'**
+  String get invitationsEmptyReceived;
+
+  /// No description provided for @invitationsEmptySent.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُرسل دعوة لأي لاعب بعد.'**
+  String get invitationsEmptySent;
+
+  /// No description provided for @invitationStatusPending.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد الانتظار'**
+  String get invitationStatusPending;
+
+  /// No description provided for @invitationStatusAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقبولة'**
+  String get invitationStatusAccepted;
+
+  /// No description provided for @invitationStatusRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرفوضة'**
+  String get invitationStatusRejected;
+
+  /// No description provided for @invitationStatusCancelled.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملغاة'**
+  String get invitationStatusCancelled;
+
+  /// No description provided for @invitationStatusExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتهية'**
+  String get invitationStatusExpired;
+
+  /// No description provided for @invitationAcceptLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول'**
+  String get invitationAcceptLabel;
+
+  /// No description provided for @invitationRejectLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفض'**
+  String get invitationRejectLabel;
+
+  /// No description provided for @invitationCancelInvitationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب'**
+  String get invitationCancelInvitationLabel;
+
+  /// No description provided for @invitationViewProfileLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الملف'**
+  String get invitationViewProfileLabel;
+
+  /// No description provided for @invitationRejectConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفض هذا الطلب؟'**
+  String get invitationRejectConfirmTitle;
+
+  /// No description provided for @invitationRejectConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن التراجع عن ذلك. يمكنه إرسال طلب جديد لاحقًا.'**
+  String get invitationRejectConfirmBody;
+
+  /// No description provided for @invitationCancelConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب هذه الدعوة؟'**
+  String get invitationCancelConfirmTitle;
+
+  /// No description provided for @invitationCancelConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن التراجع عن ذلك. يمكنك دعوته مرة أخرى لاحقًا.'**
+  String get invitationCancelConfirmBody;
+
+  /// No description provided for @invitationAcceptedFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم القبول. انضم اللاعب إلى ناديك.'**
+  String get invitationAcceptedFeedback;
+
+  /// No description provided for @invitationRejectedFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض الطلب.'**
+  String get invitationRejectedFeedback;
+
+  /// No description provided for @invitationCancelledFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم سحب الدعوة.'**
+  String get invitationCancelledFeedback;
+
+  /// No description provided for @invitationSentFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال الدعوة.'**
+  String get invitationSentFeedback;
+
+  /// No description provided for @invitationExpiresOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنتهي في {date}'**
+  String invitationExpiresOn(String date);
+
+  /// No description provided for @invitePlayerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوة إلى النادي'**
+  String get invitePlayerLabel;
+
+  /// No description provided for @invitePlayerTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوة لاعب'**
+  String get invitePlayerTitle;
+
+  /// No description provided for @invitePlayerBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادعُ {name} للانضمام إلى ناديك. يمكنه القبول أو الرفض.'**
+  String invitePlayerBody(String name);
+
+  /// No description provided for @inviteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوة'**
+  String get inviteLabel;
+
+  /// No description provided for @invitationMessageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسالة (اختياري)'**
+  String get invitationMessageLabel;
+
+  /// No description provided for @invitationMessageHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اذكر سبب رغبتك في انضمامه.'**
+  String get invitationMessageHint;
+
+  /// No description provided for @inviteByCodeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوة بالكود'**
+  String get inviteByCodeTitle;
+
+  /// No description provided for @inviteByCodeLookUpLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث'**
+  String get inviteByCodeLookUpLabel;
+
+  /// No description provided for @playerCodeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود اللاعب'**
+  String get playerCodeLabel;
+
+  /// No description provided for @playerCodeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'PLY-000123'**
+  String get playerCodeHint;
+
+  /// No description provided for @playerCodeNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد لاعب عام بهذا الكود.'**
+  String get playerCodeNotFound;
+
+  /// No description provided for @clubCodeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود النادي'**
+  String get clubCodeLabel;
+
+  /// No description provided for @copyCodeTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ الكود'**
+  String get copyCodeTooltip;
+
+  /// No description provided for @publicCodeCopiedFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم نسخ الكود'**
+  String get publicCodeCopiedFeedback;
+
+  /// No description provided for @clubDashboardInvitationsDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'راجع طلبات الانضمام والدعوات التي أرسلتها.'**
+  String get clubDashboardInvitationsDescription;
+
+  /// No description provided for @playerInvitationsEmptyReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد دعوات بعد. الأندية التي تدعوك ستظهر هنا.'**
+  String get playerInvitationsEmptyReceived;
+
+  /// No description provided for @playerInvitationsEmptySent.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تطلب الانضمام إلى أي نادٍ بعد.'**
+  String get playerInvitationsEmptySent;
+
+  /// No description provided for @requestToJoinLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب انضمام'**
+  String get requestToJoinLabel;
+
+  /// No description provided for @requestToJoinTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب الانضمام إلى النادي'**
+  String get requestToJoinTitle;
+
+  /// No description provided for @requestToJoinBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اطلب من {name} ضمّك إلى الفريق. يمكنه القبول أو الرفض.'**
+  String requestToJoinBody(String name);
+
+  /// No description provided for @joinRequestSentFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال الطلب.'**
+  String get joinRequestSentFeedback;
+
+  /// No description provided for @joinByCodeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الانضمام بالكود'**
+  String get joinByCodeTitle;
+
+  /// No description provided for @clubCodeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'CLB-000123'**
+  String get clubCodeHint;
+
+  /// No description provided for @clubCodeNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد نادٍ بهذا الكود.'**
+  String get clubCodeNotFound;
+
+  /// No description provided for @playerCodeShareHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'شاركه مع الأندية'**
+  String get playerCodeShareHint;
+
+  /// No description provided for @membershipJoinedOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'انضم في {date}'**
+  String membershipJoinedOn(String date);
+
+  /// No description provided for @clubMembersTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللاعبون ({count})'**
+  String clubMembersTitle(int count);
+
   /// No description provided for @genericErrorMessage.
   ///
   /// In ar, this message translates to:

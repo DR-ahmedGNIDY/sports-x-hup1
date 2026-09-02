@@ -11,6 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Throttle } from '@nestjs/throttler';
 import {
   CurrentUser,
   JwtPayload,
@@ -18,6 +19,7 @@ import {
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { CODE_LOOKUP_THROTTLE } from '../common/throttle.config';
 import { imageUploadOptions } from '../common/upload.config';
 import { UserRole } from '../users/schemas/user.schema';
 import { ClubsService } from './clubs.service';
@@ -68,6 +70,19 @@ export class ClubsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const profile = await this.clubsService.uploadLogo(user.sub, file);
+    return toClubView(profile);
+  }
+
+  // Registered before the ':id' wildcard below so "by-code" is never matched
+  // as a club id. Authenticated (unlike GET /clubs/:id) and throttled well
+  // under the global default: codes are sequential, so this is the one route
+  // where guessing them in bulk would be cheap — see the plan's §2
+  // trade-off note.
+  @Get('by-code/:code')
+  @UseGuards(JwtAuthGuard)
+  @Throttle(CODE_LOOKUP_THROTTLE)
+  async findByCode(@Param('code') code: string) {
+    const profile = await this.clubsService.findByPublicCodeOrThrow(code);
     return toClubView(profile);
   }
 

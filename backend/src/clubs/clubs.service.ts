@@ -8,6 +8,10 @@ import { Model, Types } from 'mongoose';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../common/upload.config';
 import { assertFileContentMatchesMimeType } from '../common/file-signature';
+import {
+  PublicCodePrefix,
+  PublicCodesService,
+} from '../public-codes/public-codes.service';
 import { UpdateClubProfileDto } from './dto/update-club-profile.dto';
 import {
   ClubProfile,
@@ -29,6 +33,7 @@ export class ClubsService {
     @InjectModel(ClubProfile.name)
     private readonly clubProfileModel: Model<ClubProfile>,
     private readonly cloudinary: CloudinaryService,
+    private readonly publicCodes: PublicCodesService,
   ) {}
 
   async getOrCreateForUser(userId: string): Promise<ClubProfileDocument> {
@@ -36,7 +41,64 @@ export class ClubsService {
     if (!profile) {
       profile = await this.clubProfileModel.create({ userId });
     }
+    return this.ensurePublicCode(profile);
+  }
+
+  // Assigns the club's shareable code the first time it's needed, so
+  // profiles created before this feature existed pick one up on their next
+  // load without a required migration (the backfill script just does it in
+  // bulk instead of waiting). Never rewrites an existing code — a code is a
+  // published identity, not a mutable field.
+  //
+  // The write is conditional on `publicCode` still being absent, so if two
+  // requests race here the loser's update matches nothing and it re-reads
+  // the winner's code rather than overwriting it. A burnt counter value is
+  // the only cost; codes are identifiers, not a contiguous count.
+  async ensurePublicCode(
+    profile: ClubProfileDocument,
+  ): Promise<ClubProfileDocument> {
+    if (profile.publicCode) return profile;
+
+    const publicCode = await this.publicCodes.allocate(PublicCodePrefix.CLUB);
+    const updated = await this.clubProfileModel.findOneAndUpdate(
+      { _id: profile._id, publicCode: { $in: [null, undefined] } },
+      { $set: { publicCode } },
+      { new: true },
+    );
+    return updated ?? (await this.clubProfileModel.findById(profile._id))!;
+  }
+
+  // Indexed equality lookup on the unique `publicCode` field — never a
+  // collection scan. Returns 404 for a malformed code without touching the
+  // database, so a bad string costs nothing.
+  async findByPublicCodeOrThrow(code: string): Promise<ClubProfileDocument> {
+    const normalized = PublicCodesService.normalizeFor(
+      code,
+      PublicCodePrefix.CLUB,
+    );
+    if (!normalized) {
+      throw new NotFoundException('Club not found.');
+    }
+    const profile = await this.clubProfileModel.findOne({
+      publicCode: normalized,
+    });
+    if (!profile) {
+      throw new NotFoundException('Club not found.');
+    }
     return profile;
+  }
+
+  // Read-only counterpart to getOrCreateForUser — used where a missing club
+  // profile means "no such club" (e.g. an invitation's counterpart) rather
+  // than "create one on demand".
+  findByUserId(userId: string): Promise<ClubProfileDocument | null> {
+    return this.clubProfileModel.findOne({ userId });
+  }
+
+  // Batch counterpart lookup for a page of invitations, so rendering N rows
+  // costs one query rather than N.
+  findManyByUserIds(userIds: string[]): Promise<ClubProfileDocument[]> {
+    return this.clubProfileModel.find({ userId: { $in: userIds } });
   }
 
   // Public (Phase 5) — Public Clubs listing. Club profiles have no private

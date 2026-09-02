@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Throttle } from '@nestjs/throttler';
 import {
   CurrentUser,
   JwtPayload,
@@ -19,6 +20,7 @@ import {
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { CODE_LOOKUP_THROTTLE } from '../common/throttle.config';
 import {
   imageUploadOptions,
   mediaUploadOptions,
@@ -213,6 +215,19 @@ export class PlayersController {
   ) {
     const profile = await this.playersService.removeSocialLink(user.sub, id);
     return toOwnerView(profile);
+  }
+
+  // Registered before the ':id' wildcard below so "by-code" is never matched
+  // as a player id. Authenticated (unlike GET /players/:id) and throttled
+  // well under the global default — codes are sequential, so bulk guessing
+  // is the one thing worth making expensive here. Still PUBLIC-only: a code
+  // is not a way around a player's visibility setting.
+  @Get('by-code/:code')
+  @UseGuards(JwtAuthGuard)
+  @Throttle(CODE_LOOKUP_THROTTLE)
+  async findByCode(@Param('code') code: string) {
+    const profile = await this.playersService.findPublicByCodeOrThrow(code);
+    return toPublicView(profile);
   }
 
   @Get(':id/contact')

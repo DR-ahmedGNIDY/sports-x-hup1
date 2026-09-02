@@ -38,6 +38,15 @@ export class ClubProfile {
 
   @Prop({ trim: true })
   level?: string;
+
+  // Public, shareable identity (e.g. "CLB-000123") — safe to print on a
+  // profile and to search by, and it never exposes the Mongo _id. Optional
+  // on the schema only because profiles created before this feature existed
+  // have none until `ClubsService.ensurePublicCode` (or the backfill script)
+  // assigns one; it is assigned exactly once and never rewritten. `sparse`
+  // so those not-yet-backfilled documents don't all collide on null.
+  @Prop({ unique: true, sparse: true, trim: true })
+  publicCode?: string;
 }
 
 export const ClubProfileSchema = SchemaFactory.createForClass(ClubProfile);

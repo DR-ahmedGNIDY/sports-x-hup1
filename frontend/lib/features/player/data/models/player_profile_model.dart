@@ -10,6 +10,7 @@ extension PlayerProfileModel on PlayerProfile {
   static PlayerProfile fromJson(Map<String, dynamic> json) {
     return PlayerProfile(
       id: json['id'] as String,
+      publicCode: json['publicCode'] as String?,
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       dateOfBirth: json['dateOfBirth'] != null

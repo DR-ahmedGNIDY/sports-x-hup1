@@ -207,6 +207,13 @@ class PlayerRepositoryImpl implements PlayerRepository {
   }
 
   @override
+  Future<PlayerProfile> getPublicProfileByCode(String code) =>
+      _authorized((token) async {
+        final json = await _remote.getPublicProfileByCode(token, code);
+        return PlayerProfileModel.fromJson(json);
+      });
+
+  @override
   Future<ContactDetails> getContact(String id) => _authorized((token) async {
     final json = await _remote.getContact(token, id);
     return ContactDetailsModel.fromJson(json);

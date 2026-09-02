@@ -10,6 +10,7 @@ import 'social_link.dart';
 class PlayerProfile {
   const PlayerProfile({
     required this.id,
+    this.publicCode,
     this.firstName,
     this.lastName,
     this.dateOfBirth,
@@ -35,6 +36,13 @@ class PlayerProfile {
   });
 
   final String id;
+
+  /// The player's shareable public identifier — `PLY-000123`. Assigned
+  /// once by the backend and never rewritten, so it is safe to print on a
+  /// profile and to look someone up by. `null` on a profile that predates
+  /// the feature and hasn't been backfilled yet.
+  final String? publicCode;
+
   final String? firstName;
   final String? lastName;
   final DateTime? dateOfBirth;

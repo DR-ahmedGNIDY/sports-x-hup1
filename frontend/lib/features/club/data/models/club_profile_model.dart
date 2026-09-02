@@ -5,6 +5,7 @@ extension ClubProfileModel on ClubProfile {
     final logo = json['logo'] as Map<String, dynamic>?;
     return ClubProfile(
       id: json['id'] as String,
+      publicCode: json['publicCode'] as String?,
       name: json['name'] as String?,
       country: json['country'] as String?,
       city: json['city'] as String?,

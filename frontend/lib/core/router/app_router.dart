@@ -19,6 +19,8 @@ import '../../features/club_players/presentation/club_players_page.dart';
 import '../../features/club_players/presentation/edit_club_player_page.dart';
 import '../../features/community/presentation/community_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/invitations/presentation/club_invitations_page.dart';
+import '../../features/invitations/presentation/player_invitations_page.dart';
 import '../../features/marketing/presentation/about_page.dart';
 import '../../features/marketing/presentation/contact_page.dart';
 import '../../features/marketing/presentation/home_page.dart';
@@ -69,7 +71,15 @@ const _galleryRoute = '/dev/gallery';
 
 bool _isAdminRoute(String path) => path.startsWith('/admin/');
 
-bool _isClubRoute(String path) => path.startsWith('/club/players');
+bool _isClubRoute(String path) =>
+    path.startsWith('/club/players') || path.startsWith('/club/invitations');
+
+// Narrower than it looks: the Player profile and skills screens are not
+// listed, because they have always been reachable by any role (they render
+// the caller's own profile, and a Club simply has none). Invitations is
+// different — its send action is PLAYER-only on the server, so a Club that
+// wandered in would meet a 403 instead of a screen.
+bool _isPlayerRoute(String path) => path.startsWith('/player/invitations');
 
 // Where an authenticated session lands after splash/login, or gets bounced
 // back to when it hits a route it doesn't own — a Player's home is their
@@ -126,6 +136,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Adding/managing players directly is a Club-only tool, same
       // enforcement shape as the admin check above.
       if (_isClubRoute(path) && session.user?.role != UserRole.club) {
+        return _landingRoute(session);
+      }
+      if (_isPlayerRoute(path) && session.user?.role != UserRole.player) {
         return _landingRoute(session);
       }
       return null;
@@ -242,6 +255,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
               slidePage(state: state, child: const MyTraitsPage()),
         ),
       ],
+      AppBranch.playerInvitations => [
+        GoRoute(
+          path: '/player/invitations',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const PlayerInvitationsPage()),
+        ),
+      ],
       AppBranch.clubProfile => [
         GoRoute(
           path: '/club/preview',
@@ -271,6 +291,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
             state: state,
             child: EditClubPlayerPage(userId: state.pathParameters['userId']!),
           ),
+        ),
+      ],
+      AppBranch.clubInvitations => [
+        GoRoute(
+          path: '/club/invitations',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const ClubInvitationsPage()),
         ),
       ],
       AppBranch.search => [

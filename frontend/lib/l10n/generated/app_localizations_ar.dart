@@ -1494,6 +1494,171 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get invitationsTitle => 'الدعوات';
+
+  @override
+  String get invitationsReceivedTab => 'الواردة';
+
+  @override
+  String get invitationsSentTab => 'المُرسَلة';
+
+  @override
+  String get invitationsEmptyReceived =>
+      'لا توجد دعوات بعد. طلبات الانضمام إلى ناديك ستظهر هنا.';
+
+  @override
+  String get invitationsEmptySent => 'لم تُرسل دعوة لأي لاعب بعد.';
+
+  @override
+  String get invitationStatusPending => 'قيد الانتظار';
+
+  @override
+  String get invitationStatusAccepted => 'مقبولة';
+
+  @override
+  String get invitationStatusRejected => 'مرفوضة';
+
+  @override
+  String get invitationStatusCancelled => 'ملغاة';
+
+  @override
+  String get invitationStatusExpired => 'منتهية';
+
+  @override
+  String get invitationAcceptLabel => 'قبول';
+
+  @override
+  String get invitationRejectLabel => 'رفض';
+
+  @override
+  String get invitationCancelInvitationLabel => 'سحب';
+
+  @override
+  String get invitationViewProfileLabel => 'عرض الملف';
+
+  @override
+  String get invitationRejectConfirmTitle => 'رفض هذا الطلب؟';
+
+  @override
+  String get invitationRejectConfirmBody =>
+      'لا يمكن التراجع عن ذلك. يمكنه إرسال طلب جديد لاحقًا.';
+
+  @override
+  String get invitationCancelConfirmTitle => 'سحب هذه الدعوة؟';
+
+  @override
+  String get invitationCancelConfirmBody =>
+      'لا يمكن التراجع عن ذلك. يمكنك دعوته مرة أخرى لاحقًا.';
+
+  @override
+  String get invitationAcceptedFeedback => 'تم القبول. انضم اللاعب إلى ناديك.';
+
+  @override
+  String get invitationRejectedFeedback => 'تم رفض الطلب.';
+
+  @override
+  String get invitationCancelledFeedback => 'تم سحب الدعوة.';
+
+  @override
+  String get invitationSentFeedback => 'تم إرسال الدعوة.';
+
+  @override
+  String invitationExpiresOn(String date) {
+    return 'تنتهي في $date';
+  }
+
+  @override
+  String get invitePlayerLabel => 'دعوة إلى النادي';
+
+  @override
+  String get invitePlayerTitle => 'دعوة لاعب';
+
+  @override
+  String invitePlayerBody(String name) {
+    return 'ادعُ $name للانضمام إلى ناديك. يمكنه القبول أو الرفض.';
+  }
+
+  @override
+  String get inviteLabel => 'دعوة';
+
+  @override
+  String get invitationMessageLabel => 'رسالة (اختياري)';
+
+  @override
+  String get invitationMessageHint => 'اذكر سبب رغبتك في انضمامه.';
+
+  @override
+  String get inviteByCodeTitle => 'دعوة بالكود';
+
+  @override
+  String get inviteByCodeLookUpLabel => 'بحث';
+
+  @override
+  String get playerCodeLabel => 'كود اللاعب';
+
+  @override
+  String get playerCodeHint => 'PLY-000123';
+
+  @override
+  String get playerCodeNotFound => 'لا يوجد لاعب عام بهذا الكود.';
+
+  @override
+  String get clubCodeLabel => 'كود النادي';
+
+  @override
+  String get copyCodeTooltip => 'نسخ الكود';
+
+  @override
+  String get publicCodeCopiedFeedback => 'تم نسخ الكود';
+
+  @override
+  String get clubDashboardInvitationsDescription =>
+      'راجع طلبات الانضمام والدعوات التي أرسلتها.';
+
+  @override
+  String get playerInvitationsEmptyReceived =>
+      'لا توجد دعوات بعد. الأندية التي تدعوك ستظهر هنا.';
+
+  @override
+  String get playerInvitationsEmptySent => 'لم تطلب الانضمام إلى أي نادٍ بعد.';
+
+  @override
+  String get requestToJoinLabel => 'طلب انضمام';
+
+  @override
+  String get requestToJoinTitle => 'طلب الانضمام إلى النادي';
+
+  @override
+  String requestToJoinBody(String name) {
+    return 'اطلب من $name ضمّك إلى الفريق. يمكنه القبول أو الرفض.';
+  }
+
+  @override
+  String get joinRequestSentFeedback => 'تم إرسال الطلب.';
+
+  @override
+  String get joinByCodeTitle => 'الانضمام بالكود';
+
+  @override
+  String get clubCodeHint => 'CLB-000123';
+
+  @override
+  String get clubCodeNotFound => 'لا يوجد نادٍ بهذا الكود.';
+
+  @override
+  String get playerCodeShareHint => 'شاركه مع الأندية';
+
+  @override
+  String membershipJoinedOn(String date) {
+    return 'انضم في $date';
+  }
+
+  @override
+  String clubMembersTitle(int count) {
+    return 'اللاعبون ($count)';
+  }
+
+  @override
   String get genericErrorMessage => 'حدث خطأ ما. الرجاء المحاولة مرة أخرى.';
 
   @override

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { PublicCodesModule } from '../public-codes/public-codes.module';
 import {
   SavedPlayer,
   SavedPlayerSchema,
@@ -23,6 +24,7 @@ import {
       { name: SavedPlayer.name, schema: SavedPlayerSchema },
     ]),
     CloudinaryModule,
+    PublicCodesModule,
     // VideosModule registers its schemas directly rather than importing
     // PlayersModule, so this doesn't create a cycle — needed so a deleted
     // player's videos/likes/comments cascade-delete too (deleteAllForPlayer).

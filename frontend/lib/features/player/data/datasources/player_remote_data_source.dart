@@ -197,6 +197,23 @@ class PlayerRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
+  /// Look a player up by their public code ("PLY-000123"). Unlike
+  /// `GET /players/:id` this one is authenticated and tightly throttled on
+  /// the backend — codes are sequential, so bulk guessing is the one thing
+  /// worth making expensive. Still PUBLIC-only, so a code is not a way
+  /// around a player's visibility setting.
+  Future<Map<String, dynamic>> getPublicProfileByCode(
+    String accessToken,
+    String code,
+  ) async {
+    final response = await _client.get(
+      '/players/by-code/${Uri.encodeComponent(code)}',
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
   /// Simple Contact (Phase 3) — CLUB-only, returns phone/email/WhatsApp.
   Future<Map<String, dynamic>> getContact(String accessToken, String id) async {
     final response = await _client.get(

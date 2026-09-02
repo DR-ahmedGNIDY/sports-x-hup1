@@ -556,6 +556,82 @@
     }
   },
 
+  "invitationsTitle": "الدعوات",
+  "invitationsReceivedTab": "الواردة",
+  "invitationsSentTab": "المُرسَلة",
+  "invitationsEmptyReceived": "لا توجد دعوات بعد. طلبات الانضمام إلى ناديك ستظهر هنا.",
+  "invitationsEmptySent": "لم تُرسل دعوة لأي لاعب بعد.",
+  "invitationStatusPending": "قيد الانتظار",
+  "invitationStatusAccepted": "مقبولة",
+  "invitationStatusRejected": "مرفوضة",
+  "invitationStatusCancelled": "ملغاة",
+  "invitationStatusExpired": "منتهية",
+  "invitationAcceptLabel": "قبول",
+  "invitationRejectLabel": "رفض",
+  "invitationCancelInvitationLabel": "سحب",
+  "invitationViewProfileLabel": "عرض الملف",
+  "invitationRejectConfirmTitle": "رفض هذا الطلب؟",
+  "invitationRejectConfirmBody": "لا يمكن التراجع عن ذلك. يمكنه إرسال طلب جديد لاحقًا.",
+  "invitationCancelConfirmTitle": "سحب هذه الدعوة؟",
+  "invitationCancelConfirmBody": "لا يمكن التراجع عن ذلك. يمكنك دعوته مرة أخرى لاحقًا.",
+  "invitationAcceptedFeedback": "تم القبول. انضم اللاعب إلى ناديك.",
+  "invitationRejectedFeedback": "تم رفض الطلب.",
+  "invitationCancelledFeedback": "تم سحب الدعوة.",
+  "invitationSentFeedback": "تم إرسال الدعوة.",
+  "invitationExpiresOn": "تنتهي في {date}",
+  "@invitationExpiresOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "invitePlayerLabel": "دعوة إلى النادي",
+  "invitePlayerTitle": "دعوة لاعب",
+  "invitePlayerBody": "ادعُ {name} للانضمام إلى ناديك. يمكنه القبول أو الرفض.",
+  "@invitePlayerBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "inviteLabel": "دعوة",
+  "invitationMessageLabel": "رسالة (اختياري)",
+  "invitationMessageHint": "اذكر سبب رغبتك في انضمامه.",
+  "inviteByCodeTitle": "دعوة بالكود",
+  "inviteByCodeLookUpLabel": "بحث",
+  "playerCodeLabel": "كود اللاعب",
+  "playerCodeHint": "PLY-000123",
+  "playerCodeNotFound": "لا يوجد لاعب عام بهذا الكود.",
+  "clubCodeLabel": "كود النادي",
+  "copyCodeTooltip": "نسخ الكود",
+  "publicCodeCopiedFeedback": "تم نسخ الكود",
+  "clubDashboardInvitationsDescription": "راجع طلبات الانضمام والدعوات التي أرسلتها.",
+  "playerInvitationsEmptyReceived": "لا توجد دعوات بعد. الأندية التي تدعوك ستظهر هنا.",
+  "playerInvitationsEmptySent": "لم تطلب الانضمام إلى أي نادٍ بعد.",
+  "requestToJoinLabel": "طلب انضمام",
+  "requestToJoinTitle": "طلب الانضمام إلى النادي",
+  "requestToJoinBody": "اطلب من {name} ضمّك إلى الفريق. يمكنه القبول أو الرفض.",
+  "@requestToJoinBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "joinRequestSentFeedback": "تم إرسال الطلب.",
+  "joinByCodeTitle": "الانضمام بالكود",
+  "clubCodeHint": "CLB-000123",
+  "clubCodeNotFound": "لا يوجد نادٍ بهذا الكود.",
+  "playerCodeShareHint": "شاركه مع الأندية",
+  "membershipJoinedOn": "انضم في {date}",
+  "@membershipJoinedOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "clubMembersTitle": "اللاعبون ({count})",
+  "@clubMembersTitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
   "genericErrorMessage": "حدث خطأ ما. الرجاء المحاولة مرة أخرى.",
   "retryButtonLabel": "إعادة المحاولة"
 }

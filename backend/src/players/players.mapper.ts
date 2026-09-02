@@ -62,6 +62,9 @@ export function profilePhotoUrl(
 function baseView(profile: PlayerProfileDocument) {
   return {
     id: profile._id.toString(),
+    // Shown on the public profile and used by clubs to look this player up.
+    // Undefined only for profiles still awaiting the backfill.
+    publicCode: profile.publicCode,
     firstName: profile.firstName,
     lastName: profile.lastName,
     dateOfBirth: profile.dateOfBirth,
@@ -115,6 +118,7 @@ export function toPublicView(profile: PlayerProfileDocument) {
 export function toSearchResultView(profile: PlayerProfileDocument) {
   return {
     id: profile._id.toString(),
+    publicCode: profile.publicCode,
     firstName: profile.firstName,
     lastName: profile.lastName,
     age: ageFromDateOfBirth(profile.dateOfBirth),

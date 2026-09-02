@@ -167,6 +167,13 @@ export class PlayerProfile {
 
   @Prop({ type: [SocialLinkSchema], default: [] })
   socialLinks: SocialLink[];
+
+  // Public, shareable identity (e.g. "PLY-000123") — see the matching field
+  // on ClubProfile. Assigned once by `PlayersService.ensurePublicCode`,
+  // never rewritten; `sparse` so profiles awaiting backfill don't collide
+  // on null.
+  @Prop({ unique: true, sparse: true, trim: true })
+  publicCode?: string;
 }
 
 export const PlayerProfileSchema = SchemaFactory.createForClass(PlayerProfile);

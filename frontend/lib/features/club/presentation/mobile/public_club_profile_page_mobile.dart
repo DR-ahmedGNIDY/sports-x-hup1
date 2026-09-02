@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/error_state.dart';
+import '../../../invitations/presentation/shared/club_members_section.dart';
+import '../../../invitations/presentation/shared/request_to_join_button.dart';
 import '../../application/public_club_profile_provider.dart';
 import '../shared/club_profile_view.dart';
 
@@ -24,7 +27,16 @@ class PublicClubProfilePageMobile extends ConsumerWidget {
       body: profileAsync.when(
         data: (profile) => SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: ClubProfileView(profile: profile),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ClubProfileView(profile: profile),
+              const SizedBox(height: AppSpacing.xl),
+              RequestToJoinButton(club: profile),
+              const SizedBox(height: AppSpacing.xl),
+              ClubMembersSection(clubId: clubId),
+            ],
+          ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => ErrorState(

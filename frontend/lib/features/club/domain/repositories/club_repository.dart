@@ -9,6 +9,10 @@ abstract class ClubRepository {
   /// Public club profile (Phase 5) — no auth required.
   Future<ClubProfile> getById(String id);
 
+  /// The same profile, found by public code ("CLB-000123"). Authenticated,
+  /// and 404s on an unknown code.
+  Future<ClubProfile> getByCode(String code);
+
   Future<ClubProfile> getMyProfile();
 
   Future<ClubProfile> updateMyProfile({

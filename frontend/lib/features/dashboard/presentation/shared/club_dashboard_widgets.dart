@@ -532,6 +532,13 @@ List<ClubQuickAction> clubDashboardQuickActions(AppLocalizations l10n) => [
     emphasis: ClubQuickActionEmphasis.secondary,
   ),
   ClubQuickAction(
+    icon: Icons.mail_outline,
+    label: l10n.invitationsTitle,
+    description: l10n.clubDashboardInvitationsDescription,
+    route: '/club/invitations',
+    emphasis: ClubQuickActionEmphasis.secondary,
+  ),
+  ClubQuickAction(
     icon: Icons.bookmark_outline,
     label: l10n.dashboardSavedPlayers,
     description: l10n.clubDashboardSavedPlayersDescription,

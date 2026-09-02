@@ -33,6 +33,11 @@ enum AppBranch {
     icon: Icons.sports_soccer_outlined,
     selectedIcon: Icons.sports_soccer,
   ),
+  playerInvitations(
+    rootPath: '/player/invitations',
+    icon: Icons.mail_outline,
+    selectedIcon: Icons.mail,
+  ),
   clubProfile(
     rootPath: '/club/preview',
     icon: Icons.shield_outlined,
@@ -42,6 +47,11 @@ enum AppBranch {
     rootPath: '/club/players',
     icon: Icons.groups_outlined,
     selectedIcon: Icons.groups,
+  ),
+  clubInvitations(
+    rootPath: '/club/invitations',
+    icon: Icons.mail_outline,
+    selectedIcon: Icons.mail,
   ),
   search(
     rootPath: '/search',
@@ -97,8 +107,10 @@ enum AppBranch {
     home => l10n.marketingNavHome,
     playerProfile => l10n.dashboardMyProfile,
     playerSkills => l10n.skillsSectionTitle,
+    playerInvitations => l10n.invitationsTitle,
     clubProfile => l10n.dashboardMyClub,
     clubPlayers => l10n.clubPlayersTitle,
+    clubInvitations => l10n.invitationsTitle,
     search => l10n.mobileSearchNavLabel,
     savedPlayers => l10n.dashboardSavedPlayers,
     community => l10n.communityNavLabel,
@@ -159,6 +171,10 @@ final Map<String, AppRouteMeta> _routeMeta = {
     parentPath: AppBranch.playerSkills.rootPath,
     ownsChrome: true,
   ),
+  '/player/invitations': AppRouteMeta(
+    title: (l10n) => l10n.invitationsTitle,
+    ownsChrome: true,
+  ),
   '/club/preview': AppRouteMeta(
     title: (l10n) => l10n.dashboardMyClub,
     ownsChrome: true,
@@ -175,6 +191,10 @@ final Map<String, AppRouteMeta> _routeMeta = {
   '/club/players/new': AppRouteMeta(
     title: (l10n) => l10n.clubPlayersAddPlayerLabel,
     parentPath: AppBranch.clubPlayers.rootPath,
+    ownsChrome: true,
+  ),
+  '/club/invitations': AppRouteMeta(
+    title: (l10n) => l10n.invitationsTitle,
     ownsChrome: true,
   ),
   '/search': AppRouteMeta(
@@ -251,12 +271,23 @@ List<AppBranch> tabBranchesFor(UserRole? role) => switch (role) {
 List<AppBranch> overflowBranchesFor(UserRole? role) {
   final tabs = tabBranchesFor(role);
   final reachable = switch (role) {
+    // Invitations is an account-sheet entry rather than a fifth tab: four
+    // tabs beside the account slot is the ceiling before labels truncate at
+    // 320px, and Club Players is the destination a club opens daily. It
+    // still gets a Dashboard quick action, which is where a club that has
+    // just added players actually goes looking for it.
     UserRole.club => const [
+      AppBranch.clubInvitations,
       AppBranch.savedPlayers,
       AppBranch.community,
       AppBranch.settings,
     ],
-    UserRole.player => const [AppBranch.settings],
+    // Same call as the Club's: Invitations is an account-sheet entry, not a
+    // fourth tab displacing Community.
+    UserRole.player => const [
+      AppBranch.playerInvitations,
+      AppBranch.settings,
+    ],
     UserRole.admin => const [
       AppBranch.adminUsers,
       AppBranch.adminPlayersClubs,

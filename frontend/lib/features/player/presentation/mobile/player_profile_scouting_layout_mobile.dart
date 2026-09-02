@@ -70,7 +70,7 @@ class PlayerProfileScoutingLayoutMobile extends StatelessWidget {
         ],
         if (isOwner) ...[
           const SizedBox(height: 16),
-          staggered(const OwnerAccountSection()),
+          staggered(OwnerAccountSection(publicCode: profile.publicCode)),
         ],
         const SizedBox(height: 16),
         staggered(FootballPositionSectionMobile(profile: profile)),

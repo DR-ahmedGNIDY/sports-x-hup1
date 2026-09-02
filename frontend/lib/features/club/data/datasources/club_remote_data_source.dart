@@ -22,6 +22,22 @@ class ClubRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
+  /// The same club, found by public code ("CLB-000123"). Unlike the `:id`
+  /// route this one is authenticated and tightly throttled on the backend:
+  /// codes are sequential, so bulk guessing is the one thing worth making
+  /// expensive.
+  Future<Map<String, dynamic>> getByCode(
+    String accessToken,
+    String code,
+  ) async {
+    final response = await _client.get(
+      '/clubs/by-code/${Uri.encodeComponent(code)}',
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
   /// Public Clubs listing (Phase 5) — GET /clubs, no auth required.
   Future<Map<String, dynamic>> listClubs({int page = 1, String? country}) async {
     final query = <String, String>{'page': '$page', 'country': ?country};

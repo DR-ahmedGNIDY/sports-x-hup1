@@ -27,7 +27,14 @@ describe('PlayersService', () => {
       deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       // search()'s pagination chain: find(filter).skip(n).limit(n),
       // resolved separately from countDocuments(filter) via Promise.all.
+      // `sort` is in the chain too because the roster reads order their
+      // page (find().sort().skip().limit()); both shapes end at `limit`.
       find: jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            limit: jest.fn().mockResolvedValue([]),
+          }),
+        }),
         skip: jest.fn().mockReturnValue({
           limit: jest.fn().mockResolvedValue([]),
         }),
@@ -48,11 +55,15 @@ describe('PlayersService', () => {
       deleteAllForPlayer: jest.fn(),
       ...videosServiceOverrides,
     } as never;
+    const publicCodes = {
+      allocate: jest.fn().mockResolvedValue('PLY-000001'),
+    } as never;
     const service = new PlayersService(
       model as never,
       savedPlayerModel as never,
       cloudinary,
       videosService,
+      publicCodes,
     );
     return {
       service,
@@ -448,6 +459,91 @@ describe('PlayersService', () => {
         pageSize: 20,
         total: 37,
       });
+    });
+  });
+
+  describe('public code', () => {
+    it('allocates a code once and stores it conditionally', async () => {
+      const profile = { _id: 'p1', publicCode: undefined };
+      const { service, model } = buildService(profile);
+      model.findOneAndUpdate.mockResolvedValue({
+        ...profile,
+        publicCode: 'PLY-000001',
+      });
+
+      const result = await service.ensurePublicCode(profile as never);
+
+      const [filter, update] = model.findOneAndUpdate.mock.calls[0];
+      expect(filter).toEqual({
+        _id: 'p1',
+        publicCode: { $in: [null, undefined] },
+      });
+      expect(update).toEqual({ $set: { publicCode: 'PLY-000001' } });
+      expect(result.publicCode).toBe('PLY-000001');
+    });
+
+    it('never rewrites a code a profile already published', async () => {
+      const profile = { _id: 'p1', publicCode: 'PLY-000042' };
+      const { service, model } = buildService(profile);
+
+      await service.ensurePublicCode(profile as never);
+
+      expect(model.findOneAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it('finds a public player by code', async () => {
+      const { service, model } = buildService({
+        visibility: ProfileVisibility.PUBLIC,
+      });
+
+      await expect(
+        service.findPublicByCodeOrThrow('ply-000001'),
+      ).resolves.toBeTruthy();
+      // Normalized before the query, and matched on the indexed field.
+      expect(model.findOne).toHaveBeenCalledWith({ publicCode: 'PLY-000001' });
+    });
+
+    it('does not let a code bypass a private profile', async () => {
+      const { service } = buildService({
+        visibility: ProfileVisibility.PRIVATE,
+      });
+
+      await expect(
+        service.findPublicByCodeOrThrow('PLY-000001'),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('rejects a club code, and a malformed one, without touching the database', async () => {
+      const { service, model } = buildService({
+        visibility: ProfileVisibility.PUBLIC,
+      });
+
+      await expect(
+        service.findPublicByCodeOrThrow('CLB-000001'),
+      ).rejects.toThrow(NotFoundException);
+      await expect(service.findPublicByCodeOrThrow('nonsense')).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(model.findOne).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('findManyPublicByUserIds', () => {
+    it('filters a club roster to public profiles, and counts the same set', async () => {
+      const { service, model } = buildService(null);
+
+      const result = await service.findManyPublicByUserIds(['u1', 'u2'], 2);
+
+      const expectedFilter = {
+        userId: { $in: ['u1', 'u2'] },
+        visibility: ProfileVisibility.PUBLIC,
+      };
+      expect(model.find).toHaveBeenCalledWith(expectedFilter);
+      // The count carries the visibility filter too — otherwise a roster
+      // would report "5 of 8" and disclose the three it may not show.
+      expect(model.countDocuments).toHaveBeenCalledWith(expectedFilter);
+      expect(result.page).toBe(2);
+      expect(result.pageSize).toBe(20);
     });
   });
 });
