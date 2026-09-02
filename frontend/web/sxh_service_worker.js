@@ -44,7 +44,11 @@ const SHELL = [
 
 /// Never cached, whatever else matches. The Flutter tombstone is excluded so
 /// it can never be resurrected from cache.
-const NEVER_CACHE = ['/flutter_service_worker.js'];
+/// This worker itself, so a fix to it can never be served from a copy of
+/// the thing being fixed. `/sxh_service_worker.js` is the one the app
+/// registers; Flutter's generated file is listed too because a browser that
+/// still holds an old registration may ask for it.
+const NEVER_CACHE = ['/sxh_service_worker.js', '/flutter_service_worker.js'];
 
 /// Fetched fresh when the network is there, served from cache when it isn't.
 ///
@@ -53,7 +57,21 @@ const NEVER_CACHE = ['/flutter_service_worker.js'];
 /// deploy's API URL — but excluding it outright is worse: `main()` awaits it
 /// before `runApp`, so an uncacheable .env means the app cannot start offline
 /// at all, however much of it is cached. Network-first gives both.
-const NETWORK_FIRST = ['/assets/.env'];
+///
+/// `flutter_bootstrap.js` is here for a sharper reason: it carries the build
+/// version this worker is registered with. Served stale-while-revalidate, a
+/// deploy could not announce itself — the old worker handed back the old
+/// bootstrap, which re-registered the same old worker, and the app stayed on
+/// a previous build until someone cleared site data by hand. The one file
+/// able to break that loop cannot itself be inside it.
+///
+/// `main.dart.js` is deliberately *not* here, though it is the build itself.
+/// Once the bootstrap arrives fresh, its new version names a new cache, and
+/// `activate` deletes the old one — so the very next request for the bundle
+/// misses and goes to the network anyway. Listing it would buy nothing and
+/// cost a conditional request on every load, forever, for the largest file
+/// the app has.
+const NETWORK_FIRST = ['/assets/.env', '/flutter_bootstrap.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
