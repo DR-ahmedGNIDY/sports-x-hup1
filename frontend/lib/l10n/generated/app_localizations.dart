@@ -3229,6 +3229,54 @@ abstract class AppLocalizations {
   /// **'{name} رفض دعوتك.'**
   String notificationInvitationRejected(String name);
 
+  /// No description provided for @pushPromptTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلّي إشعارات تليفونك تنبّهك'**
+  String get pushPromptTitle;
+
+  /// No description provided for @pushPromptBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّل الإشعارات ونبلّغك لحظة وصول أي دعوة — حتى والتطبيق مقفول.'**
+  String get pushPromptBody;
+
+  /// No description provided for @pushPromptEnableAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل'**
+  String get pushPromptEnableAction;
+
+  /// No description provided for @pushPromptInstallBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'على الآيفون، الإشعارات تعمل بعد إضافة التطبيق إلى الشاشة الرئيسية.'**
+  String get pushPromptInstallBody;
+
+  /// No description provided for @pushPromptInstallAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة إلى الشاشة الرئيسية'**
+  String get pushPromptInstallAction;
+
+  /// No description provided for @pushInstallInstructions.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط زر المشاركة في Safari، ثم اختر «إضافة إلى الشاشة الرئيسية». افتح التطبيق من هناك وفعّل الإشعارات.'**
+  String get pushInstallInstructions;
+
+  /// No description provided for @pushEnabledFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تفعيل الإشعارات.'**
+  String get pushEnabledFeedback;
+
+  /// No description provided for @pushNotEnabledFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإشعارات ما اتفعّلتش. لسه تقدر تشوف كل حاجة هنا.'**
+  String get pushNotEnabledFeedback;
+
   /// No description provided for @genericErrorMessage.
   ///
   /// In ar, this message translates to:

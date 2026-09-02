@@ -12,6 +12,7 @@ import '../shared/invitation_card.dart';
 import '../shared/invitations_filter_bar.dart';
 import '../shared/invitations_pagination.dart';
 import '../shared/invitations_screen_config.dart';
+import '../../../notifications/presentation/shared/push_prompt_card.dart';
 
 /// Both inboxes, for either role — see [InvitationsScreenConfig].
 class InvitationsPageMobile extends ConsumerStatefulWidget {
@@ -56,9 +57,15 @@ class _InvitationsPageMobileState extends ConsumerState<InvitationsPageMobile> {
             AppSpacing.lg,
           ),
           sliver: SliverToBoxAdapter(
-            child: InvitationsFilterBar(
-              kind: _kind,
-              onKindChanged: (kind) => setState(() => _kind = kind),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const PushPromptCard(),
+                InvitationsFilterBar(
+                  kind: _kind,
+                  onKindChanged: (kind) => setState(() => _kind = kind),
+                ),
+              ],
             ),
           ),
         ),

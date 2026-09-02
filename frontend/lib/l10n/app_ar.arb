@@ -667,6 +667,15 @@
     }
   },
 
+  "pushPromptTitle": "خلّي إشعارات تليفونك تنبّهك",
+  "pushPromptBody": "فعّل الإشعارات ونبلّغك لحظة وصول أي دعوة — حتى والتطبيق مقفول.",
+  "pushPromptEnableAction": "تفعيل",
+  "pushPromptInstallBody": "على الآيفون، الإشعارات تعمل بعد إضافة التطبيق إلى الشاشة الرئيسية.",
+  "pushPromptInstallAction": "إضافة إلى الشاشة الرئيسية",
+  "pushInstallInstructions": "اضغط زر المشاركة في Safari، ثم اختر «إضافة إلى الشاشة الرئيسية». افتح التطبيق من هناك وفعّل الإشعارات.",
+  "pushEnabledFeedback": "تم تفعيل الإشعارات.",
+  "pushNotEnabledFeedback": "الإشعارات ما اتفعّلتش. لسه تقدر تشوف كل حاجة هنا.",
+
   "genericErrorMessage": "حدث خطأ ما. الرجاء المحاولة مرة أخرى.",
   "retryButtonLabel": "إعادة المحاولة"
 }

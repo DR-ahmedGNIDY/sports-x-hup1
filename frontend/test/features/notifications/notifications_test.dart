@@ -63,6 +63,17 @@ class _FakeRepository implements NotificationsRepository {
     markAllCalls += 1;
     return unread;
   }
+
+  // Push is not configured in these tests: `null` is the "do not prompt"
+  // answer, which is also what a deploy with no VAPID keys returns.
+  @override
+  Future<String?> pushPublicKey() async => null;
+
+  @override
+  Future<void> subscribePush(Map<String, dynamic> subscription) async {}
+
+  @override
+  Future<void> unsubscribePush(String endpoint) async {}
 }
 
 class _StubSession extends SessionController {

@@ -667,6 +667,15 @@
     }
   },
 
+  "pushPromptTitle": "Get notified on your phone",
+  "pushPromptBody": "Turn on notifications and we'll let you know the moment an invitation arrives — even when the app is closed.",
+  "pushPromptEnableAction": "Turn on",
+  "pushPromptInstallBody": "On iPhone, notifications work once the app is added to your Home Screen.",
+  "pushPromptInstallAction": "Add to Home Screen",
+  "pushInstallInstructions": "Tap the Share button in Safari, then choose \"Add to Home Screen\". Open the app from there and turn notifications on.",
+  "pushEnabledFeedback": "Notifications are on.",
+  "pushNotEnabledFeedback": "Notifications stayed off. You can still see everything here.",
+
   "genericErrorMessage": "Something went wrong. Please try again.",
   "retryButtonLabel": "Retry"
 }

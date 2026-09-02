@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { PushService } from './push.service';
 import {
   Notification,
   NotificationDocument,
@@ -34,6 +35,7 @@ export class NotificationsService {
   constructor(
     @InjectModel(Notification.name)
     private readonly notificationModel: Model<Notification>,
+    private readonly push: PushService,
   ) {}
 
   /**
@@ -52,13 +54,27 @@ export class NotificationsService {
    */
   async emit(input: EmitInput): Promise<NotificationDocument | null> {
     try {
-      return await this.notificationModel.create({
+      const created = await this.notificationModel.create({
         userId: input.userId,
         type: input.type,
         entityType: input.entityType,
         entityId: input.entityId,
         params: input.params,
       });
+
+      // Push rides on the *creation* branch only, so the dedupe index
+      // silences the banner as well as the row: send, withdraw, re-send
+      // buzzes a phone once. Not awaited — a slow push service must not
+      // hold the request that caused it open, and the notification is
+      // already durable by this line.
+      void this.push.send(input.userId, {
+        notificationId: created._id.toString(),
+        type: input.type,
+        actorName: input.params.actorName,
+        actorRole: input.params.actorRole,
+      });
+
+      return created;
     } catch (error) {
       if ((error as { code?: number }).code === DUPLICATE_KEY_ERROR_CODE) {
         return this.notificationModel.findOne({

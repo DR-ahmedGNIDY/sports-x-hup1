@@ -290,6 +290,119 @@
           parseFloat(style.paddingLeft) || 0,
         ].join(',');
       };
+
+      // ------------------------------------------------------------ push
+      //
+      // Web Push lives here rather than in Dart for the same reason the
+      // install prompt does: it is a handful of browser calls whose shapes
+      // are awkward to bind through js_interop, and every one of them
+      // answers with a plain string the Dart side can read with a single
+      // `external` declaration.
+      //
+      // Every function is defensive about the API simply not existing.
+      // Safari before 16.4, any iOS browser outside an installed PWA, and
+      // some privacy-hardened builds have no PushManager at all — and a
+      // thrown ReferenceError here would take the app down rather than
+      // just the banners.
+
+      function sxhPushAvailable() {
+        return (
+          'serviceWorker' in navigator &&
+          'PushManager' in window &&
+          'Notification' in window
+        );
+      }
+
+      window.sxhPushSupported = function () {
+        return sxhPushAvailable();
+      };
+
+      // "granted" | "denied" | "default" | "unsupported"
+      window.sxhPushPermission = function () {
+        if (!sxhPushAvailable()) return 'unsupported';
+        return Notification.permission;
+      };
+
+      // The VAPID key travels as base64url and the browser wants bytes.
+      function sxhUrlBase64ToUint8Array(base64String) {
+        var padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+        var base64 = (base64String + padding)
+          .replace(/-/g, '+')
+          .replace(/_/g, '/');
+        var raw = window.atob(base64);
+        var output = new Uint8Array(raw.length);
+        for (var i = 0; i < raw.length; ++i) output[i] = raw.charCodeAt(i);
+        return output;
+      }
+
+      function sxhSerializeSubscription(subscription) {
+        if (!subscription) return '';
+        var json = subscription.toJSON();
+        // A flat JSON string, so Dart reads it with one binding and decodes
+        // it with the json codec it already uses everywhere else.
+        return JSON.stringify({
+          endpoint: json.endpoint,
+          keys: { p256dh: json.keys.p256dh, auth: json.keys.auth },
+        });
+      }
+
+      // Asks for permission and subscribes. Returns the subscription as a
+      // JSON string, or '' when it did not happen — a refused prompt, an
+      // unsupported browser, or a push service that declined.
+      window.sxhSubscribePush = function (vapidPublicKey) {
+        if (!sxhPushAvailable() || !vapidPublicKey) return Promise.resolve('');
+        return Notification.requestPermission()
+          .then(function (permission) {
+            if (permission !== 'granted') return '';
+            return navigator.serviceWorker.ready.then(function (registration) {
+              return registration.pushManager
+                .subscribe({
+                  // Required by Chromium: every push must show something.
+                  // The service worker's push handler always does.
+                  userVisibleOnly: true,
+                  applicationServerKey:
+                    sxhUrlBase64ToUint8Array(vapidPublicKey),
+                })
+                .then(sxhSerializeSubscription);
+            });
+          })
+          .catch(function () {
+            return '';
+          });
+      };
+
+      // The existing subscription, without prompting for anything.
+      window.sxhCurrentPushSubscription = function () {
+        if (!sxhPushAvailable()) return Promise.resolve('');
+        return navigator.serviceWorker.ready
+          .then(function (registration) {
+            return registration.pushManager.getSubscription();
+          })
+          .then(sxhSerializeSubscription)
+          .catch(function () {
+            return '';
+          });
+      };
+
+      window.sxhUnsubscribePush = function () {
+        if (!sxhPushAvailable()) return Promise.resolve('');
+        return navigator.serviceWorker.ready
+          .then(function (registration) {
+            return registration.pushManager.getSubscription();
+          })
+          .then(function (subscription) {
+            if (!subscription) return '';
+            var serialized = sxhSerializeSubscription(subscription);
+            // The server row is deleted by the caller; unsubscribing here
+            // is what actually stops the push service delivering.
+            return subscription.unsubscribe().then(function () {
+              return serialized;
+            });
+          })
+          .catch(function () {
+            return '';
+          });
+      };
     })();
   </script>
 </head>

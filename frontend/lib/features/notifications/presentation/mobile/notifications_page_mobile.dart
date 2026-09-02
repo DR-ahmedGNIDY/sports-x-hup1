@@ -9,6 +9,7 @@ import '../../../../core/widgets/mobile/app_skeleton_list.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/notifications_controller.dart';
 import '../shared/notifications_body.dart';
+import '../shared/push_prompt_card.dart';
 
 class NotificationsPageMobile extends ConsumerWidget {
   const NotificationsPageMobile({super.key});
@@ -34,6 +35,7 @@ class NotificationsPageMobile extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                   sliver: SliverList.list(
                     children: [
+                      const PushPromptCard(),
                       NotificationsToolbar(page: page),
                       const SizedBox(height: AppSpacing.sm),
                       ...notificationRows(page),

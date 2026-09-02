@@ -1,6 +1,7 @@
 # Notifications — Plan
 
-Status: not started. This document is the design only.
+Status: **Phases 1 and 2 implemented.** Phase 3 (expiry reminders) not
+started. §12 is the deployment step push needs before it can send anything.
 
 **Scope decision (taken after the first draft):** no email. The channels are
 in-app, and the phone's own notification tray via Web Push on the installed
@@ -286,3 +287,36 @@ Phase 3 stays optional.
    start and resume. Push covers the closed-app case, so the gap is narrow.
 5. **A process death between the transition and the send loses the push.**
    The in-app row is already committed, so nothing durable is lost.
+
+## 12. Deploying push
+
+**Push stays silently off until VAPID keys exist.** `PushService` disables
+itself when they are absent and every method becomes a no-op — deliberate,
+so a dev machine, a test run, and a deploy that skipped this section all
+keep working, just without banners. The in-app notification is the durable
+record either way.
+
+Generate a keypair once:
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+Set three variables on the **backend** service:
+
+| Variable | Value |
+| --- | --- |
+| `VAPID_PUBLIC_KEY` | the public key from above |
+| `VAPID_PRIVATE_KEY` | the private key — a secret, never committed |
+| `VAPID_SUBJECT` | `mailto:` address or a site URL; falls back to `FRONTEND_URL` |
+
+They are read through `ConfigService` rather than added to the Joi schema in
+`env.validation.ts`, precisely so that a deploy without them still boots.
+
+**Rotating the keys invalidates every existing subscription.** Browsers bind
+a subscription to the public key it was created with; after a rotation every
+row in `push_subscriptions` is dead and will be pruned on its next failed
+send, and every user has to re-enable. Generate once and keep them.
+
+**Push requires HTTPS**, which Railway already provides. It will not work
+over plain HTTP beyond `localhost`.

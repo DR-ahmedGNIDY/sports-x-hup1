@@ -15,4 +15,13 @@ abstract class NotificationsRepository {
 
   /// Returns how many were still unread.
   Future<int> markAllRead();
+
+  /// The server's VAPID public key, or `null` when push is not configured
+  /// there. Callers must treat `null` as "do not prompt".
+  Future<String?> pushPublicKey();
+
+  /// Registers this browser. [subscription] is the browser's own JSON.
+  Future<void> subscribePush(Map<String, dynamic> subscription);
+
+  Future<void> unsubscribePush(String endpoint);
 }

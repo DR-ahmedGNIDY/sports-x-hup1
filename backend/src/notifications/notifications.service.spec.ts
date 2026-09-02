@@ -36,9 +36,17 @@ function buildService(
       }),
     }),
   };
+  // Push is optional infrastructure and never throws at its caller; this
+  // stands in for it so these tests are about the record, not the banner.
+  const push = { send: jest.fn().mockResolvedValue(undefined) };
+
   return {
-    service: new NotificationsService(notificationModel as never),
+    service: new NotificationsService(
+      notificationModel as never,
+      push as never,
+    ),
     notificationModel,
+    push,
   };
 }
 
@@ -84,6 +92,33 @@ describe('NotificationsService', () => {
           type: NotificationType.INVITATION_RECEIVED,
         }),
       );
+    });
+
+    it('pushes on the creation branch, so a duplicate does not buzz twice', async () => {
+      const { service, push } = buildService();
+
+      await service.emit(emitInput);
+
+      expect(push.send).toHaveBeenCalledWith(
+        'user-1',
+        expect.objectContaining({
+          type: NotificationType.INVITATION_RECEIVED,
+          actorName: 'Al Ahly',
+        }),
+      );
+    });
+
+    it('does not push when the row already existed', async () => {
+      const { service, push } = buildService({
+        create: jest.fn().mockRejectedValue({ code: 11000 }),
+        findOne: jest.fn().mockResolvedValue({ _id: 'already-there' }),
+      });
+
+      await service.emit(emitInput);
+
+      // The dedupe index silences the banner as well as the row: send,
+      // withdraw, re-send buzzes a phone once.
+      expect(push.send).not.toHaveBeenCalled();
     });
 
     it('never throws — a failed announcement must not fail the event', async () => {

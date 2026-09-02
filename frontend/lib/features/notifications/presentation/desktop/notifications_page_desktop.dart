@@ -7,6 +7,7 @@ import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/notifications_controller.dart';
 import '../shared/notifications_body.dart';
+import '../shared/push_prompt_card.dart';
 
 class NotificationsPageDesktop extends ConsumerWidget {
   const NotificationsPageDesktop({super.key});
@@ -51,6 +52,7 @@ class NotificationsPageDesktop extends ConsumerWidget {
                         )
                       : ListView(
                           children: [
+                            const PushPromptCard(),
                             NotificationsToolbar(page: page),
                             const SizedBox(height: AppSpacing.sm),
                             ...notificationRows(page),

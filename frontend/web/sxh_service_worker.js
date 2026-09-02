@@ -152,3 +152,118 @@ self.addEventListener('fetch', (event) => {
     })(),
   );
 });
+
+// ---------------------------------------------------------------- web push
+//
+// The two handlers that turn this from a caching worker into something the
+// operating system will show a banner for. They run when the app is closed —
+// that is the whole point, and it is why the notification text has to be
+// built here rather than by the Flutter app, which is not running.
+//
+// The payload is the same structured shape the in-app notification stores
+// (`type` + actor), never a rendered sentence: see the backend's
+// notification schema for why. The consequence is that this file owns one
+// small copy of the wording, in both languages, because a service worker
+// cannot reach the app's .arb files. It is the only duplicated copy in the
+// system, and it is deliberate — the alternative is a server that renders
+// text and freezes the reader's language at send time.
+
+const PUSH_STRINGS = {
+  ar: {
+    title: 'Sport X Hub',
+    INVITATION_RECEIVED_CLUB: (name) => `${name} دعاك للانضمام إلى النادي.`,
+    INVITATION_RECEIVED_PLAYER: (name) => `${name} طلب الانضمام إلى ناديك.`,
+    INVITATION_ACCEPTED: (name) => `${name} قَبِل دعوتك.`,
+    INVITATION_REJECTED: (name) => `${name} رفض دعوتك.`,
+    fallbackClub: 'نادٍ',
+    fallbackPlayer: 'لاعب',
+    generic: 'لديك إشعار جديد.',
+  },
+  en: {
+    title: 'Sport X Hub',
+    INVITATION_RECEIVED_CLUB: (name) => `${name} invited you to join their club.`,
+    INVITATION_RECEIVED_PLAYER: (name) => `${name} asked to join your club.`,
+    INVITATION_ACCEPTED: (name) => `${name} accepted your invitation.`,
+    INVITATION_REJECTED: (name) => `${name} declined your invitation.`,
+    fallbackClub: 'A club',
+    fallbackPlayer: 'A player',
+    generic: 'You have a new notification.',
+  },
+};
+
+// Arabic is the app's default, so it is the fallback here too.
+function pushStrings() {
+  const language = (self.navigator && self.navigator.language) || 'ar';
+  return language.startsWith('en') ? PUSH_STRINGS.en : PUSH_STRINGS.ar;
+}
+
+function pushBody(data) {
+  const s = pushStrings();
+  const isClub = data.actorRole === 'CLUB';
+  const name =
+    (data.actorName && data.actorName.trim()) ||
+    (isClub ? s.fallbackClub : s.fallbackPlayer);
+
+  switch (data.type) {
+    case 'INVITATION_RECEIVED':
+      return isClub
+        ? s.INVITATION_RECEIVED_CLUB(name)
+        : s.INVITATION_RECEIVED_PLAYER(name);
+    case 'INVITATION_ACCEPTED':
+      return s.INVITATION_ACCEPTED(name);
+    case 'INVITATION_REJECTED':
+      return s.INVITATION_REJECTED(name);
+    default:
+      // A type this build predates. Still worth a banner — the app will
+      // render it properly once opened.
+      return s.generic;
+  }
+}
+
+self.addEventListener('push', (event) => {
+  // A push with no readable payload still shows something. Silently
+  // dropping it would be worse: on some platforms a push that shows no
+  // notification costs the site its permission.
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (_) {
+    data = {};
+  }
+
+  const s = pushStrings();
+  event.waitUntil(
+    self.registration.showNotification(s.title, {
+      body: pushBody(data),
+      icon: 'icons/Icon-192.png',
+      badge: 'icons/Icon-192.png',
+      // Collapses repeats for one notification rather than stacking them.
+      tag: data.notificationId || 'sxh-notification',
+      data: { notificationId: data.notificationId || null },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  // Focus a tab that is already open rather than adding another — someone
+  // who has the app open in a tab wants that tab, not a second copy.
+  event.waitUntil(
+    (async () => {
+      const target = new URL('/#/notifications', self.location.origin).href;
+      const clientList = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      });
+      for (const client of clientList) {
+        if (client.url.startsWith(self.location.origin) && 'focus' in client) {
+          await client.focus();
+          if ('navigate' in client) await client.navigate(target);
+          return;
+        }
+      }
+      if (self.clients.openWindow) await self.clients.openWindow(target);
+    })(),
+  );
+});

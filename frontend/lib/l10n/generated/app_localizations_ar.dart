@@ -1706,6 +1706,34 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get pushPromptTitle => 'خلّي إشعارات تليفونك تنبّهك';
+
+  @override
+  String get pushPromptBody =>
+      'فعّل الإشعارات ونبلّغك لحظة وصول أي دعوة — حتى والتطبيق مقفول.';
+
+  @override
+  String get pushPromptEnableAction => 'تفعيل';
+
+  @override
+  String get pushPromptInstallBody =>
+      'على الآيفون، الإشعارات تعمل بعد إضافة التطبيق إلى الشاشة الرئيسية.';
+
+  @override
+  String get pushPromptInstallAction => 'إضافة إلى الشاشة الرئيسية';
+
+  @override
+  String get pushInstallInstructions =>
+      'اضغط زر المشاركة في Safari، ثم اختر «إضافة إلى الشاشة الرئيسية». افتح التطبيق من هناك وفعّل الإشعارات.';
+
+  @override
+  String get pushEnabledFeedback => 'تم تفعيل الإشعارات.';
+
+  @override
+  String get pushNotEnabledFeedback =>
+      'الإشعارات ما اتفعّلتش. لسه تقدر تشوف كل حاجة هنا.';
+
+  @override
   String get genericErrorMessage => 'حدث خطأ ما. الرجاء المحاولة مرة أخرى.';
 
   @override

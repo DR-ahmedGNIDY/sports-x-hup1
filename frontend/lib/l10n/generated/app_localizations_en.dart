@@ -1721,6 +1721,34 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pushPromptTitle => 'Get notified on your phone';
+
+  @override
+  String get pushPromptBody =>
+      'Turn on notifications and we\'ll let you know the moment an invitation arrives — even when the app is closed.';
+
+  @override
+  String get pushPromptEnableAction => 'Turn on';
+
+  @override
+  String get pushPromptInstallBody =>
+      'On iPhone, notifications work once the app is added to your Home Screen.';
+
+  @override
+  String get pushPromptInstallAction => 'Add to Home Screen';
+
+  @override
+  String get pushInstallInstructions =>
+      'Tap the Share button in Safari, then choose \"Add to Home Screen\". Open the app from there and turn notifications on.';
+
+  @override
+  String get pushEnabledFeedback => 'Notifications are on.';
+
+  @override
+  String get pushNotEnabledFeedback =>
+      'Notifications stayed off. You can still see everything here.';
+
+  @override
   String get genericErrorMessage => 'Something went wrong. Please try again.';
 
   @override

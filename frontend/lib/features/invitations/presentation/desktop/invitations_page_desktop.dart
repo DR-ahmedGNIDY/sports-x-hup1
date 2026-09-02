@@ -10,6 +10,7 @@ import '../shared/invitation_card.dart';
 import '../shared/invitations_filter_bar.dart';
 import '../shared/invitations_pagination.dart';
 import '../shared/invitations_screen_config.dart';
+import '../../../notifications/presentation/shared/push_prompt_card.dart';
 
 /// Both inboxes, for either role — see [InvitationsScreenConfig].
 class InvitationsPageDesktop extends ConsumerStatefulWidget {
@@ -60,6 +61,7 @@ class _InvitationsPageDesktopState extends ConsumerState<InvitationsPageDesktop>
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
+              const PushPromptCard(),
               InvitationsFilterBar(
                 kind: _kind,
                 onKindChanged: (kind) => setState(() => _kind = kind),

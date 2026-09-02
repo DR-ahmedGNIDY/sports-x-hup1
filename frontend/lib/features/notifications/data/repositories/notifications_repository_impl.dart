@@ -41,6 +41,18 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
     final json = await _remote.markAllRead(token);
     return json['marked'] as int? ?? 0;
   });
+
+  @override
+  Future<String?> pushPublicKey() =>
+      _authorized((token) => _remote.pushPublicKey(token));
+
+  @override
+  Future<void> subscribePush(Map<String, dynamic> subscription) =>
+      _authorized((token) => _remote.subscribePush(token, subscription));
+
+  @override
+  Future<void> unsubscribePush(String endpoint) =>
+      _authorized((token) => _remote.unsubscribePush(token, endpoint));
 }
 
 final notificationsRepositoryProvider = Provider<NotificationsRepository>(
