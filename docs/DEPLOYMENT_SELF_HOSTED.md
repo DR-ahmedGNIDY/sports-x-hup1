@@ -18,6 +18,16 @@ one; the two share the same images and the same variables.
 ## 0. Before you start
 
 - A server with a public IPv4 address, Docker Engine and the Compose plugin.
+  On a fresh Ubuntu/Debian box:
+
+  ```bash
+  curl -fsSL https://get.docker.com | sudo sh
+  sudo usermod -aG docker "$USER"   # then log out and back in
+  docker compose version            # confirms the plugin came with it
+  ```
+
+- **At least 2 GB of RAM to build the web image**, or a plan for §2.1. The
+  Flutter compile is the demanding step; everything else is small.
 - Both DNS records pointing at it — **before** requesting certificates, or
   the ACME challenge has nowhere to land:
 
@@ -60,9 +70,41 @@ docker compose up -d --build
 ```
 
 The first build compiles the Flutter web app, which takes several minutes
-and a couple of GB of RAM. On a 1 GB server it will be killed part-way — if
-that happens, either add swap or build the `web` image somewhere else and
-push it to a registry.
+and a couple of GB of RAM.
+
+### 2.1 If the web build is killed
+
+On a 1 GB server the Flutter compile is killed part-way — usually with no
+message beyond the build stopping, because the kernel's OOM killer does not
+explain itself. Two ways out.
+
+**Add swap** (simplest; slow but it finishes):
+
+```bash
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile && sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+**Or build the web image elsewhere** — on your own machine, or in CI — and
+ship it:
+
+```bash
+# where you have RAM to spare
+docker build -t sportxhup-web ./frontend
+docker save sportxhup-web | gzip | ssh you@server 'gunzip | docker load'
+```
+
+Then on the server, start it without rebuilding:
+
+```bash
+docker compose up -d --no-build web
+docker compose up -d --build api mongo
+```
+
+The API image is a plain Node build and compiles happily on any size box;
+only the web one needs this.
 
 Check both are answering locally before involving nginx:
 
@@ -180,7 +222,43 @@ Nothing schedules this. Until something does, you have a database with no
 backups — worth a cron entry on day one rather than after the first
 incident.
 
-## 8. Known limitations
+## 8. Moving off Railway
+
+The order matters, because the Railway deployment is production until the
+day it isn't.
+
+1. **Bring the VPS up fully** — steps 1 to 4 above — while Railway keeps
+   serving. Test it by pointing a `hosts` entry at the new IP, or by hitting
+   the server's address directly, *before* touching DNS.
+2. **Switch DNS.** Lower the TTL a day beforehand if you can; expect a tail
+   of traffic on the old host regardless.
+3. **Watch both** for a day. Railway's copy is a working rollback for as
+   long as its database is still current.
+4. **Only then** delete `backend/railway.json`, `frontend/railway.json` and
+   `DEPLOYMENT_RAILWAY.md`. Removing them earlier changes how Railway builds
+   the still-live site: without `railway.json` it falls back to
+   auto-detection, which now finds `backend/Dockerfile` and takes a
+   different path than the one currently running.
+
+**The database does not move itself.** Railway's Mongo and the `mongo-data`
+volume here are separate stores. Dump from the old one and restore into the
+new one during the switch, or start on the VPS with an empty database and
+accept the loss — but decide which, deliberately, rather than discovering it
+afterwards.
+
+```bash
+mongodump --uri "<railway MONGODB_URI>" --archive --gzip > move.gz
+docker compose exec -T mongo mongorestore \
+  --username "$MONGO_ROOT_USERNAME" --password "$MONGO_ROOT_PASSWORD" \
+  --authenticationDatabase admin --archive --gzip < move.gz
+```
+
+**Email may simply start working.** `SmtpEmailProvider` times out on Railway
+because it blocks outbound mail ports (25/465/587/2525). A normal VPS leaves
+587 open — many block 25 only — so try `MAIL_PROVIDER=smtp` first and keep
+`brevo` as the fallback rather than assuming you still need it.
+
+## 9. Known limitations
 
 1. **No CI.** Deploying is `git pull && docker compose up -d --build` on the
    server, and nothing runs the test suites first. Running
