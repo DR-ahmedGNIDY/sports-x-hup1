@@ -4,6 +4,9 @@
   "description": "Sport X Hub backend — NestJS + MongoDB (Mongoose)",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
