@@ -6,7 +6,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../navigation/app_branches.dart';
 import '../../theme/app_blur.dart';
 import '../../theme/app_spacing.dart';
-import '../app_logo.dart';
+import '../branded_app_bar_title.dart';
 
 /// The page scaffold for a migrated mobile screen: a collapsing app bar the
 /// content scrolls *under*, rather than the fixed opaque bar the shell hands
@@ -106,12 +106,13 @@ class AppScaffoldMobile extends StatelessWidget {
                 )
               : null,
           actions: [...?actions, const NotificationBell()],
-          // Home has no title — it wears the wordmark instead, the way a
-          // phone app does on its first tab. There is nothing to collapse,
-          // so the bar stays a plain pinned one.
-          title: title == null
-              ? const AppLogo(height: 28)
-              : (isDetail ? Text(title) : null),
+          // The wordmark rides in the pinned bar on every screen, not just
+          // Home. On a branch root that slot was empty — the section name
+          // lives in the collapsing `flexibleSpace` below — so the logo
+          // costs nothing there and stops the bar reading as blank. On a
+          // detail screen it shares the row with the screen name, which
+          // ellipsizes rather than pushing the logo out.
+          title: BrandedAppBarTitle(title: isDetail ? title : null),
           flexibleSpace: _BlurredBarBackground(
             color: background,
             child: isDetail || title == null

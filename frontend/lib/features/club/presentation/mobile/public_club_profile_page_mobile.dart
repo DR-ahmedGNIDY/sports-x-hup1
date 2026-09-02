@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/branded_app_bar_title.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../invitations/presentation/shared/club_members_section.dart';
 import '../../../invitations/presentation/shared/request_to_join_button.dart';
@@ -21,7 +21,7 @@ class PublicClubProfilePageMobile extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const AppLogo(height: 24),
+        title: const BrandedAppBarTitle(),
         leading: BackButton(onPressed: () => context.pop()),
       ),
       body: profileAsync.when(

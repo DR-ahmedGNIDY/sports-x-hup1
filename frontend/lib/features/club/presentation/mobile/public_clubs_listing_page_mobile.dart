@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/branded_app_bar_title.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../marketing/presentation/shared/marketing_chrome.dart';
@@ -21,7 +21,7 @@ class PublicClubsListingPageMobile extends ConsumerWidget {
     return Scaffold(
       appBar: marketingHeaderAppBar(
         context,
-        title: const AppLogo(height: 24),
+        title: const BrandedAppBarTitle(),
         actions: marketingMobileAppBarActions(context, ref),
       ),
       drawer: marketingMobileDrawer(context),

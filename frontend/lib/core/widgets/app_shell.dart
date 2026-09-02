@@ -19,6 +19,7 @@ import '../utils/app_image.dart';
 import '../utils/app_install.dart';
 import '../utils/breakpoints.dart';
 import 'app_logo.dart';
+import 'branded_app_bar_title.dart';
 import 'mobile/app_scaffold_mobile.dart';
 import 'mobile/app_sheet.dart';
 
@@ -493,9 +494,7 @@ class _MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
               // be a fixed glyph.
               icon: const Icon(Icons.arrow_back),
             ),
-      title: title == null
-          ? const AppLogo(height: 28)
-          : Text(title(l10n), style: Theme.of(context).textTheme.titleMedium),
+      title: BrandedAppBarTitle(title: title?.call(l10n)),
       actions: const [NotificationBell()],
     );
   }

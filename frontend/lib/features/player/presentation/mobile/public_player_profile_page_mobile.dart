@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/profile_colors.dart';
+import '../../../../core/widgets/branded_app_bar_title.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../invitations/presentation/shared/invite_player_button.dart';
@@ -27,8 +28,17 @@ class PublicPlayerProfilePageMobile extends ConsumerWidget {
       backgroundColor: profileColors.bg,
       appBar: AppBar(
         backgroundColor: profileColors.surface,
-        leading: BackButton(onPressed: () => context.go('/players'), color: profileColors.text),
-        title: Text(l10n.backToPlayersLabel, style: TextStyle(color: profileColors.text, fontSize: 16)),
+        leading: BackButton(
+          onPressed: () => context.go('/players'),
+          color: profileColors.text,
+        ),
+        // The only screen in the app that carried no wordmark at all — and
+        // the one a stranger is most likely to land on first, since a shared
+        // profile link points here.
+        title: BrandedAppBarTitle(
+          title: l10n.backToPlayersLabel,
+          titleStyle: TextStyle(color: profileColors.text, fontSize: 16),
+        ),
         actions: [
           ShareProfileButton(playerId: playerId, compact: true),
           profileAsync.maybeWhen(
