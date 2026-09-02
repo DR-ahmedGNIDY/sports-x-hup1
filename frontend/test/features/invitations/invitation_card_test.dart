@@ -105,14 +105,61 @@ void main() {
       expect(find.text('Al Ahly'), findsNothing);
     });
 
-    testWidgets('a player-to-club request shows the club', (tester) async {
+    testWidgets('a player-to-club request shows the player to the club', (
+      tester,
+    ) async {
       await _pump(
         tester,
-        _invitation(type: InvitationType.playerToClub, canAccept: true, canReject: true),
+        _invitation(
+          type: InvitationType.playerToClub,
+          direction: InvitationDirection.received,
+          canAccept: true,
+          canReject: true,
+        ),
+      );
+
+      // The club is reading a request addressed to it: the useful half of
+      // the card is who is asking, not the club's own name.
+      expect(find.text('Omar Hassan'), findsOneWidget);
+      expect(find.text('PLY-000002'), findsOneWidget);
+      expect(find.text('Al Ahly'), findsNothing);
+    });
+
+    // The two cases the card used to get wrong. It chose a side from the
+    // invitation's type alone, so whoever received one was shown their own
+    // name and photograph instead of the person who had written to them.
+    testWidgets('a club-to-player invitation shows the club to the player', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        _invitation(
+          type: InvitationType.clubToPlayer,
+          direction: InvitationDirection.received,
+          canAccept: true,
+          canReject: true,
+        ),
       );
 
       expect(find.text('Al Ahly'), findsOneWidget);
       expect(find.text('CLB-000001'), findsOneWidget);
+      expect(find.text('Omar Hassan'), findsNothing);
+    });
+
+    testWidgets('a player-to-club request shows the club in the outbox', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        _invitation(
+          type: InvitationType.playerToClub,
+          direction: InvitationDirection.sent,
+          canCancel: true,
+        ),
+        kind: InvitationsListKind.sent,
+      );
+
+      expect(find.text('Al Ahly'), findsOneWidget);
       expect(find.text('Omar Hassan'), findsNothing);
     });
 

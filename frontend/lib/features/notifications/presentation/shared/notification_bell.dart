@@ -51,10 +51,10 @@ class NotificationBell extends ConsumerWidget {
   }
 
   void _openPanel(BuildContext context, WidgetRef ref) {
-    // Refreshed on open, not on a timer: this is the moment the count and
-    // the list actually have to agree, and polling in the background would
-    // spend a request per user per interval to change a number almost
-    // nobody is watching.
+    // Refreshed on open as well as on the badge's own timer: this is the
+    // moment the count and the list actually have to agree, and the list is
+    // not polled — only the count is, since that is the part that has to
+    // announce itself before anyone thinks to look here.
     ref.invalidate(notificationsListProvider);
     ref.invalidate(unreadNotificationsProvider);
 

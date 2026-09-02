@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,13 +18,56 @@ import '../../application/notifications_controller.dart';
 /// It is a count, not a dot: "3" tells you whether to open it now, and a
 /// dot does not. Capped at 9+ because past that the exact number stops
 /// changing anyone's behaviour and starts costing width.
-class NotificationBadge extends ConsumerWidget {
+/// How often the badge re-checks itself.
+///
+/// Long enough to be negligible — one small request per minute per open
+/// tab — and short enough that an invitation reads as having arrived
+/// rather than as having been found later.
+const _pollInterval = Duration(minutes: 1);
+
+class NotificationBadge extends ConsumerStatefulWidget {
   const NotificationBadge({super.key, required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<NotificationBadge> createState() => _NotificationBadgeState();
+}
+
+class _NotificationBadgeState extends ConsumerState<NotificationBadge> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Polled here rather than inside the provider, so the timer's life is
+    // the badge's life: a provider-owned timer outlives every widget tree
+    // that ever watched it, which leaks in the app and hangs a test.
+    //
+    // Opening the bell already refreshed the count, and that used to be
+    // the only refresh there was — but nobody opens a bell that is not
+    // telling them anything. The badge is what says "there is something
+    // here", so a badge that only updated once you had opened it reversed
+    // the order, and a notification raised while the app sat open stayed
+    // invisible until a full page reload. That is the one thing a
+    // notification may not do.
+    //
+    // Web Push delivers instantly wherever it is granted; this is the
+    // floor under everyone else, and under a lapsed subscription.
+    _timer = Timer.periodic(_pollInterval, (_) {
+      if (mounted) ref.invalidate(unreadNotificationsProvider);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final child = widget.child;
     // valueOrNull, not value — a failed count must cost the badge, not the
     // navigation bar it sits in.
     final unread = ref.watch(unreadNotificationsProvider).valueOrNull ?? 0;

@@ -316,5 +316,72 @@ void main() {
       await pump(tester, 42);
       expect(find.text('9+'), findsOneWidget);
     });
+
+    // The bug this was reported as: "the notification only shows after I
+    // reload the page". Opening the bell refreshed everything, but the
+    // badge is what tells you to open the bell — so nothing ever prompted
+    // the open.
+    testWidgets('re-checks itself, so a new notification announces itself', (
+      tester,
+    ) async {
+      final repository = _FakeRepository(unread: 0);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            notificationsRepositoryProvider.overrideWithValue(repository),
+            sessionControllerProvider.overrideWith(_StubSession.new),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.compact(AppTheme.dark),
+            locale: const Locale('en'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const Scaffold(
+              body: Center(child: NotificationBadge(child: Icon(Icons.person))),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('2'), findsNothing);
+
+      // An invitation arrives while the reader sits on an open page.
+      repository.unread = 2;
+      await tester.pump(const Duration(minutes: 1, seconds: 1));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('2'),
+        findsOneWidget,
+        reason: 'the badge went stale until a full page reload',
+      );
+    });
+
+    // The timer must not outlive the widget: a pending one leaks in the app
+    // and hangs whichever test mounts this next.
+    testWidgets('stops re-checking once it leaves the tree', (tester) async {
+      final repository = _FakeRepository(unread: 1);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            notificationsRepositoryProvider.overrideWithValue(repository),
+            sessionControllerProvider.overrideWith(_StubSession.new),
+          ],
+          child: MaterialApp(
+            locale: const Locale("en"),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const Scaffold(
+              body: NotificationBadge(child: Icon(Icons.person)),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      // Reaching here without "A Timer is still pending" is the assertion.
+    });
   });
 }

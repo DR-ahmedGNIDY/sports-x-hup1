@@ -28,9 +28,20 @@ class InvitationCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    // Whose card this is: a club-to-player invitation is *about* the
-    // player whichever end you are looking at it from, and vice versa.
-    final showsPlayer = invitation.type == InvitationType.clubToPlayer;
+    // Whose card this is: always the *other* side of the conversation.
+    //
+    // That depends on where the viewer is standing, not only on who
+    // recruited whom. A club-to-player invitation shows the player in the
+    // club's outbox and the club in the player's inbox — deciding from the
+    // type alone meant the recipient opened their inbox and found their own
+    // name and photograph looking back at them, on both sides.
+    //
+    // The viewer is the club when they sent a club-to-player invitation, or
+    // received a player-to-club request; the player in the other two cases.
+    final viewerIsClub =
+        (invitation.type == InvitationType.clubToPlayer) ==
+        (invitation.direction == InvitationDirection.sent);
+    final showsPlayer = viewerIsClub;
     final player = invitation.player;
     final club = invitation.club;
 
