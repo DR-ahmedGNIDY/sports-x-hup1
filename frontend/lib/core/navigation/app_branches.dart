@@ -286,12 +286,14 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // 320px, and Club Players is the destination a club opens daily. It
     // still gets a Dashboard quick action, which is where a club that has
     // just added players actually goes looking for it.
-    // Notifications is first in every list on purpose: it is the only entry
-    // whose contents change without the user doing anything, so it is the
-    // one worth finding without reading. The badge on the slot that opens
-    // this sheet is what points at it.
+    // Notifications is deliberately absent from every list below. It was
+    // here while the account sheet was the only route to it; the header
+    // bell is now that route, on every screen, and listing it here as well
+    // would put the same destination behind two controls one tap apart —
+    // with the bell carrying the unread count and the menu row silently
+    // not. `/notifications` stays a real route, reached from the bell's
+    // panel.
     UserRole.club => const [
-      AppBranch.notifications,
       AppBranch.clubInvitations,
       AppBranch.savedPlayers,
       AppBranch.community,
@@ -300,12 +302,10 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // Same call as the Club's: Invitations is an account-sheet entry, not a
     // fourth tab displacing Community.
     UserRole.player => const [
-      AppBranch.notifications,
       AppBranch.playerInvitations,
       AppBranch.settings,
     ],
     UserRole.admin => const [
-      AppBranch.notifications,
       AppBranch.adminUsers,
       AppBranch.adminPlayersClubs,
       AppBranch.settings,
