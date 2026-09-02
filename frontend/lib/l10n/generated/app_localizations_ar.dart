@@ -1672,6 +1672,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationsMarkAllReadLabel => 'تعليم الكل كمقروء';
 
   @override
+  String get notificationsSeeAll => 'عرض كل الإشعارات';
+
+  @override
   String notificationsUnreadLabel(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

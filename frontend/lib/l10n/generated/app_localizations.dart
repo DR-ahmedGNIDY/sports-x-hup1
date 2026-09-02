@@ -3199,6 +3199,12 @@ abstract class AppLocalizations {
   /// **'تعليم الكل كمقروء'**
   String get notificationsMarkAllReadLabel;
 
+  /// No description provided for @notificationsSeeAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض كل الإشعارات'**
+  String get notificationsSeeAll;
+
   /// No description provided for @notificationsUnreadLabel.
   ///
   /// In ar, this message translates to:

@@ -636,6 +636,7 @@
   "notificationsEmpty": "Nothing yet. When a club or a player writes to you, it will show up here.",
   "notificationsUnreadOnlyLabel": "Unread only",
   "notificationsMarkAllReadLabel": "Mark all read",
+  "notificationsSeeAll": "See all notifications",
   "notificationsUnreadLabel": "{count, plural, =1{1 unread notification} other{{count} unread notifications}}",
   "@notificationsUnreadLabel": {
     "placeholders": {

@@ -15,9 +15,18 @@ import 'notification_labels.dart';
 /// those are one intention, and splitting them into two taps would leave
 /// people with a list of things they have read but not acted on.
 class NotificationTile extends ConsumerWidget {
-  const NotificationTile({super.key, required this.notification});
+  const NotificationTile({
+    super.key,
+    required this.notification,
+    this.onTapped,
+  });
 
   final AppNotification notification;
+
+  /// Called before navigating. The header panel uses it to close itself —
+  /// a sheet left open over the screen the tap just opened would hide the
+  /// thing the tap asked for.
+  final VoidCallback? onTapped;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,6 +70,7 @@ class NotificationTile extends ConsumerWidget {
     unawaited(
       ref.read(notificationsListProvider.notifier).markRead(notification.id),
     );
+    onTapped?.call();
     if (destination != null) router.go(destination);
   }
 

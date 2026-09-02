@@ -1690,6 +1690,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsMarkAllReadLabel => 'Mark all read';
 
   @override
+  String get notificationsSeeAll => 'See all notifications';
+
+  @override
   String notificationsUnreadLabel(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

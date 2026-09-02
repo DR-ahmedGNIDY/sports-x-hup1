@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../features/notifications/presentation/shared/notification_bell.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../navigation/app_branches.dart';
 import '../../theme/app_blur.dart';
@@ -47,6 +48,13 @@ class AppScaffoldMobile extends StatelessWidget {
 
   /// Trailing app-bar actions. Rare — most screen actions belong in the
   /// content, where they can carry a label.
+  ///
+  /// The notification bell is appended to whatever a screen passes, so it
+  /// appears on every migrated screen without each one remembering to add
+  /// it. Screens that want no bell at all are not a case that exists: it is
+  /// the one control whose content changes without the user acting, so
+  /// hiding it on some screens would mean the app is quietly holding news
+  /// wherever you happen to be standing.
   final List<Widget>? actions;
 
   /// Pull-to-refresh. Omitted when a screen has nothing to refetch.
@@ -97,7 +105,7 @@ class AppScaffoldMobile extends StatelessWidget {
                   icon: const Icon(Icons.arrow_back),
                 )
               : null,
-          actions: actions,
+          actions: [...?actions, const NotificationBell()],
           // Home has no title — it wears the wordmark instead, the way a
           // phone app does on its first tab. There is nothing to collapse,
           // so the bar stays a plain pinned one.

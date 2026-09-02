@@ -636,6 +636,7 @@
   "notificationsEmpty": "لا يوجد شيء بعد. عندما يراسلك نادٍ أو لاعب سيظهر هنا.",
   "notificationsUnreadOnlyLabel": "غير المقروءة فقط",
   "notificationsMarkAllReadLabel": "تعليم الكل كمقروء",
+  "notificationsSeeAll": "عرض كل الإشعارات",
   "notificationsUnreadLabel": "{count, plural, one{إشعار واحد غير مقروء} two{إشعاران غير مقروءين} few{{count} إشعارات غير مقروءة} many{{count} إشعارًا غير مقروء} other{{count} إشعار غير مقروء}}",
   "@notificationsUnreadLabel": {
     "placeholders": {

@@ -8,7 +8,7 @@ import '../../features/club/application/club_profile_controller.dart';
 import '../../features/player/application/player_profile_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../locale/language_toggle_button.dart';
-import '../../features/notifications/presentation/shared/notification_badge.dart';
+import '../../features/notifications/presentation/shared/notification_bell.dart';
 import '../navigation/app_branches.dart';
 import '../theme/app_blur.dart';
 import '../theme/app_motion.dart';
@@ -202,6 +202,9 @@ class _TopBar extends ConsumerWidget {
       automaticallyImplyLeading: false,
       title: const _UserIdentity(),
       actions: [
+        // First in the row: the one action here whose content changes
+        // without the user doing anything.
+        const NotificationBell(),
         IconButton(
           tooltip: l10n.themeToggleTooltip,
           onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
@@ -493,6 +496,7 @@ class _MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: title == null
           ? const AppLogo(height: 28)
           : Text(title(l10n), style: Theme.of(context).textTheme.titleMedium),
+      actions: const [NotificationBell()],
     );
   }
 }
@@ -695,13 +699,13 @@ class _AccountTabSlot extends StatelessWidget {
                   width: 2,
                 ),
               ),
-              // The unread count rides on the avatar: the account slot is
-              // what opens the sheet that holds Notifications, so this is
-              // the one place a badge is both visible from every screen and
-              // adjacent to what it wants you to open.
-              child: const NotificationBadge(
-                child: _UserIdentity(showName: false, radius: 11),
-              ),
+              // No badge here. The count used to ride on this avatar, back
+              // when the account sheet was the only way to reach
+              // Notifications. The header bell is now that affordance, and
+              // two badges for one number would have the user checking
+              // whichever they noticed first and wondering why the other
+              // agreed.
+              child: const _UserIdentity(showName: false, radius: 11),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
