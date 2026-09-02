@@ -26,7 +26,7 @@ class SavePlayerButton extends ConsumerWidget {
 
     final saved = ref.watch(
       savedPlayersControllerProvider.select(
-        (state) => state.value?.any((p) => p.id == profile.id) ?? false,
+        (state) => state.valueOrNull?.any((p) => p.id == profile.id) ?? false,
       ),
     );
 

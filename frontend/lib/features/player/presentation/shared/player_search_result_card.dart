@@ -24,11 +24,25 @@ class PlayerSearchResultCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final isClub = ref.watch(sessionControllerProvider).user?.role == UserRole.club;
-    final saved = ref.watch(
-      savedPlayersControllerProvider.select(
-        (state) => state.value?.any((p) => p.id == player.id) ?? false,
-      ),
-    );
+    // Only a Club may ask: saved-players is @Roles(CLUB) on the server, so a
+    // Player — or the signed-out visitor on the public /players listing —
+    // gets a 403 from it. This card is shared by all three, and it used to
+    // watch the provider regardless of who was looking.
+    //
+    // That was not merely a wasted request. The failure left the provider in
+    // AsyncError, and AsyncValue.value *rethrows* an error rather than
+    // returning null, so the "?? false" below never ran: every card threw
+    // while building, and the whole result list rendered as blank space under
+    // the search box. valueOrNull is the accessor that actually yields null,
+    // and is kept here as well so an error can never do that again.
+    final saved = isClub
+        ? ref.watch(
+            savedPlayersControllerProvider.select(
+              (state) =>
+                  state.valueOrNull?.any((p) => p.id == player.id) ?? false,
+            ),
+          )
+        : false;
     final subtitle = [
       player.sport,
       player.position,

@@ -214,7 +214,7 @@ class ClubDashboardSavedPlayersTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final savedCount =
-        ref.watch(savedPlayersControllerProvider).value?.length ?? 0;
+        ref.watch(savedPlayersControllerProvider).valueOrNull?.length ?? 0;
     return ClubDashboardStatTile(
       icon: Icons.bookmark_outline,
       label: l10n.dashboardSavedPlayers,

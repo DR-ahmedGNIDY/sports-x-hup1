@@ -14,17 +14,17 @@ class SavedPlayersController extends AsyncNotifier<List<PlayerSearchResult>> {
   }
 
   bool isSaved(String playerId) =>
-      state.value?.any((player) => player.id == playerId) ?? false;
+      state.valueOrNull?.any((player) => player.id == playerId) ?? false;
 
   Future<void> save(PlayerSearchResult player) async {
     await ref.read(savedPlayersRepositoryProvider).savePlayer(player.id);
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData([player, ...current]);
   }
 
   Future<void> unsave(String playerId) async {
     await ref.read(savedPlayersRepositoryProvider).unsavePlayer(playerId);
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData(current.where((player) => player.id != playerId).toList());
   }
 }
