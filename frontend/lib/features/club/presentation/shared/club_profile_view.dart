@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_image.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../invitations/presentation/shared/public_code_chip.dart';
 import '../../domain/entities/club_profile.dart';
 import 'club_level_labels.dart';
 
@@ -55,6 +57,18 @@ class ClubProfileView extends StatelessWidget {
                     style: textTheme.headlineSmall,
                   ),
                   if (location.isNotEmpty) Text(location, style: textTheme.bodyMedium),
+                  // The code is what a player quotes to ask to join, so it
+                  // sits with the club's identity rather than down among the
+                  // stats. Absent until the backfill has reached a profile
+                  // created before public codes existed — an empty space
+                  // beats a placeholder that looks like a real code.
+                  if (profile.publicCode case final code?) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: PublicCodeChip(label: l10n.clubCodeLabel, code: code),
+                    ),
+                  ],
                 ],
               ),
             ),

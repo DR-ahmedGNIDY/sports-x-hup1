@@ -43,6 +43,11 @@ enum AppBranch {
     icon: Icons.groups_outlined,
     selectedIcon: Icons.groups,
   ),
+  clubInvitations(
+    rootPath: '/club/invitations',
+    icon: Icons.mail_outline,
+    selectedIcon: Icons.mail,
+  ),
   search(
     rootPath: '/search',
     icon: Icons.search_outlined,
@@ -99,6 +104,7 @@ enum AppBranch {
     playerSkills => l10n.skillsSectionTitle,
     clubProfile => l10n.dashboardMyClub,
     clubPlayers => l10n.clubPlayersTitle,
+    clubInvitations => l10n.invitationsTitle,
     search => l10n.mobileSearchNavLabel,
     savedPlayers => l10n.dashboardSavedPlayers,
     community => l10n.communityNavLabel,
@@ -177,6 +183,10 @@ final Map<String, AppRouteMeta> _routeMeta = {
     parentPath: AppBranch.clubPlayers.rootPath,
     ownsChrome: true,
   ),
+  '/club/invitations': AppRouteMeta(
+    title: (l10n) => l10n.invitationsTitle,
+    ownsChrome: true,
+  ),
   '/search': AppRouteMeta(
     title: (l10n) => l10n.dashboardSearchPlayers,
     ownsChrome: true,
@@ -251,7 +261,13 @@ List<AppBranch> tabBranchesFor(UserRole? role) => switch (role) {
 List<AppBranch> overflowBranchesFor(UserRole? role) {
   final tabs = tabBranchesFor(role);
   final reachable = switch (role) {
+    // Invitations is an account-sheet entry rather than a fifth tab: four
+    // tabs beside the account slot is the ceiling before labels truncate at
+    // 320px, and Club Players is the destination a club opens daily. It
+    // still gets a Dashboard quick action, which is where a club that has
+    // just added players actually goes looking for it.
     UserRole.club => const [
+      AppBranch.clubInvitations,
       AppBranch.savedPlayers,
       AppBranch.community,
       AppBranch.settings,

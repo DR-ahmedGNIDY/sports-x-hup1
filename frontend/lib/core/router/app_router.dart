@@ -19,6 +19,7 @@ import '../../features/club_players/presentation/club_players_page.dart';
 import '../../features/club_players/presentation/edit_club_player_page.dart';
 import '../../features/community/presentation/community_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/invitations/presentation/club_invitations_page.dart';
 import '../../features/marketing/presentation/about_page.dart';
 import '../../features/marketing/presentation/contact_page.dart';
 import '../../features/marketing/presentation/home_page.dart';
@@ -69,7 +70,8 @@ const _galleryRoute = '/dev/gallery';
 
 bool _isAdminRoute(String path) => path.startsWith('/admin/');
 
-bool _isClubRoute(String path) => path.startsWith('/club/players');
+bool _isClubRoute(String path) =>
+    path.startsWith('/club/players') || path.startsWith('/club/invitations');
 
 // Where an authenticated session lands after splash/login, or gets bounced
 // back to when it hits a route it doesn't own — a Player's home is their
@@ -271,6 +273,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
             state: state,
             child: EditClubPlayerPage(userId: state.pathParameters['userId']!),
           ),
+        ),
+      ],
+      AppBranch.clubInvitations => [
+        GoRoute(
+          path: '/club/invitations',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const ClubInvitationsPage()),
         ),
       ],
       AppBranch.search => [

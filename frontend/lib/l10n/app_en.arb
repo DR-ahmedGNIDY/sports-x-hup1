@@ -556,6 +556,55 @@
     }
   },
 
+  "invitationsTitle": "Invitations",
+  "invitationsReceivedTab": "Received",
+  "invitationsSentTab": "Sent",
+  "invitationsEmptyReceived": "No invitations yet. Players who ask to join your club will appear here.",
+  "invitationsEmptySent": "You haven't invited anyone yet.",
+  "invitationStatusPending": "Pending",
+  "invitationStatusAccepted": "Accepted",
+  "invitationStatusRejected": "Declined",
+  "invitationStatusCancelled": "Cancelled",
+  "invitationStatusExpired": "Expired",
+  "invitationAcceptLabel": "Accept",
+  "invitationRejectLabel": "Decline",
+  "invitationCancelInvitationLabel": "Withdraw",
+  "invitationViewProfileLabel": "View profile",
+  "invitationRejectConfirmTitle": "Decline this request?",
+  "invitationRejectConfirmBody": "This cannot be undone. They can send a new request later.",
+  "invitationCancelConfirmTitle": "Withdraw this invitation?",
+  "invitationCancelConfirmBody": "This cannot be undone. You can invite them again later.",
+  "invitationAcceptedFeedback": "Accepted. The player has joined your club.",
+  "invitationRejectedFeedback": "Request declined.",
+  "invitationCancelledFeedback": "Invitation withdrawn.",
+  "invitationSentFeedback": "Invitation sent.",
+  "invitationExpiresOn": "Expires on {date}",
+  "@invitationExpiresOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "invitePlayerLabel": "Invite to club",
+  "invitePlayerTitle": "Invite player",
+  "invitePlayerBody": "Invite {name} to join your club. They can accept or decline.",
+  "@invitePlayerBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "inviteLabel": "Invite",
+  "invitationMessageLabel": "Message (optional)",
+  "invitationMessageHint": "Tell them why you'd like them to join.",
+  "inviteByCodeTitle": "Invite by code",
+  "inviteByCodeLookUpLabel": "Look up",
+  "playerCodeLabel": "Player code",
+  "playerCodeHint": "PLY-000123",
+  "playerCodeNotFound": "No public player found with that code.",
+  "clubCodeLabel": "Club code",
+  "copyCodeTooltip": "Copy code",
+  "publicCodeCopiedFeedback": "Code copied to clipboard",
+  "clubDashboardInvitationsDescription": "Review join requests and the invitations you've sent.",
+
   "genericErrorMessage": "Something went wrong. Please try again.",
   "retryButtonLabel": "Retry"
 }

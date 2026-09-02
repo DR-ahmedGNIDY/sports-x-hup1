@@ -1,6 +1,7 @@
 # Club ↔ Player Invitations & Recruitment System — Plan
 
-Status: Phase 1 implemented (backend foundation). Phases 2 and 3 not started.
+Status: Phases 1 (backend foundation) and 2 (Club experience) implemented.
+Phase 3 not started.
 
 ## 1. What already exists (audit before design)
 
@@ -198,8 +199,8 @@ identically on both:
 
 ## 8. Phasing
 
-- **Phase 1 (this phase)** — public codes, both schemas, invitation and
-  membership services, the REST surface above, unit tests, backfill script.
+- **Phase 1** — public codes, both schemas, invitation and membership
+  services, the REST surface above, unit tests, backfill script.
 - **Phase 2** — Club UI: invite from a player profile, search by player code,
   Club Invitations screen (Received/Sent), club code + copy on the profile.
 - **Phase 3** — Player UI: request to join from a club profile, search by club

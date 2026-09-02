@@ -73,6 +73,11 @@ abstract class PlayerRepository {
 
   Future<PlayerProfile> getPublicProfile(String id);
 
+  /// The same public view, found by public code ("PLY-000123") instead of
+  /// by id. Authenticated, and 404s on an unknown or non-public code —
+  /// a code is not a way around a player's visibility setting.
+  Future<PlayerProfile> getPublicProfileByCode(String code);
+
   /// Simple Contact (Phase 3) — CLUB-only, 404s if the caller isn't a Club
   /// or the player isn't public.
   Future<ContactDetails> getContact(String id);

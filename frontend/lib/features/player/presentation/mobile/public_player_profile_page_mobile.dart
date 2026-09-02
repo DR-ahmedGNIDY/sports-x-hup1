@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../invitations/presentation/shared/invite_player_button.dart';
 import '../../application/public_player_profile_provider.dart';
 import '../shared/save_player_button.dart';
 import '../shared/share_profile_button.dart';
@@ -31,7 +32,13 @@ class PublicPlayerProfilePageMobile extends ConsumerWidget {
         actions: [
           ShareProfileButton(playerId: playerId, compact: true),
           profileAsync.maybeWhen(
-            data: (profile) => SavePlayerButton(profile: profile),
+            data: (profile) => Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SavePlayerButton(profile: profile),
+                InvitePlayerButton(profile: profile, compact: true),
+              ],
+            ),
             orElse: () => const SizedBox.shrink(),
           ),
         ],

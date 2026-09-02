@@ -1510,6 +1510,129 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get invitationsTitle => 'Invitations';
+
+  @override
+  String get invitationsReceivedTab => 'Received';
+
+  @override
+  String get invitationsSentTab => 'Sent';
+
+  @override
+  String get invitationsEmptyReceived =>
+      'No invitations yet. Players who ask to join your club will appear here.';
+
+  @override
+  String get invitationsEmptySent => 'You haven\'t invited anyone yet.';
+
+  @override
+  String get invitationStatusPending => 'Pending';
+
+  @override
+  String get invitationStatusAccepted => 'Accepted';
+
+  @override
+  String get invitationStatusRejected => 'Declined';
+
+  @override
+  String get invitationStatusCancelled => 'Cancelled';
+
+  @override
+  String get invitationStatusExpired => 'Expired';
+
+  @override
+  String get invitationAcceptLabel => 'Accept';
+
+  @override
+  String get invitationRejectLabel => 'Decline';
+
+  @override
+  String get invitationCancelInvitationLabel => 'Withdraw';
+
+  @override
+  String get invitationViewProfileLabel => 'View profile';
+
+  @override
+  String get invitationRejectConfirmTitle => 'Decline this request?';
+
+  @override
+  String get invitationRejectConfirmBody =>
+      'This cannot be undone. They can send a new request later.';
+
+  @override
+  String get invitationCancelConfirmTitle => 'Withdraw this invitation?';
+
+  @override
+  String get invitationCancelConfirmBody =>
+      'This cannot be undone. You can invite them again later.';
+
+  @override
+  String get invitationAcceptedFeedback =>
+      'Accepted. The player has joined your club.';
+
+  @override
+  String get invitationRejectedFeedback => 'Request declined.';
+
+  @override
+  String get invitationCancelledFeedback => 'Invitation withdrawn.';
+
+  @override
+  String get invitationSentFeedback => 'Invitation sent.';
+
+  @override
+  String invitationExpiresOn(String date) {
+    return 'Expires on $date';
+  }
+
+  @override
+  String get invitePlayerLabel => 'Invite to club';
+
+  @override
+  String get invitePlayerTitle => 'Invite player';
+
+  @override
+  String invitePlayerBody(String name) {
+    return 'Invite $name to join your club. They can accept or decline.';
+  }
+
+  @override
+  String get inviteLabel => 'Invite';
+
+  @override
+  String get invitationMessageLabel => 'Message (optional)';
+
+  @override
+  String get invitationMessageHint => 'Tell them why you\'d like them to join.';
+
+  @override
+  String get inviteByCodeTitle => 'Invite by code';
+
+  @override
+  String get inviteByCodeLookUpLabel => 'Look up';
+
+  @override
+  String get playerCodeLabel => 'Player code';
+
+  @override
+  String get playerCodeHint => 'PLY-000123';
+
+  @override
+  String get playerCodeNotFound => 'No public player found with that code.';
+
+  @override
+  String get clubCodeLabel => 'Club code';
+
+  @override
+  String get copyCodeTooltip => 'Copy code';
+
+  @override
+  String get publicCodeCopiedFeedback => 'Code copied to clipboard';
+
+  @override
+  String get clubDashboardInvitationsDescription =>
+      'Review join requests and the invitations you\'ve sent.';
+
+  @override
   String get genericErrorMessage => 'Something went wrong. Please try again.';
 
   @override
