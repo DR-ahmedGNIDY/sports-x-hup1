@@ -215,8 +215,20 @@ export class PlayersService {
       // since $text tokenizes on word boundaries and would change
       // "contains" matching (e.g. "med" no longer matching "Ahmed")
       // rather than just speeding up the current behavior.
-      const regex = { $regex: escapeRegex(dto.search.trim()), $options: 'i' };
-      filter.$or = [{ firstName: regex }, { lastName: regex }];
+      // Matched token by token, not as one string. A person searching for a
+      // player types the name they know — "ahmed ismail" — and that phrase
+      // lives in no single field: firstName holds "Ahmed" and lastName holds
+      // "Ismail", so a whole-phrase regex against either matched nothing and
+      // the search returned zero for a player who was plainly there.
+      //
+      // Every token must match one of the two name fields, which keeps a
+      // second word narrowing the result rather than widening it, and does
+      // not care which order the two were typed in.
+      const tokens = dto.search.trim().split(/\s+/).filter(Boolean);
+      filter.$and = tokens.map((token) => {
+        const regex = { $regex: escapeRegex(token), $options: 'i' };
+        return { $or: [{ firstName: regex }, { lastName: regex }] };
+      });
     }
     if (dto.country) filter.country = dto.country;
     if (dto.position) filter.position = dto.position;

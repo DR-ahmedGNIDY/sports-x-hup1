@@ -367,12 +367,63 @@ describe('PlayersService', () => {
       await service.search({ search: 'ahmed' });
 
       const filter = model.find.mock.calls[0][0];
-      expect(filter.$or).toEqual([
-        { firstName: { $regex: 'ahmed', $options: 'i' } },
-        { lastName: { $regex: 'ahmed', $options: 'i' } },
+      expect(filter.$and).toEqual([
+        {
+          $or: [
+            { firstName: { $regex: 'ahmed', $options: 'i' } },
+            { lastName: { $regex: 'ahmed', $options: 'i' } },
+          ],
+        },
       ]);
       // The same filter object is reused for the count query.
       expect(model.countDocuments).toHaveBeenCalledWith(filter);
+    });
+
+    // A full name spans two fields, so the phrase matches neither on its
+    // own. Searching "ahmed ismail" used to return nothing at all for a
+    // player of exactly that name.
+    it('requires every word of a multi-word name to match, in either field', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({ search: 'ahmed ismail' });
+
+      const filter = model.find.mock.calls[0][0];
+      expect(filter.$and).toEqual([
+        {
+          $or: [
+            { firstName: { $regex: 'ahmed', $options: 'i' } },
+            { lastName: { $regex: 'ahmed', $options: 'i' } },
+          ],
+        },
+        {
+          $or: [
+            { firstName: { $regex: 'ismail', $options: 'i' } },
+            { lastName: { $regex: 'ismail', $options: 'i' } },
+          ],
+        },
+      ]);
+    });
+
+    it('does not care which order the two names were typed in', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({ search: 'ismail ahmed' });
+
+      const clauses = model.find.mock.calls[0][0].$and as Array<{
+        $or: Array<{ firstName: { $regex: string } }>;
+      }>;
+      expect(clauses.map((c) => c.$or[0].firstName.$regex).sort()).toEqual([
+        'ahmed',
+        'ismail',
+      ]);
+    });
+
+    it('collapses runs of whitespace between names rather than searching for an empty word', async () => {
+      const { service, model } = buildService(null);
+
+      await service.search({ search: '  ahmed   ismail  ' });
+
+      expect(model.find.mock.calls[0][0].$and).toHaveLength(2);
     });
 
     it('escapes regex metacharacters in the search term instead of treating them as regex syntax', async () => {
@@ -381,7 +432,7 @@ describe('PlayersService', () => {
       await service.search({ search: 'a.*+(b)' });
 
       const filter = model.find.mock.calls[0][0];
-      expect(filter.$or[0].firstName.$regex).toBe('a\\.\\*\\+\\(b\\)');
+      expect(filter.$and[0].$or[0].firstName.$regex).toBe('a\\.\\*\\+\\(b\\)');
     });
 
     it('ignores a search term that is empty or only whitespace', async () => {
@@ -390,6 +441,7 @@ describe('PlayersService', () => {
       await service.search({ search: '   ' });
 
       const filter = model.find.mock.calls[0][0];
+      expect(filter.$and).toBeUndefined();
       expect(filter.$or).toBeUndefined();
     });
 
