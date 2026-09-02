@@ -8,6 +8,7 @@ import { ClubsModule } from '../clubs/clubs.module';
 import { PlayersModule } from '../players/players.module';
 import { InvitationsController } from './invitations.controller';
 import { InvitationsService } from './invitations.service';
+import { MembershipsController } from './memberships.controller';
 import { MembershipsService } from './memberships.service';
 import {
   ClubMembership,
@@ -32,10 +33,8 @@ import {
     PlayersModule,
     ClubsModule,
   ],
-  controllers: [InvitationsController],
+  controllers: [InvitationsController, MembershipsController],
   providers: [InvitationsService, MembershipsService],
-  // Exported for the Phase 2/3 screens that will read a club's roster and a
-  // player's current club.
   exports: [MembershipsService],
 })
 export class InvitationsModule {}

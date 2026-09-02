@@ -6,6 +6,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_haptics.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/invitations_controller.dart';
+import '../../domain/entities/invitation.dart';
 
 /// Matches `INVITATION_MESSAGE_MAX_LENGTH` on the backend. Enforced here as
 /// a counter and a hard limit rather than left to the server, so the length
@@ -26,34 +27,76 @@ Future<bool> showInvitePlayerDialog(
   required String playerName,
   String? playerId,
   String? playerCode,
+}) {
+  return _show(
+    context,
+    titleOf: (l10n) => l10n.invitePlayerTitle,
+    bodyOf: (l10n) => l10n.invitePlayerBody(playerName),
+    send: (actions, message) => actions.invitePlayer(
+      playerId: playerId,
+      playerCode: playerCode,
+      message: message,
+    ),
+  );
+}
+
+/// The mirror image: a Player asking to join a club (PLAYER_TO_CLUB).
+///
+/// Same dialog, different endpoint and wording. The two are one widget
+/// because the composing step is genuinely identical — a note and a send —
+/// and two copies would be two places for the message limit to drift.
+Future<bool> showRequestToJoinDialog(
+  BuildContext context, {
+  required String clubName,
+  String? clubId,
+  String? clubCode,
+}) {
+  return _show(
+    context,
+    titleOf: (l10n) => l10n.requestToJoinTitle,
+    bodyOf: (l10n) => l10n.requestToJoinBody(clubName),
+    send: (actions, message) => actions.requestToJoinClub(
+      clubId: clubId,
+      clubCode: clubCode,
+      message: message,
+    ),
+  );
+}
+
+typedef _Send =
+    Future<Invitation> Function(InvitationsActions actions, String message);
+
+Future<bool> _show(
+  BuildContext context, {
+  required String Function(AppLocalizations) titleOf,
+  required String Function(AppLocalizations) bodyOf,
+  required _Send send,
 }) async {
   final sent = await showDialog<bool>(
     context: context,
-    builder: (context) => _InvitePlayerDialog(
-      playerName: playerName,
-      playerId: playerId,
-      playerCode: playerCode,
-    ),
+    builder: (context) =>
+        _SendInvitationDialog(titleOf: titleOf, bodyOf: bodyOf, send: send),
   );
   return sent ?? false;
 }
 
-class _InvitePlayerDialog extends ConsumerStatefulWidget {
-  const _InvitePlayerDialog({
-    required this.playerName,
-    this.playerId,
-    this.playerCode,
+class _SendInvitationDialog extends ConsumerStatefulWidget {
+  const _SendInvitationDialog({
+    required this.titleOf,
+    required this.bodyOf,
+    required this.send,
   });
 
-  final String playerName;
-  final String? playerId;
-  final String? playerCode;
+  final String Function(AppLocalizations) titleOf;
+  final String Function(AppLocalizations) bodyOf;
+  final _Send send;
 
   @override
-  ConsumerState<_InvitePlayerDialog> createState() => _InvitePlayerDialogState();
+  ConsumerState<_SendInvitationDialog> createState() =>
+      _SendInvitationDialogState();
 }
 
-class _InvitePlayerDialogState extends ConsumerState<_InvitePlayerDialog> {
+class _SendInvitationDialogState extends ConsumerState<_SendInvitationDialog> {
   final _messageController = TextEditingController();
   bool _sending = false;
 
@@ -68,13 +111,13 @@ class _InvitePlayerDialogState extends ConsumerState<_InvitePlayerDialog> {
     final l10n = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: Text(l10n.invitePlayerTitle),
+      title: Text(widget.titleOf(l10n)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.invitePlayerBody(widget.playerName),
+            widget.bodyOf(l10n),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -115,13 +158,10 @@ class _InvitePlayerDialogState extends ConsumerState<_InvitePlayerDialog> {
     final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
     try {
-      await ref
-          .read(invitationsActionsProvider)
-          .invitePlayer(
-            playerId: widget.playerId,
-            playerCode: widget.playerCode,
-            message: _messageController.text.trim(),
-          );
+      await widget.send(
+        ref.read(invitationsActionsProvider),
+        _messageController.text.trim(),
+      );
       AppHaptics.success();
       navigator.pop(true);
     } on AppException catch (e) {

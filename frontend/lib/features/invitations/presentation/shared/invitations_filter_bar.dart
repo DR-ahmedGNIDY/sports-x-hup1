@@ -26,7 +26,9 @@ class InvitationsFilterBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final summary = ref.watch(invitationsSummaryProvider).value;
+    // valueOrNull: a failed badge count must cost the badge, not the
+    // screen — `value` rethrows on an AsyncError.
+    final summary = ref.watch(invitationsSummaryProvider).valueOrNull;
     final controller = ref.watch(invitationsListProvider(kind).notifier);
     final selectedStatus = controller.statusFilter;
 

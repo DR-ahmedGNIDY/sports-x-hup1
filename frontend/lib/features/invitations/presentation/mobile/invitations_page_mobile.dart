@@ -11,18 +11,19 @@ import '../../application/invitations_controller.dart';
 import '../shared/invitation_card.dart';
 import '../shared/invitations_filter_bar.dart';
 import '../shared/invitations_pagination.dart';
-import '../shared/invite_by_code_sheet.dart';
+import '../shared/invitations_screen_config.dart';
 
-class ClubInvitationsPageMobile extends ConsumerStatefulWidget {
-  const ClubInvitationsPageMobile({super.key});
+/// Both inboxes, for either role — see [InvitationsScreenConfig].
+class InvitationsPageMobile extends ConsumerStatefulWidget {
+  const InvitationsPageMobile({super.key, required this.config});
+
+  final InvitationsScreenConfig config;
 
   @override
-  ConsumerState<ClubInvitationsPageMobile> createState() =>
-      _ClubInvitationsPageMobileState();
+  ConsumerState<InvitationsPageMobile> createState() => _InvitationsPageMobileState();
 }
 
-class _ClubInvitationsPageMobileState
-    extends ConsumerState<ClubInvitationsPageMobile> {
+class _InvitationsPageMobileState extends ConsumerState<InvitationsPageMobile> {
   // Which inbox is showing. Screen-local rather than a provider: it is
   // where the user is looking, not application state, and each list keeps
   // its own page and filter in its own controller regardless.
@@ -31,6 +32,7 @@ class _ClubInvitationsPageMobileState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final config = widget.config;
     final listAsync = ref.watch(invitationsListProvider(_kind));
 
     return AppScaffoldMobile(
@@ -40,8 +42,8 @@ class _ClubInvitationsPageMobileState
       },
       actions: [
         IconButton(
-          tooltip: l10n.inviteByCodeTitle,
-          onPressed: () => showInviteByCodeSheet(context),
+          tooltip: config.codeActionLabel(l10n),
+          onPressed: () => config.openCodeSheet(context),
           icon: const Icon(Icons.qr_code_2_outlined),
         ),
       ],
@@ -66,16 +68,16 @@ class _ClubInvitationsPageMobileState
                   hasScrollBody: false,
                   child: AppEmptyState(
                     message: _kind == InvitationsListKind.received
-                        ? l10n.invitationsEmptyReceived
-                        : l10n.invitationsEmptySent,
-                    // The way out of an empty outbox is to send one; an
-                    // empty inbox has no action of its own — nothing a club
-                    // does makes a player write to it.
+                        ? config.emptyReceived(l10n)
+                        : config.emptySent(l10n),
+                    // The way out of an empty outbox is to send something;
+                    // an empty inbox has no action of its own — nothing you
+                    // do makes someone else write to you.
                     actionLabel: _kind == InvitationsListKind.sent
-                        ? l10n.inviteByCodeTitle
+                        ? config.codeActionLabel(l10n)
                         : null,
                     onAction: _kind == InvitationsListKind.sent
-                        ? () => showInviteByCodeSheet(context)
+                        ? () => config.openCodeSheet(context)
                         : null,
                   ),
                 )

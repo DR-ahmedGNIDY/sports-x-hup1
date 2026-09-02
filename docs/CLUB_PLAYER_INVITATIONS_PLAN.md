@@ -1,7 +1,7 @@
 # Club ↔ Player Invitations & Recruitment System — Plan
 
-Status: Phases 1 (backend foundation) and 2 (Club experience) implemented.
-Phase 3 not started.
+Status: all three phases implemented — 1 (backend foundation), 2 (Club
+experience), 3 (Player experience + membership reads).
 
 ## 1. What already exists (audit before design)
 
@@ -207,6 +207,8 @@ identically on both:
   code, Player Invitations screen, and the membership display on both public
   profiles.
 
-Membership *read* endpoints (a club's roster, a player's current club) are
-deliberately deferred to the phase whose UI consumes them, so nothing ships
-without a caller.
+Membership *read* endpoints (a club's roster, a player's current club) were
+deliberately deferred to the phase whose UI consumes them, so nothing shipped
+without a caller — they landed in Phase 3 as
+`GET /memberships/clubs/:clubId/players` and
+`GET /memberships/players/:playerId/club`.

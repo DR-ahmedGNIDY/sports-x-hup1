@@ -75,7 +75,7 @@ class PlayerProfileScoutingLayoutDesktop extends StatelessWidget {
         ],
         if (isOwner) ...[
           const SizedBox(height: 24),
-          staggered(const OwnerAccountSection()),
+          staggered(OwnerAccountSection(publicCode: profile.publicCode)),
         ],
         if (hasFootball || hasBasketball) ...[
           const SizedBox(height: 24),

@@ -5,9 +5,11 @@ import 'desktop/invitations_page_desktop.dart';
 import 'mobile/invitations_page_mobile.dart';
 import 'shared/invitations_screen_config.dart';
 
-/// `/club/invitations` — the Club's end of the conversation.
-class ClubInvitationsPage extends StatelessWidget {
-  const ClubInvitationsPage({super.key});
+/// `/player/invitations` — the same screen as the Club's, seen from the
+/// other end. Received holds clubs that invited this player; Sent holds the
+/// clubs they asked to join.
+class PlayerInvitationsPage extends StatelessWidget {
+  const PlayerInvitationsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class ClubInvitationsPage extends StatelessWidget {
   }
 
   static Widget _desktop(BuildContext context) =>
-      InvitationsPageDesktop(config: InvitationsScreenConfig.club);
+      InvitationsPageDesktop(config: InvitationsScreenConfig.player);
   static Widget _mobile(BuildContext context) =>
-      InvitationsPageMobile(config: InvitationsScreenConfig.club);
+      InvitationsPageMobile(config: InvitationsScreenConfig.player);
 }

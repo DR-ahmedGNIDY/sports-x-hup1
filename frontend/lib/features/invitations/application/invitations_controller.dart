@@ -96,7 +96,9 @@ class InvitationsListController
   }
 
   void _patch(Invitation updated) {
-    final current = state.value;
+    // valueOrNull: `value` rethrows when the list itself failed to load,
+    // which would turn a *successful* accept into a thrown error.
+    final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData(
       InvitationsPage(

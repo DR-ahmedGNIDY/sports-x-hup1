@@ -40,6 +40,12 @@ class ClubRepositoryImpl implements ClubRepository {
   }
 
   @override
+  Future<ClubProfile> getByCode(String code) => _authorized((token) async {
+    final json = await _remote.getByCode(token, code);
+    return ClubProfileModel.fromJson(json);
+  });
+
+  @override
   Future<ClubProfile> getMyProfile() => _authorized((token) async {
     final json = await _remote.getMyProfile(token);
     return ClubProfileModel.fromJson(json);

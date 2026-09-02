@@ -90,6 +90,24 @@ export class MembershipsService {
     return { items, page, pageSize: ROSTER_PAGE_SIZE, total };
   }
 
+  // Every current member, unpaginated on purpose: the caller pages over
+  // *player profiles*, not over memberships, so that a roster narrowed by a
+  // visibility filter still reports an honest total. Same shape and the same
+  // bounded-collection assumption as ClubPlayersService, which already loads
+  // a club's whole ownership list before paging its profiles.
+  async listActiveForClubUnpaginated(
+    clubUserId: string,
+  ): Promise<{ playerUserId: string; joinedAt: Date }[]> {
+    const rows = await this.membershipModel
+      .find({ clubUserId, status: MembershipStatus.ACTIVE })
+      .select('playerUserId joinedAt')
+      .sort({ joinedAt: -1 });
+    return rows.map((row) => ({
+      playerUserId: row.playerUserId.toString(),
+      joinedAt: row.joinedAt,
+    }));
+  }
+
   countActiveForClub(clubUserId: string): Promise<number> {
     return this.membershipModel.countDocuments({
       clubUserId,

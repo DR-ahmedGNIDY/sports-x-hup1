@@ -1633,6 +1633,50 @@ class AppLocalizationsEn extends AppLocalizations {
       'Review join requests and the invitations you\'ve sent.';
 
   @override
+  String get playerInvitationsEmptyReceived =>
+      'No invitations yet. Clubs that invite you will appear here.';
+
+  @override
+  String get playerInvitationsEmptySent =>
+      'You haven\'t asked to join a club yet.';
+
+  @override
+  String get requestToJoinLabel => 'Request to join';
+
+  @override
+  String get requestToJoinTitle => 'Request to join club';
+
+  @override
+  String requestToJoinBody(String name) {
+    return 'Ask $name to add you to their squad. They can accept or decline.';
+  }
+
+  @override
+  String get joinRequestSentFeedback => 'Request sent.';
+
+  @override
+  String get joinByCodeTitle => 'Join by code';
+
+  @override
+  String get clubCodeHint => 'CLB-000123';
+
+  @override
+  String get clubCodeNotFound => 'No club found with that code.';
+
+  @override
+  String get playerCodeShareHint => 'Share with clubs';
+
+  @override
+  String membershipJoinedOn(String date) {
+    return 'Joined $date';
+  }
+
+  @override
+  String clubMembersTitle(int count) {
+    return 'Players ($count)';
+  }
+
+  @override
   String get genericErrorMessage => 'Something went wrong. Please try again.';
 
   @override

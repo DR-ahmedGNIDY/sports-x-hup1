@@ -9,23 +9,26 @@ import '../../application/invitations_controller.dart';
 import '../shared/invitation_card.dart';
 import '../shared/invitations_filter_bar.dart';
 import '../shared/invitations_pagination.dart';
-import '../shared/invite_by_code_sheet.dart';
+import '../shared/invitations_screen_config.dart';
 
-class ClubInvitationsPageDesktop extends ConsumerStatefulWidget {
-  const ClubInvitationsPageDesktop({super.key});
+/// Both inboxes, for either role — see [InvitationsScreenConfig].
+class InvitationsPageDesktop extends ConsumerStatefulWidget {
+  const InvitationsPageDesktop({super.key, required this.config});
+
+  final InvitationsScreenConfig config;
 
   @override
-  ConsumerState<ClubInvitationsPageDesktop> createState() =>
-      _ClubInvitationsPageDesktopState();
+  ConsumerState<InvitationsPageDesktop> createState() =>
+      _InvitationsPageDesktopState();
 }
 
-class _ClubInvitationsPageDesktopState
-    extends ConsumerState<ClubInvitationsPageDesktop> {
+class _InvitationsPageDesktopState extends ConsumerState<InvitationsPageDesktop> {
   InvitationsListKind _kind = InvitationsListKind.received;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final config = widget.config;
     final listAsync = ref.watch(invitationsListProvider(_kind));
 
     return Center(
@@ -50,9 +53,9 @@ class _ClubInvitationsPageDesktopState
                     ),
                   ),
                   FilledButton.icon(
-                    onPressed: () => showInviteByCodeSheet(context),
+                    onPressed: () => config.openCodeSheet(context),
                     icon: const Icon(Icons.qr_code_2_outlined),
-                    label: Text(l10n.inviteByCodeTitle),
+                    label: Text(config.codeActionLabel(l10n)),
                   ),
                 ],
               ),
@@ -75,8 +78,8 @@ class _ClubInvitationsPageDesktopState
                               const SizedBox(height: AppSpacing.md),
                               Text(
                                 _kind == InvitationsListKind.received
-                                    ? l10n.invitationsEmptyReceived
-                                    : l10n.invitationsEmptySent,
+                                    ? config.emptyReceived(l10n)
+                                    : config.emptySent(l10n),
                               ),
                             ],
                           ),

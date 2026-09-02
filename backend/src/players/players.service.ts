@@ -262,6 +262,31 @@ export class PlayersService {
     });
   }
 
+  // A club's *public* roster page — the members list on a public club
+  // profile. PUBLIC-only and counted on the same filter, so a private
+  // member is absent from both the page and the total: showing "5 of 8"
+  // would disclose the existence of the three this endpoint may not show.
+  // Belonging to a club is not a way around a player's visibility setting,
+  // the same rule findPublicByCodeOrThrow enforces for codes.
+  async findManyPublicByUserIds(
+    userIds: string[],
+    page = 1,
+  ): Promise<PlayerSearchResult> {
+    const filter = {
+      userId: { $in: userIds },
+      visibility: ProfileVisibility.PUBLIC,
+    };
+    const [items, total] = await Promise.all([
+      this.playerProfileModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * SEARCH_PAGE_SIZE)
+        .limit(SEARCH_PAGE_SIZE),
+      this.playerProfileModel.countDocuments(filter),
+    ]);
+    return { items, page, pageSize: SEARCH_PAGE_SIZE, total };
+  }
+
   // Unlike findManyPublicByIds, not restricted to PUBLIC — used by a club
   // to list the players it manages regardless of their current visibility.
   findManyByUserIds(userIds: string[]): Promise<PlayerProfileDocument[]> {

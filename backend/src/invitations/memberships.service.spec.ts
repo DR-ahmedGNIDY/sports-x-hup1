@@ -5,11 +5,18 @@ import {
 import { MembershipStatus } from './schemas/club-membership.schema';
 
 describe('MembershipsService', () => {
-  function buildService(overrides: { create?: jest.Mock } = {}) {
+  function buildService(
+    overrides: { create?: jest.Mock; memberRows?: unknown[] } = {},
+  ) {
     const membershipModel = {
       create: overrides.create ?? jest.fn().mockResolvedValue({ _id: 'm1' }),
       findOne: jest.fn().mockResolvedValue(null),
       find: jest.fn().mockReturnValue({
+        // The unpaginated roster read: find().select().sort().
+        select: jest.fn().mockReturnValue({
+          sort: jest.fn().mockResolvedValue(overrides.memberRows ?? []),
+        }),
+        // The paginated one: find().sort().skip().limit().
         sort: jest.fn().mockReturnValue({
           skip: jest.fn().mockReturnValue({
             limit: jest.fn().mockResolvedValue([]),
@@ -92,6 +99,28 @@ describe('MembershipsService', () => {
     const sorted = chain.sort.mock.results[0].value;
     expect(sorted.skip).toHaveBeenCalledWith(20);
     expect(result.pageSize).toBe(20);
+  });
+
+  it('lists every current member of a club, newest first', async () => {
+    const joinedAt = new Date('2026-01-10');
+    const { service, membershipModel } = buildService({
+      memberRows: [
+        {
+          playerUserId: { toString: () => 'player-1' },
+          joinedAt,
+        },
+      ],
+    });
+
+    const result = await service.listActiveForClubUnpaginated('club-1');
+
+    expect(membershipModel.find).toHaveBeenCalledWith({
+      clubUserId: 'club-1',
+      status: MembershipStatus.ACTIVE,
+    });
+    // Unpaginated on purpose — the caller pages over player profiles so the
+    // roster's total can honour the PUBLIC-only filter.
+    expect(result).toEqual([{ playerUserId: 'player-1', joinedAt }]);
   });
 
   it('ends a membership only while it is still ACTIVE', async () => {

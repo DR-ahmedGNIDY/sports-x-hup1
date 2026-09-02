@@ -3,9 +3,13 @@
 // the Current Club card's new always-render "No Club" state, and the
 // Achievements section's "hide entirely when empty" rule.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sport_x_hub/core/theme/app_theme.dart';
+import 'package:sport_x_hub/features/invitations/data/repositories/memberships_repository_impl.dart';
+import 'package:sport_x_hub/features/invitations/domain/entities/membership.dart';
+import 'package:sport_x_hub/features/invitations/domain/repositories/memberships_repository.dart';
 import 'package:sport_x_hub/features/player/domain/entities/achievement.dart';
 import 'package:sport_x_hub/features/player/domain/entities/player_profile.dart';
 import 'package:sport_x_hub/features/player/presentation/shared/player_club_card.dart';
@@ -14,16 +18,34 @@ import 'package:sport_x_hub/features/player/presentation/shared/player_profile_d
 import 'package:sport_x_hub/features/player/presentation/shared/player_profile_trailing_sections.dart';
 import 'package:sport_x_hub/l10n/generated/app_localizations.dart';
 
+/// A repository that reports "this player has no club". The Current Club
+/// card reads a membership now, so without an override these tests would
+/// try to reach a backend — and the point of the two below is what the card
+/// falls back to when there is no membership, not what the network does.
+class _NoMembershipRepository implements MembershipsRepository {
+  @override
+  Future<PlayerClubMembership?> findPlayerClub(String playerId) async => null;
+
+  @override
+  Future<ClubMembersPage> listClubMembers(String clubId, {int page = 1}) async =>
+      ClubMembersPage.empty;
+}
+
 Widget _wrap(Widget child) {
-  return MaterialApp(
-    // Player Profile widgets read colors via `context.profileColors`
-    // (see core/theme/profile_colors.dart), which requires the
-    // `ProfileColors` ThemeExtension the real app always registers
-    // through AppTheme — a bare/default ThemeData doesn't have it.
-    theme: AppTheme.dark,
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: Scaffold(body: child),
+  return ProviderScope(
+    overrides: [
+      membershipsRepositoryProvider.overrideWithValue(_NoMembershipRepository()),
+    ],
+    child: MaterialApp(
+      // Player Profile widgets read colors via `context.profileColors`
+      // (see core/theme/profile_colors.dart), which requires the
+      // `ProfileColors` ThemeExtension the real app always registers
+      // through AppTheme — a bare/default ThemeData doesn't have it.
+      theme: AppTheme.dark,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(body: child),
+    ),
   );
 }
 

@@ -27,7 +27,11 @@ export function effectiveStatus(
 // Just enough to render a card: who it is, what they play, and the code to
 // look them up by. Deliberately excludes contact details — those stay behind
 // GET /players/:id/contact, which has its own club-only guard.
-function clubSummary(profile: ClubProfileDocument | null) {
+//
+// Exported because the membership views render the same two cards. One
+// definition of "what a counterpart card needs" means a field can never be
+// safe to show in an invitation and leak in a roster.
+export function clubSummary(profile: ClubProfileDocument | null) {
   if (!profile) return null;
   return {
     id: profile._id.toString(),
@@ -40,7 +44,7 @@ function clubSummary(profile: ClubProfileDocument | null) {
   };
 }
 
-function playerSummary(profile: PlayerProfileDocument | null) {
+export function playerSummary(profile: PlayerProfileDocument | null) {
   if (!profile) return null;
   return {
     id: profile._id.toString(),

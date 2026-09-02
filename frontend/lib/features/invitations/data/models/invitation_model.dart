@@ -10,14 +10,14 @@ extension InvitationModel on Invitation {
       status: InvitationStatus.fromWire(json['status'] as String),
       direction: InvitationDirection.fromWire(json['direction'] as String),
       message: json['message'] as String?,
-      club: _clubFromJson(json['club'] as Map<String, dynamic>?),
-      player: _playerFromJson(json['player'] as Map<String, dynamic>?),
+      club: invitationClubFromJson(json['club'] as Map<String, dynamic>?),
+      player: invitationPlayerFromJson(json['player'] as Map<String, dynamic>?),
       canAccept: json['canAccept'] as bool? ?? false,
       canReject: json['canReject'] as bool? ?? false,
       canCancel: json['canCancel'] as bool? ?? false,
-      createdAt: _dateFrom(json['createdAt']),
-      expiresAt: _dateFrom(json['expiresAt']),
-      respondedAt: _dateFrom(json['respondedAt']),
+      createdAt: dateFromJson(json['createdAt']),
+      expiresAt: dateFromJson(json['expiresAt']),
+      respondedAt: dateFromJson(json['respondedAt']),
     );
   }
 }
@@ -45,7 +45,10 @@ extension InvitationsSummaryModel on InvitationsSummary {
   }
 }
 
-InvitationClub? _clubFromJson(Map<String, dynamic>? json) {
+// Shared with the membership models: the backend renders both sides of a
+// membership with the very same summary mappers it uses for invitations, so
+// decoding them twice would be two chances to disagree.
+InvitationClub? invitationClubFromJson(Map<String, dynamic>? json) {
   if (json == null) return null;
   return InvitationClub(
     id: json['id'] as String,
@@ -58,7 +61,7 @@ InvitationClub? _clubFromJson(Map<String, dynamic>? json) {
   );
 }
 
-InvitationPlayer? _playerFromJson(Map<String, dynamic>? json) {
+InvitationPlayer? invitationPlayerFromJson(Map<String, dynamic>? json) {
   if (json == null) return null;
   return InvitationPlayer(
     id: json['id'] as String,
@@ -74,7 +77,7 @@ InvitationPlayer? _playerFromJson(Map<String, dynamic>? json) {
 
 // Dates arrive as ISO-8601 strings. Parsed leniently — a card that shows no
 // date beats a list that fails to decode over one unexpected field.
-DateTime? _dateFrom(Object? value) {
+DateTime? dateFromJson(Object? value) {
   if (value is! String) return null;
   return DateTime.tryParse(value);
 }

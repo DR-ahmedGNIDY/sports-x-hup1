@@ -8,6 +8,7 @@ import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../invitations/presentation/shared/public_code_chip.dart';
 import '../../application/player_stats_controller.dart';
 import '../../domain/entities/player_stats.dart';
 import 'player_enum_labels.dart';
@@ -26,7 +27,14 @@ import 'visibility_section.dart';
 /// missing/failed stats fetch degrades to an inline retry rather than
 /// hiding the whole section.
 class OwnerAccountSection extends ConsumerWidget {
-  const OwnerAccountSection({super.key});
+  const OwnerAccountSection({super.key, this.publicCode});
+
+  /// The owner's own `PLY-` code, shown so it can be handed to a club that
+  /// wants to invite them. Only meaningful on an owner view — the code is
+  /// public, but the point of showing it here is that this is where someone
+  /// looks for their *own* identifiers. `null` on a profile that predates
+  /// public codes and hasn't been backfilled yet.
+  final String? publicCode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,6 +44,20 @@ class OwnerAccountSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (publicCode case final code?) ...[
+          ProfileSectionCard(
+            icon: Icons.badge_outlined,
+            title: AppLocalizations.of(context)!.playerCodeLabel,
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: PublicCodeChip(
+                label: AppLocalizations.of(context)!.playerCodeShareHint,
+                code: code,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
         statsAsync.when(
           data: (stats) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

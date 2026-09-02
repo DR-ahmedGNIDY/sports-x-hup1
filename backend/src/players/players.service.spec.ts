@@ -27,7 +27,14 @@ describe('PlayersService', () => {
       deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       // search()'s pagination chain: find(filter).skip(n).limit(n),
       // resolved separately from countDocuments(filter) via Promise.all.
+      // `sort` is in the chain too because the roster reads order their
+      // page (find().sort().skip().limit()); both shapes end at `limit`.
       find: jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            limit: jest.fn().mockResolvedValue([]),
+          }),
+        }),
         skip: jest.fn().mockReturnValue({
           limit: jest.fn().mockResolvedValue([]),
         }),
@@ -518,6 +525,25 @@ describe('PlayersService', () => {
         NotFoundException,
       );
       expect(model.findOne).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('findManyPublicByUserIds', () => {
+    it('filters a club roster to public profiles, and counts the same set', async () => {
+      const { service, model } = buildService(null);
+
+      const result = await service.findManyPublicByUserIds(['u1', 'u2'], 2);
+
+      const expectedFilter = {
+        userId: { $in: ['u1', 'u2'] },
+        visibility: ProfileVisibility.PUBLIC,
+      };
+      expect(model.find).toHaveBeenCalledWith(expectedFilter);
+      // The count carries the visibility filter too — otherwise a roster
+      // would report "5 of 8" and disclose the three it may not show.
+      expect(model.countDocuments).toHaveBeenCalledWith(expectedFilter);
+      expect(result.page).toBe(2);
+      expect(result.pageSize).toBe(20);
     });
   });
 });

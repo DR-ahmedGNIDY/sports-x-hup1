@@ -1616,6 +1616,49 @@ class AppLocalizationsAr extends AppLocalizations {
       'راجع طلبات الانضمام والدعوات التي أرسلتها.';
 
   @override
+  String get playerInvitationsEmptyReceived =>
+      'لا توجد دعوات بعد. الأندية التي تدعوك ستظهر هنا.';
+
+  @override
+  String get playerInvitationsEmptySent => 'لم تطلب الانضمام إلى أي نادٍ بعد.';
+
+  @override
+  String get requestToJoinLabel => 'طلب انضمام';
+
+  @override
+  String get requestToJoinTitle => 'طلب الانضمام إلى النادي';
+
+  @override
+  String requestToJoinBody(String name) {
+    return 'اطلب من $name ضمّك إلى الفريق. يمكنه القبول أو الرفض.';
+  }
+
+  @override
+  String get joinRequestSentFeedback => 'تم إرسال الطلب.';
+
+  @override
+  String get joinByCodeTitle => 'الانضمام بالكود';
+
+  @override
+  String get clubCodeHint => 'CLB-000123';
+
+  @override
+  String get clubCodeNotFound => 'لا يوجد نادٍ بهذا الكود.';
+
+  @override
+  String get playerCodeShareHint => 'شاركه مع الأندية';
+
+  @override
+  String membershipJoinedOn(String date) {
+    return 'انضم في $date';
+  }
+
+  @override
+  String clubMembersTitle(int count) {
+    return 'اللاعبون ($count)';
+  }
+
+  @override
   String get genericErrorMessage => 'حدث خطأ ما. الرجاء المحاولة مرة أخرى.';
 
   @override

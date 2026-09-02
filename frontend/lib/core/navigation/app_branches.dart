@@ -33,6 +33,11 @@ enum AppBranch {
     icon: Icons.sports_soccer_outlined,
     selectedIcon: Icons.sports_soccer,
   ),
+  playerInvitations(
+    rootPath: '/player/invitations',
+    icon: Icons.mail_outline,
+    selectedIcon: Icons.mail,
+  ),
   clubProfile(
     rootPath: '/club/preview',
     icon: Icons.shield_outlined,
@@ -102,6 +107,7 @@ enum AppBranch {
     home => l10n.marketingNavHome,
     playerProfile => l10n.dashboardMyProfile,
     playerSkills => l10n.skillsSectionTitle,
+    playerInvitations => l10n.invitationsTitle,
     clubProfile => l10n.dashboardMyClub,
     clubPlayers => l10n.clubPlayersTitle,
     clubInvitations => l10n.invitationsTitle,
@@ -163,6 +169,10 @@ final Map<String, AppRouteMeta> _routeMeta = {
   '/player/traits': AppRouteMeta(
     title: (l10n) => l10n.traitsTitle,
     parentPath: AppBranch.playerSkills.rootPath,
+    ownsChrome: true,
+  ),
+  '/player/invitations': AppRouteMeta(
+    title: (l10n) => l10n.invitationsTitle,
     ownsChrome: true,
   ),
   '/club/preview': AppRouteMeta(
@@ -272,7 +282,12 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
       AppBranch.community,
       AppBranch.settings,
     ],
-    UserRole.player => const [AppBranch.settings],
+    // Same call as the Club's: Invitations is an account-sheet entry, not a
+    // fourth tab displacing Community.
+    UserRole.player => const [
+      AppBranch.playerInvitations,
+      AppBranch.settings,
+    ],
     UserRole.admin => const [
       AppBranch.adminUsers,
       AppBranch.adminPlayersClubs,

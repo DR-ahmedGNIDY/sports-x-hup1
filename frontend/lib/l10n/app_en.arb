@@ -604,6 +604,33 @@
   "copyCodeTooltip": "Copy code",
   "publicCodeCopiedFeedback": "Code copied to clipboard",
   "clubDashboardInvitationsDescription": "Review join requests and the invitations you've sent.",
+  "playerInvitationsEmptyReceived": "No invitations yet. Clubs that invite you will appear here.",
+  "playerInvitationsEmptySent": "You haven't asked to join a club yet.",
+  "requestToJoinLabel": "Request to join",
+  "requestToJoinTitle": "Request to join club",
+  "requestToJoinBody": "Ask {name} to add you to their squad. They can accept or decline.",
+  "@requestToJoinBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "joinRequestSentFeedback": "Request sent.",
+  "joinByCodeTitle": "Join by code",
+  "clubCodeHint": "CLB-000123",
+  "clubCodeNotFound": "No club found with that code.",
+  "playerCodeShareHint": "Share with clubs",
+  "membershipJoinedOn": "Joined {date}",
+  "@membershipJoinedOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "clubMembersTitle": "Players ({count})",
+  "@clubMembersTitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
 
   "genericErrorMessage": "Something went wrong. Please try again.",
   "retryButtonLabel": "Retry"

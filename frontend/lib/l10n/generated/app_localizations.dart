@@ -3103,6 +3103,78 @@ abstract class AppLocalizations {
   /// **'راجع طلبات الانضمام والدعوات التي أرسلتها.'**
   String get clubDashboardInvitationsDescription;
 
+  /// No description provided for @playerInvitationsEmptyReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد دعوات بعد. الأندية التي تدعوك ستظهر هنا.'**
+  String get playerInvitationsEmptyReceived;
+
+  /// No description provided for @playerInvitationsEmptySent.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تطلب الانضمام إلى أي نادٍ بعد.'**
+  String get playerInvitationsEmptySent;
+
+  /// No description provided for @requestToJoinLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب انضمام'**
+  String get requestToJoinLabel;
+
+  /// No description provided for @requestToJoinTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب الانضمام إلى النادي'**
+  String get requestToJoinTitle;
+
+  /// No description provided for @requestToJoinBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اطلب من {name} ضمّك إلى الفريق. يمكنه القبول أو الرفض.'**
+  String requestToJoinBody(String name);
+
+  /// No description provided for @joinRequestSentFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال الطلب.'**
+  String get joinRequestSentFeedback;
+
+  /// No description provided for @joinByCodeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الانضمام بالكود'**
+  String get joinByCodeTitle;
+
+  /// No description provided for @clubCodeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'CLB-000123'**
+  String get clubCodeHint;
+
+  /// No description provided for @clubCodeNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد نادٍ بهذا الكود.'**
+  String get clubCodeNotFound;
+
+  /// No description provided for @playerCodeShareHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'شاركه مع الأندية'**
+  String get playerCodeShareHint;
+
+  /// No description provided for @membershipJoinedOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'انضم في {date}'**
+  String membershipJoinedOn(String date);
+
+  /// No description provided for @clubMembersTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللاعبون ({count})'**
+  String clubMembersTitle(int count);
+
   /// No description provided for @genericErrorMessage.
   ///
   /// In ar, this message translates to:

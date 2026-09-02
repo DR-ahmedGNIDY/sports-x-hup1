@@ -5,7 +5,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
 import '../../../player/domain/entities/player_profile.dart';
-import 'invite_player_dialog.dart';
+import 'send_invitation_dialog.dart';
 
 /// "Invite to club" on a public player profile — visible only to a
 /// logged-in Club, the same rule [SavePlayerButton] and
