@@ -1,7 +1,7 @@
 server {
-    # Railway injects $PORT at runtime — docker-entrypoint.sh substitutes it
-    # into this template before nginx starts. Defaults to 80 for local
-    # `docker run` without $PORT set.
+    # docker-entrypoint.sh substitutes $PORT into this template before nginx
+    # starts, so a host that assigns the port at runtime is handled without
+    # rebuilding. Defaults to 80 for a local `docker run` with $PORT unset.
     listen ${PORT};
     server_name _;
     root /usr/share/nginx/html;

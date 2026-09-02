@@ -33,7 +33,7 @@ Auth token storage uses `SharedPreferences` (not `flutter_secure_storage`) — a
 
 ### Infrastructure
 
-No CI/CD pipeline exists (no `.github/workflows`). Frontend ships via a multi-stage Docker build (Flutter build → nginx:alpine), with runtime config (`API_BASE_URL`, `APP_ENV` — both non-secret) injected at container start via `docker-entrypoint.sh` + `envsubst`. Backend has no Dockerfile in the inventory (deploy mechanism not confirmed in this pass — worth clarifying with the user whether Railway/Render/other PaaS auto-detects it).
+No CI/CD pipeline exists (no `.github/workflows`). Frontend ships via a multi-stage Docker build (Flutter build → nginx:alpine), with runtime config (`API_BASE_URL`, `APP_ENV` — both non-secret) injected at container start via `docker-entrypoint.sh` + `envsubst`. Backend has no Dockerfile in the inventory (deploy mechanism not confirmed in this pass — worth clarifying with the user).
 
 ---
 

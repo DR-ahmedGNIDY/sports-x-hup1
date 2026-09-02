@@ -19,7 +19,7 @@ existed. Closing that is what this plan is for.
 | --- | --- | --- |
 | Notifications | **None**, anywhere | Everything here is new. |
 | Transactional email | `MailService` + `EmailProvider` seam, three bound implementations (`smtp`, `brevo`, `console`) chosen by `MAIL_PROVIDER` | Reused — but the interface has exactly one method, `sendPasswordResetEmail`. It must be generalized before it can carry anything else. |
-| Email delivery in production | **Broken.** `SmtpEmailProvider` times out on Railway, which blocks outbound mail ports (25/465/587/2525) | `BrevoApiEmailProvider` (HTTPS on 443) exists **uncommitted** in the working tree and fixes it. Email notifications are blocked until it lands. |
+| Email delivery | Host-dependent. `SmtpEmailProvider` times out wherever outbound mail ports are blocked, which some managed platforms do | `BrevoApiEmailProvider` (HTTPS on 443) exists **uncommitted** in the working tree for those hosts. The current server leaves 587 open, so SMTP works there. |
 | User contact | `User { email?, phone? }` — **both optional**; a club-created player may have only a phone | Email cannot reach every player. This is the single most important constraint in this plan; see §3. |
 | Scheduler | **None.** No `@nestjs/schedule`, no cron, no queue | Anything periodic (digests, expiry reminders) needs new infrastructure. Phase 1 deliberately needs none. |
 | Realtime transport | **None.** No WebSocket, no SSE | The client polls. Stated as a limitation rather than hidden. |
@@ -206,7 +206,7 @@ prompt (`core/utils/app_install.dart`) — Phase 2 should route iOS users to
 it explicitly rather than letting them silently receive nothing.
 
 **Not the native Android app.** The repo has an `android/` target, but the
-product ships as web on Railway. Doing this over FCM instead would mean an
+product ships as web. Doing this over FCM instead would mean an
 app-store release, a signing pipeline and a separate token lifecycle — for
 the same banner on the same phone. Web Push reaches the same place with no
 store involved. If a native release happens later, FCM is added beside this,
@@ -318,5 +318,5 @@ a subscription to the public key it was created with; after a rotation every
 row in `push_subscriptions` is dead and will be pruned on its next failed
 send, and every user has to re-enable. Generate once and keep them.
 
-**Push requires HTTPS**, which Railway already provides. It will not work
+**Push requires HTTPS**, which the deployment already has. It will not work
 over plain HTTP beyond `localhost`.

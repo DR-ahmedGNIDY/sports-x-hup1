@@ -28,7 +28,7 @@ COPY docker/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
-# Overridable at deploy time (e.g. Railway service variables).
+# Overridable at deploy time — see docs/DEPLOYMENT_SELF_HOSTED.md.
 ENV API_BASE_URL=http://localhost:3000
 ENV APP_ENV=production
 

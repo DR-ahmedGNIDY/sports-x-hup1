@@ -10,10 +10,10 @@ WORKDIR /app
 # Dependencies are their own layer: package.json and the lockfile change far
 # less often than src/, so a normal code change reuses the cached install.
 COPY package.json package-lock.json ./
-# `npm ci` here — and only here. It wipes node_modules before installing,
-# which is exactly what you want in a clean build stage and exactly what
-# broke on Railway, where a cache was mounted inside the directory it tries
-# to delete (see the fix in backend/railway.json).
+# `npm ci` wipes node_modules before installing, which is exactly right in a
+# clean build stage. Note it is fragile anywhere a build cache is mounted
+# *inside* node_modules — you cannot rmdir a mount point, and the install
+# dies with EBUSY. Nothing here does that; a PaaS might.
 RUN npm ci
 
 COPY tsconfig*.json nest-cli.json ./
@@ -46,6 +46,6 @@ USER node
 ENV PORT=3000
 EXPOSE 3000
 
-# `dist/main` — the same entry point railway.json's startCommand uses, so
-# the two deployment paths cannot drift.
+# `dist/main` — the same entry point the pm2 deployment starts (see
+# docs/DEPLOYMENT_SELF_HOSTED.md), so the two paths cannot drift.
 CMD ["node", "dist/main"]

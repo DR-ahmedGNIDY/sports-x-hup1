@@ -12,8 +12,13 @@ container is reachable from the internet directly** — they bind to
 `127.0.0.1`, which also stops Docker's iptables rules from quietly punching
 through `ufw`.
 
-This is the self-hosted path. `DEPLOYMENT_RAILWAY.md` describes the managed
-one; the two share the same images and the same variables.
+> **This guide describes the Docker Compose path. The live deployment does
+> not use it.** `sportxhup.com` runs on a shared host that already had nginx
+> and pm2 serving other sites, so the API runs under pm2 on port 3007 and
+> the web build is served as static files from `/var/www/sportxhup`, with
+> MongoDB Atlas rather than a local container. Everything below still works
+> on a machine of its own; it is simply not what is running today. Bringing
+> the two together is outstanding work.
 
 ## 0. Before you start
 
@@ -222,41 +227,25 @@ Nothing schedules this. Until something does, you have a database with no
 backups — worth a cron entry on day one rather than after the first
 incident.
 
-## 8. Moving off Railway
+## 8. Two things worth knowing
 
-The order matters, because the Railway deployment is production until the
-day it isn't.
-
-1. **Bring the VPS up fully** — steps 1 to 4 above — while Railway keeps
-   serving. Test it by pointing a `hosts` entry at the new IP, or by hitting
-   the server's address directly, *before* touching DNS.
-2. **Switch DNS.** Lower the TTL a day beforehand if you can; expect a tail
-   of traffic on the old host regardless.
-3. **Watch both** for a day. Railway's copy is a working rollback for as
-   long as its database is still current.
-4. **Only then** delete `backend/railway.json`, `frontend/railway.json` and
-   `DEPLOYMENT_RAILWAY.md`. Removing them earlier changes how Railway builds
-   the still-live site: without `railway.json` it falls back to
-   auto-detection, which now finds `backend/Dockerfile` and takes a
-   different path than the one currently running.
-
-**The database does not move itself.** Railway's Mongo and the `mongo-data`
-volume here are separate stores. Dump from the old one and restore into the
-new one during the switch, or start on the VPS with an empty database and
-accept the loss — but decide which, deliberately, rather than discovering it
-afterwards.
+**A database does not move itself.** If you ever migrate between hosts, the
+old store and the new one are separate: dump from one and restore into the
+other during the switch, or start empty and accept the loss — but decide
+which, deliberately, rather than discovering it afterwards.
 
 ```bash
-mongodump --uri "<railway MONGODB_URI>" --archive --gzip > move.gz
+mongodump --uri "<source MONGODB_URI>" --archive --gzip > move.gz
 docker compose exec -T mongo mongorestore \
   --username "$MONGO_ROOT_USERNAME" --password "$MONGO_ROOT_PASSWORD" \
   --authenticationDatabase admin --archive --gzip < move.gz
 ```
 
-**Email may simply start working.** `SmtpEmailProvider` times out on Railway
-because it blocks outbound mail ports (25/465/587/2525). A normal VPS leaves
-587 open — many block 25 only — so try `MAIL_PROVIDER=smtp` first and keep
-`brevo` as the fallback rather than assuming you still need it.
+**Outbound SMTP is not guaranteed.** Many hosts block port 25, and some
+managed platforms block 465/587/2525 as well — where they do, SMTP fails
+with a connection timeout that no credential change can fix. This server
+leaves 587 open, so `MAIL_PROVIDER=smtp` works; `brevo` sends the identical
+message over HTTPS on 443 and exists for hosts that do not.
 
 ## 9. Known limitations
 

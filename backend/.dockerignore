@@ -20,4 +20,3 @@ coverage
 .gitignore
 Dockerfile
 .dockerignore
-railway.json
