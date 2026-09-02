@@ -16,6 +16,10 @@ import {
   VIDEO_SIZE_LIMIT_BYTES,
 } from '../common/upload.config';
 import { assertFileContentMatchesMimeType } from '../common/file-signature';
+import {
+  PublicCodePrefix,
+  PublicCodesService,
+} from '../public-codes/public-codes.service';
 import { SavedPlayer } from '../saved-players/schemas/saved-player.schema';
 import { VideosService } from '../videos/videos.service';
 import {
@@ -115,6 +119,7 @@ export class PlayersService {
     private readonly savedPlayerModel: Model<SavedPlayer>,
     private readonly cloudinary: CloudinaryService,
     private readonly videosService: VideosService,
+    private readonly publicCodes: PublicCodesService,
   ) {}
 
   // Atomic upsert, not findOne-then-create: the Dashboard and Edit Profile
@@ -125,11 +130,57 @@ export class PlayersService {
   // on the unique userId index instead of just returning the row the
   // winner created.
   async getOrCreateForUser(userId: string): Promise<PlayerProfileDocument> {
-    return this.playerProfileModel.findOneAndUpdate(
+    const profile = await this.playerProfileModel.findOneAndUpdate(
       { userId },
       { $setOnInsert: { userId } },
       { new: true, upsert: true },
     );
+    return this.ensurePublicCode(profile);
+  }
+
+  // Assigns the player's shareable code on first need — same contract as
+  // ClubsService.ensurePublicCode: allocated once, never rewritten, and the
+  // conditional update means a race re-reads the winner's code instead of
+  // clobbering it.
+  async ensurePublicCode(
+    profile: PlayerProfileDocument,
+  ): Promise<PlayerProfileDocument> {
+    if (profile.publicCode) return profile;
+
+    const publicCode = await this.publicCodes.allocate(PublicCodePrefix.PLAYER);
+    const updated = await this.playerProfileModel.findOneAndUpdate(
+      { _id: profile._id, publicCode: { $in: [null, undefined] } },
+      { $set: { publicCode } },
+      { new: true },
+    );
+    return updated ?? (await this.playerProfileModel.findById(profile._id))!;
+  }
+
+  // Indexed equality lookup on the unique `publicCode` field. Applies the
+  // same PUBLIC-only rule as findPublicByIdOrThrow — a code must not become
+  // a way around a player's visibility setting — and answers 404 for a
+  // malformed code without a database round-trip.
+  async findPublicByCodeOrThrow(code: string): Promise<PlayerProfileDocument> {
+    const normalized = PublicCodesService.normalizeFor(
+      code,
+      PublicCodePrefix.PLAYER,
+    );
+    if (!normalized) {
+      throw new NotFoundException('Player not found.');
+    }
+    const profile = await this.playerProfileModel.findOne({
+      publicCode: normalized,
+    });
+    if (!profile || profile.visibility !== ProfileVisibility.PUBLIC) {
+      throw new NotFoundException('Player not found.');
+    }
+    return profile;
+  }
+
+  // Read-only counterpart to getOrCreateForUser, for callers where a missing
+  // profile means "no such player" rather than "create one on demand".
+  findByUserId(userId: string): Promise<PlayerProfileDocument | null> {
+    return this.playerProfileModel.findOne({ userId });
   }
 
   async findPublicByIdOrThrow(id: string): Promise<PlayerProfileDocument> {
