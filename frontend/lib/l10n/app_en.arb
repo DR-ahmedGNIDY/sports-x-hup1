@@ -633,6 +633,8 @@
       "count": { "type": "int" }
     }
   },
+  "clubMembersEmpty": "No players in this club yet.",
+  "clubProfileIncompleteNote": "This club has not added its details yet.",
 
   "notificationsTitle": "Notifications",
   "notificationsEmpty": "Nothing yet. When a club or a player writes to you, it will show up here.",

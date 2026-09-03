@@ -633,6 +633,8 @@
       "count": { "type": "int" }
     }
   },
+  "clubMembersEmpty": "لا يوجد لاعبون في هذا النادي بعد.",
+  "clubProfileIncompleteNote": "لم يُضف هذا النادي تفاصيله بعد.",
 
   "notificationsTitle": "الإشعارات",
   "notificationsEmpty": "لا يوجد شيء بعد. عندما يراسلك نادٍ أو لاعب سيظهر هنا.",

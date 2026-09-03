@@ -24,6 +24,10 @@ class ClubProfileView extends StatelessWidget {
       profile.city,
       profile.country,
     ].where((v) => v != null && v.isNotEmpty).join(', ');
+    final hasDetails =
+        (profile.description?.isNotEmpty ?? false) ||
+        profile.foundedYear != null ||
+        clubLevelDisplayValue(l10n, profile.level) != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,6 +95,20 @@ class ClubProfileView extends StatelessWidget {
               _Stat(label: l10n.levelLabel, value: level),
           ],
         ),
+        // Said plainly when there is nothing to say. Every part of this view
+        // below the name is conditional, so a club that has filled none of
+        // it in rendered as a name floating over an empty screen — which
+        // reads as a page that failed to load rather than as a profile
+        // nobody has written yet.
+        if (!hasDetails) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            l10n.clubProfileIncompleteNote,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
       ],
     );
   }

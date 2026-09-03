@@ -40,13 +40,34 @@ class _ClubMembersSectionState extends ConsumerState<ClubMembersSection> {
       clubMembersProvider((clubId: widget.clubId, page: _page)),
     );
 
-    // Loading and failure both render nothing: this is a supplementary
+    // Loading and failure still render nothing: this is a supplementary
     // section on someone else's profile, and a spinner or an error box
     // there is worse than its quiet absence. `valueOrNull`, not `value` —
     // the latter rethrows on an AsyncError, which would take the whole
     // profile page down with a side request.
     final page = membersAsync.valueOrNull;
-    if (page == null || page.items.isEmpty) return const SizedBox.shrink();
+    if (page == null) return const SizedBox.shrink();
+
+    // An empty roster is stated rather than hidden. Vanishing was the right
+    // call while this sat under a profile that had other things to show; on
+    // a club that has filled nothing in, every section vanished the same way
+    // and the visitor was left facing a blank page with no way to tell an
+    // empty club from a broken one.
+    if (page.items.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.clubMembersTitle(0), style: theme.textTheme.titleMedium),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            l10n.clubMembersEmpty,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

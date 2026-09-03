@@ -3187,6 +3187,18 @@ abstract class AppLocalizations {
   /// **'اللاعبون ({count})'**
   String clubMembersTitle(int count);
 
+  /// No description provided for @clubMembersEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد لاعبون في هذا النادي بعد.'**
+  String get clubMembersEmpty;
+
+  /// No description provided for @clubProfileIncompleteNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يُضف هذا النادي تفاصيله بعد.'**
+  String get clubProfileIncompleteNote;
+
   /// No description provided for @notificationsTitle.
   ///
   /// In ar, this message translates to:

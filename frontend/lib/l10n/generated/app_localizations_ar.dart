@@ -1665,6 +1665,12 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get clubMembersEmpty => 'لا يوجد لاعبون في هذا النادي بعد.';
+
+  @override
+  String get clubProfileIncompleteNote => 'لم يُضف هذا النادي تفاصيله بعد.';
+
+  @override
   String get notificationsTitle => 'الإشعارات';
 
   @override

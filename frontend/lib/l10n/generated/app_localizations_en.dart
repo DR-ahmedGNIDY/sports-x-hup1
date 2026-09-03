@@ -1683,6 +1683,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get clubMembersEmpty => 'No players in this club yet.';
+
+  @override
+  String get clubProfileIncompleteNote =>
+      'This club has not added its details yet.';
+
+  @override
   String get notificationsTitle => 'Notifications';
 
   @override
