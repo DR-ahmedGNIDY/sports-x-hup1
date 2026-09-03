@@ -26,7 +26,7 @@ class PublicVideosController extends AutoDisposeFamilyAsyncNotifier<List<Video>,
   }
 
   Future<void> toggleLike(String videoId) async {
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     final video = current.where((v) => v.id == videoId).firstOrNull;
     if (video == null) return;
     final result = video.isLikedByMe

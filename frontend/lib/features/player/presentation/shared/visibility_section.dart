@@ -17,7 +17,7 @@ class VisibilitySection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(playerProfileControllerProvider).value;
+    final profile = ref.watch(playerProfileControllerProvider).valueOrNull;
     final isPublic = profile?.visibility == ProfileVisibility.public;
     final l10n = AppLocalizations.of(context)!;
 

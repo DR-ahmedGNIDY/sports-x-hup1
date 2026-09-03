@@ -21,7 +21,7 @@ class AdminUsersController extends AsyncNotifier<List<AdminUser>> {
     final result = await ref.read(adminRepositoryProvider).getUsers(page: nextPage);
     _page = nextPage;
     hasMore = result.hasMore;
-    state = AsyncData([...state.value ?? const [], ...result.items]);
+    state = AsyncData([...state.valueOrNull ?? const [], ...result.items]);
   }
 
   Future<void> setStatus(String userId, String status) async {
@@ -32,7 +32,7 @@ class AdminUsersController extends AsyncNotifier<List<AdminUser>> {
 
   Future<void> deleteUser(String userId) async {
     await ref.read(adminRepositoryProvider).deleteUser(userId);
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData(current.where((u) => u.id != userId).toList());
   }
 }

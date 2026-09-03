@@ -51,7 +51,7 @@ Future<void> resendCredentialsAndOpenWhatsApp(
         .read(clubPlayersControllerProvider.notifier)
         .resendCredentials(player.userId);
     if (!context.mounted) return;
-    final clubName = ref.read(clubProfileControllerProvider).value?.name ?? '';
+    final clubName = ref.read(clubProfileControllerProvider).valueOrNull?.name ?? '';
     await _openWhatsApp(
       phone: credentials.username,
       message: _credentialsMessage(
@@ -83,7 +83,7 @@ class SendCredentialsWhatsAppButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final clubName = ref.watch(clubProfileControllerProvider).value?.name ?? '';
+    final clubName = ref.watch(clubProfileControllerProvider).valueOrNull?.name ?? '';
     return FilledButton.icon(
       onPressed: () => _openWhatsApp(
         phone: credentials.username,

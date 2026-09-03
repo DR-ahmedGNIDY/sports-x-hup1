@@ -60,7 +60,7 @@ class HomeFeedController extends AsyncNotifier<HomeFeedState> {
   }
 
   Future<void> loadMore() async {
-    final current = state.value;
+    final current = state.valueOrNull;
     if (current == null || current.loadingMore || !current.page.hasNextPage) return;
     state = AsyncData(current.copyWith(loadingMore: true));
     try {
@@ -90,7 +90,7 @@ class HomeFeedController extends AsyncNotifier<HomeFeedState> {
     final item = await ref
         .read(feedRepositoryProvider)
         .createPost(bytes: bytes, filename: filename, caption: caption);
-    final current = state.value;
+    final current = state.valueOrNull;
     if (current != null) {
       state = AsyncData(
         current.copyWith(
@@ -107,7 +107,7 @@ class HomeFeedController extends AsyncNotifier<HomeFeedState> {
   }
 
   void patchItem(String id, FeedItem Function(FeedItem) update) {
-    final current = state.value;
+    final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData(
       current.copyWith(

@@ -68,7 +68,7 @@ class MyVideosController extends AsyncNotifier<List<Video>> {
     final updated = await ref
         .read(videoRepositoryProvider)
         .updateVisibility(videoId, visibility);
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData([
       for (final video in current)
         if (video.id == updated.id) updated else video,
@@ -78,7 +78,7 @@ class MyVideosController extends AsyncNotifier<List<Video>> {
 
   Future<void> updateTitle(String videoId, String? title) async {
     final updated = await ref.read(videoRepositoryProvider).updateTitle(videoId, title);
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData([
       for (final video in current)
         if (video.id == updated.id) updated else video,
@@ -88,13 +88,13 @@ class MyVideosController extends AsyncNotifier<List<Video>> {
 
   Future<void> delete(String videoId) async {
     await ref.read(videoRepositoryProvider).deleteVideo(videoId);
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData(current.where((v) => v.id != videoId).toList());
     _invalidateCommunityFeed();
   }
 
   Future<void> toggleLike(String videoId) async {
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     final video = current.where((v) => v.id == videoId).firstOrNull;
     if (video == null) return;
     final result = video.isLikedByMe
@@ -110,7 +110,7 @@ class MyVideosController extends AsyncNotifier<List<Video>> {
   }
 
   Future<void> incrementCommentCount(String videoId, int delta) async {
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData([
       for (final v in current)
         if (v.id == videoId) v.copyWith(commentCount: v.commentCount + delta) else v,

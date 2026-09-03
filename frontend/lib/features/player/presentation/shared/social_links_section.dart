@@ -20,7 +20,7 @@ class SocialLinksSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final links =
-        ref.watch(playerProfileControllerProvider).value?.socialLinks ?? const [];
+        ref.watch(playerProfileControllerProvider).valueOrNull?.socialLinks ?? const [];
     final l10n = AppLocalizations.of(context)!;
 
     return Column(

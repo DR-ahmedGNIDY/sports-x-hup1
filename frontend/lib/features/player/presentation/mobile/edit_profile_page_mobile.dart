@@ -38,7 +38,7 @@ class _EditProfilePageMobileState extends ConsumerState<EditProfilePageMobile> {
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(playerProfileControllerProvider);
     final l10n = AppLocalizations.of(context)!;
-    final profile = profileAsync.value;
+    final profile = profileAsync.valueOrNull;
 
     final accordionSections = [
       (l10n.photosVideosTitle, const MediaSection()),

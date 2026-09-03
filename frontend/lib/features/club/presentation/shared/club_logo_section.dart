@@ -46,7 +46,7 @@ class _ClubLogoSectionState extends ConsumerState<ClubLogoSection> {
 
   @override
   Widget build(BuildContext context) {
-    final logoUrl = ref.watch(clubProfileControllerProvider).value?.logoUrl;
+    final logoUrl = ref.watch(clubProfileControllerProvider).valueOrNull?.logoUrl;
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 

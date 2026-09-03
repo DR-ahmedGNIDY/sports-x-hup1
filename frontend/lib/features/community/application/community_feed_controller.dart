@@ -83,7 +83,7 @@ class CommunityFeedController extends AsyncNotifier<CommunityFeedPage> {
   }
 
   Future<void> toggleLike(String videoId) async {
-    final current = state.value;
+    final current = state.valueOrNull;
     if (current == null) return;
     final video = current.items.where((v) => v.id == videoId).firstOrNull;
     if (video == null) return;
@@ -107,7 +107,7 @@ class CommunityFeedController extends AsyncNotifier<CommunityFeedPage> {
   }
 
   Future<void> incrementCommentCount(String videoId, int delta) async {
-    final current = state.value;
+    final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData(
       CommunityFeedPage(

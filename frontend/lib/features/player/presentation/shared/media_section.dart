@@ -62,7 +62,7 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
   @override
   Widget build(BuildContext context) {
     final media =
-        ref.watch(playerProfileControllerProvider).value?.media ?? const [];
+        ref.watch(playerProfileControllerProvider).valueOrNull?.media ?? const [];
     final l10n = AppLocalizations.of(context)!;
 
     return Column(

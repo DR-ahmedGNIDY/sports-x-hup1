@@ -47,7 +47,7 @@ class _ClubInfoSectionState extends ConsumerState<ClubInfoSection> {
   }
 
   void _initFromProfile() {
-    final profile = ref.read(clubProfileControllerProvider).value;
+    final profile = ref.read(clubProfileControllerProvider).valueOrNull;
     if (profile == null || _initialized) return;
     _name.text = profile.name ?? '';
     _city.text = profile.city ?? '';

@@ -66,7 +66,7 @@ class _ProfilePhotoSectionState extends ConsumerState<ProfilePhotoSection> {
   Widget build(BuildContext context) {
     final photoUrl = widget.onUpload != null
         ? widget.photoUrl
-        : ref.watch(playerProfileControllerProvider).value?.profilePhoto?.secureUrl;
+        : ref.watch(playerProfileControllerProvider).valueOrNull?.profilePhoto?.secureUrl;
     final l10n = AppLocalizations.of(context)!;
 
     final colorScheme = Theme.of(context).colorScheme;

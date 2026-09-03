@@ -21,12 +21,12 @@ class AdminClubsController extends AsyncNotifier<List<AdminClubSummary>> {
     final result = await ref.read(adminRepositoryProvider).getClubs(page: nextPage);
     _page = nextPage;
     hasMore = result.hasMore;
-    state = AsyncData([...state.value ?? const [], ...result.items]);
+    state = AsyncData([...state.valueOrNull ?? const [], ...result.items]);
   }
 
   Future<void> deleteClub(String clubId) async {
     await ref.read(adminRepositoryProvider).deleteClub(clubId);
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData(current.where((c) => c.id != clubId).toList());
   }
 }

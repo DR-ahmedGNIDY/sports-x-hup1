@@ -124,7 +124,7 @@ class ClubPlayersController extends AsyncNotifier<ClubRosterPage> {
   }
 
   void _patchIfLoaded(String userId, ClubManagedPlayer updated) {
-    final current = state.value;
+    final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData(
       ClubRosterPage(

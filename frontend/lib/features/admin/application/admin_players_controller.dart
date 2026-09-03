@@ -21,12 +21,12 @@ class AdminPlayersController extends AsyncNotifier<List<AdminPlayerSummary>> {
     final result = await ref.read(adminRepositoryProvider).getPlayers(page: nextPage);
     _page = nextPage;
     hasMore = result.hasMore;
-    state = AsyncData([...state.value ?? const [], ...result.items]);
+    state = AsyncData([...state.valueOrNull ?? const [], ...result.items]);
   }
 
   Future<void> deletePlayer(String playerId) async {
     await ref.read(adminRepositoryProvider).deletePlayer(playerId);
-    final current = state.value ?? const [];
+    final current = state.valueOrNull ?? const [];
     state = AsyncData(current.where((p) => p.id != playerId).toList());
   }
 }

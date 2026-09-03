@@ -22,7 +22,7 @@ class AchievementsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final achievements =
-        ref.watch(playerProfileControllerProvider).value?.achievements ?? const [];
+        ref.watch(playerProfileControllerProvider).valueOrNull?.achievements ?? const [];
     final l10n = AppLocalizations.of(context)!;
 
     return Column(

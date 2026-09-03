@@ -136,7 +136,7 @@ class _ProfileDetailsFormState extends ConsumerState<ProfileDetailsForm> {
   }
 
   void _initFromProfile() {
-    final profile = widget.initialProfile ?? ref.read(playerProfileControllerProvider).value;
+    final profile = widget.initialProfile ?? ref.read(playerProfileControllerProvider).valueOrNull;
     if (profile == null || _initialized) return;
     _firstName.text = profile.firstName ?? '';
     _lastName.text = profile.lastName ?? '';
