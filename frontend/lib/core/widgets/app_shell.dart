@@ -242,15 +242,28 @@ class _UserIdentity extends ConsumerWidget {
 
     String? photoUrl;
     String displayName;
+    // `valueOrNull` throughout, never `value` — the latter *rethrows* an
+    // AsyncError instead of answering null.
+    //
+    // This widget is the avatar inside the bottom bar's account slot, so a
+    // profile request that failed — an expired token, a dropped connection,
+    // a slow server — threw while building the bar, and the Column holding
+    // every tab went down with it. The reported symptom was the navigation
+    // buttons vanishing at random, which is exactly what an intermittent
+    // request failure looks like from the outside.
+    //
+    // The fallbacks below already handle a missing profile: the account
+    // shows the signed-in email and a generic avatar. There was never a
+    // reason for a failed side request to cost more than that.
     switch (user?.role) {
       case UserRole.player:
-        final profile = ref.watch(playerProfileControllerProvider).value;
+        final profile = ref.watch(playerProfileControllerProvider).valueOrNull;
         photoUrl = profile?.profilePhoto?.secureUrl;
         displayName = (profile?.firstName?.isNotEmpty ?? false)
             ? profile!.firstName!
             : email;
       case UserRole.club:
-        final profile = ref.watch(clubProfileControllerProvider).value;
+        final profile = ref.watch(clubProfileControllerProvider).valueOrNull;
         photoUrl = profile?.logoUrl;
         displayName = (profile?.name?.isNotEmpty ?? false)
             ? profile!.name!

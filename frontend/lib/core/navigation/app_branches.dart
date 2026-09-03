@@ -239,7 +239,18 @@ AppRouteMeta? routeMetaFor(String path) {
     return _routeMeta['/settings'];
   }
 
-  // The one parameterised route in the shell.
+  // The in-shell copies of the two public profile routes. They keep their
+  // own Scaffold and AppBar — the same widget a signed-out visitor sees —
+  // so the shell must stand down over them or the screen carries two bars.
+  // No parentPath: the page's own back button pops the push that opened it,
+  // which returns you wherever you actually came from rather than to a
+  // fixed tab.
+  if (path.startsWith('/search/players/') ||
+      path.startsWith('/search/clubs/')) {
+    return const AppRouteMeta(title: null, ownsChrome: true);
+  }
+
+  // The other parameterised routes in the shell.
   if (path.startsWith('/club/players/') && path.endsWith('/edit')) {
     return AppRouteMeta(
       title: (l10n) => l10n.clubPlayerEditTitle,

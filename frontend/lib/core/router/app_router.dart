@@ -58,6 +58,21 @@ const _marketingRoutes = {'/home', '/about', '/pricing', '/contact', '/players',
 bool _isPublicPlayerProfile(String path) => path.startsWith('/players/');
 bool _isPublicClubProfile(String path) => path.startsWith('/clubs/');
 
+/// The in-shell path for a public profile URL, or `null` if [path] is not
+/// one. `/players/abc` becomes `/search/players/abc`.
+///
+/// Only the exact two-segment forms map: `/players` on its own is the
+/// public listing, which is a marketing page and stays one.
+String? _inShellProfilePath(String path) {
+  for (final prefix in const ['/players/', '/clubs/']) {
+    if (!path.startsWith(prefix)) continue;
+    final id = path.substring(prefix.length);
+    if (id.isEmpty || id.contains('/')) return null;
+    return '/search$path';
+  }
+  return null;
+}
+
 bool _isMarketingRoute(String path) =>
     _marketingRoutes.contains(path) ||
     _isPublicPlayerProfile(path) ||
@@ -95,6 +110,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final session = ref.read(sessionControllerProvider);
       final path = state.matchedLocation;
+
+      // A signed-in reader gets the in-shell copy of a public profile, so
+      // opening one keeps the tab bar and the header instead of dropping
+      // them. Checked before the marketing pass-through below, which would
+      // otherwise let these through untouched.
+      //
+      // Only once the session is actually known: during restore() the
+      // answer is not "no", it is "not yet", and guessing would flash the
+      // public page at a member. refreshListenable re-runs this the moment
+      // restore() lands, which moves them in without a second tap.
+      if (session.status == SessionStatus.authenticated) {
+        final inShell = _inShellProfilePath(path);
+        if (inShell != null) return inShell;
+      }
 
       // The public marketing site and public profile/listing deep links are
       // session-independent — checked before the splash gate below, so a
@@ -306,6 +335,34 @@ StatefulShellBranch _branchFor(AppBranch branch) {
           path: '/search',
           pageBuilder: (context, state) =>
               fadePage(state: state, child: const SearchPlayersPage()),
+        ),
+        // The signed-in twins of the two public profile routes.
+        //
+        // `/players/:id` and `/clubs/:id` are declared outside this shell so
+        // a visitor with no account can open a shared link. That is right
+        // for them and wrong for everyone else: a member who tapped a search
+        // result was taken out of the shell entirely, losing the tab bar,
+        // the header, and the saved scroll position of every tab. The
+        // redirect in [appRouterProvider] sends a signed-in reader here
+        // instead, and the public URLs stay exactly as shareable as before.
+        //
+        // Search owns them because search is where nearly every profile is
+        // opened from, by both roles. A profile reached from Invitations
+        // will leave Search highlighted, which is a smaller wrong than
+        // dropping the whole shell was.
+        GoRoute(
+          path: '/search/players/:id',
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: PublicPlayerProfilePage(playerId: state.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/search/clubs/:id',
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: PublicClubProfilePage(clubId: state.pathParameters['id']!),
+          ),
         ),
       ],
       AppBranch.savedPlayers => [
