@@ -19,7 +19,8 @@
     "seed:admin": "ts-node -T src/database/seed-admin.ts",
     "migrate:profile-photos": "ts-node -T src/database/migrate-profile-photos.ts",
     "migrate:public-codes": "ts-node -T src/database/migrate-public-codes.ts",
-    "migrate:profiles-public": "ts-node -T src/database/migrate-profiles-public.ts"
+    "migrate:profiles-public": "ts-node -T src/database/migrate-profiles-public.ts",
+    "migrate:email-index-sparse": "ts-node -T src/database/migrate-email-index-sparse.ts"
   },
   "jest": {
     "moduleFileExtensions": [
