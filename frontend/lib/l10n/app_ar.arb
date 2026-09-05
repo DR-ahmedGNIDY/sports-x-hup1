@@ -381,6 +381,7 @@
   "clubPlayersAnyFilterOption": "الكل",
   "clubPlayersSportFilterLabel": "الرياضة",
   "clubPlayersPositionFilterLabel": "المركز",
+  "clubPlayersBirthYearFilterLabel": "مواليد",
   "clubPlayersNoSearchResults": "لا يوجد لاعبون مطابقون لهذا البحث/الفلاتر.",
   "clubPlayersTableColumnPlayer": "اللاعب",
   "clubPlayersTableColumnActions": "الإجراءات",

@@ -317,12 +317,28 @@ export class PlayersService {
       search,
       sport,
       position,
+      birthYear,
       page = 1,
-    }: { search?: string; sport?: string; position?: string; page?: number },
+    }: {
+      search?: string;
+      sport?: string;
+      position?: string;
+      birthYear?: number;
+      page?: number;
+    },
   ): Promise<PlayerSearchResult> {
     const filter: Record<string, unknown> = { userId: { $in: userIds } };
     if (sport) filter.sport = sport;
     if (position) filter.position = position;
+    if (birthYear !== undefined) {
+      // Whole-year range, not an exact-date match — dateOfBirth carries a
+      // day/month too, and clubs group players by birth *year* ("مواليد
+      // 2010"), the same age-category convention as football academies.
+      filter.dateOfBirth = {
+        $gte: new Date(Date.UTC(birthYear, 0, 1)),
+        $lt: new Date(Date.UTC(birthYear + 1, 0, 1)),
+      };
+    }
     if (search && search.trim()) {
       // Same unindexed-regex trade-off as search() above — see that
       // function's comment. Lower-risk here since this is always scoped

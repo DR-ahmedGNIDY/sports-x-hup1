@@ -381,6 +381,7 @@
   "clubPlayersAnyFilterOption": "Any",
   "clubPlayersSportFilterLabel": "Sport",
   "clubPlayersPositionFilterLabel": "Position",
+  "clubPlayersBirthYearFilterLabel": "Birth year",
   "clubPlayersNoSearchResults": "No players match this search/filters.",
   "clubPlayersTableColumnPlayer": "Player",
   "clubPlayersTableColumnActions": "Actions",

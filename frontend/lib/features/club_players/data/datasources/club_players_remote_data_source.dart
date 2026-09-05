@@ -38,12 +38,14 @@ class ClubPlayersRemoteDataSource {
     String? search,
     String? sport,
     String? position,
+    int? birthYear,
   }) async {
     final query = <String, String>{
       'page': '$page',
       'search': ?search,
       'sport': ?sport,
       'position': ?position,
+      'birthYear': ?birthYear?.toString(),
     };
     final queryString = Uri(queryParameters: query).query;
     final response = await _client.get(

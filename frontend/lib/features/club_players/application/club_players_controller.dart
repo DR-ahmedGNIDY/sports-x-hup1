@@ -25,8 +25,18 @@ class ClubPlayersController extends AsyncNotifier<ClubRosterPage> {
     return ref.read(clubPlayersRepositoryProvider).listPlayers(_filters);
   }
 
-  Future<void> applyFilters({String? search, String? sport, String? position}) async {
-    _filters = ClubPlayersFilters.cleared(search: search, sport: sport, position: position);
+  Future<void> applyFilters({
+    String? search,
+    String? sport,
+    String? position,
+    int? birthYear,
+  }) async {
+    _filters = ClubPlayersFilters.cleared(
+      search: search,
+      sport: sport,
+      position: position,
+      birthYear: birthYear,
+    );
     await _reload();
   }
 

@@ -2029,6 +2029,12 @@ abstract class AppLocalizations {
   /// **'المركز'**
   String get clubPlayersPositionFilterLabel;
 
+  /// No description provided for @clubPlayersBirthYearFilterLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مواليد'**
+  String get clubPlayersBirthYearFilterLabel;
+
   /// No description provided for @clubPlayersNoSearchResults.
   ///
   /// In ar, this message translates to:

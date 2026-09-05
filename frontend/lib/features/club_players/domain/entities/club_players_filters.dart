@@ -4,18 +4,35 @@
 /// too. All server-side (see `ClubPlayersController`); nothing here ever
 /// filters an already-downloaded list on the client.
 class ClubPlayersFilters {
-  const ClubPlayersFilters({this.search, this.sport, this.position, this.page = 1});
+  const ClubPlayersFilters({
+    this.search,
+    this.sport,
+    this.position,
+    this.birthYear,
+    this.page = 1,
+  });
 
   final String? search;
   final String? sport;
   final String? position;
+
+  /// Exact birth year (e.g. 2010) — how clubs group players into age
+  /// categories, not a min/max-age range.
+  final int? birthYear;
   final int page;
 
-  ClubPlayersFilters copyWith({String? search, String? sport, String? position, int? page}) {
+  ClubPlayersFilters copyWith({
+    String? search,
+    String? sport,
+    String? position,
+    int? birthYear,
+    int? page,
+  }) {
     return ClubPlayersFilters(
       search: search ?? this.search,
       sport: sport ?? this.sport,
       position: position ?? this.position,
+      birthYear: birthYear ?? this.birthYear,
       page: page ?? this.page,
     );
   }
@@ -27,8 +44,15 @@ class ClubPlayersFilters {
     String? search,
     String? sport,
     String? position,
+    int? birthYear,
     int page = 1,
   }) {
-    return ClubPlayersFilters(search: search, sport: sport, position: position, page: page);
+    return ClubPlayersFilters(
+      search: search,
+      sport: sport,
+      position: position,
+      birthYear: birthYear,
+      page: page,
+    );
   }
 }

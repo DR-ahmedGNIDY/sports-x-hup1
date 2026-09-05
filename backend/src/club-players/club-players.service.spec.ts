@@ -199,7 +199,13 @@ describe('ClubPlayersService', () => {
 
       expect(playersService.findManyByUserIdsFiltered).toHaveBeenCalledWith(
         ['player-1', 'player-2'],
-        { search: 'ali', sport: 'Football', position: undefined, page: 2 },
+        {
+          search: 'ali',
+          sport: 'Football',
+          position: undefined,
+          birthYear: undefined,
+          page: 2,
+        },
       );
       expect(result.items).toEqual([
         { profile: { userId: 'player-2' }, dialCode: '+971' },

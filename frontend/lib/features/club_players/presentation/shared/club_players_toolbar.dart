@@ -29,12 +29,14 @@ class _ClubPlayersToolbarState extends ConsumerState<ClubPlayersToolbar> {
     text: ref.read(clubPlayersControllerProvider.notifier).filters.position ?? '',
   );
   String? _sport;
+  int? _birthYear;
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _sport = ref.read(clubPlayersControllerProvider.notifier).filters.sport;
+    _birthYear = ref.read(clubPlayersControllerProvider.notifier).filters.birthYear;
   }
 
   @override
@@ -57,6 +59,7 @@ class _ClubPlayersToolbarState extends ConsumerState<ClubPlayersToolbar> {
           search: _search.text.trim().isEmpty ? null : _search.text.trim(),
           sport: _sport,
           position: _position.text.trim().isEmpty ? null : _position.text.trim(),
+          birthYear: _birthYear,
         );
   }
 
@@ -123,8 +126,34 @@ class _ClubPlayersToolbarState extends ConsumerState<ClubPlayersToolbar> {
             onChanged: (_) => _scheduleApply(),
           ),
         ),
+        SizedBox(
+          width: 160,
+          child: DropdownButtonFormField<int>(
+            initialValue: _birthYear,
+            isExpanded: true,
+            decoration: InputDecoration(labelText: l10n.clubPlayersBirthYearFilterLabel),
+            items: [
+              DropdownMenuItem<int>(value: null, child: Text(l10n.clubPlayersAnyFilterOption)),
+              ..._birthYearOptions().map(
+                (year) => DropdownMenuItem(value: year, child: Text('$year')),
+              ),
+            ],
+            onChanged: (value) {
+              setState(() => _birthYear = value);
+              _apply();
+            },
+          ),
+        ),
       ],
     );
+  }
+
+  /// Newest-first list of birth years a club roster would realistically
+  /// contain — youth-academy players through adult staff/players, wide
+  /// enough that this never needs to change as a season rolls over.
+  List<int> _birthYearOptions() {
+    final currentYear = DateTime.now().year;
+    return [for (var year = currentYear; year >= currentYear - 60; year--) year];
   }
 }
 
@@ -134,4 +163,5 @@ class _ClubPlayersToolbarState extends ConsumerState<ClubPlayersToolbar> {
 bool clubPlayersFiltersActive(ClubPlayersFilters filters) =>
     (filters.search?.isNotEmpty ?? false) ||
     (filters.sport?.isNotEmpty ?? false) ||
-    (filters.position?.isNotEmpty ?? false);
+    (filters.position?.isNotEmpty ?? false) ||
+    filters.birthYear != null;
