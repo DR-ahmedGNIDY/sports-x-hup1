@@ -1045,6 +1045,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clubPlayersPositionFilterLabel => 'Position';
 
   @override
+  String get clubPlayersBirthYearFilterLabel => 'Birth year';
+
+  @override
   String get clubPlayersNoSearchResults =>
       'No players match this search/filters.';
 

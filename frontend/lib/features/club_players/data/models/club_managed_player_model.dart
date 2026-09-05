@@ -1,3 +1,4 @@
+import '../../../../core/utils/date_only.dart';
 import '../../../player/data/models/player_profile_model.dart';
 import '../../../player/domain/entities/contact_details.dart';
 import '../../domain/entities/club_dashboard_summary.dart';
@@ -88,7 +89,7 @@ Map<String, dynamic> updateClubPlayerInputToJson({
   return {
     'firstName': ?firstName,
     'lastName': ?lastName,
-    'dateOfBirth': ?dateOfBirth?.toIso8601String(),
+    'dateOfBirth': ?(dateOfBirth == null ? null : dateOnlyIso(dateOfBirth)),
     'nationality': ?nationality,
     'country': ?country,
     'city': ?city,
@@ -129,7 +130,7 @@ Map<String, dynamic> createClubPlayerInputToJson({
     'phone': phone,
     'countryIsoCode': countryIsoCode,
     'email': ?email,
-    'dateOfBirth': ?dateOfBirth?.toIso8601String(),
+    'dateOfBirth': ?(dateOfBirth == null ? null : dateOnlyIso(dateOfBirth)),
     'nationality': ?nationality,
     'country': ?country,
     'city': ?city,

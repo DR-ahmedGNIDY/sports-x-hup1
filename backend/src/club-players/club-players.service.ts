@@ -175,6 +175,7 @@ export class ClubPlayersService {
         search: dto.search,
         sport: dto.sport,
         position: dto.position,
+        birthYear: dto.birthYear,
         page: dto.page,
       });
     return {

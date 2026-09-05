@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/authorized_request.dart';
+import '../../../../core/utils/date_only.dart';
 import '../../../../core/storage/session_storage.dart';
 import '../../../../core/storage/session_storage_provider.dart';
 import '../../domain/entities/contact_details.dart';
@@ -69,7 +70,7 @@ class PlayerRepositoryImpl implements PlayerRepository {
     final json = await _remote.updateMyProfile(token, {
       'firstName': ?firstName,
       'lastName': ?lastName,
-      'dateOfBirth': ?dateOfBirth?.toIso8601String(),
+      'dateOfBirth': ?(dateOfBirth == null ? null : dateOnlyIso(dateOfBirth)),
       'nationality': ?nationality,
       'country': ?country,
       'city': ?city,

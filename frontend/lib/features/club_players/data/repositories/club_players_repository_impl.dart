@@ -34,6 +34,7 @@ class ClubPlayersRepositoryImpl implements ClubPlayersRepository {
           search: filters.search,
           sport: filters.sport,
           position: filters.position,
+          birthYear: filters.birthYear,
         );
         return ClubRosterPageModel.fromJson(json);
       });

@@ -1034,6 +1034,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clubPlayersPositionFilterLabel => 'المركز';
 
   @override
+  String get clubPlayersBirthYearFilterLabel => 'مواليد';
+
+  @override
   String get clubPlayersNoSearchResults =>
       'لا يوجد لاعبون مطابقون لهذا البحث/الفلاتر.';
 
