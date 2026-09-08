@@ -11,11 +11,14 @@ import 'package:sport_x_hub/features/invitations/data/repositories/memberships_r
 import 'package:sport_x_hub/features/invitations/domain/entities/membership.dart';
 import 'package:sport_x_hub/features/invitations/domain/repositories/memberships_repository.dart';
 import 'package:sport_x_hub/features/player/domain/entities/achievement.dart';
+import 'package:sport_x_hub/features/player/domain/entities/player_enums.dart';
+import 'package:sport_x_hub/features/player/domain/entities/player_media.dart';
 import 'package:sport_x_hub/features/player/domain/entities/player_profile.dart';
 import 'package:sport_x_hub/features/player/presentation/shared/player_club_card.dart';
 import 'package:sport_x_hub/features/player/presentation/shared/player_hero_card.dart';
 import 'package:sport_x_hub/features/player/presentation/shared/player_profile_data.dart';
 import 'package:sport_x_hub/features/player/presentation/shared/player_profile_trailing_sections.dart';
+import 'package:sport_x_hub/features/videos/presentation/shared/video_player_screen.dart';
 import 'package:sport_x_hub/l10n/generated/app_localizations.dart';
 
 /// A repository that reports "this player has no club". The Current Club
@@ -137,6 +140,47 @@ void main() {
       );
       expect(section, isNotNull);
       expect(find.text('League Winner'), findsOneWidget);
+    });
+  });
+
+  group('gallery video tile', () {
+    // A video in the gallery used to be handed to the OS browser via
+    // url_launcher, which dropped the viewer out of the app for media the
+    // app can already play.
+    testWidgets('opens the in-app player rather than leaving the app', (tester) async {
+      const profile = PlayerProfile(
+        id: 'p1',
+        firstName: 'Amina',
+        lastName: 'Test',
+        media: [
+          PlayerMedia(
+            id: 'm1',
+            type: PlayerMediaType.video,
+            secureUrl: 'https://example.com/clip.mp4',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _wrap(
+          Builder(
+            builder: (context) => ListView(
+              children: buildTrailingSections(
+                context,
+                profile,
+                showContact: false,
+                isOwner: false,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byIcon(Icons.play_circle_outline));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(find.byType(VideoPlayerScreen), findsOneWidget);
     });
   });
 }

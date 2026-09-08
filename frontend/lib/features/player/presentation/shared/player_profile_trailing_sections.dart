@@ -8,6 +8,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_media.dart';
 import '../../domain/entities/player_profile.dart';
+import '../../../videos/presentation/shared/video_player_screen.dart';
 import 'achievement_badge_card.dart';
 import 'section_card.dart';
 import 'skills_section.dart';
@@ -166,7 +167,11 @@ class _MediaTile extends StatelessWidget {
 
   void _open(BuildContext context) {
     if (item.type == PlayerMediaType.video) {
-      launchUrl(Uri.parse(item.secureUrl));
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => VideoPlayerScreen(videoUrl: item.secureUrl),
+        ),
+      );
       return;
     }
     showDialog<void>(

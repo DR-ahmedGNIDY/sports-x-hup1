@@ -10,6 +10,13 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/player_profile_controller.dart';
 import '../../domain/entities/player_enums.dart';
 import '../../domain/entities/player_media.dart';
+import '../../../videos/presentation/shared/video_player_screen.dart';
+
+/// Client-side safety nets matching the backend's per-type caps in
+/// `upload.config.ts` — rejecting an oversized file here avoids uploading
+/// bytes the server would only reject once they arrived.
+const int _kMaxPhotoBytes = 5 * 1024 * 1024;
+const int _kMaxVideoBytes = 50 * 1024 * 1024;
 
 /// Photo/video gallery — upload via Cloudinary, delete. Setting the
 /// profile photo itself is [ProfilePhotoSection]'s job, not this one.
@@ -24,13 +31,26 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
   bool _uploading = false;
   String? _error;
 
-  Future<void> _pickAndUpload() async {
+  Future<void> _pickAndUpload(PlayerMediaType type) async {
+    final isVideo = type == PlayerMediaType.video;
     final result = await FilePicker.pickFiles(
       withData: true,
-      type: FileType.image,
+      type: isVideo ? FileType.video : FileType.image,
     );
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null) return;
+
+    final maxBytes = isVideo ? _kMaxVideoBytes : _kMaxPhotoBytes;
+    if (file.bytes!.length > maxBytes) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      setState(() {
+        _error = isVideo
+            ? l10n.videoUploadTooLargeError(maxBytes ~/ (1024 * 1024))
+            : l10n.photoUploadTooLargeError(maxBytes ~/ (1024 * 1024));
+      });
+      return;
+    }
 
     setState(() {
       _uploading = true;
@@ -42,7 +62,7 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
           .uploadMedia(
             bytes: file.bytes!,
             filename: file.name,
-            type: PlayerMediaType.photo,
+            type: type,
           );
     } on AppException catch (e) {
       setState(() => _error = e.message);
@@ -86,21 +106,31 @@ class _MediaSectionState extends ConsumerState<MediaSection> {
           Text(_error!, style: const TextStyle(color: AppColors.error)),
         ],
         const SizedBox(height: 12),
-        Row(
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             OutlinedButton.icon(
-              onPressed: _uploading ? null : _pickAndUpload,
+              onPressed: _uploading
+                  ? null
+                  : () => _pickAndUpload(PlayerMediaType.photo),
               icon: const Icon(Icons.add_a_photo_outlined),
               label: Text(l10n.addPhotoLabel),
             ),
-            if (_uploading) ...[
-              const SizedBox(width: 12),
+            OutlinedButton.icon(
+              onPressed: _uploading
+                  ? null
+                  : () => _pickAndUpload(PlayerMediaType.video),
+              icon: const Icon(Icons.videocam_outlined),
+              label: Text(l10n.addVideoLabel),
+            ),
+            if (_uploading)
               const SizedBox(
                 width: 18,
                 height: 18,
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
-            ],
           ],
         ),
       ],
@@ -137,11 +167,22 @@ class _MediaTile extends StatelessWidget {
                 : null,
           ),
           child: item.type == PlayerMediaType.video
-              ? Center(
-                  child: Icon(
-                    Icons.play_circle_outline,
-                    color: colorScheme.onSurfaceVariant,
-                    size: 32,
+              ? Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            VideoPlayerScreen(videoUrl: item.secureUrl),
+                      ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.play_circle_outline,
+                        color: colorScheme.onSurfaceVariant,
+                        size: 32,
+                      ),
+                    ),
                   ),
                 )
               : null,

@@ -531,6 +531,8 @@
   "videoVisibilityPrivate": "خاص",
   "videoUploadButtonLabel": "رفع",
   "videoUploadMissingFieldsError": "اختر فيديو وفئة قبل الرفع.",
+  "photoUploadTooLargeError": "حجم هذه الصورة أكبر من الحد المسموح به وهو {limit} ميجابايت. اختر ملفًا أصغر.",
+  "@photoUploadTooLargeError": { "placeholders": { "limit": { "type": "int" } } },
   "videoUploadTooLargeError": "حجم هذا الفيديو أكبر من الحد المسموح به وهو {limit} ميجابايت. اختر ملفًا أصغر.",
   "@videoUploadTooLargeError": { "placeholders": { "limit": { "type": "int" } } },
   "videoUploadTimeoutError": "استغرق الرفع وقتًا طويلاً وانتهت مهلته. تحقق من اتصالك وحاول مرة أخرى.",

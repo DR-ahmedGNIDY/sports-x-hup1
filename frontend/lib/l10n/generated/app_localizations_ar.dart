@@ -1454,6 +1454,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get videoUploadMissingFieldsError => 'اختر فيديو وفئة قبل الرفع.';
 
   @override
+  String photoUploadTooLargeError(int limit) {
+    return 'حجم هذه الصورة أكبر من الحد المسموح به وهو $limit ميجابايت. اختر ملفًا أصغر.';
+  }
+
+  @override
   String videoUploadTooLargeError(int limit) {
     return 'حجم هذا الفيديو أكبر من الحد المسموح به وهو $limit ميجابايت. اختر ملفًا أصغر.';
   }
