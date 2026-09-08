@@ -30,6 +30,7 @@ import {
   CreateAchievementDto,
   UpdateAchievementDto,
 } from './dto/achievement.dto';
+import { AddMediaDto } from './dto/add-media.dto';
 import { SearchPlayersDto } from './dto/search-players.dto';
 import {
   CreateSocialLinkDto,
@@ -37,6 +38,7 @@ import {
 } from './dto/social-link.dto';
 import { UpdatePlayerProfileDto } from './dto/update-player-profile.dto';
 import { UpdateVisibilityDto } from './dto/update-visibility.dto';
+import { MediaType } from './schemas/player-profile.schema';
 import {
   toOwnerView,
   toPublicView,
@@ -108,8 +110,13 @@ export class PlayersController {
   async addMedia(
     @CurrentUser() user: JwtPayload,
     @UploadedFile() file: Express.Multer.File,
+    @Body() dto: AddMediaDto,
   ) {
-    const profile = await this.playersService.addMedia(user.sub, file);
+    const profile = await this.playersService.addMedia(
+      user.sub,
+      file,
+      dto.type ?? MediaType.PHOTO,
+    );
     return toOwnerView(profile);
   }
 

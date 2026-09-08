@@ -449,11 +449,12 @@ export class PlayersService {
   async addMedia(
     userId: string,
     file: Express.Multer.File,
+    type: MediaType,
   ): Promise<PlayerProfileDocument> {
     if (!file) {
       throw new BadRequestException('A file is required.');
     }
-    validateMediaFile(MediaType.PHOTO, file);
+    validateMediaFile(type, file);
     const profile = await this.getOrCreateForUser(userId);
     if (profile.media.length >= MAX_EMBEDDED_ARRAY_ITEMS) {
       throw new BadRequestException(
@@ -463,11 +464,11 @@ export class PlayersService {
     const upload = await this.cloudinary.uploadBuffer(
       file.buffer,
       `sportxhub/players/${userId}`,
-      resourceTypeFor(MediaType.PHOTO),
+      resourceTypeFor(type),
     );
 
     profile.media.push({
-      type: MediaType.PHOTO,
+      type,
       publicId: upload.publicId,
       secureUrl: upload.secureUrl,
       isProfilePhoto: false,
@@ -480,7 +481,7 @@ export class PlayersService {
       // up) while the caller gets a raw 500.
       await this.cloudinary.deleteAsset(
         upload.publicId,
-        resourceTypeFor(MediaType.PHOTO),
+        resourceTypeFor(type),
       );
       throw error;
     }

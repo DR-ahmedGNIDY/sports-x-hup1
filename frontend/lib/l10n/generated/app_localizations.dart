@@ -2809,6 +2809,12 @@ abstract class AppLocalizations {
   /// **'اختر فيديو وفئة قبل الرفع.'**
   String get videoUploadMissingFieldsError;
 
+  /// No description provided for @photoUploadTooLargeError.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم هذه الصورة أكبر من الحد المسموح به وهو {limit} ميجابايت. اختر ملفًا أصغر.'**
+  String photoUploadTooLargeError(int limit);
+
   /// No description provided for @videoUploadTooLargeError.
   ///
   /// In ar, this message translates to:

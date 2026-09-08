@@ -1469,6 +1469,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Choose a video and a category before uploading.';
 
   @override
+  String photoUploadTooLargeError(int limit) {
+    return 'This photo is larger than the ${limit}MB limit. Choose a smaller file.';
+  }
+
+  @override
   String videoUploadTooLargeError(int limit) {
     return 'This video is larger than the ${limit}MB limit. Choose a smaller file.';
   }

@@ -11,6 +11,11 @@ import { MediaType, ProfileVisibility } from './schemas/player-profile.schema';
 const PNG_SIGNATURE = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0,
 ]);
+const MP4_SIGNATURE = Buffer.concat([
+  Buffer.from([0, 0, 0, 0x18]),
+  Buffer.from('ftyp'),
+  Buffer.from('isom'),
+]);
 
 describe('PlayersService', () => {
   function buildService(
@@ -216,11 +221,15 @@ describe('PlayersService', () => {
     });
 
     await expect(
-      service.addMedia('user-1', {
-        buffer: PNG_SIGNATURE,
-        mimetype: 'image/png',
-        size: 6 * 1024 * 1024, // over the 5MB IMAGE_SIZE_LIMIT_BYTES cap
-      } as Express.Multer.File),
+      service.addMedia(
+        'user-1',
+        {
+          buffer: PNG_SIGNATURE,
+          mimetype: 'image/png',
+          size: 6 * 1024 * 1024, // over the 5MB IMAGE_SIZE_LIMIT_BYTES cap
+        } as Express.Multer.File,
+        MediaType.PHOTO,
+      ),
     ).rejects.toThrow(BadRequestException);
     expect(cloudinary.uploadBuffer).not.toHaveBeenCalled();
   });
@@ -236,11 +245,15 @@ describe('PlayersService', () => {
     });
 
     await expect(
-      service.addMedia('user-1', {
-        buffer: PNG_SIGNATURE,
-        mimetype: 'image/png',
-        size: 10,
-      } as Express.Multer.File),
+      service.addMedia(
+        'user-1',
+        {
+          buffer: PNG_SIGNATURE,
+          mimetype: 'image/png',
+          size: 10,
+        } as Express.Multer.File,
+        MediaType.PHOTO,
+      ),
     ).rejects.toThrow(BadRequestException);
     // Rejected before ever uploading to Cloudinary.
     expect(cloudinary.uploadBuffer).not.toHaveBeenCalled();
@@ -254,14 +267,66 @@ describe('PlayersService', () => {
     const { service, cloudinary } = buildService(profile);
 
     await expect(
-      service.addMedia('user-1', {
-        buffer: PNG_SIGNATURE,
-        mimetype: 'image/png',
-        size: 10,
-      } as Express.Multer.File),
+      service.addMedia(
+        'user-1',
+        {
+          buffer: PNG_SIGNATURE,
+          mimetype: 'image/png',
+          size: 10,
+        } as Express.Multer.File,
+        MediaType.PHOTO,
+      ),
     ).rejects.toThrow('db down');
 
     expect(cloudinary.deleteAsset).toHaveBeenCalledWith('new-id', 'image');
+  });
+
+  it('uploads a video as a Cloudinary video asset and stores it as VIDEO', async () => {
+    const profile: { media: Record<string, unknown>[]; save: jest.Mock } = {
+      media: [],
+      save: jest.fn(),
+    };
+    const { service, cloudinary } = buildService(profile);
+
+    await service.addMedia(
+      'user-1',
+      {
+        buffer: MP4_SIGNATURE,
+        mimetype: 'video/mp4',
+        size: 10 * 1024 * 1024, // comfortably over the 5MB photo cap
+      } as Express.Multer.File,
+      MediaType.VIDEO,
+    );
+
+    // resource_type matters: uploaded under 'image', Cloudinary stores a
+    // video as an unplayable asset.
+    expect(cloudinary.uploadBuffer).toHaveBeenCalledWith(
+      expect.anything(),
+      'sportxhub/players/user-1',
+      'video',
+    );
+    expect(profile.media).toHaveLength(1);
+    expect(profile.media[0].type).toBe(MediaType.VIDEO);
+  });
+
+  it('rejects an image uploaded while declaring itself a VIDEO', async () => {
+    const { service, cloudinary } = buildService({
+      media: [],
+      save: jest.fn(),
+    });
+
+    await expect(
+      service.addMedia(
+        'user-1',
+        {
+          buffer: PNG_SIGNATURE,
+          mimetype: 'image/png',
+          size: 10,
+        } as Express.Multer.File,
+        MediaType.VIDEO,
+      ),
+    ).rejects.toThrow(BadRequestException);
+    expect(cloudinary.uploadBuffer).not.toHaveBeenCalled();
   });
 
   describe('setProfilePhoto', () => {
