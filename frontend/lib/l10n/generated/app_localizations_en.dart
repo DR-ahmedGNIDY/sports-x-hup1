@@ -1777,4 +1777,207 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retryButtonLabel => 'Retry';
+
+  @override
+  String get storeTitle => 'Sport X Hub Store';
+
+  @override
+  String get storeNavShop => 'Shop';
+
+  @override
+  String get storeNavCart => 'Cart';
+
+  @override
+  String get storeNavSearch => 'Search';
+
+  @override
+  String get storeNavOrders => 'My orders';
+
+  @override
+  String get storeShopBestSellers => 'Shop best sellers';
+
+  @override
+  String get storeNewArrivals => 'New arrivals';
+
+  @override
+  String get storeFeatured => 'Featured';
+
+  @override
+  String get storeShopByCategory => 'Shop by category';
+
+  @override
+  String get storeViewAll => 'View all';
+
+  @override
+  String get storeBadgeNew => 'New';
+
+  @override
+  String get storeBadgePreOrder => 'Pre-order';
+
+  @override
+  String get storeBadgeSale => 'Sale';
+
+  @override
+  String get storeSoldOut => 'Sold out';
+
+  @override
+  String get storeAddToBag => 'Add to bag';
+
+  @override
+  String get storeSelectSize => 'Select a size';
+
+  @override
+  String get storeSelectOption => 'Select an option';
+
+  @override
+  String get storeAddedToBag => 'Added to your bag';
+
+  @override
+  String get storeSearchHint => 'Search products';
+
+  @override
+  String get storeNoProducts => 'No products match that.';
+
+  @override
+  String get storeSortNewest => 'Newest';
+
+  @override
+  String get storeSortPriceAsc => 'Price: low to high';
+
+  @override
+  String get storeSortPriceDesc => 'Price: high to low';
+
+  @override
+  String get storeCartEmpty => 'Your bag is empty.';
+
+  @override
+  String get storeCartContinueShopping => 'Continue shopping';
+
+  @override
+  String get storeSubtotal => 'Subtotal';
+
+  @override
+  String get storeShippingFee => 'Shipping';
+
+  @override
+  String get storeTotal => 'Total';
+
+  @override
+  String get storeCheckout => 'Checkout';
+
+  @override
+  String get storeCheckoutTitle => 'Delivery details';
+
+  @override
+  String get storeFullNameLabel => 'Full name';
+
+  @override
+  String get storePhoneLabel => 'Mobile number';
+
+  @override
+  String get storeEmailLabel => 'Email';
+
+  @override
+  String get storeGovernorateLabel => 'Governorate';
+
+  @override
+  String get storeCityLabel => 'City / area';
+
+  @override
+  String get storeStreetLabel => 'Street address';
+
+  @override
+  String get storeNotesLabel => 'Delivery notes (optional)';
+
+  @override
+  String get storePaymentCod => 'Cash on delivery';
+
+  @override
+  String get storePlaceOrder => 'Place order';
+
+  @override
+  String get storeRequiredField => 'This field is required';
+
+  @override
+  String get storeInvalidPhone => 'Enter a valid Egyptian mobile number';
+
+  @override
+  String get storeInvalidEmail => 'Enter a valid email address';
+
+  @override
+  String get storeShippingCalculatedAtCheckout =>
+      'Shipping is priced by governorate';
+
+  @override
+  String get storeOrderPlaced => 'Order received';
+
+  @override
+  String get storeOrderNumberIs => 'Your order number';
+
+  @override
+  String get storeGuestKeepNumber =>
+      'Keep this number — you will need it and your email to track the order.';
+
+  @override
+  String get storeTrackOrder => 'Track your order';
+
+  @override
+  String get storeTrackOrderNumberLabel => 'Order number';
+
+  @override
+  String get storeTrackSubmit => 'View order';
+
+  @override
+  String get storeOrderNotFound => 'No order matches that number and email.';
+
+  @override
+  String get storeStatusPending => 'Pending';
+
+  @override
+  String get storeStatusConfirmed => 'Confirmed';
+
+  @override
+  String get storeStatusShipped => 'Shipped';
+
+  @override
+  String get storeStatusDelivered => 'Delivered';
+
+  @override
+  String get storeStatusCancelled => 'Cancelled';
+
+  @override
+  String get storeNoOrders => 'No orders yet.';
+
+  @override
+  String get storeQuantity => 'Quantity';
+
+  @override
+  String get storeRemove => 'Remove';
+
+  @override
+  String get storeFreeShipping => 'Fast shipping';
+
+  @override
+  String get storeSupport => '24/7 support';
+
+  @override
+  String get storeReturns => '14-day returns';
+
+  @override
+  String get storeSecurePayment => 'Secure payment';
+
+  @override
+  String get storeBackToStore => 'Back to the store';
+
+  @override
+  String get storePreviousPage => 'Previous page';
+
+  @override
+  String get storeNextPage => 'Next page';
+
+  @override
+  String get dashboardAdminStore => 'Store';
+
+  @override
+  String get storeNavLabel => 'Store';
 }

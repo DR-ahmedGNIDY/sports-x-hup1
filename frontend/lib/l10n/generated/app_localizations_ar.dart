@@ -1761,4 +1761,207 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get retryButtonLabel => 'إعادة المحاولة';
+
+  @override
+  String get storeTitle => 'متجر سبورت اكس هب';
+
+  @override
+  String get storeNavShop => 'تسوّق';
+
+  @override
+  String get storeNavCart => 'السلة';
+
+  @override
+  String get storeNavSearch => 'بحث';
+
+  @override
+  String get storeNavOrders => 'طلباتي';
+
+  @override
+  String get storeShopBestSellers => 'تسوّق الأكثر مبيعاً';
+
+  @override
+  String get storeNewArrivals => 'وصل حديثاً';
+
+  @override
+  String get storeFeatured => 'منتجات مختارة';
+
+  @override
+  String get storeShopByCategory => 'تسوّق حسب القسم';
+
+  @override
+  String get storeViewAll => 'عرض الكل';
+
+  @override
+  String get storeBadgeNew => 'جديد';
+
+  @override
+  String get storeBadgePreOrder => 'طلب مسبق';
+
+  @override
+  String get storeBadgeSale => 'تخفيض';
+
+  @override
+  String get storeSoldOut => 'نفدت الكمية';
+
+  @override
+  String get storeAddToBag => 'أضف إلى السلة';
+
+  @override
+  String get storeSelectSize => 'اختر المقاس';
+
+  @override
+  String get storeSelectOption => 'اختر الخيار';
+
+  @override
+  String get storeAddedToBag => 'تمت الإضافة إلى السلة';
+
+  @override
+  String get storeSearchHint => 'ابحث عن منتج';
+
+  @override
+  String get storeNoProducts => 'لا توجد منتجات مطابقة.';
+
+  @override
+  String get storeSortNewest => 'الأحدث';
+
+  @override
+  String get storeSortPriceAsc => 'السعر: من الأقل';
+
+  @override
+  String get storeSortPriceDesc => 'السعر: من الأعلى';
+
+  @override
+  String get storeCartEmpty => 'سلتك فارغة.';
+
+  @override
+  String get storeCartContinueShopping => 'تابع التسوّق';
+
+  @override
+  String get storeSubtotal => 'المجموع الفرعي';
+
+  @override
+  String get storeShippingFee => 'الشحن';
+
+  @override
+  String get storeTotal => 'الإجمالي';
+
+  @override
+  String get storeCheckout => 'إتمام الطلب';
+
+  @override
+  String get storeCheckoutTitle => 'بيانات الشحن';
+
+  @override
+  String get storeFullNameLabel => 'الاسم بالكامل';
+
+  @override
+  String get storePhoneLabel => 'رقم الموبايل';
+
+  @override
+  String get storeEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get storeGovernorateLabel => 'المحافظة';
+
+  @override
+  String get storeCityLabel => 'المدينة / المنطقة';
+
+  @override
+  String get storeStreetLabel => 'العنوان بالتفصيل';
+
+  @override
+  String get storeNotesLabel => 'ملاحظات للتوصيل (اختياري)';
+
+  @override
+  String get storePaymentCod => 'الدفع عند الاستلام';
+
+  @override
+  String get storePlaceOrder => 'تأكيد الطلب';
+
+  @override
+  String get storeRequiredField => 'هذا الحقل مطلوب';
+
+  @override
+  String get storeInvalidPhone => 'أدخل رقم موبايل مصري صحيح';
+
+  @override
+  String get storeInvalidEmail => 'أدخل بريداً إلكترونياً صحيحاً';
+
+  @override
+  String get storeShippingCalculatedAtCheckout => 'يُحسب الشحن حسب المحافظة';
+
+  @override
+  String get storeOrderPlaced => 'تم استلام طلبك';
+
+  @override
+  String get storeOrderNumberIs => 'رقم طلبك';
+
+  @override
+  String get storeGuestKeepNumber =>
+      'احتفظ برقم الطلب — هتحتاجه أنت وبريدك الإلكتروني عشان تتابع الطلب.';
+
+  @override
+  String get storeTrackOrder => 'تتبّع طلبك';
+
+  @override
+  String get storeTrackOrderNumberLabel => 'رقم الطلب';
+
+  @override
+  String get storeTrackSubmit => 'عرض الطلب';
+
+  @override
+  String get storeOrderNotFound =>
+      'لم نعثر على طلب بهذا الرقم والبريد الإلكتروني.';
+
+  @override
+  String get storeStatusPending => 'قيد المراجعة';
+
+  @override
+  String get storeStatusConfirmed => 'تم التأكيد';
+
+  @override
+  String get storeStatusShipped => 'تم الشحن';
+
+  @override
+  String get storeStatusDelivered => 'تم التسليم';
+
+  @override
+  String get storeStatusCancelled => 'ملغي';
+
+  @override
+  String get storeNoOrders => 'لا توجد طلبات بعد.';
+
+  @override
+  String get storeQuantity => 'الكمية';
+
+  @override
+  String get storeRemove => 'إزالة';
+
+  @override
+  String get storeFreeShipping => 'شحن سريع';
+
+  @override
+  String get storeSupport => 'دعم على مدار اليوم';
+
+  @override
+  String get storeReturns => 'إرجاع خلال ١٤ يوم';
+
+  @override
+  String get storeSecurePayment => 'دفع آمن';
+
+  @override
+  String get storeBackToStore => 'العودة للمتجر';
+
+  @override
+  String get storePreviousPage => 'الصفحة السابقة';
+
+  @override
+  String get storeNextPage => 'الصفحة التالية';
+
+  @override
+  String get dashboardAdminStore => 'المتجر';
+
+  @override
+  String get storeNavLabel => 'المتجر';
 }

@@ -19,6 +19,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { AdminModule } from './admin/admin.module';
 import { ContactModule } from './contact/contact.module';
 import { PostsModule } from './posts/posts.module';
+import { StoreModule } from './store/store.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { PostsModule } from './posts/posts.module';
     AdminModule,
     ContactModule,
     PostsModule,
+    StoreModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

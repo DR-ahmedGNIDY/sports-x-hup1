@@ -3330,6 +3330,408 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إعادة المحاولة'**
   String get retryButtonLabel;
+
+  /// No description provided for @storeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'متجر سبورت اكس هب'**
+  String get storeTitle;
+
+  /// No description provided for @storeNavShop.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسوّق'**
+  String get storeNavShop;
+
+  /// No description provided for @storeNavCart.
+  ///
+  /// In ar, this message translates to:
+  /// **'السلة'**
+  String get storeNavCart;
+
+  /// No description provided for @storeNavSearch.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث'**
+  String get storeNavSearch;
+
+  /// No description provided for @storeNavOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلباتي'**
+  String get storeNavOrders;
+
+  /// No description provided for @storeShopBestSellers.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسوّق الأكثر مبيعاً'**
+  String get storeShopBestSellers;
+
+  /// No description provided for @storeNewArrivals.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصل حديثاً'**
+  String get storeNewArrivals;
+
+  /// No description provided for @storeFeatured.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتجات مختارة'**
+  String get storeFeatured;
+
+  /// No description provided for @storeShopByCategory.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسوّق حسب القسم'**
+  String get storeShopByCategory;
+
+  /// No description provided for @storeViewAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الكل'**
+  String get storeViewAll;
+
+  /// No description provided for @storeBadgeNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'جديد'**
+  String get storeBadgeNew;
+
+  /// No description provided for @storeBadgePreOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب مسبق'**
+  String get storeBadgePreOrder;
+
+  /// No description provided for @storeBadgeSale.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخفيض'**
+  String get storeBadgeSale;
+
+  /// No description provided for @storeSoldOut.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفدت الكمية'**
+  String get storeSoldOut;
+
+  /// No description provided for @storeAddToBag.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف إلى السلة'**
+  String get storeAddToBag;
+
+  /// No description provided for @storeSelectSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر المقاس'**
+  String get storeSelectSize;
+
+  /// No description provided for @storeSelectOption.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الخيار'**
+  String get storeSelectOption;
+
+  /// No description provided for @storeAddedToBag.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت الإضافة إلى السلة'**
+  String get storeAddedToBag;
+
+  /// No description provided for @storeSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث عن منتج'**
+  String get storeSearchHint;
+
+  /// No description provided for @storeNoProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات مطابقة.'**
+  String get storeNoProducts;
+
+  /// No description provided for @storeSortNewest.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأحدث'**
+  String get storeSortNewest;
+
+  /// No description provided for @storeSortPriceAsc.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر: من الأقل'**
+  String get storeSortPriceAsc;
+
+  /// No description provided for @storeSortPriceDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر: من الأعلى'**
+  String get storeSortPriceDesc;
+
+  /// No description provided for @storeCartEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'سلتك فارغة.'**
+  String get storeCartEmpty;
+
+  /// No description provided for @storeCartContinueShopping.
+  ///
+  /// In ar, this message translates to:
+  /// **'تابع التسوّق'**
+  String get storeCartContinueShopping;
+
+  /// No description provided for @storeSubtotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموع الفرعي'**
+  String get storeSubtotal;
+
+  /// No description provided for @storeShippingFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشحن'**
+  String get storeShippingFee;
+
+  /// No description provided for @storeTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجمالي'**
+  String get storeTotal;
+
+  /// No description provided for @storeCheckout.
+  ///
+  /// In ar, this message translates to:
+  /// **'إتمام الطلب'**
+  String get storeCheckout;
+
+  /// No description provided for @storeCheckoutTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات الشحن'**
+  String get storeCheckoutTitle;
+
+  /// No description provided for @storeFullNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم بالكامل'**
+  String get storeFullNameLabel;
+
+  /// No description provided for @storePhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الموبايل'**
+  String get storePhoneLabel;
+
+  /// No description provided for @storeEmailLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني'**
+  String get storeEmailLabel;
+
+  /// No description provided for @storeGovernorateLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحافظة'**
+  String get storeGovernorateLabel;
+
+  /// No description provided for @storeCityLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدينة / المنطقة'**
+  String get storeCityLabel;
+
+  /// No description provided for @storeStreetLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان بالتفصيل'**
+  String get storeStreetLabel;
+
+  /// No description provided for @storeNotesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات للتوصيل (اختياري)'**
+  String get storeNotesLabel;
+
+  /// No description provided for @storePaymentCod.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع عند الاستلام'**
+  String get storePaymentCod;
+
+  /// No description provided for @storePlaceOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الطلب'**
+  String get storePlaceOrder;
+
+  /// No description provided for @storeRequiredField.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا الحقل مطلوب'**
+  String get storeRequiredField;
+
+  /// No description provided for @storeInvalidPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رقم موبايل مصري صحيح'**
+  String get storeInvalidPhone;
+
+  /// No description provided for @storeInvalidEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل بريداً إلكترونياً صحيحاً'**
+  String get storeInvalidEmail;
+
+  /// No description provided for @storeShippingCalculatedAtCheckout.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُحسب الشحن حسب المحافظة'**
+  String get storeShippingCalculatedAtCheckout;
+
+  /// No description provided for @storeOrderPlaced.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم استلام طلبك'**
+  String get storeOrderPlaced;
+
+  /// No description provided for @storeOrderNumberIs.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم طلبك'**
+  String get storeOrderNumberIs;
+
+  /// No description provided for @storeGuestKeepNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'احتفظ برقم الطلب — هتحتاجه أنت وبريدك الإلكتروني عشان تتابع الطلب.'**
+  String get storeGuestKeepNumber;
+
+  /// No description provided for @storeTrackOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'تتبّع طلبك'**
+  String get storeTrackOrder;
+
+  /// No description provided for @storeTrackOrderNumberLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الطلب'**
+  String get storeTrackOrderNumberLabel;
+
+  /// No description provided for @storeTrackSubmit.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الطلب'**
+  String get storeTrackSubmit;
+
+  /// No description provided for @storeOrderNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم نعثر على طلب بهذا الرقم والبريد الإلكتروني.'**
+  String get storeOrderNotFound;
+
+  /// No description provided for @storeStatusPending.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد المراجعة'**
+  String get storeStatusPending;
+
+  /// No description provided for @storeStatusConfirmed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التأكيد'**
+  String get storeStatusConfirmed;
+
+  /// No description provided for @storeStatusShipped.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الشحن'**
+  String get storeStatusShipped;
+
+  /// No description provided for @storeStatusDelivered.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التسليم'**
+  String get storeStatusDelivered;
+
+  /// No description provided for @storeStatusCancelled.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملغي'**
+  String get storeStatusCancelled;
+
+  /// No description provided for @storeNoOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طلبات بعد.'**
+  String get storeNoOrders;
+
+  /// No description provided for @storeQuantity.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية'**
+  String get storeQuantity;
+
+  /// No description provided for @storeRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة'**
+  String get storeRemove;
+
+  /// No description provided for @storeFreeShipping.
+  ///
+  /// In ar, this message translates to:
+  /// **'شحن سريع'**
+  String get storeFreeShipping;
+
+  /// No description provided for @storeSupport.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعم على مدار اليوم'**
+  String get storeSupport;
+
+  /// No description provided for @storeReturns.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرجاع خلال ١٤ يوم'**
+  String get storeReturns;
+
+  /// No description provided for @storeSecurePayment.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفع آمن'**
+  String get storeSecurePayment;
+
+  /// No description provided for @storeBackToStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'العودة للمتجر'**
+  String get storeBackToStore;
+
+  /// No description provided for @storePreviousPage.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصفحة السابقة'**
+  String get storePreviousPage;
+
+  /// No description provided for @storeNextPage.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصفحة التالية'**
+  String get storeNextPage;
+
+  /// No description provided for @dashboardAdminStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتجر'**
+  String get dashboardAdminStore;
+
+  /// No description provided for @storeNavLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتجر'**
+  String get storeNavLabel;
 }
 
 class _AppLocalizationsDelegate

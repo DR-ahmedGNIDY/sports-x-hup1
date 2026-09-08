@@ -7,6 +7,10 @@ import { Counter } from './schemas/counter.schema';
 export enum PublicCodePrefix {
   CLUB = 'CLB',
   PLAYER = 'PLY',
+  // Store order numbers. Same counter mechanism, because an order number is
+  // the same kind of thing: a short identity a human reads aloud, allocated
+  // once and never reused.
+  ORDER = 'ORD',
 }
 
 // Six digits covers 999,999 profiles per sequence; past that the code simply
@@ -15,7 +19,7 @@ export enum PublicCodePrefix {
 const CODE_DIGITS = 6;
 
 // Accepts the canonical form and anything longer, e.g. "PLY-1000000".
-const CODE_PATTERN = /^(CLB|PLY)-\d{6,}$/;
+const CODE_PATTERN = /^(CLB|PLY|ORD)-\d{6,}$/;
 
 @Injectable()
 export class PublicCodesService {

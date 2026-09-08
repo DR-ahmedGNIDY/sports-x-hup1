@@ -71,6 +71,11 @@ enum AppBranch {
   // Admin's two screens are separate branches rather than one, so both keep
   // the sidebar row they had before the shell became stateful — they are
   // peers, not a screen and its detail.
+  store(
+    rootPath: '/store',
+    icon: Icons.storefront_outlined,
+    selectedIcon: Icons.storefront,
+  ),
   adminUsers(
     rootPath: '/admin/users',
     icon: Icons.people_outline,
@@ -80,6 +85,11 @@ enum AppBranch {
     rootPath: '/admin/players-clubs',
     icon: Icons.manage_accounts_outlined,
     selectedIcon: Icons.manage_accounts,
+  ),
+  adminStore(
+    rootPath: '/admin/store',
+    icon: Icons.storefront_outlined,
+    selectedIcon: Icons.storefront,
   ),
   notifications(
     rootPath: '/notifications',
@@ -119,8 +129,10 @@ enum AppBranch {
     search => l10n.mobileSearchNavLabel,
     savedPlayers => l10n.dashboardSavedPlayers,
     community => l10n.communityNavLabel,
+    store => l10n.storeNavLabel,
     adminUsers => l10n.dashboardAdminUsers,
     adminPlayersClubs => l10n.dashboardAdminPlayersClubs,
+    adminStore => l10n.dashboardAdminStore,
     notifications => l10n.notificationsTitle,
     settings => l10n.dashboardNavSettings,
   };
@@ -216,6 +228,7 @@ final Map<String, AppRouteMeta> _routeMeta = {
   '/admin/players-clubs': AppRouteMeta(
     title: (l10n) => l10n.dashboardAdminPlayersClubs,
   ),
+  '/admin/store': AppRouteMeta(title: (l10n) => l10n.dashboardAdminStore),
   '/notifications': AppRouteMeta(
     title: (l10n) => l10n.notificationsTitle,
     ownsChrome: true,
@@ -257,6 +270,15 @@ AppRouteMeta? routeMetaFor(String path) {
       parentPath: AppBranch.clubPlayers.rootPath,
       ownsChrome: true,
     );
+  }
+
+  // Every storefront screen, not just its root. StoreScaffold (see
+  // store_scaffold.dart) already gives each one its own header — and, on
+  // mobile, sometimes its own bottom bar — so without this the shell drew
+  // its generic bar on every route below '/store' too, stacking a second,
+  // untitled, back-button-less bar above the store's own.
+  if (path == '/store' || path.startsWith('/store/')) {
+    return AppRouteMeta(title: (l10n) => l10n.storeNavLabel, ownsChrome: true);
   }
   return null;
 }
@@ -324,6 +346,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     UserRole.admin => const [
       AppBranch.adminUsers,
       AppBranch.adminPlayersClubs,
+      AppBranch.adminStore,
       AppBranch.settings,
     ],
     _ => const [AppBranch.settings],
