@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/admin/presentation/admin_players_clubs_page.dart';
+import '../../features/admin/presentation/admin_store_page.dart';
 import '../../features/admin/presentation/admin_users_page.dart';
 import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/application/session_state.dart';
@@ -37,6 +38,13 @@ import '../../features/search/presentation/search_players_page.dart';
 import '../../features/settings/presentation/mobile/settings_page_mobile.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/splash/presentation/splash_page.dart';
+import '../../features/store/presentation/store_cart_page.dart';
+import '../../features/store/presentation/store_checkout_page.dart';
+import '../../features/store/presentation/store_home_page.dart';
+import '../../features/store/presentation/store_listing_page.dart';
+import '../../features/store/presentation/store_order_pages.dart';
+import '../../features/store/presentation/store_product_page.dart';
+import '../../features/store/presentation/store_section.dart';
 import '../navigation/app_branches.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/mobile/component_gallery_page.dart';
@@ -379,6 +387,98 @@ StatefulShellBranch _branchFor(AppBranch branch) {
               fadePage(state: state, child: const CommunityPage()),
         ),
       ],
+      // The storefront, mounted inside the app rather than on its own
+      // origin. Every route is wrapped in StoreSection, which applies the
+      // store's own near-monochrome theme without touching the rest of the
+      // app — see store_section.dart.
+      AppBranch.store => [
+        GoRoute(
+          path: '/store',
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: const StoreSection(child: StoreHomePage()),
+          ),
+          routes: [
+            GoRoute(
+              path: 'shop',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: const StoreSection(child: StoreListingPage()),
+              ),
+            ),
+            GoRoute(
+              path: 'search',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: const StoreSection(
+                  child: StoreListingPage(showSearchField: true),
+                ),
+              ),
+            ),
+            GoRoute(
+              path: 'c/:slug',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: StoreSection(
+                  child: StoreListingPage(
+                    categorySlug: state.pathParameters['slug'],
+                  ),
+                ),
+              ),
+            ),
+            GoRoute(
+              path: 'p/:slug',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: StoreSection(
+                  child: StoreProductPage(
+                    slug: state.pathParameters['slug']!,
+                  ),
+                ),
+              ),
+            ),
+            GoRoute(
+              path: 'cart',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: const StoreSection(child: StoreCartPage()),
+              ),
+            ),
+            GoRoute(
+              path: 'checkout',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: const StoreSection(child: StoreCheckoutPage()),
+              ),
+            ),
+            GoRoute(
+              path: 'order/:orderNumber',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: StoreSection(
+                  child: StoreOrderConfirmationPage(
+                    orderNumber: state.pathParameters['orderNumber']!,
+                  ),
+                ),
+              ),
+            ),
+            GoRoute(
+              path: 'track',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: const StoreSection(child: StoreTrackOrderPage()),
+              ),
+            ),
+            GoRoute(
+              path: 'orders',
+              pageBuilder: (context, state) => fadePage(
+                state: state,
+                child: const StoreSection(child: StoreMyOrdersPage()),
+              ),
+            ),
+          ],
+        ),
+      ],
       AppBranch.adminUsers => [
         GoRoute(
           path: '/admin/users',
@@ -391,6 +491,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
           path: '/admin/players-clubs',
           pageBuilder: (context, state) =>
               fadePage(state: state, child: const AdminPlayersClubsPage()),
+        ),
+      ],
+      AppBranch.adminStore => [
+        GoRoute(
+          path: '/admin/store',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const AdminStorePage()),
         ),
       ],
       AppBranch.notifications => [

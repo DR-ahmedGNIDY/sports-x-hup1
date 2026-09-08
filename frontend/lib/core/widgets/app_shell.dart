@@ -127,6 +127,7 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
     AppBranch.search,
     AppBranch.savedPlayers,
     AppBranch.community,
+    AppBranch.store,
     AppBranch.settings,
   ],
   // Same call as the bottom tabs: Skills lives inside the Profile page,
@@ -136,6 +137,7 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
     AppBranch.community,
     AppBranch.playerProfile,
     AppBranch.search,
+    AppBranch.store,
     AppBranch.settings,
   ],
   UserRole.admin => const [
@@ -143,9 +145,15 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
     AppBranch.community,
     AppBranch.adminUsers,
     AppBranch.adminPlayersClubs,
+    AppBranch.adminStore,
     AppBranch.settings,
   ],
-  null => const [AppBranch.home, AppBranch.community, AppBranch.settings],
+  null => const [
+    AppBranch.home,
+    AppBranch.community,
+    AppBranch.store,
+    AppBranch.settings,
+  ],
 };
 
 class _Sidebar extends StatelessWidget {
