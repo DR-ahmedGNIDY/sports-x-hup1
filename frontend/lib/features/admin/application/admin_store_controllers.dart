@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../store/domain/entities/shipping_zone.dart';
 import '../../store/domain/entities/store_category.dart';
+import '../../store/domain/entities/store_coupon.dart';
+import '../../store/domain/entities/store_overview.dart';
 import '../../store/domain/entities/store_order.dart';
 import '../../store/domain/entities/store_product.dart';
 import '../data/repositories/admin_store_repository_impl.dart';
@@ -194,4 +196,34 @@ class AdminShippingController extends AsyncNotifier<List<ShippingZone>> {
 final adminShippingControllerProvider =
     AsyncNotifierProvider<AdminShippingController, List<ShippingZone>>(
       AdminShippingController.new,
+    );
+
+/// The dashboard's headline numbers. A one-shot read rather than a polling
+/// stream — the merchant refreshes by revisiting the tab, and a store this
+/// size does not need a live ticker.
+final adminStoreOverviewProvider = FutureProvider<StoreOverview>(
+  (ref) => ref.read(adminStoreRepositoryProvider).overview(),
+);
+
+class AdminCouponsController extends AsyncNotifier<List<StoreCoupon>> {
+  @override
+  Future<List<StoreCoupon>> build() =>
+      ref.read(adminStoreRepositoryProvider).listCoupons();
+
+  Future<void> create(Map<String, dynamic> body) async {
+    await ref.read(adminStoreRepositoryProvider).createCoupon(body);
+    ref.invalidateSelf();
+    await future;
+  }
+
+  Future<void> save(String id, Map<String, dynamic> body) async {
+    await ref.read(adminStoreRepositoryProvider).updateCoupon(id, body);
+    ref.invalidateSelf();
+    await future;
+  }
+}
+
+final adminCouponsControllerProvider =
+    AsyncNotifierProvider<AdminCouponsController, List<StoreCoupon>>(
+      AdminCouponsController.new,
     );

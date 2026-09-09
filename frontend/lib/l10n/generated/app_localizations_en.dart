@@ -1980,4 +1980,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get storeNavLabel => 'Store';
+
+  @override
+  String get storeCouponLabel => 'Discount code';
+
+  @override
+  String get storeCouponApply => 'Apply';
+
+  @override
+  String get storeCouponRemove => 'Remove code';
+
+  @override
+  String get storeDiscount => 'Discount';
+
+  @override
+  String get storeCouponApplied => 'Code applied';
 }

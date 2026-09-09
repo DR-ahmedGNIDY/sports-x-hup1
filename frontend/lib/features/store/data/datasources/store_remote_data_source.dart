@@ -64,6 +64,23 @@ class StoreRemoteDataSource {
     return _decode(response);
   }
 
+  /// Prices a code against the cart's subtotal without consuming it. The
+  /// subtotal sent here is only a quote input — checkout re-prices
+  /// everything server-side before a piastre is committed.
+  Future<Map<String, dynamic>> previewCoupon({
+    required String code,
+    required int subtotalMinor,
+  }) async {
+    final response = await _client.post(
+      '/store/coupons/preview',
+      body: {'code': code, 'subtotalMinor': subtotalMinor},
+    );
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw apiExceptionFromResponse(response);
+    }
+    return _decode(response);
+  }
+
   /// A POST rather than a GET because the email is the credential here, and
   /// a query string lands in access logs and browser history.
   Future<Map<String, dynamic>> trackOrder({

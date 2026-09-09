@@ -4,6 +4,7 @@ import '../../../core/errors/app_exception.dart';
 import '../data/repositories/store_repository_impl.dart';
 import '../domain/entities/store_order.dart';
 import 'cart_controller.dart';
+import 'coupon_controller.dart';
 
 /// Where a checkout attempt is. [order] is set only on success, and is what
 /// the confirmation screen renders — including the order number a guest
@@ -55,12 +56,16 @@ class CheckoutController extends Notifier<CheckoutState> {
             city: city,
             street: street,
             notes: notes,
+            // The code, not the discount — the server re-prices it against
+            // its own subtotal, and that answer is what gets charged.
+            couponCode: ref.read(couponControllerProvider).quote?.code,
           );
 
       // Cleared only once the server has confirmed the order. Clearing
       // optimistically would lose a customer's whole basket on a network
       // failure, with nothing to show for it.
       await ref.read(cartControllerProvider.notifier).clear();
+      ref.read(couponControllerProvider.notifier).clear();
 
       state = CheckoutState(order: order);
       return order;

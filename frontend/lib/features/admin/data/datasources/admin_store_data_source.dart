@@ -152,6 +152,31 @@ class AdminStoreDataSource {
     ),
   );
 
+  // ---------------------------------------------------------------- overview
+
+  Future<Map<String, dynamic>> overview(String token) async =>
+      _ok(await _client.get('/admin/store/overview', headers: _bearer(token)));
+
+  // ----------------------------------------------------------------- coupons
+
+  Future<Map<String, dynamic>> listCoupons(String token) async =>
+      _ok(await _client.get('/admin/store/coupons', headers: _bearer(token)));
+
+  Future<Map<String, dynamic>> createCoupon(
+    String token,
+    Map<String, dynamic> body,
+  ) async => _ok(
+    await _client.post('/admin/store/coupons', body: body, headers: _bearer(token)),
+  );
+
+  Future<Map<String, dynamic>> updateCoupon(
+    String token,
+    String id,
+    Map<String, dynamic> body,
+  ) async => _ok(
+    await _client.patch('/admin/store/coupons/', body: body, headers: _bearer(token)),
+  );
+
   // ---------------------------------------------------------------- shipping
 
   Future<Map<String, dynamic>> listShippingZones(String token) async => _ok(

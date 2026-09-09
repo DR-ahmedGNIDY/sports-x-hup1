@@ -18,6 +18,7 @@ import {
 } from '../order-status.enum';
 import { StoreOrder, StoreOrderDocument } from '../schemas/order.schema';
 import { StoreProduct } from '../schemas/product.schema';
+import { CouponsService } from '../coupons/coupons.service';
 import { ShippingService } from '../shipping/shipping.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ListOrdersDto } from './dto/list-orders.dto';
@@ -47,6 +48,7 @@ export class OrdersService {
     private readonly productModel: Model<StoreProduct>,
     private readonly shipping: ShippingService,
     private readonly publicCodes: PublicCodesService,
+    private readonly coupons: CouponsService,
   ) {}
 
   // `userId` is undefined for a guest — the checkout endpoint is reachable
@@ -71,9 +73,25 @@ export class OrdersService {
       0,
     );
 
+    // The code is claimed against the server's own subtotal, never a number
+    // the client sent, and before any stock moves — a rejected code should
+    // cost nothing to undo.
+    const coupon = dto.couponCode
+      ? await this.coupons.claim(dto.couponCode, subtotalMinor)
+      : null;
+    const discountMinor = coupon?.discountMinor ?? 0;
+
     // Stock is taken before the order document exists, so an order can never
     // be recorded against stock that was not actually reserved.
-    const reserved = await this.reserveStock(claims);
+    let reserved: StockClaim[];
+    try {
+      reserved = await this.reserveStock(claims);
+    } catch (error) {
+      // The redemption is already taken by this point, and a cart that
+      // sold out must not also burn the customer's code.
+      if (coupon) await this.coupons.release(coupon.code);
+      throw error;
+    }
 
     try {
       const orderNumber = await this.publicCodes.allocate(
@@ -91,7 +109,12 @@ export class OrdersService {
         },
         subtotalMinor,
         shippingFeeMinor: zone.feeMinor,
-        totalMinor: subtotalMinor + zone.feeMinor,
+        couponCode: coupon?.code,
+        discountMinor,
+        // The discount comes off the goods, not the delivery — shipping is a
+        // cost the store actually pays out. The floor at zero means a code
+        // worth more than the basket cannot drive the total negative.
+        totalMinor: Math.max(0, subtotalMinor - discountMinor) + zone.feeMinor,
         status: OrderStatus.PENDING,
       });
     } catch (error) {
@@ -101,6 +124,7 @@ export class OrdersService {
       // the failure is compensated explicitly: without this, a failed order
       // would leave its stock permanently held by nothing.
       await this.releaseStock(reserved);
+      if (coupon) await this.coupons.release(coupon.code);
       throw error;
     }
   }
@@ -318,6 +342,12 @@ export class OrdersService {
           quantity: line.quantity,
         })),
       );
+    }
+
+    // A cancelled order's code becomes usable again: the customer never got
+    // the goods, so they should not have spent their discount on it.
+    if (releasesStock(order.status, status) && order.couponCode) {
+      await this.coupons.release(order.couponCode);
     }
 
     order.status = status;

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../application/cart_controller.dart';
 import '../application/catalog_providers.dart';
+import '../application/coupon_controller.dart';
 import '../application/checkout_controller.dart';
 import '../domain/entities/shipping_zone.dart';
 import 'widgets/money.dart';
@@ -48,6 +49,7 @@ class _StoreCheckoutPageState extends ConsumerState<StoreCheckoutPage> {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final zones = ref.watch(shippingZonesProvider);
     final subtotal = ref.watch(cartSubtotalMinorProvider);
+    final discount = ref.watch(cartDiscountMinorProvider);
     final checkout = ref.watch(checkoutControllerProvider);
 
     final fee = _zone?.feeMinor;
@@ -144,7 +146,11 @@ class _StoreCheckoutPageState extends ConsumerState<StoreCheckoutPage> {
             ),
           ),
           const SizedBox(height: 24),
-          _Summary(subtotal: subtotal, feeMinor: fee),
+          _Summary(
+            subtotal: subtotal,
+            feeMinor: fee,
+            discountMinor: discount,
+          ),
           const SizedBox(height: 20),
           Row(
             children: [
@@ -199,10 +205,15 @@ class _StoreCheckoutPageState extends ConsumerState<StoreCheckoutPage> {
 }
 
 class _Summary extends StatelessWidget {
-  const _Summary({required this.subtotal, required this.feeMinor});
+  const _Summary({
+    required this.subtotal,
+    required this.feeMinor,
+    required this.discountMinor,
+  });
 
   final int subtotal;
   final int? feeMinor;
+  final int discountMinor;
 
   @override
   Widget build(BuildContext context) {
@@ -216,6 +227,11 @@ class _Summary extends StatelessWidget {
           label: l10n.storeSubtotal,
           value: formatMoney(subtotal, isArabic: isArabic),
         ),
+        if (discountMinor > 0)
+          _Row(
+            label: l10n.storeDiscount,
+            value: '-${formatMoney(discountMinor, isArabic: isArabic)}',
+          ),
         _Row(
           label: l10n.storeShippingFee,
           // Dashes until a governorate is chosen — the fee genuinely is not
@@ -225,7 +241,12 @@ class _Summary extends StatelessWidget {
         const Divider(height: 20),
         _Row(
           label: l10n.storeTotal,
-          value: formatMoney(subtotal + (fee ?? 0), isArabic: isArabic),
+          // Mirrors the server's arithmetic: the discount comes off the
+          // goods only, floored at zero, and shipping is added after.
+          value: formatMoney(
+            (subtotal - discountMinor).clamp(0, subtotal) + (fee ?? 0),
+            isArabic: isArabic,
+          ),
           isBold: true,
         ),
       ],

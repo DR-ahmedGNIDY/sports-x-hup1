@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { StoreCategoriesModule } from './categories/categories.module';
+import { CouponsModule } from './coupons/coupons.module';
 import { OrdersModule } from './orders/orders.module';
+import { StoreOverviewModule } from './overview/overview.module';
 import { StoreProductsModule } from './products/products.module';
 import { ShippingModule } from './shipping/shipping.module';
 
@@ -13,6 +15,8 @@ import { ShippingModule } from './shipping/shipping.module';
     StoreProductsModule,
     ShippingModule,
     OrdersModule,
+    StoreOverviewModule,
+    CouponsModule,
   ],
 })
 export class StoreModule {}
