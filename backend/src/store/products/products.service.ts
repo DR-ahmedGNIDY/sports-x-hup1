@@ -218,9 +218,7 @@ export class StoreProductsService {
     const image = product.images.find((it) => it.publicId === publicId);
     if (!image) throw new NotFoundException('Image not found on this product.');
 
-    product.images = product.images.filter(
-      (it) => it.publicId !== publicId,
-    );
+    product.images = product.images.filter((it) => it.publicId !== publicId);
     const saved = await product.save();
     await this.images.remove(publicId);
     return saved;

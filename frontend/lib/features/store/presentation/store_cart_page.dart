@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/store_theme.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../application/cart_controller.dart';
+import '../application/coupon_controller.dart';
 import '../domain/entities/cart_item.dart';
 import 'widgets/money.dart';
 import 'widgets/store_scaffold.dart';
@@ -19,6 +20,7 @@ class StoreCartPage extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final items = ref.watch(cartControllerProvider);
     final subtotal = ref.watch(cartSubtotalMinorProvider);
+    final discount = ref.watch(cartDiscountMinorProvider);
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     if (items.isEmpty) {
@@ -59,6 +61,8 @@ class StoreCartPage extends ConsumerWidget {
             ),
             child: Column(
               children: [
+                const _CouponField(),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -66,6 +70,19 @@ class StoreCartPage extends ConsumerWidget {
                     Text(formatMoney(subtotal, isArabic: isArabic)),
                   ],
                 ),
+                if (discount > 0) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(l10n.storeDiscount),
+                      Text(
+                        '-${formatMoney(discount, isArabic: isArabic)}',
+                        style: const TextStyle(color: StoreTheme.sale),
+                      ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 6),
                 // The fee is not knowable here — it depends on a
                 // governorate the customer has not chosen yet.
@@ -202,6 +219,110 @@ class _StepButton extends StatelessWidget {
               : Theme.of(context).colorScheme.onSurface,
         ),
       ),
+    );
+  }
+}
+
+/// The discount-code row. Applied against the current subtotal, and dropped
+/// the moment the basket changes: a percentage quoted at one basket size is
+/// wrong at another, and showing a stale figure would be worse than asking
+/// the customer to re-apply.
+class _CouponField extends ConsumerStatefulWidget {
+  const _CouponField();
+
+  @override
+  ConsumerState<_CouponField> createState() => _CouponFieldState();
+}
+
+class _CouponFieldState extends ConsumerState<_CouponField> {
+  final _code = TextEditingController();
+
+  @override
+  void dispose() {
+    _code.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final coupon = ref.watch(couponControllerProvider);
+
+    // Re-applying on every basket change would fire a request per tap of
+    // the quantity stepper, so the code is dropped instead and the customer
+    // re-applies once they have settled on what they are buying.
+    ref.listen(cartSubtotalMinorProvider, (previous, next) {
+      if (previous != null && previous != next && coupon.isApplied) {
+        ref.read(couponControllerProvider.notifier).clear();
+      }
+    });
+
+    if (coupon.isApplied) {
+      return Row(
+        children: [
+          const Icon(Icons.check_circle_outline, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text('${l10n.storeCouponApplied}: ${coupon.quote!.code}'),
+          ),
+          TextButton(
+            onPressed: () {
+              _code.clear();
+              ref.read(couponControllerProvider.notifier).clear();
+            },
+            child: Text(l10n.storeCouponRemove),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _code,
+                textCapitalization: TextCapitalization.characters,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: l10n.storeCouponLabel,
+                ),
+                onSubmitted: (value) =>
+                    ref.read(couponControllerProvider.notifier).apply(value),
+              ),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              onPressed: coupon.isChecking
+                  ? null
+                  : () => ref
+                        .read(couponControllerProvider.notifier)
+                        .apply(_code.text),
+              child: coupon.isChecking
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(l10n.storeCouponApply),
+            ),
+          ],
+        ),
+        if (coupon.error != null) ...[
+          const SizedBox(height: 6),
+          // The server's own wording: it distinguishes an expired code from
+          // a basket below the minimum, and only one of those is solvable.
+          Text(
+            coupon.error!,
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.error,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

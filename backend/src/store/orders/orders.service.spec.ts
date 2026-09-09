@@ -54,13 +54,27 @@ describe('OrdersService', () => {
     const publicCodes = {
       allocate: jest.fn().mockResolvedValue('ORD-000001'),
     };
+    const coupons = {
+      claim: jest
+        .fn()
+        .mockResolvedValue({ code: 'SUMMER10', discountMinor: 7400 }),
+      release: jest.fn().mockResolvedValue(undefined),
+    };
     const service = new OrdersService(
       orderModel as never,
       productModel as never,
       shipping as never,
       publicCodes as never,
+      coupons as never,
     );
-    return { service, orderModel, productModel, shipping, publicCodes };
+    return {
+      service,
+      orderModel,
+      productModel,
+      shipping,
+      publicCodes,
+      coupons,
+    };
   }
 
   const address = {
@@ -169,6 +183,145 @@ describe('OrdersService', () => {
       // checkout and stock held by an order that does not exist.
       const releasing = productModel.updateOne.mock.calls.at(-1);
       expect(releasing?.[1]).toEqual({ $inc: { 'variants.$.stock': 4 } });
+    });
+  });
+
+  describe('coupons', () => {
+    it('claims the code against the server subtotal, not a client number', async () => {
+      const { service, coupons } = buildService();
+
+      await service.create({
+        ...orderDto([{ quantity: 2 }]),
+        couponCode: 'summer10',
+      });
+
+      // 2 × 74000 — computed here from the database prices, never sent.
+      expect(coupons.claim).toHaveBeenCalledWith('summer10', 148000);
+    });
+
+    it('takes the discount off the goods and leaves shipping alone', async () => {
+      const { service, orderModel } = buildService();
+
+      await service.create({
+        ...orderDto([{ quantity: 1 }]),
+        couponCode: 'SUMMER10',
+      });
+
+      const created = orderModel.create.mock.calls[0][0];
+      expect(created.subtotalMinor).toBe(74000);
+      expect(created.discountMinor).toBe(7400);
+      expect(created.shippingFeeMinor).toBe(5500);
+      // Shipping is a cost the store actually pays out, so a code never
+      // eats into it.
+      expect(created.totalMinor).toBe(74000 - 7400 + 5500);
+    });
+
+    it('never lets a discount drive the total below the shipping fee', async () => {
+      const { service, orderModel, coupons } = buildService();
+      coupons.claim.mockResolvedValue({
+        code: 'HUGE',
+        discountMinor: 999999,
+      });
+
+      await service.create({
+        ...orderDto([{ quantity: 1 }]),
+        couponCode: 'HUGE',
+      });
+
+      expect(orderModel.create.mock.calls[0][0].totalMinor).toBe(5500);
+    });
+
+    it('records no coupon when none was given', async () => {
+      const { service, orderModel, coupons } = buildService();
+
+      await service.create(orderDto([{ quantity: 1 }]));
+
+      expect(coupons.claim).not.toHaveBeenCalled();
+      const created = orderModel.create.mock.calls[0][0];
+      expect(created.couponCode).toBeUndefined();
+      expect(created.discountMinor).toBe(0);
+    });
+
+    it('gives the redemption back when the cart sold out', async () => {
+      const { service, productModel, coupons } = buildService();
+      productModel.updateOne.mockResolvedValue({ modifiedCount: 0 });
+
+      await expect(
+        service.create({
+          ...orderDto([{ quantity: 1 }]),
+          couponCode: 'SUMMER10',
+        }),
+      ).rejects.toBeInstanceOf(ConflictException);
+
+      // The redemption is taken before stock moves, so a failure after it
+      // must hand the code back or the customer loses it for nothing.
+      expect(coupons.release).toHaveBeenCalledWith('SUMMER10');
+    });
+
+    it('gives the redemption back when the order write fails', async () => {
+      const { service, orderModel, coupons } = buildService();
+      orderModel.create.mockRejectedValue(new Error('mongo is down'));
+
+      await expect(
+        service.create({
+          ...orderDto([{ quantity: 1 }]),
+          couponCode: 'SUMMER10',
+        }),
+      ).rejects.toThrow('mongo is down');
+
+      expect(coupons.release).toHaveBeenCalledWith('SUMMER10');
+    });
+
+    it('reserves no stock at all when the code is rejected', async () => {
+      const { service, productModel, coupons } = buildService();
+      coupons.claim.mockRejectedValue(
+        new BadRequestException('This code has expired.'),
+      );
+
+      await expect(
+        service.create({
+          ...orderDto([{ quantity: 1 }]),
+          couponCode: 'EXPIRED',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+
+      // Claimed before stock moves precisely so a rejection costs nothing
+      // to undo.
+      expect(productModel.updateOne).not.toHaveBeenCalled();
+    });
+
+    it('releases the code when a pending order is cancelled', async () => {
+      const { service, orderModel, coupons } = buildService();
+      const order = {
+        status: OrderStatus.PENDING,
+        couponCode: 'SUMMER10',
+        lines: [],
+        save: jest.fn(),
+      };
+      order.save.mockResolvedValue(order);
+      orderModel.findById.mockResolvedValue(order);
+
+      await service.updateStatus('o1', OrderStatus.CANCELLED);
+
+      // The customer never got the goods, so they should not have spent
+      // their discount.
+      expect(coupons.release).toHaveBeenCalledWith('SUMMER10');
+    });
+
+    it('does not release the code merely because an order advanced', async () => {
+      const { service, orderModel, coupons } = buildService();
+      const order = {
+        status: OrderStatus.CONFIRMED,
+        couponCode: 'SUMMER10',
+        lines: [],
+        save: jest.fn(),
+      };
+      order.save.mockResolvedValue(order);
+      orderModel.findById.mockResolvedValue(order);
+
+      await service.updateStatus('o1', OrderStatus.SHIPPED);
+
+      expect(coupons.release).not.toHaveBeenCalled();
     });
   });
 

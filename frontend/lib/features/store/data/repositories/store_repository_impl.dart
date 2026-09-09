@@ -7,6 +7,7 @@ import '../../domain/entities/cart_item.dart';
 import '../../domain/entities/product_list_page.dart';
 import '../../domain/entities/shipping_zone.dart';
 import '../../domain/entities/store_category.dart';
+import '../../domain/entities/store_coupon.dart';
 import '../../domain/entities/store_order.dart';
 import '../../domain/entities/store_product.dart';
 import '../../domain/repositories/store_repository.dart';
@@ -80,6 +81,7 @@ class StoreRepositoryImpl implements StoreRepository {
     required String city,
     required String street,
     String? notes,
+    String? couponCode,
   }) async {
     final body = {
       'email': email,
@@ -94,6 +96,8 @@ class StoreRepositoryImpl implements StoreRepository {
             },
           )
           .toList(),
+      if (couponCode != null && couponCode.isNotEmpty)
+        'couponCode': couponCode,
       'address': {
         'fullName': fullName,
         'phone': phone,
@@ -114,6 +118,14 @@ class StoreRepositoryImpl implements StoreRepository {
       await _remote.placeOrder(body, accessToken: accessToken),
     );
   }
+
+  @override
+  Future<CouponQuote> previewCoupon({
+    required String code,
+    required int subtotalMinor,
+  }) async => StoreCouponModel.quoteFromJson(
+    await _remote.previewCoupon(code: code, subtotalMinor: subtotalMinor),
+  );
 
   @override
   Future<StoreOrder> trackOrder({

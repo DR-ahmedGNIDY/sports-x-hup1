@@ -106,14 +106,25 @@ export class StoreOrder {
   @Prop({ type: ShippingAddressSchema, required: true })
   address: ShippingAddress;
 
-  // All three are stored rather than derived on read. The fee and the
-  // product prices can both change after the fact; a total recomputed at
-  // render time would quietly disagree with what was collected at the door.
+  // All of these are stored rather than derived on read. The fee, the
+  // coupon's value and the product prices can all change after the fact; a
+  // total recomputed at render time would quietly disagree with what was
+  // collected at the door.
   @Prop({ required: true, min: 0 })
   subtotalMinor: number;
 
   @Prop({ required: true, min: 0 })
   shippingFeeMinor: number;
+
+  /// The code as it was claimed, upper-cased. Kept on the order so a receipt
+  /// can explain the discount without a join, and so cancelling knows which
+  /// coupon to hand a redemption back to.
+  @Prop({ trim: true, uppercase: true })
+  couponCode?: string;
+
+  /// What the code took off, in piastres.
+  @Prop({ default: 0, min: 0 })
+  discountMinor: number;
 
   @Prop({ required: true, min: 0 })
   totalMinor: number;

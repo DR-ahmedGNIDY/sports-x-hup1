@@ -2,6 +2,7 @@ import '../../domain/entities/localized_text.dart';
 import '../../domain/entities/product_list_page.dart';
 import '../../domain/entities/shipping_zone.dart';
 import '../../domain/entities/store_category.dart';
+import '../../domain/entities/store_coupon.dart';
 import '../../domain/entities/store_order.dart';
 import '../../domain/entities/store_product.dart';
 
@@ -148,3 +149,27 @@ class StoreOrderModel {
     imageUrl: json['imageUrl'] as String?,
   );
 }
+
+class StoreCouponModel {
+  static StoreCoupon fromJson(Map<String, dynamic> json) => StoreCoupon(
+    id: json['id'] as String,
+    code: json['code'] as String,
+    type: CouponType.fromJson(json['type'] as String),
+    value: json['value'] as int,
+    minSubtotalMinor: json['minSubtotalMinor'] as int? ?? 0,
+    redemptions: json['redemptions'] as int? ?? 0,
+    maxRedemptions: json['maxRedemptions'] as int?,
+    startsAt: _date(json['startsAt']),
+    endsAt: _date(json['endsAt']),
+    isActive: json['isActive'] as bool? ?? true,
+  );
+
+  static CouponQuote quoteFromJson(Map<String, dynamic> json) => CouponQuote(
+    code: json['code'] as String,
+    discountMinor: json['discountMinor'] as int,
+  );
+}
+
+/// Dates arrive as ISO strings, or not at all for an open-ended campaign.
+DateTime? _date(dynamic value) =>
+    value is String ? DateTime.tryParse(value) : null;

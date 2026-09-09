@@ -7,6 +7,8 @@ import '../../../store/data/models/store_models.dart';
 import '../../../store/domain/entities/product_list_page.dart';
 import '../../../store/domain/entities/shipping_zone.dart';
 import '../../../store/domain/entities/store_category.dart';
+import '../../../store/domain/entities/store_coupon.dart';
+import '../../../store/domain/entities/store_overview.dart';
 import '../../../store/domain/entities/store_order.dart';
 import '../../../store/domain/entities/store_product.dart';
 import '../datasources/admin_store_data_source.dart';
@@ -122,6 +124,32 @@ class AdminStoreRepositoryImpl {
       StoreOrderModel.fromJson(
         await _authorized((token) => _remote.setOrderStatus(token, id, status)),
       );
+
+  // ---------------------------------------------------------------- overview
+
+  Future<StoreOverview> overview() async =>
+      StoreOverview.fromJson(await _authorized(_remote.overview));
+
+  // ----------------------------------------------------------------- coupons
+
+  Future<List<StoreCoupon>> listCoupons() async {
+    final json = await _authorized(_remote.listCoupons);
+    return (json['items'] as List<dynamic>)
+        .map((e) => StoreCouponModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<StoreCoupon> createCoupon(Map<String, dynamic> body) async =>
+      StoreCouponModel.fromJson(
+        await _authorized((token) => _remote.createCoupon(token, body)),
+      );
+
+  Future<StoreCoupon> updateCoupon(
+    String id,
+    Map<String, dynamic> body,
+  ) async => StoreCouponModel.fromJson(
+    await _authorized((token) => _remote.updateCoupon(token, id, body)),
+  );
 
   // ---------------------------------------------------------------- shipping
 

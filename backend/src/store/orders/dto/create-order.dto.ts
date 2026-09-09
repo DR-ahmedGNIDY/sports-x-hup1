@@ -84,4 +84,11 @@ export class CreateOrderDto {
   @ValidateNested()
   @Type(() => ShippingAddressDto)
   address: ShippingAddressDto;
+
+  // Optional, and only ever a code — never a discount amount. What it is
+  // worth is decided by the server against its own subtotal.
+  @IsOptional()
+  @IsString()
+  @MaxLength(32)
+  couponCode?: string;
 }

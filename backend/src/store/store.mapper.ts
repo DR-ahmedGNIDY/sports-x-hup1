@@ -1,5 +1,6 @@
 import { LocalizedText } from './schemas/localized-text.schema';
 import { StoreCategoryDocument } from './schemas/category.schema';
+import { CouponDocument } from './schemas/coupon.schema';
 import { StoreOrderDocument } from './schemas/order.schema';
 import { StoreProductDocument } from './schemas/product.schema';
 import { ShippingZoneDocument } from './schemas/shipping-zone.schema';
@@ -130,7 +131,26 @@ export function toOrderView(order: StoreOrderDocument) {
     },
     subtotalMinor: order.subtotalMinor,
     shippingFeeMinor: order.shippingFeeMinor,
+    couponCode: order.couponCode,
+    discountMinor: order.discountMinor,
     totalMinor: order.totalMinor,
     createdAt: order.get('createdAt') as Date,
+  };
+}
+
+// Admin-only: coupons are never listed to customers, who only ever learn
+// whether the one code they typed is valid.
+export function toCouponView(coupon: CouponDocument) {
+  return {
+    id: coupon._id.toString(),
+    code: coupon.code,
+    type: coupon.type,
+    value: coupon.value,
+    minSubtotalMinor: coupon.minSubtotalMinor,
+    maxRedemptions: coupon.maxRedemptions,
+    redemptions: coupon.redemptions,
+    startsAt: coupon.startsAt,
+    endsAt: coupon.endsAt,
+    isActive: coupon.isActive,
   };
 }

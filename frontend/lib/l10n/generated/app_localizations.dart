@@ -3732,6 +3732,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'المتجر'**
   String get storeNavLabel;
+
+  /// No description provided for @storeCouponLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود الخصم'**
+  String get storeCouponLabel;
+
+  /// No description provided for @storeCouponApply.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق'**
+  String get storeCouponApply;
+
+  /// No description provided for @storeCouponRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الكود'**
+  String get storeCouponRemove;
+
+  /// No description provided for @storeDiscount.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخصم'**
+  String get storeDiscount;
+
+  /// No description provided for @storeCouponApplied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تطبيق الكود'**
+  String get storeCouponApplied;
 }
 
 class _AppLocalizationsDelegate

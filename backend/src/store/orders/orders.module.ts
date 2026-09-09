@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PublicCodesModule } from '../../public-codes/public-codes.module';
 import { StoreOrder, StoreOrderSchema } from '../schemas/order.schema';
 import { StoreProduct, StoreProductSchema } from '../schemas/product.schema';
+import { CouponsModule } from '../coupons/coupons.module';
 import { ShippingModule } from '../shipping/shipping.module';
 import { AdminOrdersController, OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
@@ -18,6 +19,7 @@ import { OrdersService } from './orders.service';
     ]),
     ShippingModule,
     PublicCodesModule,
+    CouponsModule,
   ],
   controllers: [OrdersController, AdminOrdersController],
   providers: [OrdersService],

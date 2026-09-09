@@ -753,5 +753,10 @@
   "storePreviousPage": "الصفحة السابقة",
   "storeNextPage": "الصفحة التالية",
   "dashboardAdminStore": "المتجر",
-  "storeNavLabel": "المتجر"
+  "storeNavLabel": "المتجر",
+  "storeCouponLabel": "كود الخصم",
+  "storeCouponApply": "تطبيق",
+  "storeCouponRemove": "إزالة الكود",
+  "storeDiscount": "الخصم",
+  "storeCouponApplied": "تم تطبيق الكود"
 }

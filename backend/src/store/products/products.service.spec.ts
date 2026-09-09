@@ -26,9 +26,10 @@ describe('StoreProductsService', () => {
       findBySlugOrThrow: jest.fn(),
     };
     const images = {
-      upload: jest
-        .fn()
-        .mockResolvedValue({ publicId: 'cl-1', secureUrl: 'https://img/1.jpg' }),
+      upload: jest.fn().mockResolvedValue({
+        publicId: 'cl-1',
+        secureUrl: 'https://img/1.jpg',
+      }),
       remove: jest.fn().mockResolvedValue(undefined),
     };
     const service = new StoreProductsService(
@@ -180,9 +181,9 @@ describe('StoreProductsService', () => {
       const { service, model, images } = buildService();
       model.findById.mockResolvedValue(productWithImages(10));
 
-      await expect(
-        service.addImage('p1', {} as never),
-      ).rejects.toBeInstanceOf(BadRequestException);
+      await expect(service.addImage('p1', {} as never)).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
       // Nothing reached Cloudinary, so no orphan is created by the refusal.
       expect(images.upload).not.toHaveBeenCalled();
     });

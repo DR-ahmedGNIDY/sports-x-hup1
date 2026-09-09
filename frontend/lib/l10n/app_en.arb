@@ -753,5 +753,10 @@
   "storePreviousPage": "Previous page",
   "storeNextPage": "Next page",
   "dashboardAdminStore": "Store",
-  "storeNavLabel": "Store"
+  "storeNavLabel": "Store",
+  "storeCouponLabel": "Discount code",
+  "storeCouponApply": "Apply",
+  "storeCouponRemove": "Remove code",
+  "storeDiscount": "Discount",
+  "storeCouponApplied": "Code applied"
 }

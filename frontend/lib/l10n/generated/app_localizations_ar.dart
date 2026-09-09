@@ -1964,4 +1964,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get storeNavLabel => 'المتجر';
+
+  @override
+  String get storeCouponLabel => 'كود الخصم';
+
+  @override
+  String get storeCouponApply => 'تطبيق';
+
+  @override
+  String get storeCouponRemove => 'إزالة الكود';
+
+  @override
+  String get storeDiscount => 'الخصم';
+
+  @override
+  String get storeCouponApplied => 'تم تطبيق الكود';
 }
