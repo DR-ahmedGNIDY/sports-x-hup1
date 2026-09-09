@@ -6,6 +6,7 @@ import '../../../../core/storage/session_storage_provider.dart';
 import '../../domain/entities/cart_item.dart';
 import '../../domain/entities/product_list_page.dart';
 import '../../domain/entities/shipping_zone.dart';
+import '../../domain/entities/store_banner.dart';
 import '../../domain/entities/store_category.dart';
 import '../../domain/entities/store_coupon.dart';
 import '../../domain/entities/store_order.dart';
@@ -62,6 +63,17 @@ class StoreRepositoryImpl implements StoreRepository {
   @override
   Future<StoreProduct> getProductBySlug(String slug) async =>
       StoreProductModel.fromJson(await _remote.getProductBySlug(slug));
+
+  @override
+  Future<List<StoreBanner>> listBanners() async {
+    final json = await _remote.listBanners();
+    return (json['items'] as List<dynamic>)
+        .map((e) => StoreBannerModel.fromJson(e as Map<String, dynamic>))
+        // A slide the parser refused (no desktop image) is dropped rather
+        // than rendered empty.
+        .nonNulls
+        .toList();
+  }
 
   @override
   Future<List<ShippingZone>> listShippingZones() async {

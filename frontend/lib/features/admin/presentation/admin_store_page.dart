@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/widgets/error_state.dart';
+import 'admin_store_banners_tab.dart';
 import 'admin_store_categories_tab.dart';
 import 'admin_store_coupons_tab.dart';
 import 'admin_store_orders_tab.dart';
@@ -24,7 +25,7 @@ class AdminStorePage extends ConsumerStatefulWidget {
 
 class _AdminStorePageState extends ConsumerState<AdminStorePage>
     with SingleTickerProviderStateMixin {
-  late final TabController _tabs = TabController(length: 6, vsync: this);
+  late final TabController _tabs = TabController(length: 7, vsync: this);
 
   @override
   void dispose() {
@@ -49,6 +50,7 @@ class _AdminStorePageState extends ConsumerState<AdminStorePage>
               Tab(text: 'Overview'),
               Tab(text: 'Products'),
               Tab(text: 'Categories'),
+              Tab(text: 'Banners'),
               Tab(text: 'Orders'),
               Tab(text: 'Discounts'),
               Tab(text: 'Shipping'),
@@ -61,6 +63,7 @@ class _AdminStorePageState extends ConsumerState<AdminStorePage>
                 AdminStoreOverviewTab(),
                 AdminStoreProductsTab(),
                 AdminStoreCategoriesTab(),
+                AdminStoreBannersTab(),
                 AdminStoreOrdersTab(),
                 AdminStoreCouponsTab(),
                 AdminStoreShippingTab(),

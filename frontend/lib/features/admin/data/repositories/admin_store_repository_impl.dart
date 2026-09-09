@@ -6,6 +6,7 @@ import '../../../../core/storage/session_storage_provider.dart';
 import '../../../store/data/models/store_models.dart';
 import '../../../store/domain/entities/product_list_page.dart';
 import '../../../store/domain/entities/shipping_zone.dart';
+import '../../../store/domain/entities/admin_banner.dart';
 import '../../../store/domain/entities/store_category.dart';
 import '../../../store/domain/entities/store_coupon.dart';
 import '../../../store/domain/entities/store_overview.dart';
@@ -123,6 +124,50 @@ class AdminStoreRepositoryImpl {
   Future<StoreOrder> setOrderStatus(String id, String status) async =>
       StoreOrderModel.fromJson(
         await _authorized((token) => _remote.setOrderStatus(token, id, status)),
+      );
+
+  // ----------------------------------------------------------------- banners
+
+  Future<List<AdminBanner>> listBanners() async {
+    final json = await _authorized(_remote.listBanners);
+    return (json['items'] as List<dynamic>)
+        .map((e) => AdminBannerModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<AdminBanner> createBanner(Map<String, dynamic> body) async =>
+      AdminBannerModel.fromJson(
+        await _authorized((token) => _remote.createBanner(token, body)),
+      );
+
+  Future<AdminBanner> updateBanner(
+    String id,
+    Map<String, dynamic> body,
+  ) async => AdminBannerModel.fromJson(
+    await _authorized((token) => _remote.updateBanner(token, id, body)),
+  );
+
+  Future<AdminBanner> setBannerImage(
+    String id,
+    String slot,
+    List<int> bytes,
+    String filename,
+  ) async => AdminBannerModel.fromJson(
+    await _authorized(
+      (token) => _remote.setBannerImage(token, id, slot, bytes, filename),
+    ),
+  );
+
+  Future<AdminBanner> removeBannerImage(String id, String slot) async =>
+      AdminBannerModel.fromJson(
+        await _authorized(
+          (token) => _remote.removeBannerImage(token, id, slot),
+        ),
+      );
+
+  Future<AdminBanner> deactivateBanner(String id) async =>
+      AdminBannerModel.fromJson(
+        await _authorized((token) => _remote.deactivateBanner(token, id)),
       );
 
   // ---------------------------------------------------------------- overview

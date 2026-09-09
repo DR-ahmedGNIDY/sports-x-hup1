@@ -1,4 +1,5 @@
 import { LocalizedText } from './schemas/localized-text.schema';
+import { StoreBannerDocument } from './schemas/banner.schema';
 import { StoreCategoryDocument } from './schemas/category.schema';
 import { CouponDocument } from './schemas/coupon.schema';
 import { StoreOrderDocument } from './schemas/order.schema';
@@ -152,5 +153,33 @@ export function toCouponView(coupon: CouponDocument) {
     startsAt: coupon.startsAt,
     endsAt: coupon.endsAt,
     isActive: coupon.isActive,
+  };
+}
+
+/// The hero's view. `mobileUrl` falls back to the desktop image rather than
+/// being null: a cropped banner on a phone beats an empty band, and the
+/// client should not have to know the fallback rule.
+export function toBannerView(banner: StoreBannerDocument) {
+  const desktopUrl = banner.desktopImage?.secureUrl;
+  return {
+    id: banner._id.toString(),
+    desktopUrl,
+    mobileUrl: banner.mobileImage?.secureUrl ?? desktopUrl,
+    alt: toLocalizedView(banner.alt),
+    linkPath: banner.linkPath,
+  };
+}
+
+/// The dashboard needs the two images kept apart — so it can say which one
+/// is missing — plus the publicIds it deletes by, and the active flag.
+export function toAdminBannerView(banner: StoreBannerDocument) {
+  return {
+    id: banner._id.toString(),
+    desktopImage: banner.desktopImage,
+    mobileImage: banner.mobileImage,
+    alt: toLocalizedView(banner.alt),
+    linkPath: banner.linkPath,
+    sortOrder: banner.sortOrder,
+    isActive: banner.isActive,
   };
 }

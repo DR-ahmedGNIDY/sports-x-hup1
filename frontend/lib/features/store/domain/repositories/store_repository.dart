@@ -1,6 +1,7 @@
 import '../entities/cart_item.dart';
 import '../entities/product_list_page.dart';
 import '../entities/shipping_zone.dart';
+import '../entities/store_banner.dart';
 import '../entities/store_category.dart';
 import '../entities/store_coupon.dart';
 import '../entities/store_order.dart';
@@ -23,6 +24,9 @@ abstract class StoreRepository {
   });
 
   Future<StoreProduct> getProductBySlug(String slug);
+
+  /// The hero's slides, in the merchant's order.
+  Future<List<StoreBanner>> listBanners();
 
   Future<List<ShippingZone>> listShippingZones();
 

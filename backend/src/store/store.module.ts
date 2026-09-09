@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BannersModule } from './banners/banners.module';
 import { StoreCategoriesModule } from './categories/categories.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { OrdersModule } from './orders/orders.module';
@@ -17,6 +18,7 @@ import { ShippingModule } from './shipping/shipping.module';
     OrdersModule,
     StoreOverviewModule,
     CouponsModule,
+    BannersModule,
   ],
 })
 export class StoreModule {}

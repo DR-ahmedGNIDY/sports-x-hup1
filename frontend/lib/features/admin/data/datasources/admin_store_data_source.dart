@@ -152,6 +152,61 @@ class AdminStoreDataSource {
     ),
   );
 
+  // ----------------------------------------------------------------- banners
+
+  Future<Map<String, dynamic>> listBanners(String token) async =>
+      _ok(await _client.get('/admin/store/banners', headers: _bearer(token)));
+
+  Future<Map<String, dynamic>> createBanner(
+    String token,
+    Map<String, dynamic> body,
+  ) async => _ok(
+    await _client.post('/admin/store/banners', body: body, headers: _bearer(token)),
+  );
+
+  Future<Map<String, dynamic>> updateBanner(
+    String token,
+    String id,
+    Map<String, dynamic> body,
+  ) async => _ok(
+    await _client.patch('/admin/store/banners/', body: body, headers: _bearer(token)),
+  );
+
+  /// [slot] is 'desktop' or 'mobile' — a banner carries one image for each.
+  Future<Map<String, dynamic>> setBannerImage(
+    String token,
+    String id,
+    String slot,
+    List<int> bytes,
+    String filename,
+  ) async => _ok(
+    await _client.postMultipart(
+      '/admin/store/banners//image/',
+      fileField: 'file',
+      fileBytes: bytes,
+      filename: filename,
+      headers: _bearer(token),
+    ),
+  );
+
+  Future<Map<String, dynamic>> removeBannerImage(
+    String token,
+    String id,
+    String slot,
+  ) async => _ok(
+    await _client.delete(
+      '/admin/store/banners//image/',
+      headers: _bearer(token),
+    ),
+  );
+
+  Future<Map<String, dynamic>> deactivateBanner(
+    String token,
+    String id,
+  ) async => _ok(
+    await _client.delete('/admin/store/banners/', headers: _bearer(token)),
+  );
+
   // ---------------------------------------------------------------- overview
 
   Future<Map<String, dynamic>> overview(String token) async =>
