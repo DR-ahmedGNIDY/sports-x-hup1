@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../store/domain/entities/admin_banner.dart';
 import '../../store/domain/entities/shipping_zone.dart';
 import '../../store/domain/entities/store_category.dart';
 import '../../store/domain/entities/store_coupon.dart';
@@ -226,4 +227,54 @@ class AdminCouponsController extends AsyncNotifier<List<StoreCoupon>> {
 final adminCouponsControllerProvider =
     AsyncNotifierProvider<AdminCouponsController, List<StoreCoupon>>(
       AdminCouponsController.new,
+    );
+
+
+/// The hero's slides, including the unfinished ones the storefront hides.
+class AdminBannersController extends AsyncNotifier<List<AdminBanner>> {
+  @override
+  Future<List<AdminBanner>> build() =>
+      ref.read(adminStoreRepositoryProvider).listBanners();
+
+  Future<void> create(Map<String, dynamic> body) async {
+    await ref.read(adminStoreRepositoryProvider).createBanner(body);
+    await _reload();
+  }
+
+  Future<void> save(String id, Map<String, dynamic> body) async {
+    await ref.read(adminStoreRepositoryProvider).updateBanner(id, body);
+    await _reload();
+  }
+
+  Future<void> setImage(
+    String id,
+    String slot,
+    List<int> bytes,
+    String filename,
+  ) async {
+    await ref
+        .read(adminStoreRepositoryProvider)
+        .setBannerImage(id, slot, bytes, filename);
+    await _reload();
+  }
+
+  Future<void> removeImage(String id, String slot) async {
+    await ref.read(adminStoreRepositoryProvider).removeBannerImage(id, slot);
+    await _reload();
+  }
+
+  Future<void> deactivate(String id) async {
+    await ref.read(adminStoreRepositoryProvider).deactivateBanner(id);
+    await _reload();
+  }
+
+  Future<void> _reload() async {
+    ref.invalidateSelf();
+    await future;
+  }
+}
+
+final adminBannersControllerProvider =
+    AsyncNotifierProvider<AdminBannersController, List<AdminBanner>>(
+      AdminBannersController.new,
     );

@@ -5,11 +5,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/store_theme.dart';
-import '../../../core/utils/breakpoints.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../application/catalog_providers.dart';
 import '../domain/entities/store_category.dart';
 import 'widgets/product_carousel.dart';
+import 'widgets/store_hero.dart';
 import 'widgets/store_scaffold.dart';
 import 'store_paths.dart';
 
@@ -37,7 +37,7 @@ class StoreHomePage extends ConsumerWidget {
           ListView(
             padding: EdgeInsets.zero,
             children: [
-              const _Hero(),
+              const StoreHero(),
               newest.when(
                 data: (page) => ProductCarousel(
                   title: l10n.storeNewArrivals,
@@ -87,27 +87,6 @@ class StoreHomePage extends ConsumerWidget {
   }
 }
 
-class _Hero extends StatelessWidget {
-  const _Hero();
-
-  @override
-  Widget build(BuildContext context) {
-    final isDesktop = AppBreakpoints.isDesktop(context);
-    return SizedBox(
-      height: isDesktop ? 560 : 460,
-      width: double.infinity,
-      child: ColoredBox(
-        color: Theme.of(context).brightness == Brightness.light
-            ? StoreTheme.surfaceAlt
-            : StoreTheme.darkSurfaceAlt,
-        // Intentionally an empty band until the merchant uploads a banner.
-        // A placeholder headline here would have to be written, translated
-        // and then deleted — an empty hero is honest about being unset.
-        child: const SizedBox.shrink(),
-      ),
-    );
-  }
-}
 
 /// "Shop by category" — image tiles, one per top-level category.
 class _CategoryStrip extends StatelessWidget {

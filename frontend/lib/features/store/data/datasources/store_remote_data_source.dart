@@ -40,6 +40,12 @@ class StoreRemoteDataSource {
     return _decode(response);
   }
 
+  Future<Map<String, dynamic>> listBanners() async {
+    final response = await _client.get('/store/banners');
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return _decode(response);
+  }
+
   Future<Map<String, dynamic>> listShippingZones() async {
     final response = await _client.get('/store/shipping-zones');
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/repositories/store_repository_impl.dart';
 import '../domain/entities/product_list_page.dart';
 import '../domain/entities/shipping_zone.dart';
+import '../domain/entities/store_banner.dart';
 import '../domain/entities/store_category.dart';
 import '../domain/entities/store_product.dart';
 
@@ -10,6 +11,13 @@ import '../domain/entities/store_product.dart';
 /// it is on every page and it changes about as often as the shop's signage.
 final storeCategoriesProvider = FutureProvider<List<StoreCategory>>(
   (ref) => ref.watch(storeRepositoryProvider).listCategories(),
+);
+
+/// The hero's slides. Kept with the other catalogue reads rather than in
+/// the home page, so a banner tapped through to a category and back does
+/// not refetch.
+final storeBannersProvider = FutureProvider<List<StoreBanner>>(
+  (ref) => ref.watch(storeRepositoryProvider).listBanners(),
 );
 
 final shippingZonesProvider = FutureProvider<List<ShippingZone>>(

@@ -1,6 +1,8 @@
+import '../../domain/entities/admin_banner.dart';
 import '../../domain/entities/localized_text.dart';
 import '../../domain/entities/product_list_page.dart';
 import '../../domain/entities/shipping_zone.dart';
+import '../../domain/entities/store_banner.dart';
 import '../../domain/entities/store_category.dart';
 import '../../domain/entities/store_coupon.dart';
 import '../../domain/entities/store_order.dart';
@@ -173,3 +175,44 @@ class StoreCouponModel {
 /// Dates arrive as ISO strings, or not at all for an open-ended campaign.
 DateTime? _date(dynamic value) =>
     value is String ? DateTime.tryParse(value) : null;
+
+class StoreBannerModel {
+  /// Skips a banner with no desktop image rather than throwing. The public
+  /// endpoint already withholds those, so seeing one means an older server
+  /// — degrading to fewer slides beats an unrenderable home page.
+  static StoreBanner? fromJson(Map<String, dynamic> json) {
+    final desktopUrl = json['desktopUrl'] as String?;
+    if (desktopUrl == null) return null;
+
+    final alt = json['alt'] as Map<String, dynamic>?;
+    return StoreBanner(
+      id: json['id'] as String,
+      desktopUrl: desktopUrl,
+      mobileUrl: json['mobileUrl'] as String? ?? desktopUrl,
+      altEn: alt?['en'] as String?,
+      altAr: alt?['ar'] as String?,
+      linkPath: json['linkPath'] as String?,
+    );
+  }
+}
+
+class AdminBannerModel {
+  static AdminBanner fromJson(Map<String, dynamic> json) {
+    final alt = json['alt'] as Map<String, dynamic>?;
+    return AdminBanner(
+      id: json['id'] as String,
+      desktopUrl:
+          (json['desktopImage'] as Map<String, dynamic>?)?['secureUrl']
+              as String?,
+      mobileUrl:
+          (json['mobileImage'] as Map<String, dynamic>?)?['secureUrl']
+              as String?,
+      alt: alt == null
+          ? null
+          : LocalizedText(en: alt['en'] as String, ar: alt['ar'] as String?),
+      linkPath: json['linkPath'] as String?,
+      sortOrder: json['sortOrder'] as int? ?? 0,
+      isActive: json['isActive'] as bool? ?? true,
+    );
+  }
+}
