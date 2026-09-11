@@ -134,8 +134,14 @@ export class CalendarEventsService {
     month: string,
   ): Promise<CalendarEventDocument[]> {
     const { start, end } = this.monthRange(month);
+    // `@Prop({ type: Types.ObjectId })` resolves to a Mixed path, so Mongoose
+    // never casts a string filter here — it has to match the ObjectId that
+    // create() stores, or the query silently finds nothing.
     return this.eventModel
-      .find({ clubUserId, date: { $gte: start, $lt: end } })
+      .find({
+        clubUserId: new Types.ObjectId(clubUserId),
+        date: { $gte: start, $lt: end },
+      })
       .sort({ date: 1, startTime: 1 });
   }
 

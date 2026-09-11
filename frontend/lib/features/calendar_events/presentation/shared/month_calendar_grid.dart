@@ -93,13 +93,20 @@ class MonthCalendarGrid extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected ? AppColors.brandBlue.withValues(alpha: 0.18) : null,
             borderRadius: BorderRadius.circular(8),
-            border: isToday ? Border.all(color: AppColors.brandBlue, width: 1.4) : null,
+            border: isSelected ? Border.all(color: AppColors.brandBlue, width: 1.4) : null,
           ),
           alignment: Alignment.topCenter,
           padding: const EdgeInsets.only(top: 6),
           child: Column(
             children: [
-              Text('$day', style: const TextStyle(fontSize: 13)),
+              Text(
+                '$day',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isToday ? AppColors.brandBlue : null,
+                  fontWeight: isToday ? FontWeight.w800 : null,
+                ),
+              ),
               if (dayEvents.isNotEmpty) ...[
                 const SizedBox(height: 4),
                 Wrap(

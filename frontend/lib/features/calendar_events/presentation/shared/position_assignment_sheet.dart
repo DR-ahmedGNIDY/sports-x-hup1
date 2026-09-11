@@ -22,6 +22,8 @@ Future<void> showPositionAssignmentSheet(
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    useRootNavigator: true,
+    useSafeArea: true,
     builder: (context) => _PositionAssignmentSheet(ref: ref, event: event, players: players),
   );
 }

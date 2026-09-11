@@ -16,6 +16,8 @@ Future<void> showRosterPoolSheet(
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    useRootNavigator: true,
+    useSafeArea: true,
     builder: (context) => _RosterPoolSheet(ref: ref, event: event),
   );
 }

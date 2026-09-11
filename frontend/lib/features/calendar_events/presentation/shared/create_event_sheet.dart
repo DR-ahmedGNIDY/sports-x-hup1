@@ -17,6 +17,11 @@ Future<void> showCreateEventSheet(
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    // The calendar lives inside a shell branch; without the root navigator
+    // the sheet is laid out under the mobile tab bar, which hides its submit
+    // button.
+    useRootNavigator: true,
+    useSafeArea: true,
     builder: (context) => _CreateEventSheet(
       ref: ref,
       day: day,

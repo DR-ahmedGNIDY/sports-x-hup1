@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { CalendarEventsService } from './calendar-events.service';
 import {
   CalendarEventRecurrence,
@@ -147,6 +148,27 @@ describe('CalendarEventsService', () => {
       const inserted = eventModel.insertMany.mock.calls[0][0];
       expect(inserted).toHaveLength(1);
       expect(inserted[0].recurrenceGroupId).toBeUndefined();
+    });
+  });
+
+  describe('listForClub', () => {
+    it('filters by the same ObjectId type create() stores', async () => {
+      const { service, eventModel } = buildService();
+      await service.create(CLUB_USER, {
+        type: CalendarEventType.TRAINING,
+        date: '2026-09-11',
+        startTime: '18:00',
+        endTime: '19:00',
+        location: 'Main pitch',
+        recurrence: CalendarEventRecurrence.NONE,
+      });
+      await service.listForClub(CLUB_USER, '2026-09');
+
+      const stored = eventModel.insertMany.mock.calls[0][0][0].clubUserId;
+      const filter = eventModel.find.mock.calls[0][0].clubUserId;
+      expect(filter).toBeInstanceOf(Types.ObjectId);
+      expect(filter.constructor).toBe(stored.constructor);
+      expect(filter.equals(stored)).toBe(true);
     });
   });
 

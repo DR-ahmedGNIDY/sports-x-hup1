@@ -66,6 +66,8 @@ class EventDetailBody extends ConsumerWidget {
   void _openRatingPicker(BuildContext context, WidgetRef ref) {
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
+      useSafeArea: true,
       builder: (context) => ListView(
         shrinkWrap: true,
         children: [
