@@ -115,9 +115,16 @@ class _RosterPoolSheetState extends ConsumerState<_RosterPoolSheet> {
                             final selected = allPlayers
                                 .where((p) => _selectedIds.contains(p.id))
                                 .toList();
-                            Navigator.of(context).pop();
-                            showPositionAssignmentSheet(
+                            // Taken before the pop: this sheet's own context
+                            // is defunct once it is gone, and the next sheet
+                            // has to be presented from a live one.
+                            final navigator = Navigator.of(
                               context,
+                              rootNavigator: true,
+                            );
+                            navigator.pop();
+                            showPositionAssignmentSheet(
+                              navigator.context,
                               ref: widget.ref,
                               event: widget.event,
                               players: selected,

@@ -34,7 +34,10 @@ class _CalendarPageDesktopState extends ConsumerState<CalendarPageDesktop> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 720),
-        child: Padding(
+        // Scrollable: a month with several events on the selected day runs
+        // past the viewport, and without this the day's cards and the
+        // create button are simply unreachable.
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
