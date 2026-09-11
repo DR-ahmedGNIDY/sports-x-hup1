@@ -675,6 +675,26 @@
     }
   },
 
+  "notificationEventScheduled": "{name} سجّلك في {event} يوم {date} الساعة {time}.",
+  "@notificationEventScheduled": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "event": { "type": "String" },
+      "date": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+  "notificationEventScheduledShort": "{name} سجّلك في {event}.",
+  "@notificationEventScheduledShort": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "event": { "type": "String" }
+    }
+  },
+  "calendarEventTypeMatch": "مباراة",
+  "calendarEventTypeTraining": "تدريب",
+  "calendarEventTypeOther": "نشاط",
+
   "pushPromptTitle": "خلّي إشعارات تليفونك تنبّهك",
   "pushPromptBody": "فعّل الإشعارات ونبلّغك لحظة وصول أي دعوة — حتى والتطبيق مقفول.",
   "pushPromptEnableAction": "تفعيل",

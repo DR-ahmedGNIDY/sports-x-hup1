@@ -1729,6 +1729,30 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String notificationEventScheduled(
+    String name,
+    String event,
+    String date,
+    String time,
+  ) {
+    return '$name سجّلك في $event يوم $date الساعة $time.';
+  }
+
+  @override
+  String notificationEventScheduledShort(String name, String event) {
+    return '$name سجّلك في $event.';
+  }
+
+  @override
+  String get calendarEventTypeMatch => 'مباراة';
+
+  @override
+  String get calendarEventTypeTraining => 'تدريب';
+
+  @override
+  String get calendarEventTypeOther => 'نشاط';
+
+  @override
   String get pushPromptTitle => 'خلّي إشعارات تليفونك تنبّهك';
 
   @override

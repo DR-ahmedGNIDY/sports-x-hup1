@@ -3271,6 +3271,41 @@ abstract class AppLocalizations {
   /// **'{name} رفض دعوتك.'**
   String notificationInvitationRejected(String name);
 
+  /// No description provided for @notificationEventScheduled.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} سجّلك في {event} يوم {date} الساعة {time}.'**
+  String notificationEventScheduled(
+    String name,
+    String event,
+    String date,
+    String time,
+  );
+
+  /// No description provided for @notificationEventScheduledShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} سجّلك في {event}.'**
+  String notificationEventScheduledShort(String name, String event);
+
+  /// No description provided for @calendarEventTypeMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'مباراة'**
+  String get calendarEventTypeMatch;
+
+  /// No description provided for @calendarEventTypeTraining.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدريب'**
+  String get calendarEventTypeTraining;
+
+  /// No description provided for @calendarEventTypeOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشاط'**
+  String get calendarEventTypeOther;
+
   /// No description provided for @pushPromptTitle.
   ///
   /// In ar, this message translates to:

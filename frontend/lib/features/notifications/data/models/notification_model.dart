@@ -24,6 +24,12 @@ extension AppNotificationModel on AppNotification {
       entityId: json['entityId'] as String? ?? '',
       read: json['read'] as bool? ?? false,
       createdAt: _dateFrom(json['createdAt']),
+      event: NotificationEventDetails(
+        name: params['eventName'] as String?,
+        type: params['eventType'] as String?,
+        date: _dateFrom(params['eventDate']),
+        startTime: params['eventStartTime'] as String?,
+      ),
     );
   }
 }

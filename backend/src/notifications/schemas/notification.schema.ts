@@ -34,6 +34,16 @@ export interface NotificationParams {
   /** Their *profile* id, so the client can link to a public profile. */
   actorProfileId?: string;
   actorPublicCode?: string;
+
+  // Calendar events only. A player is told *which* session they were added
+  // to and when, rather than having to open the event to find out.
+  eventName?: string;
+  /** MATCH | TRAINING | OTHER, so the client can name the kind of session. */
+  eventType?: string;
+  /** 'YYYY-MM-DD'. */
+  eventDate?: string;
+  /** 'HH:mm'. */
+  eventStartTime?: string;
 }
 
 @Schema({ timestamps: true, collection: 'notifications' })

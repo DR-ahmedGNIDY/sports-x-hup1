@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_state.dart';
@@ -56,7 +57,14 @@ class _CalendarPageMobileState extends ConsumerState<CalendarPageMobile> {
                       ),
                     ),
                     Expanded(
-                      child: Center(child: Text('${_visibleMonth.year}/${_visibleMonth.month}')),
+                      child: Center(
+                        child: Text(
+                          DateFormat.yMMMM(
+                            Localizations.localeOf(context).toString(),
+                          ).format(_visibleMonth),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.chevron_left),

@@ -78,6 +78,9 @@ class NotificationTile extends ConsumerWidget {
   /// which inbox holds it depends on who is reading — a club's invitations
   /// live at a different path from a player's.
   String? _destinationFor(WidgetRef ref) {
+    if (notification.entityType == NotificationEntityType.calendarEvent) {
+      return '/calendar/${notification.entityId}';
+    }
     if (notification.entityType != NotificationEntityType.invitation) {
       return null;
     }
@@ -102,6 +105,7 @@ class _Leading extends StatelessWidget {
       NotificationType.invitationReceived => Icons.mail_outline,
       NotificationType.invitationAccepted => Icons.check_circle_outline,
       NotificationType.invitationRejected => Icons.cancel_outlined,
+      NotificationType.eventScheduled => Icons.event_available_outlined,
     };
 
     return SizedBox(

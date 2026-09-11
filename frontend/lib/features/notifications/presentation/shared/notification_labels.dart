@@ -26,5 +26,35 @@ String notificationText(AppLocalizations l10n, AppNotification notification) {
       l10n.notificationInvitationAccepted(actor),
     NotificationType.invitationRejected =>
       l10n.notificationInvitationRejected(actor),
+    NotificationType.eventScheduled => _eventScheduledText(l10n, notification, actor),
   };
+}
+
+String _eventScheduledText(
+  AppLocalizations l10n,
+  AppNotification notification,
+  String actor,
+) {
+  final details = notification.event;
+  final kind = switch (details?.type) {
+    'MATCH' => l10n.calendarEventTypeMatch,
+    'TRAINING' => l10n.calendarEventTypeTraining,
+    _ => l10n.calendarEventTypeOther,
+  };
+  final name = details?.name?.trim();
+  final event = (name == null || name.isEmpty) ? kind : '$kind — $name';
+
+  final date = details?.date;
+  final time = details?.startTime;
+  // Rows written before the event details were carried in the payload have
+  // neither, and a sentence with blanks in it reads worse than a short one.
+  if (date == null || time == null || time.isEmpty) {
+    return l10n.notificationEventScheduledShort(actor, event);
+  }
+  return l10n.notificationEventScheduled(
+    actor,
+    event,
+    '${date.year}/${date.month}/${date.day}',
+    time,
+  );
 }

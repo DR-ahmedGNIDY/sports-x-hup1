@@ -1745,6 +1745,30 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String notificationEventScheduled(
+    String name,
+    String event,
+    String date,
+    String time,
+  ) {
+    return '$name added you to $event on $date at $time.';
+  }
+
+  @override
+  String notificationEventScheduledShort(String name, String event) {
+    return '$name added you to $event.';
+  }
+
+  @override
+  String get calendarEventTypeMatch => 'Match';
+
+  @override
+  String get calendarEventTypeTraining => 'Training';
+
+  @override
+  String get calendarEventTypeOther => 'Activity';
+
+  @override
   String get pushPromptTitle => 'Get notified on your phone';
 
   @override

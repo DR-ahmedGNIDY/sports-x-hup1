@@ -17,6 +17,9 @@ export interface PushPayload {
   type: string;
   actorName?: string;
   actorRole: string;
+  /** Calendar events only — enough for the banner to name the session. */
+  eventName?: string;
+  eventType?: string;
 }
 
 /**

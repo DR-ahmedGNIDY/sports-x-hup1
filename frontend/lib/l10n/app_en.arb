@@ -675,6 +675,26 @@
     }
   },
 
+  "notificationEventScheduled": "{name} added you to {event} on {date} at {time}.",
+  "@notificationEventScheduled": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "event": { "type": "String" },
+      "date": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+  "notificationEventScheduledShort": "{name} added you to {event}.",
+  "@notificationEventScheduledShort": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "event": { "type": "String" }
+    }
+  },
+  "calendarEventTypeMatch": "Match",
+  "calendarEventTypeTraining": "Training",
+  "calendarEventTypeOther": "Activity",
+
   "pushPromptTitle": "Get notified on your phone",
   "pushPromptBody": "Turn on notifications and we'll let you know the moment an invitation arrives — even when the app is closed.",
   "pushPromptEnableAction": "Turn on",

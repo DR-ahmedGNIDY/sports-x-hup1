@@ -193,6 +193,10 @@ const PUSH_STRINGS = {
     INVITATION_RECEIVED_PLAYER: (name) => `${name} طلب الانضمام إلى ناديك.`,
     INVITATION_ACCEPTED: (name) => `${name} قَبِل دعوتك.`,
     INVITATION_REJECTED: (name) => `${name} رفض دعوتك.`,
+    EVENT_SCHEDULED: (name, event) => `${name} سجّلك في ${event}.`,
+    eventMatch: 'مباراة',
+    eventTraining: 'تدريب',
+    eventOther: 'نشاط',
     fallbackClub: 'نادٍ',
     fallbackPlayer: 'لاعب',
     generic: 'لديك إشعار جديد.',
@@ -203,6 +207,10 @@ const PUSH_STRINGS = {
     INVITATION_RECEIVED_PLAYER: (name) => `${name} asked to join your club.`,
     INVITATION_ACCEPTED: (name) => `${name} accepted your invitation.`,
     INVITATION_REJECTED: (name) => `${name} declined your invitation.`,
+    EVENT_SCHEDULED: (name, event) => `${name} added you to ${event}.`,
+    eventMatch: 'a match',
+    eventTraining: 'a training session',
+    eventOther: 'an activity',
     fallbackClub: 'A club',
     fallbackPlayer: 'A player',
     generic: 'You have a new notification.',
@@ -231,6 +239,16 @@ function pushBody(data) {
       return s.INVITATION_ACCEPTED(name);
     case 'INVITATION_REJECTED':
       return s.INVITATION_REJECTED(name);
+    case 'EVENT_SCHEDULED': {
+      const kind =
+        data.eventType === 'MATCH'
+          ? s.eventMatch
+          : data.eventType === 'TRAINING'
+            ? s.eventTraining
+            : s.eventOther;
+      const eventName = data.eventName && data.eventName.trim();
+      return s.EVENT_SCHEDULED(name, eventName ? `${kind} — ${eventName}` : kind);
+    }
     default:
       // A type this build predates. Still worth a banner — the app will
       // render it properly once opened.

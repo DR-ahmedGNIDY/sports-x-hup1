@@ -12,7 +12,8 @@ library;
 enum NotificationType {
   invitationReceived('INVITATION_RECEIVED'),
   invitationAccepted('INVITATION_ACCEPTED'),
-  invitationRejected('INVITATION_REJECTED');
+  invitationRejected('INVITATION_REJECTED'),
+  eventScheduled('EVENT_SCHEDULED');
 
   const NotificationType(this.wireValue);
 
@@ -30,7 +31,8 @@ enum NotificationType {
 }
 
 enum NotificationEntityType {
-  invitation('INVITATION');
+  invitation('INVITATION'),
+  calendarEvent('CALENDAR_EVENT');
 
   const NotificationEntityType(this.wireValue);
 
@@ -76,6 +78,18 @@ class NotificationActor {
   final String? publicCode;
 }
 
+/// What a calendar-event notification says beyond who sent it: the kind of
+/// session, when it starts, and (a match's opponent or a custom activity's
+/// name) what it is called.
+class NotificationEventDetails {
+  const NotificationEventDetails({this.name, this.type, this.date, this.startTime});
+
+  final String? name;
+  final String? type;
+  final DateTime? date;
+  final String? startTime;
+}
+
 class AppNotification {
   const AppNotification({
     required this.id,
@@ -85,11 +99,13 @@ class AppNotification {
     required this.entityId,
     required this.read,
     this.createdAt,
+    this.event,
   });
 
   final String id;
   final NotificationType type;
   final NotificationActor actor;
+  final NotificationEventDetails? event;
 
   /// What to open when this is tapped.
   final NotificationEntityType? entityType;

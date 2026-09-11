@@ -306,6 +306,13 @@ export class CalendarEventsService {
             actorName: clubProfile.name,
             actorProfileId: clubProfile._id.toString(),
             actorPublicCode: clubProfile.publicCode,
+            eventName:
+              event.type === CalendarEventType.OTHER
+                ? event.customTypeName
+                : (event.opponentName ?? undefined),
+            eventType: event.type,
+            eventDate: event.date.toISOString().slice(0, 10),
+            eventStartTime: event.startTime,
           },
         }),
       );

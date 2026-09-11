@@ -72,6 +72,8 @@ export class NotificationsService {
         type: input.type,
         actorName: input.params.actorName,
         actorRole: input.params.actorRole,
+        eventName: input.params.eventName,
+        eventType: input.params.eventType,
       });
 
       return created;
