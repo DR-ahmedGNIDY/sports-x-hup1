@@ -154,28 +154,28 @@ class _LineupSection extends ConsumerWidget {
       return const Text('لم يتم تحديد التشكيلة بعد.', style: TextStyle(color: AppColors.greyLight));
     }
 
+    // The pitch draws as soon as the roster is known and fills each name in
+    // as its profile arrives: gating the whole diagram on every profile
+    // resolving left it spinning forever whenever one of them didn't.
     final profileFutures = [
       for (final participant in event.participants)
         ref.watch(publicPlayerProfileProvider(participant.playerId)),
     ];
-    final loaded = profileFutures.every((p) => p.hasValue || p.hasError);
-    if (!loaded) {
-      return const SizedBox(height: 200, child: Center(child: CircularProgressIndicator()));
-    }
 
     final lineupPlayers = <String, LineupPlayer>{};
     String? primarySport;
     for (var i = 0; i < event.participants.length; i++) {
-      final profile = profileFutures[i].value;
-      if (profile == null) continue;
       final playerId = event.participants[i].playerId;
-      final name = '${profile.firstName ?? ''} ${profile.lastName ?? ''}'.trim();
+      final profile = profileFutures[i].value;
+      final name = profile == null
+          ? ''
+          : '${profile.firstName ?? ''} ${profile.lastName ?? ''}'.trim();
       lineupPlayers[playerId] = LineupPlayer(
         id: playerId,
-        name: name.isEmpty ? playerId : name,
-        photoUrl: profile.profilePhoto?.secureUrl,
+        name: name.isEmpty ? '...' : name,
+        photoUrl: profile?.profilePhoto?.secureUrl,
       );
-      primarySport ??= profile.sport;
+      primarySport ??= profile?.sport;
     }
 
     return SizedBox(
