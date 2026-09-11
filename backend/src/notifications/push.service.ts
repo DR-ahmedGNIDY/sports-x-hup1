@@ -65,7 +65,9 @@ export class PushService {
 
   /** `null` when push is not configured — the client then skips its prompt. */
   publicKey(config: ConfigService): string | null {
-    return this.enabled ? (config.get<string>('VAPID_PUBLIC_KEY') ?? null) : null;
+    return this.enabled
+      ? (config.get<string>('VAPID_PUBLIC_KEY') ?? null)
+      : null;
   }
 
   get isEnabled(): boolean {

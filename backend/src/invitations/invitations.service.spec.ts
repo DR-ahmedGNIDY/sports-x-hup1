@@ -673,7 +673,9 @@ describe('InvitationsService', () => {
       // The real emit() swallows its own errors; this asserts the caller
       // does not depend on that being true. The membership is the fact —
       // it must survive a broken announcement.
-      await expect(service.accept(PLAYER_USER, VALID_ID)).resolves.toBeDefined();
+      await expect(
+        service.accept(PLAYER_USER, VALID_ID),
+      ).resolves.toBeDefined();
       expect(memberships.create).toHaveBeenCalled();
     });
   });

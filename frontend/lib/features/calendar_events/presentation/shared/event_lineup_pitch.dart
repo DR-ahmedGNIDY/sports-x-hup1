@@ -47,15 +47,17 @@ class EventLineupPitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final markers = isBasketball
-        ? [
-            for (final m in basketballPositionMarkers)
-              (id: m.id, code: m.code, location: m.location),
-          ]
-        : [
-            for (final m in footballPositionMarkers)
-              (id: m.id, code: m.code, location: m.location),
-          ];
+    final markers = _collapseByCode(
+      isBasketball
+          ? [
+              for (final m in basketballPositionMarkers)
+                (id: m.id, code: m.code, location: m.location),
+            ]
+          : [
+              for (final m in footballPositionMarkers)
+                (id: m.id, code: m.code, location: m.location),
+            ],
+    );
 
     final byMarkerId = _assignToMarkers(markers);
 
@@ -105,9 +107,32 @@ class EventLineupPitch extends StatelessWidget {
     );
   }
 
-  /// Spreads each position's players across every marker carrying that code,
-  /// so a formation's two centre-back spots hold one player each instead of
-  /// both showing the same name.
+  /// One circle per position: the profile pitch draws two centre-back spots,
+  /// but a lineup names the players at a position rather than the slots, so
+  /// the duplicates merge into a single marker halfway between them.
+  List<({String id, String code, Offset location})> _collapseByCode(
+    List<({String id, String code, Offset location})> markers,
+  ) {
+    final byCode = <String, List<({String id, String code, Offset location})>>{};
+    for (final marker in markers) {
+      byCode.putIfAbsent(marker.code, () => []).add(marker);
+    }
+    return [
+      for (final entry in byCode.entries)
+        (
+          id: entry.key,
+          code: entry.key,
+          location: Offset(
+            entry.value.map((m) => m.location.dx).reduce((a, b) => a + b) /
+                entry.value.length,
+            entry.value.map((m) => m.location.dy).reduce((a, b) => a + b) /
+                entry.value.length,
+          ),
+        ),
+    ];
+  }
+
+  /// Every player at a position stacks on that position's single marker.
   Map<String, List<LineupPlayer>> _assignToMarkers(
     List<({String id, String code, Offset location})> markers,
   ) {

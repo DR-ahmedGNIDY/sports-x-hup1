@@ -131,8 +131,7 @@ export class InvitationsService {
     const { invitation } = row;
     // The responder is the recipient of the original invitation, so the
     // actor here is the opposite side from the one above.
-    const respondedByPlayer =
-      invitation.type === InvitationType.CLUB_TO_PLAYER;
+    const respondedByPlayer = invitation.type === InvitationType.CLUB_TO_PLAYER;
     await this.safely(() =>
       this.notifications.emit({
         userId: invitation.senderUserId,

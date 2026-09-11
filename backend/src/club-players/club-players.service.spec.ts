@@ -62,8 +62,17 @@ describe('ClubPlayersService', () => {
       }),
     };
 
+    const membershipModel = {
+      find: jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          sort: jest.fn().mockResolvedValue([]),
+        }),
+      }),
+    };
+
     const service = new ClubPlayersService(
       clubManagedPlayerModel as never,
+      membershipModel as never,
       usersService as never,
       playersService as never,
     );

@@ -8,6 +8,10 @@ import { Model } from 'mongoose';
 import { generateStrongPassword } from '../common/password-generator';
 import { getDialCode } from '../countries/dial-codes';
 import {
+  ClubMembership,
+  MembershipStatus,
+} from '../invitations/schemas/club-membership.schema';
+import {
   completionPercentFor,
   isProfileComplete,
   missingFieldsFor,
@@ -63,6 +67,8 @@ export class ClubPlayersService {
   constructor(
     @InjectModel(ClubManagedPlayer.name)
     private readonly clubManagedPlayerModel: Model<ClubManagedPlayer>,
+    @InjectModel(ClubMembership.name)
+    private readonly membershipModel: Model<ClubMembership>,
     private readonly usersService: UsersService,
     private readonly playersService: PlayersService,
   ) {}
@@ -154,6 +160,31 @@ export class ClubPlayersService {
     return this.clubManagedPlayerModel.find({ clubId }).sort({ createdAt: -1 });
   }
 
+  /// The club's whole squad: the players it created, plus the ones who
+  /// joined by accepting an invitation. A member's account isn't the club's
+  /// to edit, so it carries no dial code — only the managed rows do.
+  private async rosterForClub(clubId: string): Promise<{
+    userIds: string[];
+    dialCodeByUserId: Map<string, string>;
+  }> {
+    const [ownerships, memberships] = await Promise.all([
+      this.ownershipsForClub(clubId),
+      this.membershipModel
+        .find({ clubUserId: clubId, status: MembershipStatus.ACTIVE })
+        .select('playerUserId joinedAt')
+        .sort({ joinedAt: -1 }),
+    ]);
+
+    const dialCodeByUserId = new Map(
+      ownerships.map((o) => [o.userId.toString(), o.dialCode]),
+    );
+    const userIds = [
+      ...ownerships.map((o) => o.userId.toString()),
+      ...memberships.map((m) => m.playerUserId.toString()),
+    ];
+    return { userIds: [...new Set(userIds)], dialCodeByUserId };
+  }
+
   // Paginated + optionally filtered by name/phone search and sport/
   // position — see PlayersService.findManyByUserIdsFiltered for how the
   // actual query stays bounded to this club's own roster.
@@ -161,15 +192,11 @@ export class ClubPlayersService {
     clubId: string,
     dto: ListClubPlayersDto,
   ): Promise<ClubRosterPage> {
-    const ownerships = await this.ownershipsForClub(clubId);
-    const userIds = ownerships.map((o) => o.userId.toString());
+    const { userIds, dialCodeByUserId } = await this.rosterForClub(clubId);
     if (userIds.length === 0) {
       return { items: [], page: dto.page ?? 1, pageSize: 20, total: 0 };
     }
 
-    const dialCodeByUserId = new Map(
-      ownerships.map((o) => [o.userId.toString(), o.dialCode]),
-    );
     const result: PlayerSearchResult =
       await this.playersService.findManyByUserIdsFiltered(userIds, {
         search: dto.search,
@@ -196,8 +223,7 @@ export class ClubPlayersService {
   // regardless of roster size: 3 numbers + up to 5 players, never the
   // full roster.
   async getSummaryForClub(clubId: string): Promise<ClubPlayersSummary> {
-    const ownerships = await this.ownershipsForClub(clubId);
-    const userIds = ownerships.map((o) => o.userId.toString());
+    const { userIds, dialCodeByUserId } = await this.rosterForClub(clubId);
     if (userIds.length === 0) {
       return {
         totalPlayers: 0,
@@ -209,9 +235,6 @@ export class ClubPlayersService {
       };
     }
 
-    const dialCodeByUserId = new Map(
-      ownerships.map((o) => [o.userId.toString(), o.dialCode]),
-    );
     const profiles = await this.playersService.findManyByUserIds(userIds);
     const profileByUserId = new Map(
       profiles.map((p) => [p.userId.toString(), p]),

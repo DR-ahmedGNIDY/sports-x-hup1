@@ -26,7 +26,10 @@ class EventDetailBody extends ConsumerWidget {
     final canRateMatch =
         isClub && event.type == CalendarEventType.match && event.hasStarted && event.isConfirmed;
 
-    return SingleChildScrollView(
+    // Deliberately not a scroll view: the pages that mount this already
+    // scroll, and nesting a second scrollable inside them made the page
+    // spring back on its own and put the actions below out of reach.
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

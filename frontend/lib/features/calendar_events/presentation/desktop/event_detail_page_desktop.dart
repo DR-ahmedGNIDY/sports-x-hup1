@@ -18,7 +18,7 @@ class EventDetailPageDesktop extends ConsumerWidget {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 720),
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: eventAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),

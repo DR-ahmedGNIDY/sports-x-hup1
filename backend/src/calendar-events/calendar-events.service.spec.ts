@@ -85,9 +85,14 @@ function buildService(
     emit: jest.fn().mockResolvedValue({ _id: 'notification-1' }),
   };
 
+  const membershipModel = {
+    find: jest.fn().mockResolvedValue([]),
+  };
+
   const service = new CalendarEventsService(
     eventModel as never,
     clubManagedPlayerModel as never,
+    membershipModel as never,
     playersService as never,
     clubsService as never,
     notifications as never,

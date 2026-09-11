@@ -50,7 +50,10 @@ export class MembershipsController {
     );
     return {
       items: result.items.map((profile) =>
-        toClubMemberView(profile, joinedAtByUserId.get(profile.userId.toString())),
+        toClubMemberView(
+          profile,
+          joinedAtByUserId.get(profile.userId.toString()),
+        ),
       ),
       page: result.page,
       pageSize: result.pageSize,

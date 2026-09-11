@@ -479,10 +479,7 @@ export class PlayersService {
       // The Cloudinary asset already landed — without this the DB write
       // failing would leave it orphaned (never referenced, never cleaned
       // up) while the caller gets a raw 500.
-      await this.cloudinary.deleteAsset(
-        upload.publicId,
-        resourceTypeFor(type),
-      );
+      await this.cloudinary.deleteAsset(upload.publicId, resourceTypeFor(type));
       throw error;
     }
     return profile;

@@ -127,9 +127,11 @@ describe('MembershipsController', () => {
     it('never exposes contact details on a roster row', async () => {
       const { controller } = build({
         memberships: {
-          listActiveForClubUnpaginated: jest.fn().mockResolvedValue([
-            { playerUserId: 'player-user-1', joinedAt: new Date() },
-          ]),
+          listActiveForClubUnpaginated: jest
+            .fn()
+            .mockResolvedValue([
+              { playerUserId: 'player-user-1', joinedAt: new Date() },
+            ]),
         },
         players: {
           findManyPublicByUserIds: jest.fn().mockResolvedValue({

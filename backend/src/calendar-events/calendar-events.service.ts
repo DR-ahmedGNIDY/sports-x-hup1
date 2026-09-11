@@ -16,6 +16,10 @@ import {
   NotificationEntityType,
   NotificationType,
 } from '../notifications/schemas/notification.schema';
+import {
+  ClubMembership,
+  MembershipStatus,
+} from '../invitations/schemas/club-membership.schema';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ClubsService } from '../clubs/clubs.service';
 import { PlayersService } from '../players/players.service';
@@ -53,6 +57,8 @@ export class CalendarEventsService {
     // couple two independent features.
     @InjectModel(ClubManagedPlayer.name)
     private readonly clubManagedPlayerModel: Model<ClubManagedPlayer>,
+    @InjectModel(ClubMembership.name)
+    private readonly membershipModel: Model<ClubMembership>,
     private readonly playersService: PlayersService,
     private readonly clubsService: ClubsService,
     private readonly notifications: NotificationsService,
@@ -209,9 +215,21 @@ export class CalendarEventsService {
 
   async rosterPool(clubUserId: string, id: string): Promise<RosterPoolGroup[]> {
     const event = await this.requireOwnedByClub(clubUserId, id);
-    const ownerships: ClubManagedPlayerDocument[] =
-      await this.clubManagedPlayerModel.find({ clubId: clubUserId });
-    const userIds = ownerships.map((o) => o.userId.toString());
+    const [ownerships, memberships] = await Promise.all([
+      this.clubManagedPlayerModel.find({ clubId: clubUserId }),
+      // A player who accepted an invitation is part of the squad too, even
+      // though the club never created their account.
+      this.membershipModel.find({
+        clubUserId,
+        status: MembershipStatus.ACTIVE,
+      }),
+    ]);
+    const userIds = [
+      ...new Set([
+        ...ownerships.map((o) => o.userId.toString()),
+        ...memberships.map((m) => m.playerUserId.toString()),
+      ]),
+    ];
     if (userIds.length === 0) return [];
 
     const profiles = await this.playersService.findManyByUserIds(userIds);
