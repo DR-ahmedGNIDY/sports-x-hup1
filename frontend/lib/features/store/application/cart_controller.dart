@@ -23,8 +23,8 @@ const int maxLineQuantity = 50;
 final cartControllerProvider =
     NotifierProvider<CartController, List<CartItem>>(CartController.new);
 
-/// Set in `main_store.dart`, the same way the app's other storage
-/// dependencies are injected at the root.
+/// Set in `main.dart`, the same way the app's other storage dependencies
+/// are injected at the root.
 final cartPreferencesProvider = Provider<SharedPreferences>(
   (ref) => throw UnimplementedError('cartPreferencesProvider was not overridden'),
 );
