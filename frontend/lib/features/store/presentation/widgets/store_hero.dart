@@ -162,21 +162,30 @@ class _Slide extends StatelessWidget {
     final alt = banner.alt(isArabic);
     final hasLink = banner.linkPath != null && banner.linkPath!.isNotEmpty;
 
-    final image = CachedNetworkImage(
-      imageUrl: banner.imageFor(isDesktop: isDesktop),
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: double.infinity,
-      placeholder: (_, _) => _band(context),
-      // The description stands in for the picture when it fails, which is
-      // the case a decorative-only hero has nothing to say in.
-      errorWidget: (_, _, _) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(
-            alt ?? '',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium,
+    // Desktop shows the merchant's artwork in full — cropping the one image
+    // a merchant picked to represent their storefront is worse than letting
+    // it sit on the band colour either side of it. Mobile stays `cover`: at
+    // phone widths there is no room either side to letterbox into.
+    final image = Container(
+      color: Theme.of(context).brightness == Brightness.light
+          ? StoreTheme.surfaceAlt
+          : StoreTheme.darkSurfaceAlt,
+      child: CachedNetworkImage(
+        imageUrl: banner.imageFor(isDesktop: isDesktop),
+        fit: isDesktop ? BoxFit.contain : BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        placeholder: (_, _) => _band(context),
+        // The description stands in for the picture when it fails, which is
+        // the case a decorative-only hero has nothing to say in.
+        errorWidget: (_, _, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              alt ?? '',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ),
         ),
       ),

@@ -20,6 +20,7 @@ import { AdminModule } from './admin/admin.module';
 import { ContactModule } from './contact/contact.module';
 import { PostsModule } from './posts/posts.module';
 import { StoreModule } from './store/store.module';
+import { CalendarEventsModule } from './calendar-events/calendar-events.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { StoreModule } from './store/store.module';
     ContactModule,
     PostsModule,
     StoreModule,
+    CalendarEventsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

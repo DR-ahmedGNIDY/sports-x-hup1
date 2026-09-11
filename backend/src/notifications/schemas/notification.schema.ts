@@ -5,6 +5,7 @@ export enum NotificationType {
   INVITATION_RECEIVED = 'INVITATION_RECEIVED',
   INVITATION_ACCEPTED = 'INVITATION_ACCEPTED',
   INVITATION_REJECTED = 'INVITATION_REJECTED',
+  EVENT_SCHEDULED = 'EVENT_SCHEDULED',
 }
 
 // One value today. It exists so the dedupe index and the client's "what do I
@@ -12,6 +13,7 @@ export enum NotificationType {
 // without a migration.
 export enum NotificationEntityType {
   INVITATION = 'INVITATION',
+  CALENDAR_EVENT = 'CALENDAR_EVENT',
 }
 
 /** Whose name a notification names. */

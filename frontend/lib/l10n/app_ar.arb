@@ -753,7 +753,8 @@
   "storePreviousPage": "الصفحة السابقة",
   "storeNextPage": "الصفحة التالية",
   "dashboardAdminStore": "المتجر",
-  "storeNavLabel": "المتجر",
+  "calendarNavLabel": "التقويم",
+  "storeNavLabel": "المتجر",
   "storeCouponLabel": "كود الخصم",
   "storeCouponApply": "تطبيق",
   "storeCouponRemove": "إزالة الكود",

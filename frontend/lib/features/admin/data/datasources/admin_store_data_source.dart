@@ -169,7 +169,7 @@ class AdminStoreDataSource {
     String id,
     Map<String, dynamic> body,
   ) async => _ok(
-    await _client.patch('/admin/store/banners/', body: body, headers: _bearer(token)),
+    await _client.patch('/admin/store/banners/$id', body: body, headers: _bearer(token)),
   );
 
   /// [slot] is 'desktop' or 'mobile' — a banner carries one image for each.
@@ -181,7 +181,7 @@ class AdminStoreDataSource {
     String filename,
   ) async => _ok(
     await _client.postMultipart(
-      '/admin/store/banners//image/',
+      '/admin/store/banners/$id/image/$slot',
       fileField: 'file',
       fileBytes: bytes,
       filename: filename,
@@ -195,7 +195,7 @@ class AdminStoreDataSource {
     String slot,
   ) async => _ok(
     await _client.delete(
-      '/admin/store/banners//image/',
+      '/admin/store/banners/$id/image/$slot',
       headers: _bearer(token),
     ),
   );
@@ -204,7 +204,7 @@ class AdminStoreDataSource {
     String token,
     String id,
   ) async => _ok(
-    await _client.delete('/admin/store/banners/', headers: _bearer(token)),
+    await _client.delete('/admin/store/banners/$id', headers: _bearer(token)),
   );
 
   // ---------------------------------------------------------------- overview
@@ -229,7 +229,7 @@ class AdminStoreDataSource {
     String id,
     Map<String, dynamic> body,
   ) async => _ok(
-    await _client.patch('/admin/store/coupons/', body: body, headers: _bearer(token)),
+    await _client.patch('/admin/store/coupons/$id', body: body, headers: _bearer(token)),
   );
 
   // ---------------------------------------------------------------- shipping
