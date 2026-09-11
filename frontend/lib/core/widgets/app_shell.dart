@@ -124,6 +124,7 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
     AppBranch.home,
     AppBranch.clubProfile,
     AppBranch.clubPlayers,
+    AppBranch.calendar,
     AppBranch.search,
     AppBranch.savedPlayers,
     AppBranch.community,

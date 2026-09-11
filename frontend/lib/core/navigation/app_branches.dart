@@ -76,6 +76,11 @@ enum AppBranch {
     icon: Icons.storefront_outlined,
     selectedIcon: Icons.storefront,
   ),
+  calendar(
+    rootPath: '/calendar',
+    icon: Icons.calendar_month_outlined,
+    selectedIcon: Icons.calendar_month,
+  ),
   adminUsers(
     rootPath: '/admin/users',
     icon: Icons.people_outline,
@@ -130,6 +135,7 @@ enum AppBranch {
     savedPlayers => l10n.dashboardSavedPlayers,
     community => l10n.communityNavLabel,
     store => l10n.storeNavLabel,
+    calendar => l10n.calendarNavLabel,
     adminUsers => l10n.dashboardAdminUsers,
     adminPlayersClubs => l10n.dashboardAdminPlayersClubs,
     adminStore => l10n.dashboardAdminStore,
@@ -215,6 +221,10 @@ final Map<String, AppRouteMeta> _routeMeta = {
     title: (l10n) => l10n.invitationsTitle,
     ownsChrome: true,
   ),
+  '/calendar': AppRouteMeta(
+    title: (l10n) => l10n.calendarNavLabel,
+    ownsChrome: true,
+  ),
   '/search': AppRouteMeta(
     title: (l10n) => l10n.dashboardSearchPlayers,
     ownsChrome: true,
@@ -263,6 +273,14 @@ AppRouteMeta? routeMetaFor(String path) {
     return const AppRouteMeta(title: null, ownsChrome: true);
   }
 
+  if (path.startsWith('/calendar/')) {
+    return AppRouteMeta(
+      title: (l10n) => l10n.calendarNavLabel,
+      parentPath: AppBranch.calendar.rootPath,
+      ownsChrome: true,
+    );
+  }
+
   // The other parameterised routes in the shell.
   if (path.startsWith('/club/players/') && path.endsWith('/edit')) {
     return AppRouteMeta(
@@ -299,6 +317,7 @@ List<AppBranch> tabBranchesFor(UserRole? role) => switch (role) {
     AppBranch.home,
     AppBranch.clubProfile,
     AppBranch.clubPlayers,
+    AppBranch.calendar,
     AppBranch.search,
   ],
   // Skills is not a tab: it is already rendered in full inside the Profile
@@ -335,12 +354,15 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
       AppBranch.clubInvitations,
       AppBranch.savedPlayers,
       AppBranch.community,
+      AppBranch.store,
       AppBranch.settings,
     ],
     // Same call as the Club's: Invitations is an account-sheet entry, not a
     // fourth tab displacing Community.
     UserRole.player => const [
       AppBranch.playerInvitations,
+      AppBranch.calendar,
+      AppBranch.store,
       AppBranch.settings,
     ],
     UserRole.admin => const [

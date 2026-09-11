@@ -18,6 +18,8 @@ import '../../features/club/presentation/public_clubs_listing_page.dart';
 import '../../features/club_players/presentation/add_club_player_page.dart';
 import '../../features/club_players/presentation/club_players_page.dart';
 import '../../features/club_players/presentation/edit_club_player_page.dart';
+import '../../features/calendar_events/presentation/calendar_page.dart';
+import '../../features/calendar_events/presentation/event_detail_page.dart';
 import '../../features/community/presentation/community_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/invitations/presentation/club_invitations_page.dart';
@@ -477,6 +479,20 @@ StatefulShellBranch _branchFor(AppBranch branch) {
               ),
             ),
           ],
+        ),
+      ],
+      AppBranch.calendar => [
+        GoRoute(
+          path: '/calendar',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const CalendarPage()),
+        ),
+        GoRoute(
+          path: '/calendar/:id',
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: EventDetailPage(eventId: state.pathParameters['id']!),
+          ),
         ),
       ],
       AppBranch.adminUsers => [

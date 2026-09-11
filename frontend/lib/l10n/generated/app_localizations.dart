@@ -3727,6 +3727,12 @@ abstract class AppLocalizations {
   /// **'المتجر'**
   String get dashboardAdminStore;
 
+  /// No description provided for @calendarNavLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقويم'**
+  String get calendarNavLabel;
+
   /// No description provided for @storeNavLabel.
   ///
   /// In ar, this message translates to:

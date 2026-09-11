@@ -1979,6 +1979,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardAdminStore => 'Store';
 
   @override
+  String get calendarNavLabel => 'Calendar';
+
+  @override
   String get storeNavLabel => 'Store';
 
   @override

@@ -1963,6 +1963,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboardAdminStore => 'المتجر';
 
   @override
+  String get calendarNavLabel => 'التقويم';
+
+  @override
   String get storeNavLabel => 'المتجر';
 
   @override
