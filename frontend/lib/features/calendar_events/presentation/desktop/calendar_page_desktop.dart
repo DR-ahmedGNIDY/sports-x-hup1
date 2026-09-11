@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../application/calendar_events_controller.dart';
-import '../shared/day_events_sheet.dart';
+import '../shared/day_events_panel.dart';
 import '../shared/month_calendar_grid.dart';
 
 class CalendarPageDesktop extends ConsumerStatefulWidget {
@@ -18,6 +18,7 @@ class CalendarPageDesktop extends ConsumerStatefulWidget {
 
 class _CalendarPageDesktopState extends ConsumerState<CalendarPageDesktop> {
   DateTime _visibleMonth = DateTime(DateTime.now().year, DateTime.now().month);
+  DateTime _selectedDay = DateUtils.dateOnly(DateTime.now());
 
   String get _monthKey =>
       '${_visibleMonth.year}-${_visibleMonth.month.toString().padLeft(2, '0')}';
@@ -76,22 +77,24 @@ class _CalendarPageDesktopState extends ConsumerState<CalendarPageDesktop> {
                         : playerCalendarEventsProvider(_monthKey),
                   ),
                 ),
-                data: (events) => MonthCalendarGrid(
-                  month: _visibleMonth,
-                  events: events,
-                  onDayTap: (day) {
-                    final dayEvents = events
-                        .where((e) => e.date.year == day.year && e.date.month == day.month && e.date.day == day.day)
-                        .toList();
-                    showDayEventsSheet(
-                      context,
+                data: (events) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    MonthCalendarGrid(
+                      month: _visibleMonth,
+                      events: events,
+                      selectedDay: _selectedDay,
+                      onDayTap: (day) => setState(() => _selectedDay = day),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    DayEventsPanel(
                       ref: ref,
-                      day: day,
-                      dayEvents: dayEvents,
+                      day: _selectedDay,
+                      events: events,
                       isClub: widget.isClub,
                       availableBirthYears: availableBirthYears,
-                    );
-                  },
+                    ),
+                  ],
                 ),
               ),
             ],

@@ -13,12 +13,14 @@ class MonthCalendarGrid extends StatelessWidget {
     required this.month,
     required this.events,
     required this.onDayTap,
+    this.selectedDay,
   });
 
   /// The first day of the visible month.
   final DateTime month;
   final List<CalendarEvent> events;
   final ValueChanged<DateTime> onDayTap;
+  final DateTime? selectedDay;
 
   static const _weekdayLabels = ['اث', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت', 'أحد'];
 
@@ -80,6 +82,7 @@ class MonthCalendarGrid extends StatelessWidget {
     final date = DateTime(month.year, month.month, day);
     final dayEvents = eventsByDay[day] ?? const [];
     final isToday = _isSameDay(date, DateTime.now());
+    final isSelected = selectedDay != null && _isSameDay(date, selectedDay!);
 
     return Expanded(
       child: InkWell(
@@ -88,6 +91,7 @@ class MonthCalendarGrid extends StatelessWidget {
           height: 56,
           margin: const EdgeInsets.all(2),
           decoration: BoxDecoration(
+            color: isSelected ? AppColors.brandBlue.withValues(alpha: 0.18) : null,
             borderRadius: BorderRadius.circular(8),
             border: isToday ? Border.all(color: AppColors.brandBlue, width: 1.4) : null,
           ),
