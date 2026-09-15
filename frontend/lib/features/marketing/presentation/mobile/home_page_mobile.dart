@@ -61,7 +61,6 @@ class HomePageMobile extends ConsumerWidget {
                         child: Text(
                           l10n.homeGetStarted,
                           style: const TextStyle(
-                            color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),

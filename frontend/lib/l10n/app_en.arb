@@ -779,5 +779,9 @@
   "storeCouponApply": "Apply",
   "storeCouponRemove": "Remove code",
   "storeDiscount": "Discount",
-  "storeCouponApplied": "Code applied"
+  "storeCouponApplied": "Code applied",
+  "brandTagline": "Building a stronger generation, together",
+  "brandMotto": "Today's discipline makes tomorrow's champions",
+  "sidebarPromoText": "Sport.\nBetter character.\nStronger future.",
+  "sidebarPromoAction": "Together to the top"
 }

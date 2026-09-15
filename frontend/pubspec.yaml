@@ -63,18 +63,16 @@ dev_dependencies:
   mocktail: ^1.0.5
 
 flutter_launcher_icons:
-  # The brand master, not the bundled variant: launcher icons are generated
-  # at up to 1024px and the shipped logo.png is 96px tall by design.
-  image_path: "assets/brand/logo_master.png"
+  # The 1024px square written by tool/generate_logo_variants.py — the X mark
+  # in white on the brand black.
+  image_path: "assets/brand/app_icon.png"
   android: true
   min_sdk_android: 21
-  adaptive_icon_background: "#0B0E14"
-  adaptive_icon_foreground: "assets/brand/logo_master.png"
+  adaptive_icon_background: "#0A0A0A"
+  adaptive_icon_foreground: "assets/brand/app_icon.png"
   web:
-    generate: true
-    image_path: "assets/brand/logo_master.png"
-    background_color: "#0B0E14"
-    theme_color: "#0B0E14"
+    # The web icons are written by tool/generate_logo_variants.py instead.
+    generate: false
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -90,7 +88,12 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/logo.png
+    - assets/images/logo_white.png
+    - assets/images/logo_black.png
+    - assets/images/mark_white.png
+    - assets/images/mark_black.png
+    - assets/images/home_banner.jpg
+    - assets/images/sidebar_promo.jpg
     - assets/videos/panar1.mp4
     - assets/videos/panar22.mp4
     - .env

@@ -26,8 +26,8 @@ class MarketingHeaderBand extends StatelessWidget {
           end: Alignment.bottomCenter,
           colors: [
             isDark
-                ? AppColors.brandBlueDark.withValues(alpha: 0.35)
-                : AppColors.brandBlueLight.withValues(alpha: 0.16),
+                ? AppColors.white.withValues(alpha: 0.06)
+                : AppColors.black.withValues(alpha: 0.05),
             Colors.transparent,
           ],
         ),

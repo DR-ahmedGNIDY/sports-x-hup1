@@ -16,7 +16,7 @@ class HeroSiteName extends StatelessWidget {
       textDirection: TextDirection.ltr,
       child: ShaderMask(
         shaderCallback: (bounds) => const LinearGradient(
-          colors: [AppColors.brandBlueLight, AppColors.brandBlue],
+          colors: [AppColors.white, AppColors.greyLight],
         ).createShader(bounds),
         child: Text(
           'SPORT X HUB',

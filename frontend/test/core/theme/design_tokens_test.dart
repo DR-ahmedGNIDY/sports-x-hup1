@@ -75,17 +75,13 @@ void main() {
     test('dark mode glows lighter than the surface, light mode darkens', () {
       // The rule the card theme was already following by hand: a black drop
       // shadow on a near-black background is invisible, so dark mode tints
-      // its shadow with the light brand blue instead.
+      // its shadow white instead.
       final dark = AppElevation.raised.shadowColor(Brightness.dark);
       final light = AppElevation.raised.shadowColor(Brightness.light);
 
       expect(
         (dark.r, dark.g, dark.b),
-        (
-          AppColors.brandBlueLight.r,
-          AppColors.brandBlueLight.g,
-          AppColors.brandBlueLight.b,
-        ),
+        (AppColors.white.r, AppColors.white.g, AppColors.white.b),
       );
       expect(
         (light.r, light.g, light.b),
@@ -115,19 +111,21 @@ void main() {
       // FilledButton is what 31 files actually use; ElevatedButton is what
       // the theme used to style. Leaving the two unequal meant most of the
       // app's submit buttons wore Material's seeded onPrimary — dark navy on
-      // brand blue — instead of the brand pairing.
+      // brand blue — instead of the brand pairing. The brand pairing is ink
+      // on paper: black on the light theme, white on the dark one.
       for (final theme in [AppTheme.dark, AppTheme.light]) {
         final filled = theme.filledButtonTheme.style!;
         final elevated = theme.elevatedButtonTheme.style!;
+        final isDark = theme.brightness == Brightness.dark;
 
         expect(
           filled.foregroundColor?.resolve({}),
-          AppColors.white,
+          isDark ? AppColors.black : AppColors.white,
           reason: '${theme.brightness}',
         );
         expect(
           filled.backgroundColor?.resolve({}),
-          AppColors.brandBlue,
+          isDark ? AppColors.white : AppColors.black,
           reason: '${theme.brightness}',
         );
         expect(filled.foregroundColor, elevated.foregroundColor);

@@ -9,6 +9,10 @@ import 'profile_colors.dart';
 
 /// Central theme definitions. Screens must consume colors/text styles via
 /// `Theme.of(context)`, never by hardcoding hex values inline.
+///
+/// The SXH identity is monochrome: the accent is ink — black on the light
+/// theme, white on the dark one — so the scheme is written out by hand
+/// rather than seeded, since a seed always brings a hue of its own.
 abstract final class AppTheme {
   static ThemeData get light => _build(Brightness.light);
 
@@ -35,7 +39,9 @@ abstract final class AppTheme {
         style: TextButton.styleFrom(minimumSize: minimumSize),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(minimumSize: minimumSize),
+        style: OutlinedButton.styleFrom(
+          minimumSize: minimumSize,
+        ).merge(base.outlinedButtonTheme.style),
       ),
       textTheme: text.copyWith(
         displayLarge: AppTextStyles.compactDisplayLarge.copyWith(
@@ -60,29 +66,61 @@ abstract final class AppTheme {
     );
   }
 
-  /// Shared by [ElevatedButton] and [FilledButton] so the app's primary
-  /// action looks the same whichever widget a screen reached for. Brightness
-  /// independent: a filled brand-blue button reads the same in both themes,
-  /// and white on brand blue is the pairing the logo already establishes.
-  static final ButtonStyle _primaryButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: AppColors.brandBlue,
-    foregroundColor: AppColors.white,
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppRadius.sm),
-    ),
-  );
+  static ColorScheme _scheme(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final ink = isDark ? AppColors.white : AppColors.black;
+    final paper = isDark ? AppColors.black : AppColors.white;
+
+    return ColorScheme(
+      brightness: brightness,
+      primary: ink,
+      onPrimary: paper,
+      primaryContainer: isDark ? AppColors.graphite : AppColors.mist,
+      onPrimaryContainer: ink,
+      secondary: isDark ? AppColors.greyLight : AppColors.grey,
+      onSecondary: paper,
+      secondaryContainer: isDark ? AppColors.slate : AppColors.mist,
+      onSecondaryContainer: ink,
+      tertiary: isDark ? AppColors.greyLight : AppColors.grey,
+      onTertiary: paper,
+      error: AppColors.error,
+      onError: AppColors.white,
+      surface: isDark ? AppColors.charcoal : AppColors.white,
+      onSurface: isDark ? const Color(0xFFFAFAFA) : AppColors.black,
+      onSurfaceVariant: isDark ? AppColors.greyLight : AppColors.grey,
+      surfaceContainerLowest: isDark ? AppColors.black : AppColors.white,
+      surfaceContainerLow: isDark ? const Color(0xFF111111) : AppColors.offWhite,
+      surfaceContainer: isDark ? AppColors.charcoal : AppColors.mist,
+      surfaceContainerHigh: isDark ? AppColors.slate : AppColors.mist,
+      surfaceContainerHighest: isDark ? AppColors.graphite : AppColors.silver,
+      outline: isDark ? const Color(0xFF3A3A3A) : const Color(0xFFCFCFD3),
+      outlineVariant: isDark ? AppColors.graphite : AppColors.silver,
+      shadow: Colors.black,
+      scrim: Colors.black,
+      inverseSurface: isDark ? AppColors.white : AppColors.black,
+      onInverseSurface: isDark ? AppColors.black : AppColors.white,
+      inversePrimary: paper,
+      surfaceTint: Colors.transparent,
+    );
+  }
 
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
+    final colorScheme = _scheme(brightness);
+    final border = colorScheme.outlineVariant;
 
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.brandBlue,
-      brightness: brightness,
-      primary: AppColors.brandBlue,
-      secondary: AppColors.brandBlueLight,
-      error: AppColors.error,
-      surface: isDark ? AppColors.charcoal : AppColors.white,
+    // Shared by [ElevatedButton] and [FilledButton] so the app's primary
+    // action looks the same whichever widget a screen reached for: solid ink
+    // with paper-colored text.
+    final primaryButtonStyle = ElevatedButton.styleFrom(
+      backgroundColor: colorScheme.primary,
+      foregroundColor: colorScheme.onPrimary,
+      disabledBackgroundColor: colorScheme.surfaceContainerHighest,
+      elevation: 0,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
     );
 
     return ThemeData(
@@ -90,6 +128,7 @@ abstract final class AppTheme {
       brightness: brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: isDark ? AppColors.black : AppColors.offWhite,
+      canvasColor: isDark ? AppColors.black : AppColors.offWhite,
       fontFamily: AppTextStyles.fontFamily,
       textTheme: TextTheme(
         displayLarge: AppTextStyles.displayLarge.copyWith(
@@ -106,69 +145,88 @@ abstract final class AppTheme {
           color: colorScheme.onSurface,
         ),
         bodySmall: AppTextStyles.caption.copyWith(
-          color: isDark ? AppColors.greyLight : AppColors.grey,
+          color: colorScheme.onSurfaceVariant,
         ),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: isDark ? AppColors.charcoal : AppColors.white,
+        backgroundColor: isDark ? AppColors.black : AppColors.white,
         foregroundColor: colorScheme.onSurface,
         elevation: AppElevation.flat.value,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         centerTitle: false,
       ),
       cardTheme: CardThemeData(
-        color: isDark ? AppColors.slate : AppColors.white,
-        // A real (if subtle) elevation instead of a flat outline. Dark mode
-        // leans on a faint, lighter-surface glow rather than a literal drop
-        // shadow (black-on-black doesn't read); light mode uses a
-        // conventional soft grey shadow. See AppElevation, which pairs the
-        // two so they can't be picked apart from each other again.
-        elevation: AppElevation.raised.value,
+        color: colorScheme.surface,
+        // Light mode separates cards with a soft grey shadow; on black a
+        // shadow reads as nothing, so dark mode relies on the hairline.
+        elevation: isDark ? 0 : AppElevation.raised.value,
         shadowColor: AppElevation.raised.shadowColor(brightness),
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
-          // Lighter/optional now that elevation carries the separation.
-          side: BorderSide(
-            color: isDark
-                ? AppColors.slate.withValues(alpha: 0.6)
-                : AppColors.offWhite.withValues(alpha: 0.8),
-          ),
+          side: BorderSide(color: border),
         ),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: isDark ? AppColors.charcoal : AppColors.white,
-        selectedIconTheme: IconThemeData(color: AppColors.brandBlue),
+        backgroundColor: colorScheme.surface,
+        selectedIconTheme: IconThemeData(color: colorScheme.primary),
         selectedLabelTextStyle: AppTextStyles.bodyStrong.copyWith(
-          color: AppColors.brandBlue,
+          color: colorScheme.primary,
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: isDark ? AppColors.charcoal : AppColors.white,
-        indicatorColor: AppColors.brandBlue.withValues(alpha: 0.15),
+        backgroundColor: colorScheme.surface,
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.1),
       ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: _primaryButtonStyle,
+      listTileTheme: ListTileThemeData(
+        selectedColor: colorScheme.primary,
+        iconColor: colorScheme.onSurfaceVariant,
       ),
-      // The app's actual primary button is FilledButton — 31 files use it,
-      // against a handful using ElevatedButton — and until now only
-      // ElevatedButton was themed. FilledButton fell through to Material 3's
-      // seeded `onPrimary`, a dark navy that sat on brand blue at a contrast
-      // ratio no one would have chosen, on every form's submit button.
-      filledButtonTheme: FilledButtonThemeData(style: _primaryButtonStyle),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: isDark ? AppColors.slate : AppColors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.sm),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.slate : AppColors.greyLight,
+      chipTheme: ChipThemeData(
+        backgroundColor: colorScheme.surface,
+        selectedColor: colorScheme.primary,
+        checkmarkColor: colorScheme.onPrimary,
+        side: BorderSide(color: border),
+        shape: const StadiumBorder(),
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colorScheme.primary,
+        linearTrackColor: colorScheme.surfaceContainerHighest,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(style: primaryButtonStyle),
+      // The app's actual primary button is FilledButton — most forms use it —
+      // so it is themed identically to ElevatedButton.
+      filledButtonTheme: FilledButtonThemeData(style: primaryButtonStyle),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: colorScheme.onSurface,
+          side: BorderSide(color: colorScheme.outline),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.sm),
           ),
         ),
       ),
-      dividerTheme: DividerThemeData(
-        color: isDark ? AppColors.slate : AppColors.offWhite,
-        thickness: 1,
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: colorScheme.onSurface),
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: isDark ? AppColors.slate : AppColors.mist,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          borderSide: BorderSide(color: border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          borderSide: BorderSide(color: border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          borderSide: BorderSide(color: colorScheme.primary, width: 1.4),
+        ),
+      ),
+      dividerTheme: DividerThemeData(color: border, thickness: 1),
       extensions: [isDark ? ProfileColors.dark : ProfileColors.light],
     );
   }

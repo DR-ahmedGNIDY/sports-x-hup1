@@ -71,7 +71,7 @@ class _EmptyStatePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final accent = Paint()
-      ..color = AppColors.brandBlueLight.withValues(alpha: 0.28)
+      ..color = AppColors.grey.withValues(alpha: 0.4)
       ..style = PaintingStyle.stroke
       ..strokeWidth = scale * 0.02
       ..strokeCap = StrokeCap.round;
@@ -137,7 +137,7 @@ class _EmptyStatePainter extends CustomPainter {
 
     // Faint dotted trail suggesting a search that came up short.
     final dotPaint = Paint()
-      ..color = AppColors.brandBlueLight.withValues(alpha: 0.3)
+      ..color = AppColors.grey.withValues(alpha: 0.4)
       ..style = PaintingStyle.fill;
     final trailStart = handleEnd + const Offset(6, 6);
     for (var i = 0; i < 3; i++) {

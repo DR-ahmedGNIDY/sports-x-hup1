@@ -3803,6 +3803,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم تطبيق الكود'**
   String get storeCouponApplied;
+
+  /// No description provided for @brandTagline.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاً نصنع جيلاً أقوى'**
+  String get brandTagline;
+
+  /// No description provided for @brandMotto.
+  ///
+  /// In ar, this message translates to:
+  /// **'الانضباط اليوم يصنع أبطال الغد'**
+  String get brandMotto;
+
+  /// No description provided for @sidebarPromoText.
+  ///
+  /// In ar, this message translates to:
+  /// **'رياضة\nشخصية أفضل\nمستقبل أقوى'**
+  String get sidebarPromoText;
+
+  /// No description provided for @sidebarPromoAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاً نحو القمة'**
+  String get sidebarPromoAction;
 }
 
 class _AppLocalizationsDelegate

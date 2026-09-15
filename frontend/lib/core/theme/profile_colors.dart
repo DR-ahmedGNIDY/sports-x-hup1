@@ -63,7 +63,7 @@ class ProfileColors extends ThemeExtension<ProfileColors> {
   static const dark = ProfileColors(
     bg: AppColors.profileBg,
     surface: AppColors.profileSurface,
-    surfaceAlt: Color(0xFF0F1520),
+    surfaceAlt: AppColors.slate,
     text: AppColors.profileText,
     textMuted: AppColors.greyLight,
     accent: AppColors.profileAccent,
@@ -76,14 +76,14 @@ class ProfileColors extends ThemeExtension<ProfileColors> {
   static const light = ProfileColors(
     bg: AppColors.offWhite,
     surface: AppColors.white,
-    surfaceAlt: Color(0xFFEDF2F9),
+    surfaceAlt: AppColors.mist,
     text: AppColors.black,
     textMuted: AppColors.grey,
     accent: AppColors.brandBlue,
     neonGreen: Color(0xFF16A34A),
     gold: Color(0xFFAD7F17),
     borderOnSurface: AppColors.black,
-    neutralBadgeBg: Color(0xFFE2E8F0),
+    neutralBadgeBg: AppColors.silver,
   );
 
   @override

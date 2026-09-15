@@ -25,6 +25,7 @@ import '../../../home_feed/presentation/shared/home_feed_slivers.dart';
 import '../shared/composer_card.dart';
 import '../shared/club_dashboard_widgets.dart';
 import '../shared/feed_tabs.dart';
+import '../shared/home_banner.dart';
 
 /// Content-only — the top bar/bottom nav chrome that used to live here now
 /// lives in `AppShell` (mounted once by the `/dashboard` ShellRoute), so
@@ -117,6 +118,8 @@ class _ClubDashboardMobileState extends ConsumerState<_ClubDashboardMobile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                HomeBanner(name: profileAsync.valueOrNull?.name),
+                const SizedBox(height: AppSpacing.lg),
                 profileAsync.when(
                   data: (profile) => _ClubHomeHeaderMobile(profile: profile),
                   loading: () => const SkeletonBox(height: 52),
@@ -233,6 +236,8 @@ class _PlayerHomeMobileState extends ConsumerState<_PlayerHomeMobile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                HomeBanner(name: profileAsync.valueOrNull?.fullName),
+                const SizedBox(height: AppSpacing.lg),
                 profileAsync.when(
                   data: (profile) => _PlayerHomeHeaderMobile(profile: profile),
                   loading: () => const SkeletonBox(height: 52),

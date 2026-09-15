@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -88,9 +87,12 @@ class SkillCategoryTabs extends StatelessWidget {
                 selected: selected,
                 onSelected: (_) => onSelected(tab.id),
                 backgroundColor: colors.surface,
-                selectedColor: AppColors.profileSecondary,
+                selectedColor: Theme.of(context).colorScheme.primary,
+                checkmarkColor: Theme.of(context).colorScheme.onPrimary,
                 labelStyle: AppTextStyles.eyebrow.copyWith(
-                  color: selected ? AppColors.white : colors.textMuted,
+                  color: selected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : colors.textMuted,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                 ),
                 side: BorderSide(

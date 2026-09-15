@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/calendar_event.dart';
 
 String calendarEventTypeLabel(CalendarEventType type) => switch (type) {
@@ -32,8 +31,11 @@ class EventCard extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         leading: CircleAvatar(
-          backgroundColor: AppColors.brandBlue.withValues(alpha: 0.12),
-          child: Icon(_iconFor(event.type), color: AppColors.brandBlue),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: Icon(
+            _iconFor(event.type),
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
         title: Text(event.displayName(typeLabel: calendarEventTypeLabel)),
         subtitle: Text('${event.startTime} - ${event.endTime}  •  ${event.location}'),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../player/application/lookup_providers.dart';
 import '../../../player/domain/entities/lookup_option.dart';
@@ -60,9 +59,12 @@ class CommunityFiltersBar extends ConsumerWidget {
                     selected: selected,
                     onSelected: (_) => controller.updateSport(option.name),
                     backgroundColor: colors.surface,
-                    selectedColor: AppColors.brandBlue,
+                    selectedColor: Theme.of(context).colorScheme.primary,
+                    checkmarkColor: Theme.of(context).colorScheme.onPrimary,
                     labelStyle: TextStyle(
-                      color: selected ? AppColors.white : colors.textMuted,
+                      color: selected
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : colors.textMuted,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                     ),
                     side: BorderSide(color: colors.borderOnSurface.withValues(alpha: 0.08)),

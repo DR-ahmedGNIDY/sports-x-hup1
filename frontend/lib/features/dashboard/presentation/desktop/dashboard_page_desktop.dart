@@ -24,6 +24,7 @@ import '../../../home_feed/presentation/shared/home_feed_slivers.dart';
 import '../shared/composer_card.dart';
 import '../shared/club_dashboard_widgets.dart';
 import '../shared/feed_tabs.dart';
+import '../shared/home_banner.dart';
 import '../shared/club_news_columns.dart';
 
 /// Content-only — the sidebar/top bar chrome that used to live here now
@@ -110,6 +111,8 @@ class _ClubDashboardDesktopState extends ConsumerState<_ClubDashboardDesktop> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      HomeBanner(name: profileAsync.valueOrNull?.name),
+                      const SizedBox(height: AppSpacing.lg),
                       profileAsync.when(
                         data: (profile) => _ClubHomeHeader(profile: profile),
                         loading: () => const SkeletonBox(height: 72),
@@ -241,6 +244,8 @@ class _PlayerDashboardDesktopState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      HomeBanner(name: profileAsync.valueOrNull?.fullName),
+                      const SizedBox(height: AppSpacing.lg),
                       profileAsync.when(
                         data: (profile) => _PlayerHomeHeader(profile: profile),
                         loading: () => const SkeletonBox(height: 72),

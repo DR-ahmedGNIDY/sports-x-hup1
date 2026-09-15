@@ -93,7 +93,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           }
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(
-              child: CircularProgressIndicator(color: AppColors.brandBlue),
+              child: CircularProgressIndicator(color: AppColors.white),
             );
           }
           return Center(

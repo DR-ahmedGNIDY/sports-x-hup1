@@ -21,7 +21,7 @@ from PIL import Image
 
 # AppColors.black — the app's dark scaffold background, and the same value
 # used for `theme_color`/`background_color` in web/manifest.json.
-BACKGROUND = (0x0B, 0x0E, 0x14, 255)
+BACKGROUND = (0x0A, 0x0A, 0x0A, 255)
 
 # Fraction of the device's shorter edge the logo occupies. Matches the
 # in-page loader's logo sizing in web/index.html so the handoff from the

@@ -2022,4 +2022,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get storeCouponApplied => 'Code applied';
+
+  @override
+  String get brandTagline => 'Building a stronger generation, together';
+
+  @override
+  String get brandMotto => 'Today\'s discipline makes tomorrow\'s champions';
+
+  @override
+  String get sidebarPromoText => 'Sport.\nBetter character.\nStronger future.';
+
+  @override
+  String get sidebarPromoAction => 'Together to the top';
 }

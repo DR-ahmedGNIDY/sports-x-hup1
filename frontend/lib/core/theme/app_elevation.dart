@@ -38,6 +38,6 @@ enum AppElevation {
   /// either invisible (dark mode, black shadow) or muddy (light mode, blue
   /// glow).
   Color shadowColor(Brightness brightness) => brightness == Brightness.dark
-      ? AppColors.brandBlueLight.withValues(alpha: 0.04 * value + 0.08)
+      ? AppColors.white.withValues(alpha: 0.02 * value + 0.03)
       : AppColors.black.withValues(alpha: 0.04 * value + 0.04);
 }

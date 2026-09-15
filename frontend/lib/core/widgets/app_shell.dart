@@ -11,7 +11,10 @@ import '../locale/language_toggle_button.dart';
 import '../../features/notifications/presentation/shared/notification_bell.dart';
 import '../navigation/app_branches.dart';
 import '../theme/app_blur.dart';
+import '../theme/app_colors.dart';
 import '../theme/app_motion.dart';
+import '../theme/app_radius.dart';
+import '../theme/app_theme.dart';
 import '../theme/app_spacing.dart';
 import '../theme/theme_mode_provider.dart';
 import '../utils/app_haptics.dart';
@@ -89,14 +92,12 @@ class _DesktopShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
     final role = ref.watch(sessionControllerProvider).user?.role;
 
     return Scaffold(
       body: Row(
         children: [
           _Sidebar(
-            colorScheme: colorScheme,
             role: role,
             navigationShell: navigationShell,
           ),
@@ -157,46 +158,312 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
   ],
 };
 
-class _Sidebar extends StatelessWidget {
-  const _Sidebar({
-    required this.colorScheme,
-    required this.role,
-    required this.navigationShell,
-  });
+/// The desktop sidebar. Black in both themes — it is the brand's anchor on
+/// the page — so it renders under the dark theme whatever the app is in.
+/// Only the selected item follows the app's theme: a white pill in light
+/// mode, a soft grey wash in dark mode.
+class _Sidebar extends ConsumerWidget {
+  const _Sidebar({required this.role, required this.navigationShell});
 
-  final ColorScheme colorScheme;
   final UserRole? role;
   final StatefulNavigationShell navigationShell;
+
+  /// Below this viewport height the promo card would squeeze the nav list,
+  /// so it steps aside.
+  static const double _promoMinViewportHeight = 760;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final appIsDark = Theme.of(context).brightness == Brightness.dark;
+    final clubName = role == UserRole.club
+        ? ref.watch(clubProfileControllerProvider).valueOrNull?.name?.trim()
+        : null;
+    final showPromo =
+        MediaQuery.sizeOf(context).height >= _promoMinViewportHeight;
+
+    return Theme(
+      data: AppTheme.dark,
+      child: Material(
+        color: AppColors.black,
+        child: SizedBox(
+          width: 264,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
+                child: Column(
+                  children: [
+                    const AppLogo(height: 40, onDark: true),
+                    if (clubName != null && clubName.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        clubName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.xs),
+                    const Text(
+                      'SPORTS CLUB',
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        color: AppColors.greyLight,
+                        fontSize: 9,
+                        letterSpacing: 2.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  children: [
+                    for (final branch in _sidebarBranchesFor(role))
+                      _SidebarItem(
+                        icon: navigationShell.currentIndex == branch.index
+                            ? branch.selectedIcon
+                            : branch.icon,
+                        label: branch.label(l10n),
+                        selected: navigationShell.currentIndex == branch.index,
+                        appIsDark: appIsDark,
+                        onTap: () =>
+                            _selectBranch(navigationShell, branch.index),
+                      ),
+                  ],
+                ),
+              ),
+              if (showPromo)
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+                  child: _SidebarPromoCard(),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: _SidebarLogoutButton(
+                  label: l10n.logoutTooltip,
+                  onTap: () =>
+                      ref.read(sessionControllerProvider.notifier).logout(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SidebarItem extends StatelessWidget {
+  const _SidebarItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.appIsDark,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final bool appIsDark;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(AppRadius.sm);
+    final foreground = selected && !appIsDark
+        ? AppColors.black
+        : AppColors.white.withValues(alpha: selected ? 1 : 0.82);
+
+    final BoxDecoration? decoration;
+    if (!selected) {
+      decoration = null;
+    } else if (appIsDark) {
+      decoration = BoxDecoration(
+        borderRadius: radius,
+        gradient: LinearGradient(
+          begin: AlignmentDirectional.centerEnd,
+          end: AlignmentDirectional.centerStart,
+          colors: [
+            AppColors.white.withValues(alpha: 0.26),
+            AppColors.white.withValues(alpha: 0.06),
+          ],
+        ),
+      );
+    } else {
+      decoration = BoxDecoration(color: AppColors.white, borderRadius: radius);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Semantics(
+        button: true,
+        selected: selected,
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            borderRadius: radius,
+            onTap: onTap,
+            child: AnimatedContainer(
+              duration: AppMotion.fast,
+              height: 52,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: decoration,
+              child: Row(
+                children: [
+                  Icon(icon, size: 24, color: foreground),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: foreground,
+                        fontSize: 15,
+                        fontWeight: selected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The brand card above Log out: the sidebar photograph with the slogan.
+/// Decorative — it carries no action of its own.
+class _SidebarPromoCard extends StatelessWidget {
+  const _SidebarPromoCard();
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     return Container(
-      width: 240,
+      height: 270,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: colorScheme.surface,
-        border: Border(right: BorderSide(color: colorScheme.outlineVariant)),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.white.withValues(alpha: 0.1)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(20),
-            child: AppLogo(height: 32),
+          Image.asset(
+            'assets/images/sidebar_promo.jpg',
+            fit: BoxFit.cover,
+            alignment: const Alignment(0, -0.2),
+            excludeFromSemantics: true,
           ),
-          const Divider(height: 1),
-          for (final branch in _sidebarBranchesFor(role))
-            ListTile(
-              leading: Icon(
-                navigationShell.currentIndex == branch.index
-                    ? branch.selectedIcon
-                    : branch.icon,
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.black.withValues(alpha: 0.2),
+                  AppColors.black.withValues(alpha: 0.1),
+                  AppColors.black.withValues(alpha: 0.9),
+                ],
+                stops: const [0, 0.4, 1],
               ),
-              title: Text(branch.label(l10n)),
-              selected: navigationShell.currentIndex == branch.index,
-              onTap: () => _selectBranch(navigationShell, branch.index),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.sidebarPromoText,
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    height: 1.45,
+                  ),
+                ),
+                const Spacer(),
+                const Center(child: AppLogo(height: 22, onDark: true)),
+                const SizedBox(height: AppSpacing.md),
+                Container(
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                    border: Border.all(color: AppColors.white, width: 1.2),
+                  ),
+                  child: Text(
+                    l10n.sidebarPromoAction,
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _SidebarLogoutButton extends StatelessWidget {
+  const _SidebarLogoutButton({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(AppRadius.md);
+    return Material(
+      color: AppColors.white.withValues(alpha: 0.06),
+      borderRadius: radius,
+      child: InkWell(
+        borderRadius: radius,
+        onTap: onTap,
+        child: SizedBox(
+          height: 52,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                const Icon(Icons.logout_outlined, color: AppColors.white),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      color: AppColors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -222,13 +489,9 @@ class _TopBar extends ConsumerWidget {
           onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
           icon: Icon(themeModeToggleIcon(themeMode)),
         ),
+        // Log out lives at the foot of the sidebar.
         const LanguageToggleButton(),
-        IconButton(
-          tooltip: l10n.logoutTooltip,
-          onPressed: () =>
-              ref.read(sessionControllerProvider.notifier).logout(),
-          icon: const Icon(Icons.logout_outlined),
-        ),
+        const SizedBox(width: AppSpacing.sm),
       ],
     );
   }

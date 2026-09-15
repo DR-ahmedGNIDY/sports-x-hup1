@@ -121,11 +121,12 @@ class MonthCalendarGrid extends StatelessWidget {
     final isSelected = selectedDay != null && _isSameDay(date, selectedDay!);
     final theme = Theme.of(context);
 
+    final scheme = theme.colorScheme;
     final Color numberColor;
     if (isSelected) {
-      numberColor = AppColors.white;
+      numberColor = scheme.onPrimary;
     } else if (isToday) {
-      numberColor = AppColors.brandBlue;
+      numberColor = scheme.primary;
     } else {
       numberColor = theme.textTheme.bodyMedium?.color ?? AppColors.white;
     }
@@ -144,9 +145,9 @@ class MonthCalendarGrid extends StatelessWidget {
                 height: 32,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isSelected ? AppColors.brandBlue : null,
+                  color: isSelected ? scheme.primary : null,
                   border: !isSelected && isToday
-                      ? Border.all(color: AppColors.brandBlue, width: 1.4)
+                      ? Border.all(color: scheme.primary, width: 1.4)
                       : null,
                 ),
                 alignment: Alignment.center,
@@ -176,8 +177,8 @@ class MonthCalendarGrid extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: isSelected
-                                    ? AppColors.white
-                                    : _dotColor(dayEvents[i].type),
+                                    ? scheme.onPrimary
+                                    : _dotColor(dayEvents[i].type, scheme),
                               ),
                             ),
                         ],
@@ -192,8 +193,8 @@ class MonthCalendarGrid extends StatelessWidget {
 
   /// A glance at the month should say what kind of week it is, not just that
   /// something is on.
-  Color _dotColor(CalendarEventType type) => switch (type) {
-    CalendarEventType.match => AppColors.brandBlue,
+  Color _dotColor(CalendarEventType type, ColorScheme scheme) => switch (type) {
+    CalendarEventType.match => scheme.primary,
     CalendarEventType.training => AppColors.success,
     CalendarEventType.other => AppColors.warning,
   };

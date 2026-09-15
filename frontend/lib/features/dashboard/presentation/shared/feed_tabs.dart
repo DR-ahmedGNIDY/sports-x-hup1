@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../home_feed/domain/entities/feed_item.dart';
@@ -19,6 +18,7 @@ class FeedTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.profileColors;
+    final scheme = Theme.of(context).colorScheme;
     final tabs = <(FeedItemKind?, String)>[
       (null, l10n.homeFeedTabAll),
       (FeedItemKind.photo, l10n.homeFeedTabPhotos),
@@ -39,9 +39,10 @@ class FeedTabs extends StatelessWidget {
             selected: selected,
             onSelected: (_) => onChanged(kind),
             backgroundColor: colors.surface,
-            selectedColor: AppColors.brandBlue,
+            selectedColor: scheme.primary,
+            checkmarkColor: scheme.onPrimary,
             labelStyle: TextStyle(
-              color: selected ? AppColors.white : colors.textMuted,
+              color: selected ? scheme.onPrimary : colors.textMuted,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
               fontSize: 13,
             ),

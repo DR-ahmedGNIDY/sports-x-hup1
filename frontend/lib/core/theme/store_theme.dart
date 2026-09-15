@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'app_colors.dart';
 import 'app_radius.dart';
 
 /// The storefront's own look, separate from [AppTheme].
@@ -50,7 +49,8 @@ abstract final class StoreTheme {
 
     final colorScheme =
         ColorScheme.fromSeed(
-          seedColor: AppColors.brandBlue,
+          seedColor: ink,
+          dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
           brightness: brightness,
         ).copyWith(
           surface: background,

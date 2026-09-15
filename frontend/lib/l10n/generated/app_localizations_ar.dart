@@ -2006,4 +2006,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get storeCouponApplied => 'تم تطبيق الكود';
+
+  @override
+  String get brandTagline => 'معاً نصنع جيلاً أقوى';
+
+  @override
+  String get brandMotto => 'الانضباط اليوم يصنع أبطال الغد';
+
+  @override
+  String get sidebarPromoText => 'رياضة\nشخصية أفضل\nمستقبل أقوى';
+
+  @override
+  String get sidebarPromoAction => 'معاً نحو القمة';
 }

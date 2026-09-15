@@ -65,7 +65,9 @@ class _StoreHeader extends ConsumerWidget implements PreferredSizeWidget {
           InkWell(
             onTap: () => context.go(StorePaths.home),
             child: Image.asset(
-              'assets/images/logo.png',
+              Theme.of(context).brightness == Brightness.dark
+                  ? 'assets/images/logo_white.png'
+                  : 'assets/images/logo_black.png',
               height: 26,
               // The logo is the only branded element in the header; if the
               // asset is missing the header must still be usable.
