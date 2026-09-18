@@ -61,7 +61,7 @@ export class AuthService {
     const user = await this.usersService.createPlayerOrClub(
       dto.email,
       dto.password,
-      dto.role as UserRole.PLAYER | UserRole.CLUB,
+      dto.role as UserRole.PLAYER | UserRole.CLUB | UserRole.COACH,
     );
     return this.issueTokens(user.id, user.email, user.role, user);
   }

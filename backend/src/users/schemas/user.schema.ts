@@ -4,6 +4,7 @@ import { HydratedDocument } from 'mongoose';
 export enum UserRole {
   PLAYER = 'PLAYER',
   CLUB = 'CLUB',
+  COACH = 'COACH',
   ADMIN = 'ADMIN',
 }
 

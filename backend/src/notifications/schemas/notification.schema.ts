@@ -20,6 +20,7 @@ export enum NotificationEntityType {
 export enum NotificationActorRole {
   CLUB = 'CLUB',
   PLAYER = 'PLAYER',
+  COACH = 'COACH',
 }
 
 export type NotificationDocument = HydratedDocument<Notification>;

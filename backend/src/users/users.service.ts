@@ -40,7 +40,7 @@ export class UsersService {
   async createPlayerOrClub(
     email: string,
     password: string,
-    role: UserRole.PLAYER | UserRole.CLUB,
+    role: UserRole.PLAYER | UserRole.CLUB | UserRole.COACH,
   ): Promise<UserDocument> {
     const existing = await this.userModel.findOne({
       email: email.toLowerCase(),
