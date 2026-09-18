@@ -25,6 +25,11 @@ class RolePicker extends StatelessWidget {
           label: Text(l10n.roleClub),
           icon: const Icon(Icons.shield_outlined),
         ),
+        ButtonSegment(
+          value: UserRole.coach,
+          label: Text(l10n.roleCoach),
+          icon: const Icon(Icons.sports_outlined),
+        ),
       ],
       selected: {value},
       onSelectionChanged: (selection) => onChanged(selection.first),

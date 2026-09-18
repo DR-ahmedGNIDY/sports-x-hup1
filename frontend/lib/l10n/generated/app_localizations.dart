@@ -3827,6 +3827,450 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'معاً نحو القمة'**
   String get sidebarPromoAction;
+
+  /// No description provided for @roleCoach.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدرب'**
+  String get roleCoach;
+
+  /// No description provided for @coachMyCvNav.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيرتي الذاتية'**
+  String get coachMyCvNav;
+
+  /// No description provided for @coachMyClubsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنديتي'**
+  String get coachMyClubsTitle;
+
+  /// No description provided for @coachProfileTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملف المدرب'**
+  String get coachProfileTitle;
+
+  /// No description provided for @coachEditCv.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل السيرة الذاتية'**
+  String get coachEditCv;
+
+  /// No description provided for @coachCvCompletion.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتمال السيرة الذاتية {percent}%'**
+  String coachCvCompletion(int percent);
+
+  /// No description provided for @coachVisibilityPublicDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملفك ظاهر للأندية ويمكنهم دعوتك بكودك.'**
+  String get coachVisibilityPublicDesc;
+
+  /// No description provided for @coachVisibilityPrivateDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملفك مخفي، ولا يمكن دعوتك بالكود.'**
+  String get coachVisibilityPrivateDesc;
+
+  /// No description provided for @coachAboutTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نبذة'**
+  String get coachAboutTitle;
+
+  /// No description provided for @coachCurrentClubsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأندية الحالية'**
+  String get coachCurrentClubsTitle;
+
+  /// No description provided for @coachExperienceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخبرات'**
+  String get coachExperienceTitle;
+
+  /// No description provided for @coachQualificationsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهادات والمؤهلات'**
+  String get coachQualificationsTitle;
+
+  /// No description provided for @coachCertificationsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهادات والرخص'**
+  String get coachCertificationsTitle;
+
+  /// No description provided for @coachSkillsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التخصصات والمهارات'**
+  String get coachSkillsTitle;
+
+  /// No description provided for @coachSpecialtiesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التخصصات'**
+  String get coachSpecialtiesLabel;
+
+  /// No description provided for @coachFormationsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطط المفضلة'**
+  String get coachFormationsLabel;
+
+  /// No description provided for @coachFormationsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: 4-3-3، 4-2-3-1'**
+  String get coachFormationsHint;
+
+  /// No description provided for @coachLanguagesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللغات'**
+  String get coachLanguagesLabel;
+
+  /// No description provided for @coachTagsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'افصل بين القيم بفاصلة'**
+  String get coachTagsHint;
+
+  /// No description provided for @coachEducationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المؤهل الدراسي'**
+  String get coachEducationLabel;
+
+  /// No description provided for @coachToDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'حتى الآن'**
+  String get coachToDate;
+
+  /// No description provided for @coachYearsOfExperience.
+  ///
+  /// In ar, this message translates to:
+  /// **'{years} سنة خبرة'**
+  String coachYearsOfExperience(int years);
+
+  /// No description provided for @coachYearsOfExperienceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنوات الخبرة'**
+  String get coachYearsOfExperienceLabel;
+
+  /// No description provided for @coachYearsValidation.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل عدد سنوات صحيح.'**
+  String get coachYearsValidation;
+
+  /// No description provided for @coachCodeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود المدرب'**
+  String get coachCodeLabel;
+
+  /// No description provided for @coachUnnamed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدرب'**
+  String get coachUnnamed;
+
+  /// No description provided for @coachUnnamedClub.
+  ///
+  /// In ar, this message translates to:
+  /// **'نادي'**
+  String get coachUnnamedClub;
+
+  /// No description provided for @coachNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتم العثور على هذا المدرب.'**
+  String get coachNotFound;
+
+  /// No description provided for @coachInviteToClub.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوة للانضمام لناديّ'**
+  String get coachInviteToClub;
+
+  /// No description provided for @coachBasicsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات الأساسية'**
+  String get coachBasicsTitle;
+
+  /// No description provided for @coachHeadlineLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسمى الوظيفي'**
+  String get coachHeadlineLabel;
+
+  /// No description provided for @coachHeadlineHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: مدرب أول، مدرب حراس مرمى'**
+  String get coachHeadlineHint;
+
+  /// No description provided for @coachSavedFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الحفظ.'**
+  String get coachSavedFeedback;
+
+  /// No description provided for @coachAddEntry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة'**
+  String get coachAddEntry;
+
+  /// No description provided for @coachNoExperience.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُضف خبرات بعد.'**
+  String get coachNoExperience;
+
+  /// No description provided for @coachNoCertifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُضف شهادات بعد.'**
+  String get coachNoCertifications;
+
+  /// No description provided for @coachClubNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'النادي'**
+  String get coachClubNameLabel;
+
+  /// No description provided for @coachRoleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوظيفة'**
+  String get coachRoleLabel;
+
+  /// No description provided for @coachStartYearLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من سنة'**
+  String get coachStartYearLabel;
+
+  /// No description provided for @coachEndYearLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى سنة (اتركه فارغًا إن كنت مستمرًا)'**
+  String get coachEndYearLabel;
+
+  /// No description provided for @coachCertificationNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الشهادة'**
+  String get coachCertificationNameLabel;
+
+  /// No description provided for @coachIssuerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجهة المانحة'**
+  String get coachIssuerLabel;
+
+  /// No description provided for @coachRequiredField.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحقل \"{field}\" مطلوب.'**
+  String coachRequiredField(String field);
+
+  /// No description provided for @coachYearValidation.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل سنة صحيحة في \"{field}\".'**
+  String coachYearValidation(String field);
+
+  /// No description provided for @coachSendLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال'**
+  String get coachSendLabel;
+
+  /// No description provided for @coachNoReceivedInvitations.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد دعوات واردة.'**
+  String get coachNoReceivedInvitations;
+
+  /// No description provided for @coachNoSentInvitations.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد دعوات مُرسلة قيد الانتظار.'**
+  String get coachNoSentInvitations;
+
+  /// No description provided for @coachPendingSentTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المُرسلة (قيد الانتظار)'**
+  String get coachPendingSentTitle;
+
+  /// No description provided for @coachNoClubsYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لست مرتبطًا بأي نادٍ بعد. اطلب الانضمام بكود النادي أو انتظر دعوة.'**
+  String get coachNoClubsYet;
+
+  /// No description provided for @coachJoinClubByCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب انضمام بكود النادي'**
+  String get coachJoinClubByCode;
+
+  /// No description provided for @coachActiveClub.
+  ///
+  /// In ar, this message translates to:
+  /// **'النادي الحالي'**
+  String get coachActiveClub;
+
+  /// No description provided for @coachSwitchToClub.
+  ///
+  /// In ar, this message translates to:
+  /// **'العمل لهذا النادي'**
+  String get coachSwitchToClub;
+
+  /// No description provided for @coachYourPermissions.
+  ///
+  /// In ar, this message translates to:
+  /// **'صلاحياتك في هذا النادي'**
+  String get coachYourPermissions;
+
+  /// No description provided for @coachLeaveClub.
+  ///
+  /// In ar, this message translates to:
+  /// **'مغادرة النادي'**
+  String get coachLeaveClub;
+
+  /// No description provided for @coachLeaveClubConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد مغادرة هذا النادي؟'**
+  String get coachLeaveClubConfirm;
+
+  /// No description provided for @coachPermViewSquad.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض اللاعبين'**
+  String get coachPermViewSquad;
+
+  /// No description provided for @coachPermViewContacts.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض بيانات تواصل اللاعبين'**
+  String get coachPermViewContacts;
+
+  /// No description provided for @coachPermManageCalendar.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة التقويم (إنشاء وحذف المواعيد)'**
+  String get coachPermManageCalendar;
+
+  /// No description provided for @coachPermManageLineup.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة التشكيلة والإحصائيات'**
+  String get coachPermManageLineup;
+
+  /// No description provided for @coachPermInvitePlayers.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوة اللاعبين وقبول طلباتهم'**
+  String get coachPermInvitePlayers;
+
+  /// No description provided for @coachPermCreatePlayers.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة لاعبين جدد'**
+  String get coachPermCreatePlayers;
+
+  /// No description provided for @coachPermManagePlayers.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل بيانات اللاعبين'**
+  String get coachPermManagePlayers;
+
+  /// No description provided for @coachPermEditClubProfile.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل ملف النادي'**
+  String get coachPermEditClubProfile;
+
+  /// No description provided for @coachPermRemoveMembers.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة لاعبين من النادي'**
+  String get coachPermRemoveMembers;
+
+  /// No description provided for @clubCoachesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدربون'**
+  String get clubCoachesTitle;
+
+  /// No description provided for @clubNoCoachesYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد مدربون في ناديك بعد. ادعُ مدربًا بكوده.'**
+  String get clubNoCoachesYet;
+
+  /// No description provided for @clubInviteCoachByCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوة مدرب بالكود'**
+  String get clubInviteCoachByCode;
+
+  /// No description provided for @clubCoachPermissionCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} صلاحيات'**
+  String clubCoachPermissionCount(int count);
+
+  /// No description provided for @clubEditPermissions.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الصلاحيات'**
+  String get clubEditPermissions;
+
+  /// No description provided for @clubRemoveCoach.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة من النادي'**
+  String get clubRemoveCoach;
+
+  /// No description provided for @clubRemoveCoachConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة {name} من طاقم النادي؟'**
+  String clubRemoveCoachConfirm(String name);
+
+  /// No description provided for @clubPermissionsFor.
+  ///
+  /// In ar, this message translates to:
+  /// **'صلاحيات {name}'**
+  String clubPermissionsFor(String name);
+
+  /// No description provided for @clubAllPermissions.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل صلاحيات مدير النادي'**
+  String get clubAllPermissions;
+
+  /// No description provided for @notificationJoinRequestFromCoach.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدرب {name} يطلب الانضمام لناديك'**
+  String notificationJoinRequestFromCoach(String name);
 }
 
 class _AppLocalizationsDelegate

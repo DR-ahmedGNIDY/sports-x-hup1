@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../coach/application/coach_providers.dart';
+import '../../../coach/domain/coach_models.dart';
+
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/mobile/app_empty_state.dart';
@@ -18,6 +21,8 @@ class ClubPlayersPageMobile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // A coach adds players only with CREATE_PLAYERS; a club always can.
+    final canCreate = ref.watch(clubPermissionProvider(CoachPermission.createPlayers));
     final rosterAsync = ref.watch(clubPlayersControllerProvider);
     final l10n = AppLocalizations.of(context)!;
 
@@ -28,6 +33,7 @@ class ClubPlayersPageMobile extends ConsumerWidget {
       // that there is a bar to put it in — it used to sit in the content as a
       // labelled button standing in for chrome the shell didn't offer.
       actions: [
+        if (canCreate)
         IconButton(
           tooltip: l10n.clubPlayersAddPlayerLabel,
           onPressed: () => context.go('/club/players/new'),
@@ -58,10 +64,10 @@ class ClubPlayersPageMobile extends ConsumerWidget {
                       : l10n.clubPlayersEmptyState,
                   // No action on a filtered-empty roster: "add a player" is
                   // not the answer to "your filter matched nothing".
-                  actionLabel: filtersActive
+                  actionLabel: filtersActive || !canCreate
                       ? null
                       : l10n.clubPlayersAddPlayerLabel,
-                  onAction: filtersActive
+                  onAction: filtersActive || !canCreate
                       ? null
                       : () => context.go('/club/players/new'),
                 ),

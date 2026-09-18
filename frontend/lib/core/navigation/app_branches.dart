@@ -53,6 +53,24 @@ enum AppBranch {
     icon: Icons.mail_outline,
     selectedIcon: Icons.mail,
   ),
+  // A club's coaching staff and their permissions (club account only).
+  clubCoaches(
+    rootPath: '/club/coaches',
+    icon: Icons.sports_outlined,
+    selectedIcon: Icons.sports,
+  ),
+  // The coach's CV.
+  coachProfile(
+    rootPath: '/coach/preview',
+    icon: Icons.assignment_ind_outlined,
+    selectedIcon: Icons.assignment_ind,
+  ),
+  // The coach's clubs, the active-club switch, and club↔coach invitations.
+  coachClubs(
+    rootPath: '/coach/clubs',
+    icon: Icons.shield_outlined,
+    selectedIcon: Icons.shield,
+  ),
   search(
     rootPath: '/search',
     icon: Icons.search_outlined,
@@ -131,6 +149,9 @@ enum AppBranch {
     clubProfile => l10n.dashboardMyClub,
     clubPlayers => l10n.clubPlayersTitle,
     clubInvitations => l10n.invitationsTitle,
+    clubCoaches => l10n.clubCoachesTitle,
+    coachProfile => l10n.coachMyCvNav,
+    coachClubs => l10n.coachMyClubsTitle,
     search => l10n.mobileSearchNavLabel,
     savedPlayers => l10n.dashboardSavedPlayers,
     community => l10n.communityNavLabel,
@@ -221,6 +242,13 @@ final Map<String, AppRouteMeta> _routeMeta = {
     title: (l10n) => l10n.invitationsTitle,
     ownsChrome: true,
   ),
+  '/club/coaches': AppRouteMeta(title: (l10n) => l10n.clubCoachesTitle),
+  '/coach/preview': AppRouteMeta(title: (l10n) => l10n.coachMyCvNav),
+  '/coach/edit': AppRouteMeta(
+    title: (l10n) => l10n.coachEditCv,
+    parentPath: AppBranch.coachProfile.rootPath,
+  ),
+  '/coach/clubs': AppRouteMeta(title: (l10n) => l10n.coachMyClubsTitle),
   '/calendar': AppRouteMeta(
     title: (l10n) => l10n.calendarNavLabel,
     ownsChrome: true,
@@ -269,7 +297,8 @@ AppRouteMeta? routeMetaFor(String path) {
   // which returns you wherever you actually came from rather than to a
   // fixed tab.
   if (path.startsWith('/search/players/') ||
-      path.startsWith('/search/clubs/')) {
+      path.startsWith('/search/clubs/') ||
+      path.startsWith('/search/coaches/')) {
     return const AppRouteMeta(title: null, ownsChrome: true);
   }
 
@@ -331,6 +360,15 @@ List<AppBranch> tabBranchesFor(UserRole? role) => switch (role) {
     AppBranch.search,
     AppBranch.community,
   ],
+  // A coach's daily screens: their CV, their clubs (and the switch between
+  // them), and the active club's calendar. The rest of the club's screens
+  // they may use sit in the account sheet.
+  UserRole.coach => const [
+    AppBranch.home,
+    AppBranch.coachProfile,
+    AppBranch.coachClubs,
+    AppBranch.calendar,
+  ],
   _ => const [AppBranch.home, AppBranch.community],
 };
 
@@ -351,6 +389,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // not. `/notifications` stays a real route, reached from the bell's
     // panel.
     UserRole.club => const [
+      AppBranch.clubCoaches,
       AppBranch.clubInvitations,
       AppBranch.savedPlayers,
       AppBranch.community,
@@ -362,6 +401,15 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     UserRole.player => const [
       AppBranch.playerInvitations,
       AppBranch.calendar,
+      AppBranch.store,
+      AppBranch.settings,
+    ],
+    UserRole.coach => const [
+      AppBranch.clubPlayers,
+      AppBranch.clubInvitations,
+      AppBranch.clubProfile,
+      AppBranch.search,
+      AppBranch.community,
       AppBranch.store,
       AppBranch.settings,
     ],

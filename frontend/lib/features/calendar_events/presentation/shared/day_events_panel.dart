@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../coach/application/coach_providers.dart';
+import '../../../coach/domain/coach_models.dart';
 import '../../domain/entities/calendar_event.dart';
 import 'create_event_sheet.dart';
 import 'event_card.dart';
@@ -53,12 +55,14 @@ class DayEventsPanel extends StatelessWidget {
         for (final event in dayEvents)
           EventCard(
             event: event,
-            isClub: isClub,
+            isClub: isClub &&
+                ref.watch(clubPermissionProvider(CoachPermission.manageLineup)),
             onTap: () => context.push('/calendar/${event.id}'),
             onCompleteRegistration: () =>
                 showRosterPoolSheet(context, ref: ref, event: event),
           ),
-        if (isClub) ...[
+        if (isClub &&
+            ref.watch(clubPermissionProvider(CoachPermission.manageCalendar))) ...[
           const SizedBox(height: 12),
           FilledButton.icon(
             onPressed: () => showCreateEventSheet(

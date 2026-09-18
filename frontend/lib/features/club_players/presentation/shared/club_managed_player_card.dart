@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../coach/application/coach_providers.dart';
+import '../../../coach/domain/coach_models.dart';
+
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -55,6 +58,8 @@ class ClubManagedPlayerCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final canManage = ref.watch(clubPermissionProvider(CoachPermission.manageClubPlayers));
+    final canRemove = ref.watch(clubPermissionProvider(CoachPermission.removeMembers));
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final profile = player.profile;
@@ -121,15 +126,18 @@ class ClubManagedPlayerCard extends ConsumerWidget {
                     value: _CardAction.view,
                     child: Text(l10n.clubPlayerViewAction),
                   ),
+                  if (canManage)
                   PopupMenuItem(
                     value: _CardAction.edit,
                     child: Text(l10n.clubPlayerEditAction),
                   ),
+                  if (canManage)
                   PopupMenuItem(
                     value: _CardAction.resend,
                     child: Text(l10n.clubPlayerResendCredentialsWhatsAppButton),
                   ),
-                  const PopupMenuDivider(),
+                  if (canRemove) const PopupMenuDivider(),
+                  if (canRemove)
                   PopupMenuItem(
                     value: _CardAction.remove,
                     child: Text(

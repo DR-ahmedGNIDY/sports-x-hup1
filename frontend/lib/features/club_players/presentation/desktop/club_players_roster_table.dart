@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../coach/application/coach_providers.dart';
+import '../../../coach/domain/coach_models.dart';
+
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -104,6 +107,9 @@ class _RosterRow extends ConsumerStatefulWidget {
 }
 
 class _RosterRowState extends ConsumerState<_RosterRow> {
+  bool get canManage => ref.watch(clubPermissionProvider(CoachPermission.manageClubPlayers));
+  bool get canRemove => ref.watch(clubPermissionProvider(CoachPermission.removeMembers));
+
   bool _hovering = false;
 
   Future<void> _confirmRemove(BuildContext context) async {
@@ -201,11 +207,13 @@ class _RosterRowState extends ConsumerState<_RosterRow> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (canManage)
                     IconButton(
                       tooltip: l10n.clubPlayerEditAction,
                       icon: const Icon(Icons.edit_outlined, size: 20),
                       onPressed: () => context.go('/club/players/${widget.player.userId}/edit'),
                     ),
+                    if (canManage)
                     IconButton(
                       tooltip: l10n.clubPlayerResendCredentialsWhatsAppButton,
                       icon: const Icon(Icons.chat_outlined, size: 20),
@@ -227,6 +235,7 @@ class _RosterRowState extends ConsumerState<_RosterRow> {
                           value: _RowAction.view,
                           child: Text(l10n.clubPlayerViewAction),
                         ),
+                        if (canRemove)
                         PopupMenuItem(
                           value: _RowAction.remove,
                           child: Text(

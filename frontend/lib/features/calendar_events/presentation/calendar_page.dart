@@ -15,7 +15,10 @@ class CalendarPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isClub = ref.watch(sessionControllerProvider).user?.role == UserRole.club;
+    // A coach sees their active club's calendar; what they may change in it
+    // is decided per action by their permissions (clubPermissionProvider).
+    final role = ref.watch(sessionControllerProvider).user?.role;
+    final isClub = role == UserRole.club || role == UserRole.coach;
     return ResponsiveLayout(
       desktop: (context) => CalendarPageDesktop(isClub: isClub),
       mobile: (context) => CalendarPageMobile(isClub: isClub),

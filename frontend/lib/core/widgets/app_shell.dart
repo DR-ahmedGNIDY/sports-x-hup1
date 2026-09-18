@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/domain/entities/user_role.dart';
+import '../../features/coach/application/coach_providers.dart';
+import '../../features/coach/presentation/club_context_gate.dart';
 import '../../features/club/application/club_profile_controller.dart';
 import '../../features/player/application/player_profile_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -125,6 +127,7 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
     AppBranch.home,
     AppBranch.clubProfile,
     AppBranch.clubPlayers,
+    AppBranch.clubCoaches,
     AppBranch.calendar,
     AppBranch.search,
     AppBranch.savedPlayers,
@@ -139,6 +142,19 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
     AppBranch.community,
     AppBranch.playerProfile,
     AppBranch.search,
+    AppBranch.store,
+    AppBranch.settings,
+  ],
+  UserRole.coach => const [
+    AppBranch.home,
+    AppBranch.coachProfile,
+    AppBranch.coachClubs,
+    AppBranch.calendar,
+    AppBranch.clubPlayers,
+    AppBranch.clubInvitations,
+    AppBranch.clubProfile,
+    AppBranch.search,
+    AppBranch.community,
     AppBranch.store,
     AppBranch.settings,
   ],
@@ -209,6 +225,11 @@ class _Sidebar extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                    ],
+                    // Which club a coach is working for, and the switch.
+                    if (role == UserRole.coach) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      const ActiveClubSwitcher(),
                     ],
                     const SizedBox(height: AppSpacing.xs),
                     const Text(
@@ -539,6 +560,12 @@ class _UserIdentity extends ConsumerWidget {
         photoUrl = profile?.logoUrl;
         displayName = (profile?.name?.isNotEmpty ?? false)
             ? profile!.name!
+            : email;
+      case UserRole.coach:
+        final profile = ref.watch(myCoachProfileProvider).valueOrNull;
+        photoUrl = profile?.profilePhotoUrl;
+        displayName = (profile?.firstName?.isNotEmpty ?? false)
+            ? profile!.firstName!
             : email;
       case UserRole.admin:
       case null:

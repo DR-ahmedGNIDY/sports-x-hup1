@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../player/application/public_player_profile_provider.dart';
 import '../../../player/domain/entities/football_position.dart';
+import '../../../coach/application/coach_providers.dart';
+import '../../../coach/domain/coach_models.dart';
 import '../../application/calendar_events_controller.dart';
 import '../../domain/entities/calendar_event.dart';
 import 'event_card.dart';
@@ -23,8 +25,12 @@ class EventDetailBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final canLineup =
+        isClub && ref.watch(clubPermissionProvider(CoachPermission.manageLineup));
+    final canManageCalendar = isClub &&
+        ref.watch(clubPermissionProvider(CoachPermission.manageCalendar));
     final canRateMatch =
-        isClub && event.type == CalendarEventType.match && event.hasStarted && event.isConfirmed;
+        canLineup && event.type == CalendarEventType.match && event.hasStarted && event.isConfirmed;
 
     // Deliberately not a scroll view: the pages that mount this already
     // scroll, and nesting a second scrollable inside them made the page
@@ -44,7 +50,7 @@ class EventDetailBody extends ConsumerWidget {
           Text(event.location),
           if (event.opponentName != null) Text('ضد: ${event.opponentName}'),
           const SizedBox(height: 16),
-          if (isClub && !event.isConfirmed)
+          if (canLineup && !event.isConfirmed)
             FilledButton(
               onPressed: () => showRosterPoolSheet(context, ref: ref, event: event),
               child: const Text('أكمل التسجيل'),
@@ -62,7 +68,7 @@ class EventDetailBody extends ConsumerWidget {
               label: const Text('تقييم المباراة'),
             ),
           ],
-          if (isClub) ...[
+          if (canManageCalendar) ...[
             const SizedBox(height: 16),
             TextButton.icon(
               onPressed: () => _confirmDelete(context, ref),

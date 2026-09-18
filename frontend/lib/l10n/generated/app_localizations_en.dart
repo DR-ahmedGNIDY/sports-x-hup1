@@ -2034,4 +2034,245 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sidebarPromoAction => 'Together to the top';
+
+  @override
+  String get roleCoach => 'Coach';
+
+  @override
+  String get coachMyCvNav => 'My CV';
+
+  @override
+  String get coachMyClubsTitle => 'My clubs';
+
+  @override
+  String get coachProfileTitle => 'Coach profile';
+
+  @override
+  String get coachEditCv => 'Edit CV';
+
+  @override
+  String coachCvCompletion(int percent) {
+    return 'CV $percent% complete';
+  }
+
+  @override
+  String get coachVisibilityPublicDesc =>
+      'Clubs can find you and invite you by your code.';
+
+  @override
+  String get coachVisibilityPrivateDesc =>
+      'Your profile is hidden and your code cannot be used to invite you.';
+
+  @override
+  String get coachAboutTitle => 'About';
+
+  @override
+  String get coachCurrentClubsTitle => 'Current clubs';
+
+  @override
+  String get coachExperienceTitle => 'Career history';
+
+  @override
+  String get coachQualificationsTitle => 'Qualifications';
+
+  @override
+  String get coachCertificationsTitle => 'Licences & certificates';
+
+  @override
+  String get coachSkillsTitle => 'Specialties & skills';
+
+  @override
+  String get coachSpecialtiesLabel => 'Specialties';
+
+  @override
+  String get coachFormationsLabel => 'Preferred formations';
+
+  @override
+  String get coachFormationsHint => 'e.g. 4-3-3, 4-2-3-1';
+
+  @override
+  String get coachLanguagesLabel => 'Languages';
+
+  @override
+  String get coachTagsHint => 'Separate values with commas';
+
+  @override
+  String get coachEducationLabel => 'Education';
+
+  @override
+  String get coachToDate => 'present';
+
+  @override
+  String coachYearsOfExperience(int years) {
+    return '$years years of experience';
+  }
+
+  @override
+  String get coachYearsOfExperienceLabel => 'Years of experience';
+
+  @override
+  String get coachYearsValidation => 'Enter a valid number of years.';
+
+  @override
+  String get coachCodeLabel => 'Coach code';
+
+  @override
+  String get coachUnnamed => 'Coach';
+
+  @override
+  String get coachUnnamedClub => 'Club';
+
+  @override
+  String get coachNotFound => 'This coach could not be found.';
+
+  @override
+  String get coachInviteToClub => 'Invite to my club';
+
+  @override
+  String get coachBasicsTitle => 'Basic details';
+
+  @override
+  String get coachHeadlineLabel => 'Title';
+
+  @override
+  String get coachHeadlineHint => 'e.g. Head coach, Goalkeeping coach';
+
+  @override
+  String get coachSavedFeedback => 'Saved.';
+
+  @override
+  String get coachAddEntry => 'Add';
+
+  @override
+  String get coachNoExperience => 'No career history added yet.';
+
+  @override
+  String get coachNoCertifications => 'No licences added yet.';
+
+  @override
+  String get coachClubNameLabel => 'Club';
+
+  @override
+  String get coachRoleLabel => 'Role';
+
+  @override
+  String get coachStartYearLabel => 'From year';
+
+  @override
+  String get coachEndYearLabel => 'To year (empty if ongoing)';
+
+  @override
+  String get coachCertificationNameLabel => 'Certificate name';
+
+  @override
+  String get coachIssuerLabel => 'Issued by';
+
+  @override
+  String coachRequiredField(String field) {
+    return '\"$field\" is required.';
+  }
+
+  @override
+  String coachYearValidation(String field) {
+    return 'Enter a valid year for \"$field\".';
+  }
+
+  @override
+  String get coachSendLabel => 'Send';
+
+  @override
+  String get coachNoReceivedInvitations => 'No invitations received.';
+
+  @override
+  String get coachNoSentInvitations => 'No pending invitations sent.';
+
+  @override
+  String get coachPendingSentTitle => 'Sent (pending)';
+
+  @override
+  String get coachNoClubsYet =>
+      'You are not on any club yet. Ask to join with a club code, or wait for an invitation.';
+
+  @override
+  String get coachJoinClubByCode => 'Ask to join by club code';
+
+  @override
+  String get coachActiveClub => 'Active';
+
+  @override
+  String get coachSwitchToClub => 'Work for this club';
+
+  @override
+  String get coachYourPermissions => 'Your permissions here';
+
+  @override
+  String get coachLeaveClub => 'Leave club';
+
+  @override
+  String get coachLeaveClubConfirm => 'Leave this club?';
+
+  @override
+  String get coachPermViewSquad => 'View the squad';
+
+  @override
+  String get coachPermViewContacts => 'See player contact details';
+
+  @override
+  String get coachPermManageCalendar => 'Manage the calendar';
+
+  @override
+  String get coachPermManageLineup => 'Manage lineups and stats';
+
+  @override
+  String get coachPermInvitePlayers => 'Invite players and answer requests';
+
+  @override
+  String get coachPermCreatePlayers => 'Add new players';
+
+  @override
+  String get coachPermManagePlayers => 'Edit players';
+
+  @override
+  String get coachPermEditClubProfile => 'Edit the club profile';
+
+  @override
+  String get coachPermRemoveMembers => 'Remove players from the club';
+
+  @override
+  String get clubCoachesTitle => 'Coaches';
+
+  @override
+  String get clubNoCoachesYet => 'No coaches yet. Invite one by their code.';
+
+  @override
+  String get clubInviteCoachByCode => 'Invite a coach by code';
+
+  @override
+  String clubCoachPermissionCount(int count) {
+    return '$count permissions';
+  }
+
+  @override
+  String get clubEditPermissions => 'Edit permissions';
+
+  @override
+  String get clubRemoveCoach => 'Remove from club';
+
+  @override
+  String clubRemoveCoachConfirm(String name) {
+    return 'Remove $name from your staff?';
+  }
+
+  @override
+  String clubPermissionsFor(String name) {
+    return 'Permissions for $name';
+  }
+
+  @override
+  String get clubAllPermissions => 'All club manager permissions';
+
+  @override
+  String notificationJoinRequestFromCoach(String name) {
+    return 'Coach $name asked to join your club';
+  }
 }

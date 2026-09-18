@@ -20,6 +20,12 @@ import '../../features/club_players/presentation/club_players_page.dart';
 import '../../features/club_players/presentation/edit_club_player_page.dart';
 import '../../features/calendar_events/presentation/calendar_page.dart';
 import '../../features/calendar_events/presentation/event_detail_page.dart';
+import '../../features/coach/presentation/club_coaches_page.dart';
+import '../../features/coach/presentation/club_context_gate.dart';
+import '../../features/coach/presentation/coach_clubs_page.dart';
+import '../../features/coach/presentation/edit_coach_profile_page.dart';
+import '../../features/coach/presentation/my_coach_profile_page.dart';
+import '../../features/coach/presentation/public_coach_profile_page.dart';
 import '../../features/community/presentation/community_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/invitations/presentation/club_invitations_page.dart';
@@ -67,6 +73,7 @@ const _marketingRoutes = {'/home', '/about', '/pricing', '/contact', '/players',
 /// redirect.
 bool _isPublicPlayerProfile(String path) => path.startsWith('/players/');
 bool _isPublicClubProfile(String path) => path.startsWith('/clubs/');
+bool _isPublicCoachProfile(String path) => path.startsWith('/coaches/');
 
 /// The in-shell path for a public profile URL, or `null` if [path] is not
 /// one. `/players/abc` becomes `/search/players/abc`.
@@ -74,7 +81,7 @@ bool _isPublicClubProfile(String path) => path.startsWith('/clubs/');
 /// Only the exact two-segment forms map: `/players` on its own is the
 /// public listing, which is a marketing page and stays one.
 String? _inShellProfilePath(String path) {
-  for (final prefix in const ['/players/', '/clubs/']) {
+  for (final prefix in const ['/players/', '/clubs/', '/coaches/']) {
     if (!path.startsWith(prefix)) continue;
     final id = path.substring(prefix.length);
     if (id.isEmpty || id.contains('/')) return null;
@@ -86,7 +93,8 @@ String? _inShellProfilePath(String path) {
 bool _isMarketingRoute(String path) =>
     _marketingRoutes.contains(path) ||
     _isPublicPlayerProfile(path) ||
-    _isPublicClubProfile(path);
+    _isPublicClubProfile(path) ||
+    _isPublicCoachProfile(path);
 
 /// Compiled in only when built with `--dart-define=SXH_GALLERY=true`. Guards
 /// the component gallery (see [ComponentGalleryPage]) — a preview surface for
@@ -97,8 +105,15 @@ const _galleryRoute = '/dev/gallery';
 
 bool _isAdminRoute(String path) => path.startsWith('/admin/');
 
+// Club screens a coach may also use, on behalf of their active club (the
+// server checks each action against that coach's permissions).
 bool _isClubRoute(String path) =>
     path.startsWith('/club/players') || path.startsWith('/club/invitations');
+
+// Managing a club's coaching staff is the club account's alone.
+bool _isClubOnlyRoute(String path) => path.startsWith('/club/coaches');
+
+bool _isCoachRoute(String path) => path.startsWith('/coach/');
 
 // Narrower than it looks: the Player profile and skills screens are not
 // listed, because they have always been reachable by any role (they render
@@ -175,7 +190,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       // Adding/managing players directly is a Club-only tool, same
       // enforcement shape as the admin check above.
-      if (_isClubRoute(path) && session.user?.role != UserRole.club) {
+      final role = session.user?.role;
+      if (_isClubRoute(path) &&
+          role != UserRole.club &&
+          role != UserRole.coach) {
+        return _landingRoute(session);
+      }
+      if (_isClubOnlyRoute(path) && role != UserRole.club) {
+        return _landingRoute(session);
+      }
+      if (_isCoachRoute(path) && role != UserRole.coach) {
         return _landingRoute(session);
       }
       if (_isPlayerRoute(path) && session.user?.role != UserRole.player) {
@@ -231,6 +255,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/clubs/:id',
         builder: (context, state) =>
             PublicClubProfilePage(clubId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/coaches/:id',
+        builder: (context, state) =>
+            PublicCoachProfilePage(coachId: state.pathParameters['id']!),
       ),
       // The authenticated app shares one persistent shell (sidebar/topbar on
       // desktop, bottom-nav/topbar on mobile) so navigating between screens
@@ -306,30 +335,30 @@ StatefulShellBranch _branchFor(AppBranch branch) {
         GoRoute(
           path: '/club/preview',
           pageBuilder: (context, state) =>
-              fadePage(state: state, child: const MyClubProfilePage()),
+              fadePage(state: state, child: const ClubContextGate(child: MyClubProfilePage())),
         ),
         GoRoute(
           path: '/club/edit',
           pageBuilder: (context, state) =>
-              slidePage(state: state, child: const EditClubProfilePage()),
+              slidePage(state: state, child: const ClubContextGate(child: EditClubProfilePage())),
         ),
       ],
       AppBranch.clubPlayers => [
         GoRoute(
           path: '/club/players',
           pageBuilder: (context, state) =>
-              fadePage(state: state, child: const ClubPlayersPage()),
+              fadePage(state: state, child: const ClubContextGate(child: ClubPlayersPage())),
         ),
         GoRoute(
           path: '/club/players/new',
           pageBuilder: (context, state) =>
-              slidePage(state: state, child: const AddClubPlayerPage()),
+              slidePage(state: state, child: const ClubContextGate(child: AddClubPlayerPage())),
         ),
         GoRoute(
           path: '/club/players/:userId/edit',
           pageBuilder: (context, state) => slidePage(
             state: state,
-            child: EditClubPlayerPage(userId: state.pathParameters['userId']!),
+            child: ClubContextGate(child: EditClubPlayerPage(userId: state.pathParameters['userId']!)),
           ),
         ),
       ],
@@ -337,7 +366,33 @@ StatefulShellBranch _branchFor(AppBranch branch) {
         GoRoute(
           path: '/club/invitations',
           pageBuilder: (context, state) =>
-              fadePage(state: state, child: const ClubInvitationsPage()),
+              fadePage(state: state, child: const ClubContextGate(child: ClubInvitationsPage())),
+        ),
+      ],
+      AppBranch.clubCoaches => [
+        GoRoute(
+          path: '/club/coaches',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const ClubCoachesPage()),
+        ),
+      ],
+      AppBranch.coachProfile => [
+        GoRoute(
+          path: '/coach/preview',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const MyCoachProfilePage()),
+        ),
+        GoRoute(
+          path: '/coach/edit',
+          pageBuilder: (context, state) =>
+              slidePage(state: state, child: const EditCoachProfilePage()),
+        ),
+      ],
+      AppBranch.coachClubs => [
+        GoRoute(
+          path: '/coach/clubs',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const CoachClubsPage()),
         ),
       ],
       AppBranch.search => [
@@ -365,6 +420,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
           pageBuilder: (context, state) => fadePage(
             state: state,
             child: PublicPlayerProfilePage(playerId: state.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/search/coaches/:id',
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: PublicCoachProfilePage(coachId: state.pathParameters['id']!),
           ),
         ),
         GoRoute(
@@ -485,13 +547,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
         GoRoute(
           path: '/calendar',
           pageBuilder: (context, state) =>
-              fadePage(state: state, child: const CalendarPage()),
+              fadePage(state: state, child: const ClubContextGate(child: CalendarPage())),
         ),
         GoRoute(
           path: '/calendar/:id',
           pageBuilder: (context, state) => slidePage(
             state: state,
-            child: EventDetailPage(eventId: state.pathParameters['id']!),
+            child: ClubContextGate(child: EventDetailPage(eventId: state.pathParameters['id']!)),
           ),
         ),
       ],

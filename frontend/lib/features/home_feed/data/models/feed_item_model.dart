@@ -8,6 +8,7 @@ extension FeedAuthorModel on FeedAuthor {
       role: json['role'] as String,
       playerId: json['playerId'] as String?,
       clubId: json['clubId'] as String?,
+      coachId: json['coachId'] as String?,
       displayName: json['displayName'] as String,
       profilePhotoUrl: json['profilePhotoUrl'] as String?,
       country: json['country'] as String?,

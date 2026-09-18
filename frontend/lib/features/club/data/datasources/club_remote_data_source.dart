@@ -55,8 +55,11 @@ class ClubRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
+  // `/club/profile` rather than `/clubs/me`: it answers for whoever acts for
+  // the club — the club itself, or a coach on its staff (X-Club-Id) — so the
+  // same screens serve both.
   Future<Map<String, dynamic>> getMyProfile(String accessToken) async {
-    final response = await _client.get('/clubs/me', headers: _bearer(accessToken));
+    final response = await _client.get('/club/profile', headers: _bearer(accessToken));
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
@@ -66,7 +69,7 @@ class ClubRemoteDataSource {
     Map<String, dynamic> body,
   ) async {
     final response = await _client.patch(
-      '/clubs/me',
+      '/club/profile',
       headers: _bearer(accessToken),
       body: body,
     );
@@ -80,7 +83,7 @@ class ClubRemoteDataSource {
     required String filename,
   }) async {
     final response = await _client.postMultipart(
-      '/clubs/me/logo',
+      '/club/profile/logo',
       headers: _bearer(accessToken),
       fileField: 'file',
       fileBytes: bytes,

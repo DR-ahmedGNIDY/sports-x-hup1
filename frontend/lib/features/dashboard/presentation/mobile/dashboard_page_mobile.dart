@@ -12,6 +12,7 @@ import '../../../../core/widgets/mobile/app_scaffold_mobile.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
+import '../../../coach/presentation/coach_home.dart';
 import '../../../club/application/club_profile_controller.dart';
 import '../../../club/domain/entities/club_profile.dart';
 import '../../../club_players/application/club_players_controller.dart';
@@ -39,6 +40,7 @@ class DashboardPageMobile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final roleLabel = switch (user?.role) {
       UserRole.club => l10n.roleClub,
+      UserRole.coach => l10n.roleCoach,
       UserRole.admin => l10n.dashboardRoleAdmin,
       _ => l10n.rolePlayer,
     };
@@ -50,6 +52,9 @@ class DashboardPageMobile extends ConsumerWidget {
     // player has no equivalent of.
     if (user?.role == UserRole.player) {
       return const _PlayerHomeMobile();
+    }
+    if (user?.role == UserRole.coach) {
+      return const CoachHome(mobile: true);
     }
     if (user?.role == UserRole.club) {
       return const _ClubDashboardMobile();

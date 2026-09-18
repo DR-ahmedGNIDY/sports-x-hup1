@@ -10,18 +10,22 @@ import '../../domain/entities/app_notification.dart';
 String notificationText(AppLocalizations l10n, AppNotification notification) {
   final name = notification.actor.name?.trim();
   final actor = (name == null || name.isEmpty)
-      ? (notification.actor.role == NotificationActorRole.club
-            ? l10n.unnamedClub
-            : l10n.unnamedPlayer)
+      ? switch (notification.actor.role) {
+          NotificationActorRole.club => l10n.unnamedClub,
+          NotificationActorRole.coach => l10n.coachUnnamed,
+          NotificationActorRole.player => l10n.unnamedPlayer,
+        }
       : name;
 
   return switch (notification.type) {
-    NotificationType.invitationReceived =>
-      notification.actor.role == NotificationActorRole.club
-          // A club wrote to a player, and a player asked to join a club —
-          // two different sentences, not one with a swapped noun.
-          ? l10n.notificationInvitationFromClub(actor)
-          : l10n.notificationJoinRequestFromPlayer(actor),
+    // A club wrote to a player or a coach; a player or a coach asked to
+    // join a club — different sentences, not one with a swapped noun.
+    NotificationType.invitationReceived => switch (notification.actor.role) {
+      NotificationActorRole.club => l10n.notificationInvitationFromClub(actor),
+      NotificationActorRole.coach => l10n.notificationJoinRequestFromCoach(actor),
+      NotificationActorRole.player =>
+        l10n.notificationJoinRequestFromPlayer(actor),
+    },
     NotificationType.invitationAccepted =>
       l10n.notificationInvitationAccepted(actor),
     NotificationType.invitationRejected =>

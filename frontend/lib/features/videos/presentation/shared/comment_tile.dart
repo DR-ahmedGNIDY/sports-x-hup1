@@ -22,6 +22,7 @@ class CommentTile extends StatelessWidget {
   String _roleLabel(AppLocalizations l10n) => switch (comment.authorRole) {
     'CLUB' => l10n.roleClub,
     'PLAYER' => l10n.rolePlayer,
+    'COACH' => l10n.roleCoach,
     'ADMIN' => l10n.dashboardRoleAdmin,
     _ => comment.authorRole,
   };

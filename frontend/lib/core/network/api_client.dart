@@ -55,15 +55,27 @@ class ApiClient {
 
   final http.Client _client;
 
+  /// The club a signed-in coach is currently acting for (its *profile* id),
+  /// sent as `X-Club-Id` on every request. The backend resolves a coach's
+  /// club and permissions from it; a club or a player never sets it, and the
+  /// server ignores it for them anyway. Owned by `activeClubProvider`.
+  String? clubContextId;
+
   Uri resolve(String path) => Uri.parse('${Env.apiBaseUrl}$path');
+
+  Map<String, String>? _withContext(Map<String, String>? headers) {
+    final club = clubContextId;
+    if (club == null) return headers;
+    return {...?headers, 'X-Club-Id': club};
+  }
 
   Map<String, String> _jsonHeaders(Map<String, String>? extra) => {
     'Content-Type': 'application/json',
-    ...?extra,
+    ...?_withContext(extra),
   };
 
   Future<http.Response> get(String path, {Map<String, String>? headers}) =>
-      _send(() => _client.get(resolve(path), headers: headers));
+      _send(() => _client.get(resolve(path), headers: _withContext(headers)));
 
   Future<http.Response> post(
     String path, {
@@ -90,7 +102,7 @@ class ApiClient {
   );
 
   Future<http.Response> delete(String path, {Map<String, String>? headers}) =>
-      _send(() => _client.delete(resolve(path), headers: headers));
+      _send(() => _client.delete(resolve(path), headers: _withContext(headers)));
 
   /// Multipart upload (a single file field plus optional string fields).
   /// Used for Cloudinary media uploads — the only endpoint that isn't JSON.
@@ -103,7 +115,8 @@ class ApiClient {
     Map<String, String>? headers,
   }) => _send(() async {
     final request = http.MultipartRequest('POST', resolve(path));
-    if (headers != null) request.headers.addAll(headers);
+    final withContext = _withContext(headers);
+    if (withContext != null) request.headers.addAll(withContext);
     if (fields != null) request.fields.addAll(fields);
     request.files.add(
       http.MultipartFile.fromBytes(

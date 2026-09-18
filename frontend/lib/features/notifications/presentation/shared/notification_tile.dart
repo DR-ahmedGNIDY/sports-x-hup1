@@ -81,10 +81,18 @@ class NotificationTile extends ConsumerWidget {
     if (notification.entityType == NotificationEntityType.calendarEvent) {
       return '/calendar/${notification.entityId}';
     }
+    final role = ref.read(sessionControllerProvider).user?.role;
+    if (notification.entityType == NotificationEntityType.coachInvitation) {
+      return switch (role) {
+        UserRole.club => '/club/coaches',
+        UserRole.coach => '/coach/clubs',
+        _ => null,
+      };
+    }
     if (notification.entityType != NotificationEntityType.invitation) {
       return null;
     }
-    return switch (ref.read(sessionControllerProvider).user?.role) {
+    return switch (role) {
       UserRole.club => '/club/invitations',
       UserRole.player => '/player/invitations',
       _ => null,

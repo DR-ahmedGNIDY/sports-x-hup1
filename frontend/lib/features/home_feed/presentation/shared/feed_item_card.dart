@@ -307,7 +307,11 @@ class _AuthorRow extends StatelessWidget {
           backgroundImage: photoUrl != null ? appImageProvider(photoUrl, context: context, decodeWidth: AppImageSize.avatarSmall) : null,
           child: photoUrl == null
               ? Icon(
-                  isClub ? Icons.shield_outlined : Icons.person,
+                  isClub
+                      ? Icons.shield_outlined
+                      : (author?.isCoach ?? false)
+                      ? Icons.sports
+                      : Icons.person,
                   size: radius,
                   color: colors.textMuted,
                 )

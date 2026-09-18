@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../auth/application/session_controller.dart';
-import '../../../auth/domain/entities/user_role.dart';
+import '../../../coach/application/coach_providers.dart';
+import '../../../coach/domain/coach_models.dart';
 import '../../../player/domain/entities/player_profile.dart';
 import 'send_invitation_dialog.dart';
 
@@ -29,8 +29,10 @@ class InvitePlayerButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isClub = ref.watch(sessionControllerProvider).user?.role == UserRole.club;
-    if (!isClub) return const SizedBox.shrink();
+    // A club, or a coach acting for one with INVITE_PLAYERS.
+    if (!ref.watch(clubPermissionProvider(CoachPermission.invitePlayers))) {
+      return const SizedBox.shrink();
+    }
 
     final l10n = AppLocalizations.of(context)!;
     final name = profile.fullName.isEmpty ? l10n.unnamedPlayer : profile.fullName;

@@ -7,6 +7,7 @@ class FeedAuthor {
     required this.role,
     this.playerId,
     this.clubId,
+    this.coachId,
     required this.displayName,
     this.profilePhotoUrl,
     this.country,
@@ -16,9 +17,11 @@ class FeedAuthor {
   final String role;
   final String? playerId;
   final String? clubId;
+  final String? coachId;
   final String displayName;
   final String? profilePhotoUrl;
   final String? country;
 
   bool get isClub => role == 'CLUB';
+  bool get isCoach => role == 'COACH';
 }

@@ -16,7 +16,8 @@ class EventDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isClub = ref.watch(sessionControllerProvider).user?.role == UserRole.club;
+    final role = ref.watch(sessionControllerProvider).user?.role;
+    final isClub = role == UserRole.club || role == UserRole.coach;
     return ResponsiveLayout(
       desktop: (context) => EventDetailPageDesktop(eventId: eventId, isClub: isClub),
       mobile: (context) => EventDetailPageMobile(eventId: eventId, isClub: isClub),

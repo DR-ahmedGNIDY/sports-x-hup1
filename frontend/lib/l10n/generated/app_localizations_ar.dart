@@ -2018,4 +2018,245 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sidebarPromoAction => 'معاً نحو القمة';
+
+  @override
+  String get roleCoach => 'مدرب';
+
+  @override
+  String get coachMyCvNav => 'سيرتي الذاتية';
+
+  @override
+  String get coachMyClubsTitle => 'أنديتي';
+
+  @override
+  String get coachProfileTitle => 'ملف المدرب';
+
+  @override
+  String get coachEditCv => 'تعديل السيرة الذاتية';
+
+  @override
+  String coachCvCompletion(int percent) {
+    return 'اكتمال السيرة الذاتية $percent%';
+  }
+
+  @override
+  String get coachVisibilityPublicDesc =>
+      'ملفك ظاهر للأندية ويمكنهم دعوتك بكودك.';
+
+  @override
+  String get coachVisibilityPrivateDesc => 'ملفك مخفي، ولا يمكن دعوتك بالكود.';
+
+  @override
+  String get coachAboutTitle => 'نبذة';
+
+  @override
+  String get coachCurrentClubsTitle => 'الأندية الحالية';
+
+  @override
+  String get coachExperienceTitle => 'الخبرات';
+
+  @override
+  String get coachQualificationsTitle => 'الشهادات والمؤهلات';
+
+  @override
+  String get coachCertificationsTitle => 'الشهادات والرخص';
+
+  @override
+  String get coachSkillsTitle => 'التخصصات والمهارات';
+
+  @override
+  String get coachSpecialtiesLabel => 'التخصصات';
+
+  @override
+  String get coachFormationsLabel => 'الخطط المفضلة';
+
+  @override
+  String get coachFormationsHint => 'مثال: 4-3-3، 4-2-3-1';
+
+  @override
+  String get coachLanguagesLabel => 'اللغات';
+
+  @override
+  String get coachTagsHint => 'افصل بين القيم بفاصلة';
+
+  @override
+  String get coachEducationLabel => 'المؤهل الدراسي';
+
+  @override
+  String get coachToDate => 'حتى الآن';
+
+  @override
+  String coachYearsOfExperience(int years) {
+    return '$years سنة خبرة';
+  }
+
+  @override
+  String get coachYearsOfExperienceLabel => 'سنوات الخبرة';
+
+  @override
+  String get coachYearsValidation => 'أدخل عدد سنوات صحيح.';
+
+  @override
+  String get coachCodeLabel => 'كود المدرب';
+
+  @override
+  String get coachUnnamed => 'مدرب';
+
+  @override
+  String get coachUnnamedClub => 'نادي';
+
+  @override
+  String get coachNotFound => 'لم يتم العثور على هذا المدرب.';
+
+  @override
+  String get coachInviteToClub => 'دعوة للانضمام لناديّ';
+
+  @override
+  String get coachBasicsTitle => 'البيانات الأساسية';
+
+  @override
+  String get coachHeadlineLabel => 'المسمى الوظيفي';
+
+  @override
+  String get coachHeadlineHint => 'مثال: مدرب أول، مدرب حراس مرمى';
+
+  @override
+  String get coachSavedFeedback => 'تم الحفظ.';
+
+  @override
+  String get coachAddEntry => 'إضافة';
+
+  @override
+  String get coachNoExperience => 'لم تُضف خبرات بعد.';
+
+  @override
+  String get coachNoCertifications => 'لم تُضف شهادات بعد.';
+
+  @override
+  String get coachClubNameLabel => 'النادي';
+
+  @override
+  String get coachRoleLabel => 'الوظيفة';
+
+  @override
+  String get coachStartYearLabel => 'من سنة';
+
+  @override
+  String get coachEndYearLabel => 'إلى سنة (اتركه فارغًا إن كنت مستمرًا)';
+
+  @override
+  String get coachCertificationNameLabel => 'اسم الشهادة';
+
+  @override
+  String get coachIssuerLabel => 'الجهة المانحة';
+
+  @override
+  String coachRequiredField(String field) {
+    return 'الحقل \"$field\" مطلوب.';
+  }
+
+  @override
+  String coachYearValidation(String field) {
+    return 'أدخل سنة صحيحة في \"$field\".';
+  }
+
+  @override
+  String get coachSendLabel => 'إرسال';
+
+  @override
+  String get coachNoReceivedInvitations => 'لا توجد دعوات واردة.';
+
+  @override
+  String get coachNoSentInvitations => 'لا توجد دعوات مُرسلة قيد الانتظار.';
+
+  @override
+  String get coachPendingSentTitle => 'المُرسلة (قيد الانتظار)';
+
+  @override
+  String get coachNoClubsYet =>
+      'لست مرتبطًا بأي نادٍ بعد. اطلب الانضمام بكود النادي أو انتظر دعوة.';
+
+  @override
+  String get coachJoinClubByCode => 'طلب انضمام بكود النادي';
+
+  @override
+  String get coachActiveClub => 'النادي الحالي';
+
+  @override
+  String get coachSwitchToClub => 'العمل لهذا النادي';
+
+  @override
+  String get coachYourPermissions => 'صلاحياتك في هذا النادي';
+
+  @override
+  String get coachLeaveClub => 'مغادرة النادي';
+
+  @override
+  String get coachLeaveClubConfirm => 'هل تريد مغادرة هذا النادي؟';
+
+  @override
+  String get coachPermViewSquad => 'عرض اللاعبين';
+
+  @override
+  String get coachPermViewContacts => 'عرض بيانات تواصل اللاعبين';
+
+  @override
+  String get coachPermManageCalendar => 'إدارة التقويم (إنشاء وحذف المواعيد)';
+
+  @override
+  String get coachPermManageLineup => 'إدارة التشكيلة والإحصائيات';
+
+  @override
+  String get coachPermInvitePlayers => 'دعوة اللاعبين وقبول طلباتهم';
+
+  @override
+  String get coachPermCreatePlayers => 'إضافة لاعبين جدد';
+
+  @override
+  String get coachPermManagePlayers => 'تعديل بيانات اللاعبين';
+
+  @override
+  String get coachPermEditClubProfile => 'تعديل ملف النادي';
+
+  @override
+  String get coachPermRemoveMembers => 'إزالة لاعبين من النادي';
+
+  @override
+  String get clubCoachesTitle => 'المدربون';
+
+  @override
+  String get clubNoCoachesYet =>
+      'لا يوجد مدربون في ناديك بعد. ادعُ مدربًا بكوده.';
+
+  @override
+  String get clubInviteCoachByCode => 'دعوة مدرب بالكود';
+
+  @override
+  String clubCoachPermissionCount(int count) {
+    return '$count صلاحيات';
+  }
+
+  @override
+  String get clubEditPermissions => 'تعديل الصلاحيات';
+
+  @override
+  String get clubRemoveCoach => 'إزالة من النادي';
+
+  @override
+  String clubRemoveCoachConfirm(String name) {
+    return 'إزالة $name من طاقم النادي؟';
+  }
+
+  @override
+  String clubPermissionsFor(String name) {
+    return 'صلاحيات $name';
+  }
+
+  @override
+  String get clubAllPermissions => 'كل صلاحيات مدير النادي';
+
+  @override
+  String notificationJoinRequestFromCoach(String name) {
+    return 'المدرب $name يطلب الانضمام لناديك';
+  }
 }

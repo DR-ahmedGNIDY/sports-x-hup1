@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../coach/application/coach_providers.dart';
+import '../../../coach/domain/coach_models.dart';
+
 import '../../../../core/widgets/error_state.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/club_players_controller.dart';
@@ -29,6 +32,7 @@ class ClubPlayersPageDesktop extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(l10n.clubPlayersTitle, style: Theme.of(context).textTheme.headlineSmall),
+                  if (ref.watch(clubPermissionProvider(CoachPermission.createPlayers)))
                   FilledButton.icon(
                     onPressed: () => context.go('/club/players/new'),
                     icon: const Icon(Icons.person_add_outlined),

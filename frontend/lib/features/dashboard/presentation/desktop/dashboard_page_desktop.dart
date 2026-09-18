@@ -11,6 +11,7 @@ import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
 import '../../../auth/domain/entities/user_role.dart';
+import '../../../coach/presentation/coach_home.dart';
 import '../../../club/application/club_profile_controller.dart';
 import '../../../club/domain/entities/club_profile.dart';
 import '../../../player/application/player_profile_controller.dart';
@@ -39,6 +40,7 @@ class DashboardPageDesktop extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final roleLabel = switch (user?.role) {
       UserRole.club => l10n.roleClub,
+      UserRole.coach => l10n.roleCoach,
       UserRole.admin => l10n.dashboardRoleAdmin,
       _ => l10n.rolePlayer,
     };
@@ -47,6 +49,9 @@ class DashboardPageDesktop extends ConsumerWidget {
     // page, and Home gains an identity and somewhere to post from.
     if (user?.role == UserRole.player) {
       return const _PlayerDashboardDesktop();
+    }
+    if (user?.role == UserRole.coach) {
+      return const CoachHome(mobile: false);
     }
     if (user?.role == UserRole.club) {
       return const _ClubDashboardDesktop();

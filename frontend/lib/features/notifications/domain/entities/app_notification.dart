@@ -32,6 +32,7 @@ enum NotificationType {
 
 enum NotificationEntityType {
   invitation('INVITATION'),
+  coachInvitation('COACH_INVITATION'),
   calendarEvent('CALENDAR_EVENT');
 
   const NotificationEntityType(this.wireValue);
@@ -48,14 +49,18 @@ enum NotificationEntityType {
 
 enum NotificationActorRole {
   club('CLUB'),
-  player('PLAYER');
+  player('PLAYER'),
+  coach('COACH');
 
   const NotificationActorRole(this.wireValue);
 
   final String wireValue;
 
-  static NotificationActorRole fromWire(String? value) =>
-      value == club.wireValue ? club : player;
+  static NotificationActorRole fromWire(String? value) => switch (value) {
+    'CLUB' => club,
+    'COACH' => coach,
+    _ => player,
+  };
 }
 
 /// The other party — who did the thing being announced.
