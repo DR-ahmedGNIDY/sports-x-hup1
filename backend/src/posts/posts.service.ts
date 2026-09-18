@@ -11,6 +11,10 @@ import {
   ClubProfile,
   ClubProfileDocument,
 } from '../clubs/schemas/club-profile.schema';
+import {
+  CoachProfile,
+  CoachProfileDocument,
+} from '../coaches/schemas/coach-profile.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../common/upload.config';
 import { assertFileContentMatchesMimeType } from '../common/file-signature';
@@ -31,6 +35,9 @@ import {
   PhotoPostDocument,
   PostAuthorRole,
 } from './schemas/photo-post.schema';
+
+type PostAuthorProfile =
+  PlayerProfileDocument | ClubProfileDocument | CoachProfileDocument;
 
 const DUPLICATE_KEY_ERROR_CODE = 11000;
 const FEED_PAGE_SIZE = 12;
@@ -57,6 +64,8 @@ export class PostsService {
     private readonly playerProfileModel: Model<PlayerProfile>,
     @InjectModel(ClubProfile.name)
     private readonly clubProfileModel: Model<ClubProfile>,
+    @InjectModel(CoachProfile.name)
+    private readonly coachProfileModel: Model<CoachProfile>,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly cloudinary: CloudinaryService,
     private readonly sportsService: SportsService,
@@ -101,6 +110,15 @@ export class PostsService {
       }
       sport = dto.sport;
       authorRole = PostAuthorRole.CLUB;
+    } else if (role === UserRole.COACH) {
+      const profile = await this.coachProfileModel.findOne({ userId });
+      sport = dto.sport ?? profile?.sport ?? '';
+      if (!sport) {
+        throw new BadRequestException(
+          'Set your sport on your profile before posting, or choose one.',
+        );
+      }
+      authorRole = PostAuthorRole.COACH;
     } else {
       const profile = await this.playerProfileModel.findOne({ userId });
       if (!profile) {
@@ -142,7 +160,9 @@ export class PostsService {
     const author =
       authorRole === PostAuthorRole.CLUB
         ? await this.clubProfileModel.findOne({ userId })
-        : await this.playerProfileModel.findOne({ userId });
+        : authorRole === PostAuthorRole.COACH
+          ? await this.coachProfileModel.findOne({ userId })
+          : await this.playerProfileModel.findOne({ userId });
     return photoFeedItem(photo, author);
   }
 
@@ -212,11 +232,8 @@ export class PostsService {
   // id (not the author id) since a single result map covers both roles.
   private async resolvePostAuthors(
     photos: PhotoPostDocument[],
-  ): Promise<Map<string, PlayerProfileDocument | ClubProfileDocument | null>> {
-    const result = new Map<
-      string,
-      PlayerProfileDocument | ClubProfileDocument | null
-    >();
+  ): Promise<Map<string, PostAuthorProfile | null>> {
+    const result = new Map<string, PostAuthorProfile | null>();
     if (photos.length === 0) return result;
 
     const playerUserIds = [
@@ -234,24 +251,39 @@ export class PostsService {
       ),
     ];
 
-    const [players, clubs] = await Promise.all([
+    const coachUserIds = [
+      ...new Set(
+        photos
+          .filter((p) => p.authorRole === PostAuthorRole.COACH)
+          .map((p) => p.authorUserId.toString()),
+      ),
+    ];
+
+    const [players, clubs, coaches] = await Promise.all([
       playerUserIds.length
         ? this.playerProfileModel.find({ userId: { $in: playerUserIds } })
         : Promise.resolve([]),
       clubUserIds.length
         ? this.clubProfileModel.find({ userId: { $in: clubUserIds } })
         : Promise.resolve([]),
+      coachUserIds.length
+        ? this.coachProfileModel.find({ userId: { $in: coachUserIds } })
+        : Promise.resolve([]),
     ]);
+    const coachByUserId = new Map(coaches.map((c) => [c.userId.toString(), c]));
     const playerByUserId = new Map(
       players.map((p) => [p.userId.toString(), p]),
     );
     const clubByUserId = new Map(clubs.map((c) => [c.userId.toString(), c]));
 
     for (const photo of photos) {
+      const authorId = photo.authorUserId.toString();
       const author =
         photo.authorRole === PostAuthorRole.CLUB
-          ? (clubByUserId.get(photo.authorUserId.toString()) ?? null)
-          : (playerByUserId.get(photo.authorUserId.toString()) ?? null);
+          ? (clubByUserId.get(authorId) ?? null)
+          : photo.authorRole === PostAuthorRole.COACH
+            ? (coachByUserId.get(authorId) ?? null)
+            : (playerByUserId.get(authorId) ?? null);
       result.set(photo._id.toString(), author);
     }
     return result;
@@ -328,15 +360,24 @@ export class PostsService {
     const clubUserIds = users
       .filter((u) => u.role === 'CLUB')
       .map((u) => u._id.toString());
+    const coachUserIds = users
+      .filter((u) => u.role === 'COACH')
+      .map((u) => u._id.toString());
 
-    const [profiles, clubProfiles] = await Promise.all([
+    const [profiles, clubProfiles, coachProfiles] = await Promise.all([
       playerUserIds.length
         ? this.playerProfileModel.find({ userId: { $in: playerUserIds } })
         : Promise.resolve([]),
       clubUserIds.length
         ? this.clubProfileModel.find({ userId: { $in: clubUserIds } })
         : Promise.resolve([]),
+      coachUserIds.length
+        ? this.coachProfileModel.find({ userId: { $in: coachUserIds } })
+        : Promise.resolve([]),
     ]);
+    const coachProfileByUserId = new Map(
+      coachProfiles.map((p) => [p.userId.toString(), p]),
+    );
     const profileByUserId = new Map(
       profiles.map((p) => [p.userId.toString(), p]),
     );
@@ -366,6 +407,18 @@ export class PostsService {
         const profile = clubProfileByUserId.get(id);
         authorInfoById.set(id, {
           displayName: profile?.name || user.email || 'Club',
+          role: user.role,
+        });
+        continue;
+      }
+      if (user.role === 'COACH') {
+        const profile = coachProfileByUserId.get(id);
+        const name = [profile?.firstName, profile?.lastName]
+          .filter(Boolean)
+          .join(' ')
+          .trim();
+        authorInfoById.set(id, {
+          displayName: name || user.email || 'Coach',
           role: user.role,
         });
         continue;

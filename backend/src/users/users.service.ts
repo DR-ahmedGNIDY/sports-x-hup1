@@ -7,7 +7,9 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
+import { ClubAccessService } from '../club-access/club-access.service';
 import { ClubsService } from '../clubs/clubs.service';
+import { CoachesService } from '../coaches/coaches.service';
 import { PlayersService } from '../players/players.service';
 import { VideosService } from '../videos/videos.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,6 +37,8 @@ export class UsersService {
     private readonly playersService: PlayersService,
     private readonly clubsService: ClubsService,
     private readonly videosService: VideosService,
+    private readonly coachesService: CoachesService,
+    private readonly clubAccess: ClubAccessService,
   ) {}
 
   async createPlayerOrClub(
@@ -197,7 +201,11 @@ export class UsersService {
       await this.playersService.deleteProfileAndMediaByUserId(id);
     } else if (user.role === UserRole.CLUB) {
       await this.clubsService.deleteProfileAndLogoByUserId(id);
+    } else if (user.role === UserRole.COACH) {
+      await this.coachesService.deleteProfileAndMediaByUserId(id);
     }
+    // Either side of a coach's staff memberships.
+    await this.clubAccess.endAllForUser(id);
     await this.videosService.deleteUserFootprint(id);
     await this.userModel.deleteOne({ _id: id });
   }

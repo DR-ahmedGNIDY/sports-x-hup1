@@ -21,6 +21,7 @@ import { ContactModule } from './contact/contact.module';
 import { PostsModule } from './posts/posts.module';
 import { StoreModule } from './store/store.module';
 import { CalendarEventsModule } from './calendar-events/calendar-events.module';
+import { CoachesModule } from './coaches/coaches.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { CalendarEventsModule } from './calendar-events/calendar-events.module';
     PostsModule,
     StoreModule,
     CalendarEventsModule,
+    CoachesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

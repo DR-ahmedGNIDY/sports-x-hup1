@@ -1,5 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
+import { ClubAccessService } from '../club-access/club-access.service';
 import { ClubsService } from '../clubs/clubs.service';
+import { CoachesService } from '../coaches/coaches.service';
 import { PlayersService } from '../players/players.service';
 import { VideosService } from '../videos/videos.service';
 import { UsersService } from './users.service';
@@ -22,13 +24,29 @@ describe('UsersService', () => {
     const videosService = {
       deleteUserFootprint: jest.fn(),
     } as unknown as VideosService;
+    const coachesService = {
+      deleteProfileAndMediaByUserId: jest.fn(),
+    } as unknown as CoachesService;
+    const clubAccess = {
+      endAllForUser: jest.fn(),
+    } as unknown as ClubAccessService;
     const service = new UsersService(
       model as never,
       playersService,
       clubsService,
       videosService,
+      coachesService,
+      clubAccess,
     );
-    return { service, model, playersService, clubsService, videosService };
+    return {
+      service,
+      model,
+      playersService,
+      clubsService,
+      videosService,
+      coachesService,
+      clubAccess,
+    };
   }
 
   it('rejects deleting a user that does not exist', async () => {
@@ -51,6 +69,19 @@ describe('UsersService', () => {
     expect(clubsService.deleteProfileAndLogoByUserId).not.toHaveBeenCalled();
     expect(videosService.deleteUserFootprint).toHaveBeenCalledWith('user-1');
     expect(model.deleteOne).toHaveBeenCalledWith({ _id: 'user-1' });
+  });
+
+  it('cascade-deletes a coach user profile and ends their staff memberships', async () => {
+    const { service, playersService, coachesService, clubAccess } =
+      buildService({ role: UserRole.COACH });
+
+    await service.deleteById('user-3');
+
+    expect(coachesService.deleteProfileAndMediaByUserId).toHaveBeenCalledWith(
+      'user-3',
+    );
+    expect(playersService.deleteProfileAndMediaByUserId).not.toHaveBeenCalled();
+    expect(clubAccess.endAllForUser).toHaveBeenCalledWith('user-3');
   });
 
   it('cascade-deletes a club user profile and viewer footprint', async () => {

@@ -1,3 +1,5 @@
+import { coachDisplayName } from '../coaches/coaches.mapper';
+import { CoachProfileDocument } from '../coaches/schemas/coach-profile.schema';
 import { ClubProfileDocument } from '../clubs/schemas/club-profile.schema';
 import { profilePhotoUrl } from '../players/players.mapper';
 import { PlayerProfileDocument } from '../players/schemas/player-profile.schema';
@@ -9,9 +11,10 @@ import { PhotoPostDocument, PostAuthorRole } from './schemas/photo-post.schema';
 // card doesn't have to branch on who made the post — only on `kind`
 // (VIDEO/PHOTO) for how to render the media itself.
 export interface FeedAuthorView {
-  role: 'PLAYER' | 'CLUB';
+  role: 'PLAYER' | 'CLUB' | 'COACH';
   playerId?: string;
   clubId?: string;
+  coachId?: string;
   displayName: string;
   profilePhotoUrl?: string;
   country?: string;
@@ -47,6 +50,19 @@ function clubAuthorView(
   };
 }
 
+function coachAuthorView(
+  profile: CoachProfileDocument | null,
+): FeedAuthorView | null {
+  if (!profile) return null;
+  return {
+    role: 'COACH',
+    coachId: profile._id.toString(),
+    displayName: coachDisplayName(profile) ?? 'Coach',
+    profilePhotoUrl: profile.profilePhoto?.secureUrl,
+    country: profile.country,
+  };
+}
+
 // A unified Home-feed item — one shape for both a Video and a Photo post,
 // distinguished by `kind`, so the frontend renders one card component
 // instead of branching on the source collection. Deliberately a fresh
@@ -78,7 +94,8 @@ export function videoFeedItem(
 
 export function photoFeedItem(
   photo: PhotoPostDocument,
-  authorProfile: PlayerProfileDocument | ClubProfileDocument | null,
+  authorProfile:
+    PlayerProfileDocument | ClubProfileDocument | CoachProfileDocument | null,
 ) {
   return {
     kind: 'PHOTO' as const,
@@ -93,7 +110,9 @@ export function photoFeedItem(
     author:
       photo.authorRole === PostAuthorRole.CLUB
         ? clubAuthorView(authorProfile as ClubProfileDocument | null)
-        : playerAuthorView(authorProfile as PlayerProfileDocument | null),
+        : photo.authorRole === PostAuthorRole.COACH
+          ? coachAuthorView(authorProfile as CoachProfileDocument | null)
+          : playerAuthorView(authorProfile as PlayerProfileDocument | null),
   };
 }
 

@@ -4,6 +4,10 @@ import {
   ClubProfile,
   ClubProfileSchema,
 } from '../clubs/schemas/club-profile.schema';
+import {
+  CoachProfile,
+  CoachProfileSchema,
+} from '../coaches/schemas/coach-profile.schema';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import {
   PlayerProfile,
@@ -32,6 +36,7 @@ import { PhotoPost, PhotoPostSchema } from './schemas/photo-post.schema';
       // resolution — same rationale as VideosModule.
       { name: PlayerProfile.name, schema: PlayerProfileSchema },
       { name: ClubProfile.name, schema: ClubProfileSchema },
+      { name: CoachProfile.name, schema: CoachProfileSchema },
       { name: User.name, schema: UserSchema },
     ]),
     CloudinaryModule,

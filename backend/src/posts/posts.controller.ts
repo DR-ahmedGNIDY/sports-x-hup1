@@ -31,10 +31,11 @@ export class PostsController {
 
   // A Player posts from their own profile's sport by default; a Club must
   // choose one (see CreatePhotoPostDto/PostsService.createPost) — both are
-  // the only roles a Home feed post can come from.
+  // the only roles a Home feed post can come from. A coach posts as
+  // themselves (never as a club), sport defaulting to their CV's.
   @Post('posts')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.PLAYER, UserRole.CLUB)
+  @Roles(UserRole.PLAYER, UserRole.CLUB, UserRole.COACH)
   @UseInterceptors(FileInterceptor('file', imageUploadOptions))
   async create(
     @CurrentUser() user: JwtPayload,

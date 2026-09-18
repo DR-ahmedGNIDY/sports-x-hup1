@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import {
+  CoachProfile,
+  CoachProfileSchema,
+} from '../coaches/schemas/coach-profile.schema';
+import {
   ClubProfile,
   ClubProfileSchema,
 } from '../clubs/schemas/club-profile.schema';
@@ -31,6 +35,7 @@ import { Video, VideoSchema } from './schemas/video.schema';
       // resolution — avoids a circular module dependency.
       { name: PlayerProfile.name, schema: PlayerProfileSchema },
       { name: ClubProfile.name, schema: ClubProfileSchema },
+      { name: CoachProfile.name, schema: CoachProfileSchema },
       { name: User.name, schema: UserSchema },
     ]),
     CloudinaryModule,

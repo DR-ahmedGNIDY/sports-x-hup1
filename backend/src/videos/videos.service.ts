@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { CoachProfile } from '../coaches/schemas/coach-profile.schema';
 import { ClubProfile } from '../clubs/schemas/club-profile.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ALLOWED_VIDEO_MIME_TYPES } from '../common/upload.config';
@@ -70,6 +71,8 @@ export class VideosService {
     private readonly playerProfileModel: Model<PlayerProfile>,
     @InjectModel(ClubProfile.name)
     private readonly clubProfileModel: Model<ClubProfile>,
+    @InjectModel(CoachProfile.name)
+    private readonly coachProfileModel: Model<CoachProfile>,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly cloudinary: CloudinaryService,
     private readonly sportsService: SportsService,
@@ -415,6 +418,14 @@ export class VideosService {
         role: user.role,
       };
     }
+    if (user.role === 'COACH') {
+      const profile = await this.coachProfileModel.findOne({ userId });
+      const name = [profile?.firstName, profile?.lastName]
+        .filter(Boolean)
+        .join(' ')
+        .trim();
+      return { displayName: name || user.email || 'Coach', role: user.role };
+    }
     return { displayName: 'Admin', role: user.role };
   }
 
@@ -442,15 +453,24 @@ export class VideosService {
     const clubUserIds = users
       .filter((user) => user.role === 'CLUB')
       .map((user) => user._id.toString());
+    const coachUserIds = users
+      .filter((user) => user.role === 'COACH')
+      .map((user) => user._id.toString());
 
-    const [profiles, clubProfiles] = await Promise.all([
+    const [profiles, clubProfiles, coachProfiles] = await Promise.all([
       playerUserIds.length
         ? this.playerProfileModel.find({ userId: { $in: playerUserIds } })
         : Promise.resolve([]),
       clubUserIds.length
         ? this.clubProfileModel.find({ userId: { $in: clubUserIds } })
         : Promise.resolve([]),
+      coachUserIds.length
+        ? this.coachProfileModel.find({ userId: { $in: coachUserIds } })
+        : Promise.resolve([]),
     ]);
+    const coachProfileByUserId = new Map(
+      coachProfiles.map((profile) => [profile.userId.toString(), profile]),
+    );
     const profileByUserId = new Map(
       profiles.map((profile) => [profile.userId.toString(), profile]),
     );
@@ -480,6 +500,18 @@ export class VideosService {
         const profile = clubProfileByUserId.get(id);
         authorInfoById.set(id, {
           displayName: profile?.name || user.email || 'Club',
+          role: user.role,
+        });
+        continue;
+      }
+      if (user.role === 'COACH') {
+        const profile = coachProfileByUserId.get(id);
+        const name = [profile?.firstName, profile?.lastName]
+          .filter(Boolean)
+          .join(' ')
+          .trim();
+        authorInfoById.set(id, {
+          displayName: name || user.email || 'Coach',
           role: user.role,
         });
         continue;

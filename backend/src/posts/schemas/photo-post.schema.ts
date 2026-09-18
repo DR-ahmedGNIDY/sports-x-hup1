@@ -11,6 +11,7 @@ export type PhotoPostDocument = HydratedDocument<PhotoPost>;
 export enum PostAuthorRole {
   PLAYER = 'PLAYER',
   CLUB = 'CLUB',
+  COACH = 'COACH',
 }
 
 @Schema({ timestamps: true, collection: 'photo_posts' })

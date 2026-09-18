@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ClubAccessModule } from '../club-access/club-access.module';
 import { ClubsModule } from '../clubs/clubs.module';
+import { CoachesModule } from '../coaches/coaches.module';
 import { PlayersModule } from '../players/players.module';
 import { VideosModule } from '../videos/videos.module';
 import { User, UserSchema } from './schemas/user.schema';
@@ -16,6 +18,8 @@ import { UsersService } from './users.service';
     PlayersModule,
     ClubsModule,
     VideosModule,
+    CoachesModule,
+    ClubAccessModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

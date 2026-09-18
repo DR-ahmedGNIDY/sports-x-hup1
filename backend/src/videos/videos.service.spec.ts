@@ -81,6 +81,7 @@ describe('VideosService', () => {
       videoCommentModel as never,
       playerProfileModel as never,
       clubProfileModel as never,
+      { findOne: jest.fn(), find: jest.fn() } as never,
       userModel as never,
       cloudinary,
       sportsService,
