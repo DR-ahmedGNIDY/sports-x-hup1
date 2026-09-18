@@ -13,6 +13,9 @@ export enum NotificationType {
 // without a migration.
 export enum NotificationEntityType {
   INVITATION = 'INVITATION',
+  // A club↔coach invitation — its own collection, so its own entity type:
+  // the client opens the coach-invitations screen for it, not the player one.
+  COACH_INVITATION = 'COACH_INVITATION',
   CALENDAR_EVENT = 'CALENDAR_EVENT',
 }
 
