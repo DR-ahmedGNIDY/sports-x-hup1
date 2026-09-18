@@ -19,7 +19,7 @@ export type CoachProfileDocument = HydratedDocument<CoachProfile>;
 export class CoachMedia {
   _id?: Types.ObjectId;
 
-  @Prop({ required: true, enum: MediaType })
+  @Prop({ type: String, required: true, enum: MediaType })
   type: MediaType;
 
   @Prop({ required: true })
@@ -129,6 +129,7 @@ export class CoachProfile {
   // PUBLIC by default, unlike a player: a coach is recruited by code, and a
   // code only resolves for a public profile.
   @Prop({
+    type: String,
     enum: ProfileVisibility,
     default: ProfileVisibility.PUBLIC,
     index: true,

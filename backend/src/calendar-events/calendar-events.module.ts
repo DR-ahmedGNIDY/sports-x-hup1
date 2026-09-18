@@ -4,6 +4,7 @@ import {
   ClubManagedPlayer,
   ClubManagedPlayerSchema,
 } from '../club-players/schemas/club-managed-player.schema';
+import { ClubAccessModule } from '../club-access/club-access.module';
 import { ClubsModule } from '../clubs/clubs.module';
 import {
   ClubMembership,
@@ -32,6 +33,7 @@ import {
     PlayersModule,
     ClubsModule,
     NotificationsModule,
+    ClubAccessModule,
   ],
   controllers: [CalendarEventsController],
   providers: [CalendarEventsService],

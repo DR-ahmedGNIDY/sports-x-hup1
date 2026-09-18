@@ -6,6 +6,7 @@ import { CoachesModule } from '../coaches/coaches.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { CoachInvitationsController } from './coach-invitations.controller';
 import { CoachInvitationsService } from './coach-invitations.service';
+import { ClubProfileAsStaffController } from './club-profile-as-staff.controller';
 import { CoachStaffController } from './coach-staff.controller';
 import {
   ClubCoachInvitation,
@@ -22,7 +23,11 @@ import {
     CoachesModule,
     NotificationsModule,
   ],
-  controllers: [CoachInvitationsController, CoachStaffController],
+  controllers: [
+    CoachInvitationsController,
+    CoachStaffController,
+    ClubProfileAsStaffController,
+  ],
   providers: [CoachInvitationsService],
 })
 export class CoachInvitationsModule {}

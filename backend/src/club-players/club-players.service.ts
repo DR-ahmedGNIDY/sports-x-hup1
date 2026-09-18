@@ -80,6 +80,7 @@ export class ClubPlayersService {
   async createPlayer(
     clubId: string,
     dto: CreateClubPlayerDto,
+    createdByCoachUserId?: string,
   ): Promise<{
     player: PlayerProfileDocument;
     credentials: Credentials;
@@ -126,6 +127,7 @@ export class ClubPlayersService {
       userId: user.id,
       clubId,
       dialCode,
+      ...(createdByCoachUserId ? { createdByCoachUserId } : {}),
     });
 
     return {

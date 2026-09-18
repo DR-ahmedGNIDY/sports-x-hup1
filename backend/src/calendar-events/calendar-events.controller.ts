@@ -18,6 +18,14 @@ import {
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { ClubActor } from '../club-access/club-access.service';
+import {
+  ClubActorGuard,
+  ClubActorParam,
+  ClubPermission,
+  OptionalClubActorParam,
+} from '../club-access/club-actor.guard';
+import { CoachPermission } from '../club-access/coach-permission.enum';
 import { UserRole } from '../users/schemas/user.schema';
 import { CalendarEventsService } from './calendar-events.service';
 import { toCalendarEventView } from './calendar-events.mapper';
@@ -26,29 +34,36 @@ import { ListCalendarEventsDto } from './dto/list-calendar-events.dto';
 import { UpdateRosterDto } from './dto/update-roster.dto';
 import { UpdateStatsDto } from './dto/update-stats.dto';
 
+// Club routes admit the club and any coach on its staff (X-Club-Id); what
+// a coach may change is gated per route by @ClubPermission. Reading the
+// calendar needs nothing beyond being on the staff.
 @Controller('calendar-events')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, ClubActorGuard)
 export class CalendarEventsController {
   constructor(private readonly calendarEventsService: CalendarEventsService) {}
 
   @Post()
-  @Roles(UserRole.CLUB)
+  @Roles(UserRole.CLUB, UserRole.COACH)
+  @ClubPermission(CoachPermission.MANAGE_CALENDAR)
   async create(
-    @CurrentUser() user: JwtPayload,
+    @ClubActorParam() actor: ClubActor,
     @Body() dto: CreateCalendarEventDto,
   ) {
-    const events = await this.calendarEventsService.create(user.sub, dto);
+    const events = await this.calendarEventsService.create(
+      actor.clubUserId,
+      dto,
+    );
     return { items: events.map(toCalendarEventView) };
   }
 
   @Get()
-  @Roles(UserRole.CLUB)
+  @Roles(UserRole.CLUB, UserRole.COACH)
   async list(
-    @CurrentUser() user: JwtPayload,
+    @ClubActorParam() actor: ClubActor,
     @Query() dto: ListCalendarEventsDto,
   ) {
     const events = await this.calendarEventsService.listForClub(
-      user.sub,
+      actor.clubUserId,
       dto.month,
     );
     return { items: events.map(toCalendarEventView) };
@@ -68,9 +83,16 @@ export class CalendarEventsController {
   }
 
   @Get(':id/roster-pool')
-  @Roles(UserRole.CLUB)
-  async rosterPool(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
-    const groups = await this.calendarEventsService.rosterPool(user.sub, id);
+  @Roles(UserRole.CLUB, UserRole.COACH)
+  @ClubPermission(CoachPermission.MANAGE_LINEUP)
+  async rosterPool(
+    @ClubActorParam() actor: ClubActor,
+    @Param('id') id: string,
+  ) {
+    const groups = await this.calendarEventsService.rosterPool(
+      actor.clubUserId,
+      id,
+    );
     return {
       groups: groups.map((group) => ({
         birthYear: group.birthYear,
@@ -86,14 +108,15 @@ export class CalendarEventsController {
   }
 
   @Patch(':id/roster')
-  @Roles(UserRole.CLUB)
+  @Roles(UserRole.CLUB, UserRole.COACH)
+  @ClubPermission(CoachPermission.MANAGE_LINEUP)
   async updateRoster(
-    @CurrentUser() user: JwtPayload,
+    @ClubActorParam() actor: ClubActor,
     @Param('id') id: string,
     @Body() dto: UpdateRosterDto,
   ) {
     const event = await this.calendarEventsService.updateRoster(
-      user.sub,
+      actor.clubUserId,
       id,
       dto,
     );
@@ -101,25 +124,36 @@ export class CalendarEventsController {
   }
 
   @Get(':id')
-  @Roles(UserRole.CLUB, UserRole.PLAYER)
-  async findOne(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
-    const event = await this.calendarEventsService.findByIdForParty(
-      user.sub,
-      id,
-      user.role === UserRole.CLUB ? 'CLUB' : 'PLAYER',
-    );
+  @Roles(UserRole.CLUB, UserRole.COACH, UserRole.PLAYER)
+  async findOne(
+    @CurrentUser() user: JwtPayload,
+    @OptionalClubActorParam() actor: ClubActor | undefined,
+    @Param('id') id: string,
+  ) {
+    const event = actor
+      ? await this.calendarEventsService.findByIdForParty(
+          actor.clubUserId,
+          id,
+          'CLUB',
+        )
+      : await this.calendarEventsService.findByIdForParty(
+          user.sub,
+          id,
+          'PLAYER',
+        );
     return toCalendarEventView(event);
   }
 
   @Patch(':id/stats')
-  @Roles(UserRole.CLUB)
+  @Roles(UserRole.CLUB, UserRole.COACH)
+  @ClubPermission(CoachPermission.MANAGE_LINEUP)
   async updateStats(
-    @CurrentUser() user: JwtPayload,
+    @ClubActorParam() actor: ClubActor,
     @Param('id') id: string,
     @Body() dto: UpdateStatsDto,
   ) {
     const event = await this.calendarEventsService.updateStats(
-      user.sub,
+      actor.clubUserId,
       id,
       dto,
     );
@@ -127,9 +161,10 @@ export class CalendarEventsController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.CLUB)
+  @Roles(UserRole.CLUB, UserRole.COACH)
+  @ClubPermission(CoachPermission.MANAGE_CALENDAR)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@CurrentUser() user: JwtPayload, @Param('id') id: string) {
-    await this.calendarEventsService.remove(user.sub, id);
+  async remove(@ClubActorParam() actor: ClubActor, @Param('id') id: string) {
+    await this.calendarEventsService.remove(actor.clubUserId, id);
   }
 }

@@ -25,6 +25,11 @@ import {
   imageUploadOptions,
   mediaUploadOptions,
 } from '../common/upload.config';
+import {
+  ClubActorGuard,
+  ClubPermission,
+} from '../club-access/club-actor.guard';
+import { CoachPermission } from '../club-access/coach-permission.enum';
 import { UserRole } from '../users/schemas/user.schema';
 import {
   CreateAchievementDto,
@@ -237,9 +242,11 @@ export class PlayersController {
     return toPublicView(profile);
   }
 
+  // A club, or a coach acting for one with VIEW_PLAYER_CONTACTS.
   @Get(':id/contact')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.CLUB)
+  @UseGuards(JwtAuthGuard, RolesGuard, ClubActorGuard)
+  @Roles(UserRole.CLUB, UserRole.COACH)
+  @ClubPermission(CoachPermission.VIEW_PLAYER_CONTACTS)
   async contact(@Param('id') id: string) {
     const profile = await this.playersService.findPublicByIdOrThrow(id);
     return profile.contact;

@@ -18,10 +18,11 @@ export type ClubCoachInvitationDocument = HydratedDocument<ClubCoachInvitation>;
 // one-live-invitation-per-pair rule. Accepting creates a ClubCoachMembership.
 @Schema({ timestamps: true, collection: 'club_coach_invitations' })
 export class ClubCoachInvitation {
-  @Prop({ required: true, enum: CoachInvitationType })
+  @Prop({ type: String, required: true, enum: CoachInvitationType })
   type: CoachInvitationType;
 
   @Prop({
+    type: String,
     required: true,
     enum: InvitationStatus,
     default: InvitationStatus.PENDING,

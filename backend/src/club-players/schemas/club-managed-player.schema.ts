@@ -23,6 +23,11 @@ export class ClubManagedPlayer {
   // collection alone, without joining back to the Countries collection.
   @Prop({ required: true })
   dialCode: string;
+
+  // Set when a coach created this account on the club's behalf (with the
+  // CREATE_PLAYERS permission). The club still owns it — this is provenance.
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  createdByCoachUserId?: Types.ObjectId;
 }
 
 export const ClubManagedPlayerSchema =

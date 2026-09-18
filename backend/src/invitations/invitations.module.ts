@@ -4,6 +4,7 @@ import {
   ClubManagedPlayer,
   ClubManagedPlayerSchema,
 } from '../club-players/schemas/club-managed-player.schema';
+import { ClubAccessModule } from '../club-access/club-access.module';
 import { ClubsModule } from '../clubs/clubs.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { PlayersModule } from '../players/players.module';
@@ -34,6 +35,7 @@ import {
     PlayersModule,
     ClubsModule,
     NotificationsModule,
+    ClubAccessModule,
   ],
   controllers: [InvitationsController, MembershipsController],
   providers: [InvitationsService, MembershipsService],

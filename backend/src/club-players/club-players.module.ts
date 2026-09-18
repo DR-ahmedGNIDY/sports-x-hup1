@@ -4,6 +4,7 @@ import {
   ClubMembership,
   ClubMembershipSchema,
 } from '../invitations/schemas/club-membership.schema';
+import { ClubAccessModule } from '../club-access/club-access.module';
 import { PlayersModule } from '../players/players.module';
 import { UsersModule } from '../users/users.module';
 import { ClubPlayersController } from './club-players.controller';
@@ -23,6 +24,7 @@ import {
     ]),
     PlayersModule,
     UsersModule,
+    ClubAccessModule,
   ],
   controllers: [ClubPlayersController],
   providers: [ClubPlayersService],

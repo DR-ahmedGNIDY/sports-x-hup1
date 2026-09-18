@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtPayload } from '../auth/decorators/current-user.decorator';
+import { UserRole } from '../users/schemas/user.schema';
 import { ClubAccessService, ClubActor } from './club-access.service';
 import { CoachPermission } from './coach-permission.enum';
 
@@ -29,6 +30,12 @@ interface ClubActorRequest {
   clubActor?: ClubActor;
 }
 
+/** The actor on routes that also admit non-club roles; undefined for those. */
+export const OptionalClubActorParam = createParamDecorator(
+  (_data: unknown, ctx: ExecutionContext): ClubActor | undefined =>
+    ctx.switchToHttp().getRequest<ClubActorRequest>().clubActor,
+);
+
 /**
  * Resolves who is acting for which club and puts it on the request for
  * `@ClubActorParam()`. Must run after JwtAuthGuard and RolesGuard.
@@ -45,6 +52,15 @@ export class ClubActorGuard implements CanActivate {
       CoachPermission | undefined
     >(CLUB_PERMISSION_KEY, [context.getHandler(), context.getClass()]);
     const request = context.switchToHttp().getRequest<ClubActorRequest>();
+    // Only a club or a coach acts for a club. Anyone else a route admits
+    // (e.g. a player reading their own event) passes through untouched —
+    // RolesGuard has already decided whether they may be here at all.
+    if (
+      request.user.role !== UserRole.CLUB &&
+      request.user.role !== UserRole.COACH
+    ) {
+      return true;
+    }
     const header = request.headers[CLUB_CONTEXT_HEADER];
     request.clubActor = await this.access.resolve(
       request.user,

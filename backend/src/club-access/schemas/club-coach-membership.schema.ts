@@ -23,6 +23,7 @@ export class ClubCoachMembership {
   coachUserId: Types.ObjectId;
 
   @Prop({
+    type: String,
     required: true,
     enum: MembershipStatus,
     default: MembershipStatus.ACTIVE,

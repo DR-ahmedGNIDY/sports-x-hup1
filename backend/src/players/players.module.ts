@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ClubAccessModule } from '../club-access/club-access.module';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { PublicCodesModule } from '../public-codes/public-codes.module';
 import {
@@ -29,6 +30,7 @@ import {
     // PlayersModule, so this doesn't create a cycle — needed so a deleted
     // player's videos/likes/comments cascade-delete too (deleteAllForPlayer).
     VideosModule,
+    ClubAccessModule,
   ],
   controllers: [PlayersController],
   providers: [PlayersService],
