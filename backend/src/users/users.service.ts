@@ -166,14 +166,18 @@ export class UsersService {
     await this.userModel.updateOne({ _id: id }, { passwordHash });
   }
 
-  async findAll(page = 1): Promise<PaginatedResult<UserDocument>> {
+  async findAll(
+    page = 1,
+    role?: UserRole,
+  ): Promise<PaginatedResult<UserDocument>> {
+    const filter = role ? { role } : {};
     const [items, total] = await Promise.all([
       this.userModel
-        .find()
+        .find(filter)
         .sort({ createdAt: -1 })
         .skip((page - 1) * ADMIN_LIST_PAGE_SIZE)
         .limit(ADMIN_LIST_PAGE_SIZE),
-      this.userModel.countDocuments(),
+      this.userModel.countDocuments(filter),
     ]);
     return { items, page, pageSize: ADMIN_LIST_PAGE_SIZE, total };
   }

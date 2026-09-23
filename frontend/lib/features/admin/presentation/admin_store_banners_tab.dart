@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/admin_banner.dart';
 import '../application/admin_store_controllers.dart';
 import 'admin_store_page.dart';
@@ -14,6 +15,7 @@ class AdminStoreBannersTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final banners = ref.watch(adminBannersControllerProvider);
 
     return Column(
@@ -23,11 +25,10 @@ class AdminStoreBannersTab extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Banners rotate on the store home page, in this order. '
-                  'A banner appears only once it has a desktop image.',
-                  style: TextStyle(fontSize: 12),
+                  l10n.adminBannersIntro,
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
               FilledButton.icon(
@@ -36,7 +37,7 @@ class AdminStoreBannersTab extends ConsumerWidget {
                   builder: (context) => const _BannerEditor(banner: null),
                 ),
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('New banner'),
+                label: Text(l10n.adminBannerNew),
               ),
             ],
           ),
@@ -44,8 +45,7 @@ class AdminStoreBannersTab extends ConsumerWidget {
         Expanded(
           child: AdminAsyncList<AdminBanner>(
             value: banners,
-            emptyMessage:
-                'No banners yet — the store shows an empty hero band.',
+            emptyMessage: l10n.adminBannersEmpty,
             onRetry: () => ref.invalidate(adminBannersControllerProvider),
             builder: (context, items) => ListView.separated(
               itemCount: items.length,
@@ -67,6 +67,7 @@ class _BannerRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
     final withheld = banner.withheldReason;
 
@@ -78,7 +79,7 @@ class _BannerRow extends ConsumerWidget {
           // Shown side by side and labelled, so "which one is missing" is
           // answered by looking rather than by clicking in.
           _Slot(
-            label: 'Desktop',
+            label: l10n.adminBannerSlotDesktop,
             url: banner.desktopUrl,
             width: 160,
             // Required: it is what makes the banner publishable, so it can
@@ -88,10 +89,10 @@ class _BannerRow extends ConsumerWidget {
           ),
           const SizedBox(width: 12),
           _Slot(
-            label: 'Mobile',
+            label: l10n.adminBannerSlotMobile,
             url: banner.mobileUrl,
             width: 72,
-            hint: banner.mobileUrl == null ? 'Falls back to desktop' : null,
+            hint: banner.mobileUrl == null ? l10n.adminBannerFallsBackToDesktop : null,
             onClear: banner.mobileUrl == null
                 ? null
                 : () => ref
@@ -105,7 +106,7 @@ class _BannerRow extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  banner.alt?.en ?? 'No description',
+                  banner.alt?.en ?? l10n.adminBannerNoDescription,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: banner.alt == null ? scheme.onSurfaceVariant : null,
@@ -113,8 +114,10 @@ class _BannerRow extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Order ${banner.sortOrder}'
-                  '${banner.linkPath == null ? '' : '  ·  links to ${banner.linkPath}'}',
+                  l10n.adminBannerOrderLabel(banner.sortOrder) +
+                      (banner.linkPath == null
+                          ? ''
+                          : l10n.adminBannerLinksToSuffix(banner.linkPath!)),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 if (withheld != null) ...[
@@ -130,7 +133,7 @@ class _BannerRow extends ConsumerWidget {
                       // Says why rather than leaving the merchant to work
                       // out why their banner is not on the site.
                       Text(
-                        'Not on the store — $withheld',
+                        l10n.adminBannerNotOnStore(withheld),
                         style: TextStyle(fontSize: 12, color: scheme.error),
                       ),
                     ],
@@ -140,7 +143,7 @@ class _BannerRow extends ConsumerWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Edit',
+            tooltip: l10n.editLabel,
             onPressed: () => showDialog<void>(
               context: context,
               builder: (context) => _BannerEditor(banner: banner),
@@ -148,7 +151,7 @@ class _BannerRow extends ConsumerWidget {
             icon: const Icon(Icons.edit_outlined, size: 18),
           ),
           IconButton(
-            tooltip: banner.isActive ? 'Switch off' : 'Already off',
+            tooltip: banner.isActive ? l10n.adminBannerSwitchOff : l10n.adminBannerAlreadyOff,
             onPressed: banner.isActive
                 ? () => ref
                       .read(adminBannersControllerProvider.notifier)
@@ -205,6 +208,7 @@ class _Slot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
 
     return SizedBox(
@@ -255,7 +259,7 @@ class _Slot extends StatelessWidget {
                 minimumSize: const Size(0, 28),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('Clear', style: TextStyle(fontSize: 11)),
+              child: Text(l10n.adminBannerClear, style: const TextStyle(fontSize: 11)),
             ),
         ],
       ),
@@ -295,10 +299,11 @@ class _BannerEditorState extends ConsumerState<_BannerEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isNew = widget.banner == null;
 
     return AlertDialog(
-      title: Text(isNew ? 'New banner' : 'Edit banner'),
+      title: Text(isNew ? l10n.adminBannerNew : l10n.adminBannerEdit),
       content: SizedBox(
         width: 520,
         child: SingleChildScrollView(
@@ -309,34 +314,34 @@ class _BannerEditorState extends ConsumerState<_BannerEditor> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (isNew)
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
                       // The images need the banner to exist first, so its
                       // folder can be named after it.
-                      'Save this first, then upload its images from the list.',
-                      style: TextStyle(fontSize: 12),
+                      l10n.adminBannerSaveFirstHint,
+                      style: const TextStyle(fontSize: 12),
                     ),
                   ),
                 TextFormField(
                   controller: _altEn,
-                  decoration: const InputDecoration(
-                    labelText: 'Description (English)',
-                    helperText: 'Read aloud by screen readers',
+                  decoration: InputDecoration(
+                    labelText: l10n.adminDescriptionEn,
+                    helperText: l10n.adminDescriptionEnHelper,
                   ),
                 ),
                 TextFormField(
                   controller: _altAr,
-                  decoration: const InputDecoration(
-                    labelText: 'Description (Arabic)',
+                  decoration: InputDecoration(
+                    labelText: l10n.adminDescriptionAr,
                   ),
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _linkPath,
-                  decoration: const InputDecoration(
-                    labelText: 'Links to (optional)',
-                    helperText: 'A store path, e.g. /c/men or /p/black-shorts',
+                  decoration: InputDecoration(
+                    labelText: l10n.adminBannerLinkPathLabel,
+                    helperText: l10n.adminBannerLinkPathHelper,
                   ),
                   validator: (value) {
                     final text = (value ?? '').trim();
@@ -344,7 +349,7 @@ class _BannerEditorState extends ConsumerState<_BannerEditor> {
                     // Matches the server's own rule. A full URL here would
                     // be a redirect off the store.
                     if (!RegExp(r'^/(?!/)[A-Za-z0-9\-._~/]*$').hasMatch(text)) {
-                      return 'A store path starting with / — not a full URL';
+                      return l10n.adminBannerLinkPathError;
                     }
                     return null;
                   },
@@ -353,18 +358,18 @@ class _BannerEditorState extends ConsumerState<_BannerEditor> {
                 TextFormField(
                   controller: _sortOrder,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Order',
-                    helperText: 'Lower numbers show first',
+                  decoration: InputDecoration(
+                    labelText: l10n.adminBannerOrderFieldLabel,
+                    helperText: l10n.adminBannerOrderFieldHelper,
                   ),
                   validator: (value) =>
                       int.tryParse((value ?? '').trim()) == null
-                      ? 'A whole number'
+                      ? l10n.adminWholeNumberError
                       : null,
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Active'),
+                  title: Text(l10n.adminActiveLabel),
                   value: _isActive,
                   onChanged: (value) => setState(() => _isActive = value),
                 ),
@@ -385,7 +390,7 @@ class _BannerEditorState extends ConsumerState<_BannerEditor> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelLabel),
         ),
         FilledButton(
           onPressed: _busy ? null : _save,
@@ -395,7 +400,7 @@ class _BannerEditorState extends ConsumerState<_BannerEditor> {
                   height: 14,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Save'),
+              : Text(l10n.saveLabel),
         ),
       ],
     );

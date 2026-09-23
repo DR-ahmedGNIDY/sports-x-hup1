@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_category.dart';
 import '../application/admin_store_controllers.dart';
 import 'admin_store_page.dart';
@@ -11,6 +12,7 @@ class AdminStoreCategoriesTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final categories = ref.watch(adminCategoriesControllerProvider);
 
     return Column(
@@ -20,16 +22,16 @@ class AdminStoreCategoriesTab extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Order here is the order they appear in the store nav.',
-                  style: TextStyle(fontSize: 12),
+                  l10n.adminCategoryOrderHint,
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
               FilledButton.icon(
                 onPressed: () => _showEditor(context, ref, null, categories),
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('New category'),
+                label: Text(l10n.adminCategoryNew),
               ),
             ],
           ),
@@ -37,7 +39,7 @@ class AdminStoreCategoriesTab extends ConsumerWidget {
         Expanded(
           child: AdminAsyncList<StoreCategory>(
             value: categories,
-            emptyMessage: 'No categories yet.',
+            emptyMessage: l10n.adminCategoriesEmpty,
             onRetry: () => ref.invalidate(adminCategoriesControllerProvider),
             builder: (context, items) => ListView.separated(
               itemCount: items.length,
@@ -75,6 +77,7 @@ class _CategoryRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
     final parent = category.parentId == null
         ? null
@@ -110,19 +113,19 @@ class _CategoryRow extends ConsumerWidget {
       title: Text(category.name.en),
       subtitle: Text(
         '/${category.slug}'
-        '${category.name.ar == null ? '  ·  no Arabic name' : ''}'
-        '${isVisible ? '' : '  ·  Hidden'}',
+        '${category.name.ar == null ? l10n.adminCategoryNoArabicNameSuffix : ''}'
+        '${isVisible ? '' : l10n.adminCategoryHiddenSuffix}',
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            tooltip: 'Set image',
+            tooltip: l10n.adminSetImageTooltip,
             onPressed: () => _pickImage(context, ref),
             icon: const Icon(Icons.add_photo_alternate_outlined, size: 18),
           ),
           IconButton(
-            tooltip: 'Edit',
+            tooltip: l10n.editLabel,
             onPressed: () => showDialog<void>(
               context: context,
               builder: (context) =>
@@ -189,6 +192,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Only top-level categories can be parents (the nav is one level deep),
     // and a category cannot parent itself.
     final parents = widget.all
@@ -197,7 +201,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
 
     return AlertDialog(
       title: Text(
-        widget.category == null ? 'New category' : 'Edit category',
+        widget.category == null ? l10n.adminCategoryNew : l10n.adminCategoryEdit,
       ),
       content: SizedBox(
         width: 460,
@@ -208,24 +212,24 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
             children: [
               TextFormField(
                 controller: _nameEn,
-                decoration: const InputDecoration(labelText: 'Name (English)'),
+                decoration: InputDecoration(labelText: l10n.adminCategoryNameEn),
                 validator: (value) =>
-                    (value ?? '').trim().isEmpty ? 'Required' : null,
+                    (value ?? '').trim().isEmpty ? l10n.storeRequiredField : null,
               ),
               TextFormField(
                 controller: _nameAr,
-                decoration: const InputDecoration(labelText: 'Name (Arabic)'),
+                decoration: InputDecoration(labelText: l10n.adminCategoryNameAr),
               ),
               DropdownButtonFormField<String?>(
                 initialValue: parents.any((c) => c.id == _parentId)
                     ? _parentId
                     : null,
                 isExpanded: true,
-                decoration: const InputDecoration(
-                  labelText: 'Parent (optional)',
+                decoration: InputDecoration(
+                  labelText: l10n.adminCategoryParentLabel,
                 ),
                 items: [
-                  const DropdownMenuItem(value: null, child: Text('Top level')),
+                  DropdownMenuItem(value: null, child: Text(l10n.adminCategoryTopLevel)),
                   for (final parent in parents)
                     DropdownMenuItem(
                       value: parent.id,
@@ -237,28 +241,27 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
               TextFormField(
                 controller: _sortOrder,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Sort order'),
+                decoration: InputDecoration(labelText: l10n.adminCategorySortOrderLabel),
                 validator: (value) =>
                     int.tryParse((value ?? '').trim()) == null
-                    ? 'Whole number'
+                    ? l10n.adminWholeNumberError
                     : null,
               ),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Visible'),
-                subtitle: const Text('Shows in the store nav'),
+                title: Text(l10n.adminVisibleLabel),
+                subtitle: Text(l10n.adminCategoryVisibleHint),
                 value: _isActive,
                 onChanged: (value) => setState(() => _isActive = value),
               ),
               if (widget.category != null)
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
                   child: Text(
                     // Worth saying plainly, because it is surprising: the
                     // rename lands but the URL does not follow.
-                    'Renaming does not change the URL — the slug is fixed '
-                    'once created so existing links keep working.',
-                    style: TextStyle(fontSize: 12),
+                    l10n.adminCategoryRenameHint,
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ),
               if (_error != null) ...[
@@ -275,7 +278,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelLabel),
         ),
         FilledButton(
           onPressed: _busy ? null : _save,
@@ -285,7 +288,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                   height: 14,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Save'),
+              : Text(l10n.saveLabel),
         ),
       ],
     );

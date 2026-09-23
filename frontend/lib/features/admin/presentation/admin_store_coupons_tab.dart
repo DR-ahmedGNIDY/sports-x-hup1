@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_coupon.dart';
+import '../../store/presentation/widgets/money.dart';
 import '../application/admin_store_controllers.dart';
 import 'admin_store_page.dart';
 
@@ -10,6 +12,7 @@ class AdminStoreCouponsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final coupons = ref.watch(adminCouponsControllerProvider);
 
     return Column(
@@ -19,10 +22,10 @@ class AdminStoreCouponsTab extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Discounts apply to the goods, never to the delivery fee.',
-                  style: TextStyle(fontSize: 12),
+                  l10n.adminCouponsIntro,
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
               FilledButton.icon(
@@ -31,7 +34,7 @@ class AdminStoreCouponsTab extends ConsumerWidget {
                   builder: (context) => const _CouponEditor(coupon: null),
                 ),
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('New code'),
+                label: Text(l10n.adminCouponNewCode),
               ),
             ],
           ),
@@ -39,7 +42,7 @@ class AdminStoreCouponsTab extends ConsumerWidget {
         Expanded(
           child: AdminAsyncList<StoreCoupon>(
             value: coupons,
-            emptyMessage: 'No discount codes yet.',
+            emptyMessage: l10n.adminCouponsEmpty,
             onRetry: () => ref.invalidate(adminCouponsControllerProvider),
             builder: (context, items) => ListView.separated(
               itemCount: items.length,
@@ -60,6 +63,8 @@ class _CouponRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final scheme = Theme.of(context).colorScheme;
     final isUsable = coupon.isUsableAt(DateTime.now());
 
@@ -76,27 +81,27 @@ class _CouponRow extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             coupon.type == CouponType.percent
-                ? '${coupon.value}% off'
-                : '${minorToPounds(coupon.value)} EGP off',
+                ? l10n.adminCouponPercentOff(coupon.value)
+                : l10n.adminCouponAmountOff(formatMoney(coupon.value, isArabic: isArabic)),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],
       ),
-      subtitle: Text(_describe(coupon)),
+      subtitle: Text(_describe(l10n, coupon, isArabic)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           // One word for the state a customer would experience, rather than
           // making the merchant work it out from the dates and the counter.
           Text(
-            isUsable ? 'Live' : _whyNotUsable(coupon),
+            isUsable ? l10n.adminCouponLive : _whyNotUsable(l10n, coupon),
             style: TextStyle(
               fontSize: 12,
               color: isUsable ? scheme.primary : scheme.onSurfaceVariant,
             ),
           ),
           IconButton(
-            tooltip: 'Edit',
+            tooltip: l10n.editLabel,
             onPressed: () => showDialog<void>(
               context: context,
               builder: (context) => _CouponEditor(coupon: coupon),
@@ -108,27 +113,27 @@ class _CouponRow extends StatelessWidget {
     );
   }
 
-  String _describe(StoreCoupon coupon) {
+  String _describe(AppLocalizations l10n, StoreCoupon coupon, bool isArabic) {
     final parts = <String>[
       if (coupon.minSubtotalMinor > 0)
-        'min basket ${minorToPounds(coupon.minSubtotalMinor)} EGP',
+        l10n.adminCouponMinBasket(formatMoney(coupon.minSubtotalMinor, isArabic: isArabic)),
       coupon.maxRedemptions == null
-        ? '${coupon.redemptions} used'
-        : '${coupon.redemptions} of ${coupon.maxRedemptions} used',
-      if (coupon.startsAt != null) 'from ${_day(coupon.startsAt!)}',
-      if (coupon.endsAt != null) 'until ${_day(coupon.endsAt!)}',
+        ? l10n.adminCouponUsedCount(coupon.redemptions)
+        : l10n.adminCouponUsedOfMax(coupon.redemptions, coupon.maxRedemptions!),
+      if (coupon.startsAt != null) l10n.adminCouponFrom(_day(coupon.startsAt!)),
+      if (coupon.endsAt != null) l10n.adminCouponUntil(_day(coupon.endsAt!)),
     ];
     return parts.join('  ·  ');
   }
 
-  String _whyNotUsable(StoreCoupon coupon) {
+  String _whyNotUsable(AppLocalizations l10n, StoreCoupon coupon) {
     final now = DateTime.now();
-    if (!coupon.isActive) return 'Off';
-    if (coupon.isExhausted) return 'Used up';
+    if (!coupon.isActive) return l10n.adminCouponOff;
+    if (coupon.isExhausted) return l10n.adminCouponUsedUp;
     if (coupon.startsAt != null && coupon.startsAt!.isAfter(now)) {
-      return 'Scheduled';
+      return l10n.adminCouponScheduled;
     }
-    return 'Expired';
+    return l10n.adminCouponExpired;
   }
 
   String _day(DateTime date) =>
@@ -181,10 +186,11 @@ class _CouponEditorState extends ConsumerState<_CouponEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isEditing = widget.coupon != null;
 
     return AlertDialog(
-      title: Text(isEditing ? 'Edit code' : 'New code'),
+      title: Text(isEditing ? l10n.adminCouponEditCode : l10n.adminCouponNewCode),
       content: SizedBox(
         width: 520,
         child: SingleChildScrollView(
@@ -202,16 +208,16 @@ class _CouponEditorState extends ConsumerState<_CouponEditor> {
                   enabled: !isEditing,
                   textCapitalization: TextCapitalization.characters,
                   decoration: InputDecoration(
-                    labelText: 'Code',
+                    labelText: l10n.adminCouponCodeLabel,
                     helperText: isEditing
-                        ? 'A code cannot be renamed once customers have it'
-                        : 'Letters, digits and hyphens',
+                        ? l10n.adminCouponCodeLockedHelper
+                        : l10n.adminCouponCodeHelper,
                   ),
                   validator: (value) {
                     final text = (value ?? '').trim();
-                    if (text.isEmpty) return 'Required';
+                    if (text.isEmpty) return l10n.storeRequiredField;
                     if (!RegExp(r'^[A-Za-z0-9-]+$').hasMatch(text)) {
-                      return 'Letters, digits and hyphens only';
+                      return l10n.adminCouponCodeInvalid;
                     }
                     return null;
                   },
@@ -222,15 +228,15 @@ class _CouponEditorState extends ConsumerState<_CouponEditor> {
                     Expanded(
                       child: DropdownButtonFormField<CouponType>(
                         initialValue: _type,
-                        decoration: const InputDecoration(labelText: 'Kind'),
-                        items: const [
+                        decoration: InputDecoration(labelText: l10n.adminCouponKindLabel),
+                        items: [
                           DropdownMenuItem(
                             value: CouponType.percent,
-                            child: Text('Percentage off'),
+                            child: Text(l10n.adminCouponPercentageOff),
                           ),
                           DropdownMenuItem(
                             value: CouponType.fixed,
-                            child: Text('Fixed amount off'),
+                            child: Text(l10n.adminCouponFixedAmountOff),
                           ),
                         ],
                         onChanged: (value) => setState(
@@ -245,10 +251,10 @@ class _CouponEditorState extends ConsumerState<_CouponEditor> {
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           labelText: _type == CouponType.percent
-                              ? 'Percent'
-                              : 'Amount (EGP)',
+                              ? l10n.adminCouponPercentLabel
+                              : l10n.adminCouponAmountEgpLabel,
                         ),
-                        validator: _valueValidator,
+                        validator: (value) => _valueValidator(l10n, value),
                       ),
                     ),
                   ],
@@ -257,51 +263,51 @@ class _CouponEditorState extends ConsumerState<_CouponEditor> {
                 TextFormField(
                   controller: _minSubtotal,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Minimum basket (EGP, optional)',
+                  decoration: InputDecoration(
+                    labelText: l10n.adminCouponMinBasketLabel,
                     // Says which number it is measured against, because the
                     // distinction decides whether a basket qualifies in one
                     // governorate but not another.
-                    helperText: 'Compared against the goods, before shipping',
+                    helperText: l10n.adminCouponMinBasketHelper,
                   ),
                   validator: (value) =>
                       (value ?? '').trim().isEmpty ||
                           poundsToMinor(value!) != null
                       ? null
-                      : 'Enter an amount like 500.00',
+                      : l10n.adminCouponAmountExample,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _maxRedemptions,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Usage limit (optional)',
-                    helperText: 'Leave empty for unlimited',
+                  decoration: InputDecoration(
+                    labelText: l10n.adminCouponUsageLimitLabel,
+                    helperText: l10n.adminCouponUsageLimitHelper,
                   ),
                   validator: (value) {
                     final text = (value ?? '').trim();
                     if (text.isEmpty) return null;
                     final parsed = int.tryParse(text);
                     return parsed == null || parsed < 1
-                        ? 'A whole number, 1 or more'
+                        ? l10n.adminCouponUsageLimitError
                         : null;
                   },
                 ),
                 const SizedBox(height: 8),
                 _DateField(
-                  label: 'Starts (optional)',
+                  label: l10n.adminCouponStartsLabel,
                   value: _startsAt,
                   onChanged: (value) => setState(() => _startsAt = value),
                 ),
                 _DateField(
-                  label: 'Ends (optional)',
+                  label: l10n.adminCouponEndsLabel,
                   value: _endsAt,
                   onChanged: (value) => setState(() => _endsAt = value),
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Active'),
-                  subtitle: const Text('Off stops it regardless of dates'),
+                  title: Text(l10n.adminActiveLabel),
+                  subtitle: Text(l10n.adminCouponActiveHint),
                   value: _isActive,
                   onChanged: (value) => setState(() => _isActive = value),
                 ),
@@ -322,17 +328,17 @@ class _CouponEditorState extends ConsumerState<_CouponEditor> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelLabel),
         ),
         FilledButton(
-          onPressed: _busy ? null : _save,
+          onPressed: _busy ? null : () => _save(l10n),
           child: _busy
               ? const SizedBox(
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Save'),
+              : Text(l10n.saveLabel),
         ),
       ],
     );
@@ -341,24 +347,24 @@ class _CouponEditorState extends ConsumerState<_CouponEditor> {
   /// A percentage and an amount are different numbers in the same field, so
   /// they are validated differently: 15 means 15% one way and 0.15 EGP the
   /// other, and only one of them has a ceiling.
-  String? _valueValidator(String? value) {
+  String? _valueValidator(AppLocalizations l10n, String? value) {
     final text = (value ?? '').trim();
-    if (text.isEmpty) return 'Required';
+    if (text.isEmpty) return l10n.storeRequiredField;
     if (_type == CouponType.percent) {
       final percent = int.tryParse(text);
       if (percent == null || percent < 1 || percent > 100) {
-        return 'A whole percent between 1 and 100';
+        return l10n.adminCouponPercentRangeError;
       }
       return null;
     }
     final minor = poundsToMinor(text);
-    return minor == null || minor < 1 ? 'Enter an amount like 50.00' : null;
+    return minor == null || minor < 1 ? l10n.adminCouponAmountMinError : null;
   }
 
-  Future<void> _save() async {
+  Future<void> _save(AppLocalizations l10n) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_startsAt != null && _endsAt != null && !_endsAt!.isAfter(_startsAt!)) {
-      setState(() => _error = 'The end date must be after the start.');
+      setState(() => _error = l10n.adminCouponEndAfterStartError);
       return;
     }
 
@@ -410,13 +416,14 @@ class _DateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListTile(
       contentPadding: EdgeInsets.zero,
       dense: true,
       title: Text(label, style: Theme.of(context).textTheme.bodySmall),
       subtitle: Text(
         value == null
-            ? 'Not set'
+            ? l10n.adminCouponNotSet
             : '${value!.year}-${value!.month.toString().padLeft(2, '0')}-'
                   '${value!.day.toString().padLeft(2, '0')}',
       ),
@@ -425,12 +432,12 @@ class _DateField extends StatelessWidget {
         children: [
           if (value != null)
             IconButton(
-              tooltip: 'Clear',
+              tooltip: l10n.adminBannerClear,
               onPressed: () => onChanged(null),
               icon: const Icon(Icons.close, size: 16),
             ),
           IconButton(
-            tooltip: 'Pick a date',
+            tooltip: l10n.adminCouponPickDate,
             onPressed: () async {
               final now = DateTime.now();
               final picked = await showDatePicker(

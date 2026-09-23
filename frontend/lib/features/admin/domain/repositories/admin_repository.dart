@@ -1,3 +1,4 @@
+import '../../../auth/domain/entities/user_role.dart';
 import '../entities/admin_club_summary.dart';
 import '../entities/admin_player_summary.dart';
 import '../entities/admin_stats.dart';
@@ -10,7 +11,7 @@ typedef AdminPage<T> = ({List<T> items, bool hasMore});
 
 /// Throws [AppException] (core/errors) on failure.
 abstract class AdminRepository {
-  Future<AdminPage<AdminUser>> getUsers({int page = 1});
+  Future<AdminPage<AdminUser>> getUsers({int page = 1, UserRole? role});
 
   Future<AdminStats> getStats();
 

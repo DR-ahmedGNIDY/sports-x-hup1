@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_order.dart';
+import '../../store/presentation/widgets/money.dart';
 import '../application/admin_store_controllers.dart';
 import 'admin_store_page.dart';
 
@@ -17,12 +19,12 @@ const Map<OrderStatus, List<OrderStatus>> _allowedTransitions = {
   OrderStatus.cancelled: [],
 };
 
-String _statusLabel(OrderStatus status) => switch (status) {
-  OrderStatus.pending => 'Pending',
-  OrderStatus.confirmed => 'Confirmed',
-  OrderStatus.shipped => 'Shipped',
-  OrderStatus.delivered => 'Delivered',
-  OrderStatus.cancelled => 'Cancelled',
+String _statusLabel(AppLocalizations l10n, OrderStatus status) => switch (status) {
+  OrderStatus.pending => l10n.adminOrderStatusPending,
+  OrderStatus.confirmed => l10n.adminOrderStatusConfirmed,
+  OrderStatus.shipped => l10n.adminOrderStatusShipped,
+  OrderStatus.delivered => l10n.adminOrderStatusDelivered,
+  OrderStatus.cancelled => l10n.adminOrderStatusCancelled,
 };
 
 class AdminStoreOrdersTab extends ConsumerWidget {
@@ -30,6 +32,7 @@ class AdminStoreOrdersTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final orders = ref.watch(adminOrdersControllerProvider);
     final controller = ref.read(adminOrdersControllerProvider.notifier);
 
@@ -44,13 +47,13 @@ class AdminStoreOrdersTab extends ConsumerWidget {
               // "All" first and selected by default — a queue that hides
               // orders behind a filter is how one gets missed.
               ChoiceChip(
-                label: const Text('All'),
+                label: Text(l10n.adminOrdersAll),
                 selected: controller.filter == null,
                 onSelected: (_) => controller.setFilter(null),
               ),
               for (final status in OrderStatus.values)
                 ChoiceChip(
-                  label: Text(_statusLabel(status)),
+                  label: Text(_statusLabel(l10n, status)),
                   selected: controller.filter == status,
                   onSelected: (_) => controller.setFilter(status),
                 ),
@@ -60,7 +63,7 @@ class AdminStoreOrdersTab extends ConsumerWidget {
         Expanded(
           child: AdminAsyncList<StoreOrder>(
             value: orders,
-            emptyMessage: 'No orders here.',
+            emptyMessage: l10n.adminOrdersEmpty,
             onRetry: () => ref.invalidate(adminOrdersControllerProvider),
             builder: (context, items) => ListView.separated(
               itemCount: items.length + (controller.hasMore ? 1 : 0),
@@ -72,7 +75,7 @@ class AdminStoreOrdersTab extends ConsumerWidget {
                     child: Center(
                       child: OutlinedButton(
                         onPressed: controller.loadMore,
-                        child: const Text('Load more'),
+                        child: Text(l10n.loadMoreLabel),
                       ),
                     ),
                   );
@@ -94,6 +97,8 @@ class _OrderRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final moves = _allowedTransitions[order.status] ?? const <OrderStatus>[];
     final units = order.lines.fold<int>(0, (sum, l) => sum + l.quantity);
 
@@ -111,16 +116,16 @@ class _OrderRow extends ConsumerWidget {
           SizedBox(width: 160, child: Text(order.address.governorateName.en)),
           SizedBox(
             width: 110,
-            child: Text('${minorToPounds(order.totalMinor)} EGP'),
+            child: Text(formatMoney(order.totalMinor, isArabic: isArabic)),
           ),
-          SizedBox(width: 110, child: Text(_statusLabel(order.status))),
+          SizedBox(width: 110, child: Text(_statusLabel(l10n, order.status))),
         ],
       ),
       subtitle: Text(
-        '$units item${units == 1 ? '' : 's'}  ·  ${order.email}'
+        '${l10n.adminOrderItemsCount(units)}  ·  ${order.email}'
         // Whether the buyer had an account changes how the merchant can
         // reach them about the order, so it is on the row, not buried.
-        '${order.isGuestOrder ? '  ·  Guest' : ''}',
+        '${order.isGuestOrder ? l10n.adminOrderGuestSuffix : ''}',
       ),
       children: [
         Padding(
@@ -135,7 +140,7 @@ class _OrderRow extends ConsumerWidget {
                     '${line.quantity} × ${line.title.en}'
                     '${line.size == null ? '' : ' · ${line.size}'}'
                     '${line.colour == null ? '' : ' · ${line.colour}'}'
-                    '   —   ${minorToPounds(line.lineTotalMinor)} EGP',
+                    '   —   ${formatMoney(line.lineTotalMinor, isArabic: isArabic)}',
                   ),
                 ),
               const SizedBox(height: 8),
@@ -146,18 +151,20 @@ class _OrderRow extends ConsumerWidget {
               if (order.address.notes != null &&
                   order.address.notes!.isNotEmpty) ...[
                 const SizedBox(height: 4),
-                Text('Notes: ${order.address.notes}'),
+                Text(l10n.adminOrderNotesLabel(order.address.notes!)),
               ],
               const SizedBox(height: 8),
               Text(
-                'Subtotal ${minorToPounds(order.subtotalMinor)}  ·  '
-                'Shipping ${minorToPounds(order.shippingFeeMinor)}  ·  '
-                'Total ${minorToPounds(order.totalMinor)} EGP',
+                l10n.adminOrderSummaryLine(
+                  formatMoney(order.subtotalMinor, isArabic: isArabic),
+                  formatMoney(order.shippingFeeMinor, isArabic: isArabic),
+                  formatMoney(order.totalMinor, isArabic: isArabic),
+                ),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 16),
               if (moves.isEmpty)
-                const Text('This order is closed.')
+                Text(l10n.adminOrderClosed)
               else
                 Wrap(
                   spacing: 8,
@@ -165,7 +172,7 @@ class _OrderRow extends ConsumerWidget {
                     for (final next in moves)
                       FilledButton.tonal(
                         onPressed: () => _move(context, ref, next),
-                        child: Text('Mark ${_statusLabel(next).toLowerCase()}'),
+                        child: Text(l10n.adminOrderMarkAs(_statusLabel(l10n, next))),
                       ),
                   ],
                 ),
@@ -181,6 +188,7 @@ class _OrderRow extends ConsumerWidget {
     WidgetRef ref,
     OrderStatus next,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     // Cancelling returns stock to the variants, which is not something to
     // do on a stray click; advancing an order is reversible enough not to
     // need a dialog.
@@ -188,18 +196,16 @@ class _OrderRow extends ConsumerWidget {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Cancel ${order.orderNumber}?'),
-          content: const Text(
-            'The items go back into stock and the order cannot be reopened.',
-          ),
+          title: Text(l10n.adminOrderCancelTitle(order.orderNumber)),
+          content: Text(l10n.adminOrderCancelBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Keep it'),
+              child: Text(l10n.adminOrderKeepIt),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Cancel order'),
+              child: Text(l10n.adminOrderCancelConfirm),
             ),
           ],
         ),

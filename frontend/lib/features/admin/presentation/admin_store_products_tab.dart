@@ -2,7 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_product.dart';
+import '../../store/presentation/widgets/money.dart';
 import '../application/admin_store_controllers.dart';
 import 'admin_store_page.dart';
 import 'admin_store_product_editor.dart';
@@ -27,6 +29,7 @@ class _AdminStoreProductsTabState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final products = ref.watch(adminProductsControllerProvider);
     final controller = ref.read(adminProductsControllerProvider.notifier);
 
@@ -41,10 +44,10 @@ class _AdminStoreProductsTabState
                 width: 280,
                 child: TextField(
                   controller: _search,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     isDense: true,
-                    hintText: 'Search products',
-                    prefixIcon: Icon(Icons.search, size: 18),
+                    hintText: l10n.adminProductSearchHint,
+                    prefixIcon: const Icon(Icons.search, size: 18),
                   ),
                   onSubmitted: (value) => controller.search(
                     value.trim().isEmpty ? null : value.trim(),
@@ -55,7 +58,7 @@ class _AdminStoreProductsTabState
               FilledButton.icon(
                 onPressed: () => showProductEditor(context, ref, null),
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('New product'),
+                label: Text(l10n.adminProductNew),
               ),
             ],
           ),
@@ -63,7 +66,7 @@ class _AdminStoreProductsTabState
         Expanded(
           child: AdminAsyncList<StoreProduct>(
             value: products,
-            emptyMessage: 'No products yet.',
+            emptyMessage: l10n.adminProductsEmpty,
             onRetry: () =>
                 ref.invalidate(adminProductsControllerProvider),
             builder: (context, items) => ListView.separated(
@@ -76,7 +79,7 @@ class _AdminStoreProductsTabState
                     child: Center(
                       child: OutlinedButton(
                         onPressed: controller.loadMore,
-                        child: const Text('Load more'),
+                        child: Text(l10n.loadMoreLabel),
                       ),
                     ),
                   );
@@ -98,6 +101,8 @@ class _ProductRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final scheme = Theme.of(context).colorScheme;
     // Null means the response did not carry the flag, which for an admin
     // response it always does; treating null as listed keeps the row
@@ -126,9 +131,10 @@ class _ProductRow extends ConsumerWidget {
       ),
       title: Text(product.title.en),
       subtitle: Text(
-        '${minorToPounds(product.priceMinor)} EGP  ·  '
-        '${product.variants.length} options  ·  $totalStock in stock'
-        '${isListed ? '' : '  ·  Unlisted'}',
+        '${formatMoney(product.priceMinor, isArabic: isArabic)}  ·  '
+        '${l10n.adminProductOptionsCount(product.variants.length)}  ·  '
+        '${l10n.adminProductInStock(totalStock)}'
+        '${isListed ? '' : l10n.adminProductUnlistedSuffix}',
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -139,17 +145,17 @@ class _ProductRow extends ConsumerWidget {
               child: Icon(Icons.star, size: 16),
             ),
           IconButton(
-            tooltip: 'Images',
+            tooltip: l10n.adminProductImagesTooltip,
             onPressed: () => _manageImages(context, ref),
             icon: const Icon(Icons.photo_library_outlined, size: 18),
           ),
           IconButton(
-            tooltip: 'Edit',
+            tooltip: l10n.editLabel,
             onPressed: () => showProductEditor(context, ref, product),
             icon: const Icon(Icons.edit_outlined, size: 18),
           ),
           IconButton(
-            tooltip: isListed ? 'Unlist' : 'Already unlisted',
+            tooltip: isListed ? l10n.adminProductUnlistTooltip : l10n.adminProductAlreadyUnlisted,
             onPressed: isListed ? () => _confirmUnlist(context, ref) : null,
             icon: const Icon(Icons.visibility_off_outlined, size: 18),
           ),
@@ -159,24 +165,22 @@ class _ProductRow extends ConsumerWidget {
   }
 
   Future<void> _confirmUnlist(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Unlist product?'),
+        title: Text(l10n.adminProductUnlistTitle),
         // Says what actually happens, because "delete" would be a lie: the
         // document survives so past orders still render.
-        content: Text(
-          '${product.title.en} will stop appearing in the store. Orders that '
-          'already include it are unaffected, and you can re-list it later.',
-        ),
+        content: Text(l10n.adminProductUnlistBody(product.title.en)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancelLabel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Unlist'),
+            child: Text(l10n.adminProductUnlistConfirm),
           ),
         ],
       ),
@@ -213,23 +217,24 @@ class _ImagesDialogState extends ConsumerState<_ImagesDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text('Images — ${_product.title.en}'),
+      title: Text(l10n.adminProductImagesTitle(_product.title.en)),
       content: SizedBox(
         width: 520,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'The first image is the one shown on product cards.',
-              style: TextStyle(fontSize: 12),
+            Text(
+              l10n.adminProductImagesHint,
+              style: const TextStyle(fontSize: 12),
             ),
             const SizedBox(height: 12),
             if (_product.images.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
-                child: Text('No images yet.'),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Text(l10n.adminProductNoImages),
               )
             else
               Wrap(
@@ -257,7 +262,7 @@ class _ImagesDialogState extends ConsumerState<_ImagesDialog> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: Text(l10n.adminCloseLabel),
         ),
         FilledButton.icon(
           onPressed: _busy ? null : _pickAndUpload,
@@ -268,7 +273,7 @@ class _ImagesDialogState extends ConsumerState<_ImagesDialog> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.upload, size: 18),
-          label: const Text('Upload'),
+          label: Text(l10n.adminUploadLabel),
         ),
       ],
     );
@@ -337,6 +342,7 @@ class _Thumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SizedBox(
       width: 96,
       height: 128,
@@ -357,9 +363,9 @@ class _Thumb extends StatelessWidget {
               child: Container(
                 color: Colors.black87,
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                child: const Text(
-                  'Card',
-                  style: TextStyle(color: Colors.white, fontSize: 10),
+                child: Text(
+                  l10n.adminProductImageCardBadge,
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
               ),
             ),
@@ -367,7 +373,7 @@ class _Thumb extends StatelessWidget {
             right: 0,
             top: 0,
             child: IconButton(
-              tooltip: 'Remove image',
+              tooltip: l10n.adminProductRemoveImageTooltip,
               onPressed: onRemove,
               icon: const Icon(Icons.close, size: 16, color: Colors.white),
               style: IconButton.styleFrom(backgroundColor: Colors.black54),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/widgets/error_state.dart';
 import '../../../core/widgets/verified_badge.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../application/admin_clubs_controller.dart';
 import '../application/admin_stats_controller.dart';
 import '../application/admin_players_controller.dart';
@@ -16,6 +17,7 @@ class AdminPlayersClubsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return DefaultTabController(
       length: 2,
       child: Padding(
@@ -26,16 +28,16 @@ class AdminPlayersClubsPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Admin — Players & Clubs', style: Theme.of(context).textTheme.headlineSmall),
+                Text(l10n.dashboardAdminPlayersClubs, style: Theme.of(context).textTheme.headlineSmall),
                 TextButton.icon(
                   onPressed: () => context.go('/admin/users'),
                   icon: const Icon(Icons.people_outline),
-                  label: const Text('Users'),
+                  label: Text(l10n.usersTabLabel),
                 ),
               ],
             ),
-            const TabBar(
-              tabs: [Tab(text: 'Players'), Tab(text: 'Clubs')],
+            TabBar(
+              tabs: [Tab(text: l10n.playersTabLabel), Tab(text: l10n.clubsTabLabel)],
             ),
             const Expanded(
               child: TabBarView(children: [_PlayersTab(), _ClubsTab()]),
@@ -55,23 +57,24 @@ class _PlayersTab extends ConsumerWidget {
     WidgetRef ref,
     AdminPlayerSummary player,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Remove player profile?'),
+        title: Text(l10n.removePlayerProfileTitle),
         content: Text(
-          'This permanently deletes the profile for '
-          '${player.fullName.isEmpty ? 'this player' : player.fullName}, '
-          'including their photos and videos. This cannot be undone.',
+          l10n.removePlayerProfileContent(
+            player.fullName.isEmpty ? l10n.thisPlayerFallback : player.fullName,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancelLabel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Remove'),
+            child: Text(l10n.removeProfileTooltip),
           ),
         ],
       ),
@@ -83,12 +86,13 @@ class _PlayersTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final playersAsync = ref.watch(adminPlayersControllerProvider);
 
     return playersAsync.when(
       data: (players) {
         if (players.isEmpty) {
-          return const Center(child: Text('No player profiles found.'));
+          return Center(child: Text(l10n.noPlayerProfilesFound));
         }
         final hasMore = ref.watch(adminPlayersControllerProvider.notifier).hasMore;
         return Padding(
@@ -97,26 +101,26 @@ class _PlayersTab extends ConsumerWidget {
             child: Column(
               children: [
                 DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Name')),
-                    DataColumn(label: Text('Sport')),
-                    DataColumn(label: Text('Position')),
-                    DataColumn(label: Text('Visibility')),
-                    DataColumn(label: Text('Actions')),
+                  columns: [
+                    DataColumn(label: Text(l10n.nameColumnLabel)),
+                    DataColumn(label: Text(l10n.sportColumnLabel)),
+                    DataColumn(label: Text(l10n.positionColumnLabel)),
+                    DataColumn(label: Text(l10n.visibilityColumnLabel)),
+                    DataColumn(label: Text(l10n.actionsColumnLabel)),
                   ],
                   rows: players
                       .map(
                         (player) => DataRow(
                           cells: [
                             DataCell(
-                              Text(player.fullName.isEmpty ? 'Unnamed' : player.fullName),
+                              Text(player.fullName.isEmpty ? l10n.unnamedShort : player.fullName),
                             ),
                             DataCell(Text(player.sport ?? '')),
                             DataCell(Text(player.position ?? '')),
                             DataCell(Text(player.visibility ?? '')),
                             DataCell(
                               IconButton(
-                                tooltip: 'Remove profile',
+                                tooltip: l10n.removeProfileTooltip,
                                 icon: const Icon(Icons.delete_outline),
                                 onPressed: () => _confirmDelete(context, ref, player),
                               ),
@@ -132,7 +136,7 @@ class _PlayersTab extends ConsumerWidget {
                     child: OutlinedButton(
                       onPressed: () =>
                           ref.read(adminPlayersControllerProvider.notifier).loadMore(),
-                      child: const Text('Load more'),
+                      child: Text(l10n.loadMoreLabel),
                     ),
                   ),
               ],
@@ -155,23 +159,24 @@ class _ClubsTab extends ConsumerWidget {
     WidgetRef ref,
     AdminClubSummary club,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Remove club profile?'),
+        title: Text(l10n.removeClubProfileTitle),
         content: Text(
-          'This permanently deletes the profile for '
-          '${club.name?.isNotEmpty == true ? club.name! : 'this club'}, '
-          'including its logo. This cannot be undone.',
+          l10n.removeClubProfileContent(
+            club.name?.isNotEmpty == true ? club.name! : l10n.thisClubFallback,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancelLabel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Remove'),
+            child: Text(l10n.removeProfileTooltip),
           ),
         ],
       ),
@@ -183,12 +188,13 @@ class _ClubsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final clubsAsync = ref.watch(adminClubsControllerProvider);
 
     return clubsAsync.when(
       data: (clubs) {
         if (clubs.isEmpty) {
-          return const Center(child: Text('No club profiles found.'));
+          return Center(child: Text(l10n.noClubProfilesFound));
         }
         final hasMore = ref.watch(adminClubsControllerProvider.notifier).hasMore;
         return Padding(
@@ -197,12 +203,12 @@ class _ClubsTab extends ConsumerWidget {
             child: Column(
               children: [
                 DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Name')),
-                    DataColumn(label: Text('Country')),
-                    DataColumn(label: Text('City')),
-                    DataColumn(label: Text('Verified')),
-                    DataColumn(label: Text('Actions')),
+                  columns: [
+                    DataColumn(label: Text(l10n.nameColumnLabel)),
+                    DataColumn(label: Text(l10n.countryLabel)),
+                    DataColumn(label: Text(l10n.cityLabel)),
+                    DataColumn(label: Text(l10n.verifiedColumnLabel)),
+                    DataColumn(label: Text(l10n.actionsColumnLabel)),
                   ],
                   rows: clubs
                       .map(
@@ -215,7 +221,7 @@ class _ClubsTab extends ConsumerWidget {
                                   Text(
                                     club.name?.isNotEmpty == true
                                         ? club.name!
-                                        : 'Unnamed',
+                                        : l10n.unnamedShort,
                                   ),
                                   // The same badge the rest of the app
                                   // shows, so the admin sees exactly what
@@ -242,7 +248,7 @@ class _ClubsTab extends ConsumerWidget {
                             ),
                             DataCell(
                               IconButton(
-                                tooltip: 'Remove profile',
+                                tooltip: l10n.removeProfileTooltip,
                                 icon: const Icon(Icons.delete_outline),
                                 onPressed: () => _confirmDelete(context, ref, club),
                               ),
@@ -258,7 +264,7 @@ class _ClubsTab extends ConsumerWidget {
                     child: OutlinedButton(
                       onPressed: () =>
                           ref.read(adminClubsControllerProvider.notifier).loadMore(),
-                      child: const Text('Load more'),
+                      child: Text(l10n.loadMoreLabel),
                     ),
                   ),
               ],

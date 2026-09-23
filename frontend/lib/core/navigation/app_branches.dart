@@ -427,8 +427,6 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
       AppBranch.settings,
     ],
     UserRole.admin => const [
-      // First, so it is the dashboard's landing screen — the counts are
-      // what an admin wants to see before drilling into a list.
       AppBranch.adminOverview,
       AppBranch.adminUsers,
       AppBranch.adminPlayersClubs,

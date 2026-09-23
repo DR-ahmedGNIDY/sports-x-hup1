@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../domain/entities/admin_user.dart';
 
 /// What the admin chose in [showSuspendUserDialog].
@@ -42,17 +43,19 @@ class _SuspendUserDialogState extends State<_SuspendUserDialog> {
     super.dispose();
   }
 
-  static const _labels = {
-    SuspensionDuration.oneMonth: '1 month',
-    SuspensionDuration.threeMonths: '3 months',
-    SuspensionDuration.oneYear: '1 year',
-    SuspensionDuration.permanent: 'Permanent',
+  Map<SuspensionDuration, String> _labels(AppLocalizations l10n) => {
+    SuspensionDuration.oneMonth: l10n.adminSuspendOneMonth,
+    SuspensionDuration.threeMonths: l10n.adminSuspendThreeMonths,
+    SuspensionDuration.oneYear: l10n.adminSuspendOneYear,
+    SuspensionDuration.permanent: l10n.adminSuspendPermanent,
   };
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final labels = _labels(l10n);
     return AlertDialog(
-      title: const Text('Suspend account'),
+      title: Text(l10n.adminSuspendAccountTitle),
       content: SizedBox(
         width: 380,
         child: Column(
@@ -60,7 +63,7 @@ class _SuspendUserDialogState extends State<_SuspendUserDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${widget.user.email} will not be able to log in.',
+              l10n.adminSuspendAccountBody(widget.user.email),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: AppSpacing.md),
@@ -73,11 +76,9 @@ class _SuspendUserDialogState extends State<_SuspendUserDialog> {
                   for (final duration in SuspensionDuration.values)
                     RadioListTile<SuspensionDuration>(
                       value: duration,
-                      title: Text(_labels[duration]!),
+                      title: Text(labels[duration]!),
                       subtitle: duration == SuspensionDuration.permanent
-                          ? const Text(
-                              'Stays suspended until an admin reactivates it.',
-                            )
+                          ? Text(l10n.adminSuspendPermanentHint)
                           : null,
                       contentPadding: EdgeInsets.zero,
                       dense: true,
@@ -90,9 +91,9 @@ class _SuspendUserDialogState extends State<_SuspendUserDialog> {
               controller: _reasonController,
               maxLength: 500,
               maxLines: 2,
-              decoration: const InputDecoration(
-                labelText: 'Reason (optional)',
-                helperText: 'Internal note — the user never sees this.',
+              decoration: InputDecoration(
+                labelText: l10n.adminSuspendReasonLabel,
+                helperText: l10n.adminSuspendReasonHint,
               ),
             ),
           ],
@@ -101,7 +102,7 @@ class _SuspendUserDialogState extends State<_SuspendUserDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelLabel),
         ),
         FilledButton(
           onPressed: () {
@@ -111,7 +112,7 @@ class _SuspendUserDialogState extends State<_SuspendUserDialog> {
               reason: reason.isEmpty ? null : reason,
             ));
           },
-          child: const Text('Suspend'),
+          child: Text(l10n.suspendLabel),
         ),
       ],
     );

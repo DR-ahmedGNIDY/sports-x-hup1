@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_radius.dart';
 import '../../../core/widgets/error_state.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_overview.dart';
+import '../../store/presentation/widgets/money.dart';
 import '../application/admin_store_controllers.dart';
-import 'admin_store_page.dart';
 
 /// The first thing the merchant sees: what happened today, and what needs
 /// doing now. Six numbers, no charts — a store this size has nothing a
@@ -35,6 +36,8 @@ class _Cards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 24),
       children: [
@@ -43,21 +46,21 @@ class _Cards extends StatelessWidget {
           runSpacing: 16,
           children: [
             _StatCard(
-              label: 'Orders today',
+              label: l10n.adminStoreOrdersToday,
               value: '${overview.ordersToday}',
               icon: Icons.receipt_long_outlined,
             ),
             _StatCard(
-              label: 'Takings today',
-              value: '${minorToPounds(overview.revenueTodayMinor)} EGP',
+              label: l10n.adminStoreTakingsToday,
+              value: formatMoney(overview.revenueTodayMinor, isArabic: isArabic),
               icon: Icons.payments_outlined,
               // Cancelled orders are excluded server-side; saying so here
               // stops the number reading as a discrepancy against the
               // orders tab, where cancellations are still listed.
-              hint: 'Cancelled orders excluded',
+              hint: l10n.adminStoreTakingsHint,
             ),
             _StatCard(
-              label: 'Awaiting you',
+              label: l10n.adminStoreAwaitingYou,
               value: '${overview.pendingOrders}',
               icon: Icons.pending_actions_outlined,
               // The only card that is a to-do rather than a fact, so it is
@@ -65,20 +68,20 @@ class _Cards extends StatelessWidget {
               isAlert: overview.pendingOrders > 0,
             ),
             _StatCard(
-              label: 'Out of stock',
+              label: l10n.adminStoreOutOfStock,
               value: '${overview.outOfStockProducts}',
               icon: Icons.remove_shopping_cart_outlined,
-              hint: 'Listed, but nothing buyable',
+              hint: l10n.adminStoreOutOfStockHint,
               isAlert: overview.outOfStockProducts > 0,
             ),
             _StatCard(
-              label: 'Running low',
+              label: l10n.adminStoreRunningLow,
               value: '${overview.lowStockProducts}',
               icon: Icons.inventory_2_outlined,
-              hint: 'A size with 3 or fewer left',
+              hint: l10n.adminStoreRunningLowHint,
             ),
             _StatCard(
-              label: 'Listed products',
+              label: l10n.adminStoreListedProducts,
               value: '${overview.activeProducts}',
               icon: Icons.sell_outlined,
             ),

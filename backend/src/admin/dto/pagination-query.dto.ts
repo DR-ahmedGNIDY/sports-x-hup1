@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
+import { UserRole } from '../../users/schemas/user.schema';
 
 export class PaginationQueryDto {
   @IsOptional()
@@ -7,4 +8,8 @@ export class PaginationQueryDto {
   @IsInt()
   @Min(1)
   page?: number;
+
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
 }

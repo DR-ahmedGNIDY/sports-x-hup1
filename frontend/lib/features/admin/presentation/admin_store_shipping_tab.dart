@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/shipping_zone.dart';
 import '../application/admin_store_controllers.dart';
 import 'admin_store_page.dart';
@@ -15,24 +16,23 @@ class AdminStoreShippingTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final zones = ref.watch(adminShippingControllerProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
-            'Turning a governorate off removes it from checkout. Orders '
-            'already delivered there keep their fee.',
-            style: TextStyle(fontSize: 12),
+            l10n.adminShippingIntro,
+            style: const TextStyle(fontSize: 12),
           ),
         ),
         Expanded(
           child: AdminAsyncList<ShippingZone>(
             value: zones,
-            emptyMessage:
-                'No governorates yet — run the shipping seed on the server.',
+            emptyMessage: l10n.adminShippingEmpty,
             onRetry: () => ref.invalidate(adminShippingControllerProvider),
             builder: (context, items) => ListView.separated(
               itemCount: items.length,
@@ -78,6 +78,7 @@ class _ZoneRowState extends ConsumerState<_ZoneRow> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -99,9 +100,9 @@ class _ZoneRowState extends ConsumerState<_ZoneRow> {
             child: TextField(
               controller: _fee,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 isDense: true,
-                labelText: 'Fee (EGP)',
+                labelText: l10n.adminShippingFeeLabel,
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -112,7 +113,7 @@ class _ZoneRowState extends ConsumerState<_ZoneRow> {
             child: SwitchListTile(
               contentPadding: EdgeInsets.zero,
               dense: true,
-              title: const Text('Deliver', style: TextStyle(fontSize: 12)),
+              title: Text(l10n.adminShippingDeliverLabel, style: const TextStyle(fontSize: 12)),
               value: _isActive,
               onChanged: (value) => setState(() => _isActive = value),
             ),
@@ -126,7 +127,7 @@ class _ZoneRowState extends ConsumerState<_ZoneRow> {
                     height: 14,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Save'),
+                : Text(l10n.saveLabel),
           ),
         ],
       ),
@@ -134,11 +135,12 @@ class _ZoneRowState extends ConsumerState<_ZoneRow> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context)!;
     final feeMinor = poundsToMinor(_fee.text);
     final messenger = ScaffoldMessenger.of(context);
     if (feeMinor == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Enter a fee like 65.00')),
+        SnackBar(content: Text(l10n.adminShippingFeeExampleError)),
       );
       return;
     }

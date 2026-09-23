@@ -15,9 +15,14 @@ class AdminRemoteDataSource {
     'Authorization': 'Bearer $accessToken',
   };
 
-  Future<Map<String, dynamic>> getUsers(String accessToken, {int page = 1}) async {
+  Future<Map<String, dynamic>> getUsers(
+    String accessToken, {
+    int page = 1,
+    String? role,
+  }) async {
+    final roleQuery = role == null ? '' : '&role=$role';
     final response = await _client.get(
-      '/admin/users?page=$page',
+      '/admin/users?page=$page$roleQuery',
       headers: _bearer(accessToken),
     );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);

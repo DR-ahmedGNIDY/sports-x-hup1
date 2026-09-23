@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_category.dart';
 import '../../store/domain/entities/store_product.dart';
 import '../application/admin_store_controllers.dart';
@@ -80,10 +81,11 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final categories = ref.watch(adminCategoriesControllerProvider);
 
     return AlertDialog(
-      title: Text(widget.product == null ? 'New product' : 'Edit product'),
+      title: Text(widget.product == null ? l10n.adminProductNew : l10n.adminProductEditTitle),
       content: SizedBox(
         width: 640,
         child: SingleChildScrollView(
@@ -93,18 +95,20 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _Pair(
-                  left: _field(_titleEn, 'Title (English)', required: true),
-                  right: _field(_titleAr, 'Title (Arabic)'),
+                  left: _field(l10n, _titleEn, l10n.adminProductTitleEn, required: true),
+                  right: _field(l10n, _titleAr, l10n.adminProductTitleAr),
                 ),
                 _Pair(
                   left: _field(
+                    l10n,
                     _descriptionEn,
-                    'Description (English)',
+                    l10n.adminDescriptionEn,
                     maxLines: 3,
                   ),
                   right: _field(
+                    l10n,
                     _descriptionAr,
-                    'Description (Arabic)',
+                    l10n.adminDescriptionAr,
                     maxLines: 3,
                   ),
                 ),
@@ -112,7 +116,7 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                   data: (items) => DropdownButtonFormField<String>(
                     initialValue: _validCategory(items),
                     isExpanded: true,
-                    decoration: const InputDecoration(labelText: 'Category'),
+                    decoration: InputDecoration(labelText: l10n.adminProductCategoryLabel),
                     items: [
                       for (final category in items)
                         DropdownMenuItem(
@@ -120,32 +124,34 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                           child: Text(
                             category.name.en +
                                 (category.isActive == false
-                                    ? '  (hidden)'
+                                    ? l10n.adminProductCategoryHiddenSuffix
                                     : ''),
                           ),
                         ),
                     ],
                     validator: (value) =>
-                        value == null ? 'Pick a category' : null,
+                        value == null ? l10n.adminProductPickCategoryError : null,
                     onChanged: (value) => setState(() => _categoryId = value),
                   ),
                   loading: () => const LinearProgressIndicator(),
-                  error: (error, _) => Text('Categories failed to load: $error'),
+                  error: (error, _) => Text(l10n.adminProductCategoriesFailed('$error')),
                 ),
                 const SizedBox(height: 12),
                 _Pair(
                   left: _field(
+                    l10n,
                     _price,
-                    'Price (EGP)',
+                    l10n.adminProductPriceEgpLabel,
                     required: true,
-                    validator: _priceValidator,
+                    validator: (value) => _priceValidator(l10n, value),
                   ),
                   // Named for what it does on the card rather than
                   // "compareAtPrice", which means nothing to a merchant.
                   right: _field(
+                    l10n,
                     _compareAt,
-                    'Was price (EGP, optional)',
-                    validator: _compareAtValidator,
+                    l10n.adminProductWasPriceLabel,
+                    validator: (value) => _compareAtValidator(l10n, value),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -154,23 +160,23 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                     Expanded(
                       child: DropdownButtonFormField<ProductBadge>(
                         initialValue: _badge,
-                        decoration: const InputDecoration(labelText: 'Badge'),
-                        items: const [
+                        decoration: InputDecoration(labelText: l10n.adminProductBadgeLabel),
+                        items: [
                           DropdownMenuItem(
                             value: ProductBadge.none,
-                            child: Text('None'),
+                            child: Text(l10n.adminProductBadgeNone),
                           ),
                           DropdownMenuItem(
                             value: ProductBadge.isNew,
-                            child: Text('New'),
+                            child: Text(l10n.adminProductBadgeNew),
                           ),
                           DropdownMenuItem(
                             value: ProductBadge.preOrder,
-                            child: Text('Pre-order'),
+                            child: Text(l10n.adminProductBadgePreOrder),
                           ),
                           DropdownMenuItem(
                             value: ProductBadge.sale,
-                            child: Text('Sale'),
+                            child: Text(l10n.adminProductBadgeSale),
                           ),
                         ],
                         onChanged: (value) =>
@@ -184,8 +190,8 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
                             dense: true,
-                            title: const Text('Featured'),
-                            subtitle: const Text('Shows in the home carousel'),
+                            title: Text(l10n.adminProductFeaturedLabel),
+                            subtitle: Text(l10n.adminProductFeaturedHint),
                             value: _isFeatured,
                             onChanged: (value) =>
                                 setState(() => _isFeatured = value),
@@ -193,8 +199,8 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
                             dense: true,
-                            title: const Text('Listed'),
-                            subtitle: const Text('Visible in the store'),
+                            title: Text(l10n.adminProductListedLabel),
+                            subtitle: Text(l10n.adminProductListedHint),
                             value: _isActive,
                             onChanged: (value) =>
                                 setState(() => _isActive = value),
@@ -207,24 +213,24 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                 const Divider(height: 32),
                 Row(
                   children: [
-                    const Text(
-                      'Options',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                    Text(
+                      l10n.adminProductOptionsTitle,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(width: 12),
                     // Stock lives on the option, not the product, because
                     // "Black / L is sold out" is the answer the cart needs.
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Each size/colour carries its own stock.',
-                        style: TextStyle(fontSize: 12),
+                        l10n.adminProductOptionsHint,
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ),
                     TextButton.icon(
                       onPressed: () =>
                           setState(() => _variants.add(_VariantDraft())),
                       icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Add option'),
+                      label: Text(l10n.adminProductAddOption),
                     ),
                   ],
                 ),
@@ -250,7 +256,7 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelLabel),
         ),
         FilledButton(
           onPressed: _busy ? null : _save,
@@ -260,7 +266,7 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                   height: 14,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Save'),
+              : Text(l10n.saveLabel),
         ),
       ],
     );
@@ -274,19 +280,19 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
     return items.any((c) => c.id == _categoryId) ? _categoryId : null;
   }
 
-  String? _priceValidator(String? value) =>
-      poundsToMinor(value ?? '') == null ? 'Enter a price like 749.00' : null;
+  String? _priceValidator(AppLocalizations l10n, String? value) =>
+      poundsToMinor(value ?? '') == null ? l10n.adminProductPriceExample : null;
 
-  String? _compareAtValidator(String? value) {
+  String? _compareAtValidator(AppLocalizations l10n, String? value) {
     final text = (value ?? '').trim();
     if (text.isEmpty) return null;
     final was = poundsToMinor(text);
-    if (was == null) return 'Enter a price like 999.00';
+    if (was == null) return l10n.adminProductWasPriceExample;
     final now = poundsToMinor(_price.text);
     // The API refuses this too; catching it here saves a round trip and
     // explains it in the merchant's own terms.
     if (now != null && was <= now) {
-      return 'Must be higher than the price';
+      return l10n.adminProductWasPriceHigherError;
     }
     return null;
   }
@@ -354,6 +360,7 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
   };
 
   Widget _field(
+    AppLocalizations l10n,
     TextEditingController controller,
     String label, {
     bool required = false,
@@ -369,7 +376,7 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
           validator ??
           (required
               ? (value) =>
-                    (value ?? '').trim().isEmpty ? 'Required' : null
+                    (value ?? '').trim().isEmpty ? l10n.storeRequiredField : null
               : null),
     ),
   );
@@ -397,6 +404,7 @@ class _VariantRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -404,7 +412,7 @@ class _VariantRow extends StatelessWidget {
           Expanded(
             child: TextFormField(
               initialValue: draft.size,
-              decoration: const InputDecoration(labelText: 'Size', isDense: true),
+              decoration: InputDecoration(labelText: l10n.adminProductSizeLabel, isDense: true),
               onChanged: (value) => draft.size = value,
             ),
           ),
@@ -412,8 +420,8 @@ class _VariantRow extends StatelessWidget {
           Expanded(
             child: TextFormField(
               initialValue: draft.colour,
-              decoration: const InputDecoration(
-                labelText: 'Colour',
+              decoration: InputDecoration(
+                labelText: l10n.adminProductColourLabel,
                 isDense: true,
               ),
               onChanged: (value) => draft.colour = value,
@@ -423,7 +431,7 @@ class _VariantRow extends StatelessWidget {
           Expanded(
             child: TextFormField(
               initialValue: draft.sku,
-              decoration: const InputDecoration(labelText: 'SKU', isDense: true),
+              decoration: InputDecoration(labelText: l10n.adminProductSkuLabel, isDense: true),
               onChanged: (value) => draft.sku = value,
             ),
           ),
@@ -433,8 +441,8 @@ class _VariantRow extends StatelessWidget {
             child: TextFormField(
               initialValue: '${draft.stock}',
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Stock',
+              decoration: InputDecoration(
+                labelText: l10n.adminProductStockLabel,
                 isDense: true,
               ),
               validator: (value) =>
@@ -444,7 +452,7 @@ class _VariantRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Remove option',
+            tooltip: l10n.adminProductRemoveOptionTooltip,
             onPressed: onRemove,
             icon: const Icon(Icons.close, size: 18),
           ),

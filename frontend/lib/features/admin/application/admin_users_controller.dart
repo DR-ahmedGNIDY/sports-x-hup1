@@ -1,16 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/domain/entities/user_role.dart';
 import '../data/repositories/admin_repository_impl.dart';
 import '../domain/entities/admin_user.dart';
 
-class AdminUsersController extends AsyncNotifier<List<AdminUser>> {
+/// One instance per role tab (Players / Coaches / Clubs / Platform
+/// management), each with its own page and "load more" state — mirrors
+/// `InvitationsListController`.
+class AdminUsersController extends FamilyAsyncNotifier<List<AdminUser>, UserRole> {
   int _page = 1;
   bool hasMore = false;
 
   @override
-  Future<List<AdminUser>> build() async {
+  Future<List<AdminUser>> build(UserRole arg) async {
     _page = 1;
-    final result = await ref.read(adminRepositoryProvider).getUsers(page: _page);
+    final result = await ref
+        .read(adminRepositoryProvider)
+        .getUsers(page: _page, role: arg);
     hasMore = result.hasMore;
     return result.items;
   }
@@ -18,7 +24,9 @@ class AdminUsersController extends AsyncNotifier<List<AdminUser>> {
   Future<void> loadMore() async {
     if (!hasMore || state.isLoading) return;
     final nextPage = _page + 1;
-    final result = await ref.read(adminRepositoryProvider).getUsers(page: nextPage);
+    final result = await ref
+        .read(adminRepositoryProvider)
+        .getUsers(page: nextPage, role: arg);
     _page = nextPage;
     hasMore = result.hasMore;
     state = AsyncData([...state.valueOrNull ?? const [], ...result.items]);
@@ -64,6 +72,6 @@ class AdminUsersController extends AsyncNotifier<List<AdminUser>> {
 }
 
 final adminUsersControllerProvider =
-    AsyncNotifierProvider<AdminUsersController, List<AdminUser>>(
+    AsyncNotifierProvider.family<AdminUsersController, List<AdminUser>, UserRole>(
       AdminUsersController.new,
     );

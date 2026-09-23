@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/widgets/error_state.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import 'admin_store_banners_tab.dart';
 import 'admin_store_categories_tab.dart';
 import 'admin_store_coupons_tab.dart';
@@ -35,25 +36,26 @@ class _AdminStorePageState extends ConsumerState<AdminStorePage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Store', style: Theme.of(context).textTheme.headlineSmall),
+          Text(l10n.dashboardAdminStore, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 12),
           TabBar(
             controller: _tabs,
             isScrollable: true,
             tabAlignment: TabAlignment.start,
-            tabs: const [
-              Tab(text: 'Overview'),
-              Tab(text: 'Products'),
-              Tab(text: 'Categories'),
-              Tab(text: 'Banners'),
-              Tab(text: 'Orders'),
-              Tab(text: 'Discounts'),
-              Tab(text: 'Shipping'),
+            tabs: [
+              Tab(text: l10n.adminStoreTabOverview),
+              Tab(text: l10n.adminStoreTabProducts),
+              Tab(text: l10n.adminStoreTabCategories),
+              Tab(text: l10n.adminStoreTabBanners),
+              Tab(text: l10n.adminStoreTabOrders),
+              Tab(text: l10n.adminStoreTabDiscounts),
+              Tab(text: l10n.adminStoreTabShipping),
             ],
           ),
           Expanded(

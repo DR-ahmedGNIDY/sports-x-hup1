@@ -1219,6 +1219,672 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clubProfileNotAvailable => 'This club profile is not available.';
 
   @override
+  String get moderatorColumnLabel => 'Moderator';
+
+  @override
+  String get verifiedColumnLabel => 'Verified';
+
+  @override
+  String get statusActiveLabel => 'ACTIVE';
+
+  @override
+  String get statusSuspendedPermanentLabel => 'SUSPENDED · permanent';
+
+  @override
+  String statusSuspendedUntilLabel(String date) {
+    return 'SUSPENDED · until $date';
+  }
+
+  @override
+  String get adminUsersTabPlayers => 'Players';
+
+  @override
+  String get adminUsersTabCoaches => 'Coaches';
+
+  @override
+  String get adminUsersTabClubs => 'Clubs';
+
+  @override
+  String get adminUsersTabPlatform => 'Platform management';
+
+  @override
+  String get adminOverviewRefreshTooltip => 'Refresh';
+
+  @override
+  String get adminOverviewRegisteredPlayers => 'Registered players';
+
+  @override
+  String adminOverviewPlayersWithProfile(int count) {
+    return '$count with a profile';
+  }
+
+  @override
+  String get adminOverviewRegisteredClubs => 'Registered clubs';
+
+  @override
+  String adminOverviewClubsWithProfile(int count) {
+    return '$count with a profile';
+  }
+
+  @override
+  String get adminOverviewVerifiedClubs => 'Verified clubs';
+
+  @override
+  String get adminOverviewCoaches => 'Coaches';
+
+  @override
+  String get adminOverviewTotalAccounts => 'Total accounts';
+
+  @override
+  String get adminOverviewSuspendedAccounts => 'Suspended accounts';
+
+  @override
+  String get adminOverviewModerators => 'Moderators';
+
+  @override
+  String get adminOverviewCommunityPosts => 'Community posts';
+
+  @override
+  String adminOverviewHiddenPosts(int count) {
+    return '$count hidden';
+  }
+
+  @override
+  String get adminSuspendAccountTitle => 'Suspend account';
+
+  @override
+  String adminSuspendAccountBody(String email) {
+    return '$email will not be able to log in.';
+  }
+
+  @override
+  String get adminSuspendOneMonth => '1 month';
+
+  @override
+  String get adminSuspendThreeMonths => '3 months';
+
+  @override
+  String get adminSuspendOneYear => '1 year';
+
+  @override
+  String get adminSuspendPermanent => 'Permanent';
+
+  @override
+  String get adminSuspendPermanentHint =>
+      'Stays suspended until an admin reactivates it.';
+
+  @override
+  String get adminSuspendReasonLabel => 'Reason (optional)';
+
+  @override
+  String get adminSuspendReasonHint =>
+      'Internal note — the user never sees this.';
+
+  @override
+  String get adminStoreTabOverview => 'Overview';
+
+  @override
+  String get adminStoreTabProducts => 'Products';
+
+  @override
+  String get adminStoreTabCategories => 'Categories';
+
+  @override
+  String get adminStoreTabBanners => 'Banners';
+
+  @override
+  String get adminStoreTabOrders => 'Orders';
+
+  @override
+  String get adminStoreTabDiscounts => 'Discounts';
+
+  @override
+  String get adminStoreTabShipping => 'Shipping';
+
+  @override
+  String get adminStoreOrdersToday => 'Orders today';
+
+  @override
+  String get adminStoreTakingsToday => 'Takings today';
+
+  @override
+  String get adminStoreTakingsHint => 'Cancelled orders excluded';
+
+  @override
+  String get adminStoreAwaitingYou => 'Awaiting you';
+
+  @override
+  String get adminStoreOutOfStock => 'Out of stock';
+
+  @override
+  String get adminStoreOutOfStockHint => 'Listed, but nothing buyable';
+
+  @override
+  String get adminStoreRunningLow => 'Running low';
+
+  @override
+  String get adminStoreRunningLowHint => 'A size with 3 or fewer left';
+
+  @override
+  String get adminStoreListedProducts => 'Listed products';
+
+  @override
+  String get adminBannersIntro =>
+      'Banners rotate on the store home page, in this order. A banner appears only once it has a desktop image.';
+
+  @override
+  String get adminBannerNew => 'New banner';
+
+  @override
+  String get adminBannerEdit => 'Edit banner';
+
+  @override
+  String get adminBannersEmpty =>
+      'No banners yet — the store shows an empty hero band.';
+
+  @override
+  String get adminBannerSlotDesktop => 'Desktop';
+
+  @override
+  String get adminBannerSlotMobile => 'Mobile';
+
+  @override
+  String get adminBannerFallsBackToDesktop => 'Falls back to desktop';
+
+  @override
+  String get adminBannerNoDescription => 'No description';
+
+  @override
+  String adminBannerOrderLabel(int order) {
+    return 'Order $order';
+  }
+
+  @override
+  String adminBannerLinksToSuffix(String path) {
+    return '  ·  links to $path';
+  }
+
+  @override
+  String adminBannerNotOnStore(String reason) {
+    return 'Not on the store — $reason';
+  }
+
+  @override
+  String get adminBannerSwitchOff => 'Switch off';
+
+  @override
+  String get adminBannerAlreadyOff => 'Already off';
+
+  @override
+  String get adminBannerClear => 'Clear';
+
+  @override
+  String get adminBannerSaveFirstHint =>
+      'Save this first, then upload its images from the list.';
+
+  @override
+  String get adminDescriptionEn => 'Description (English)';
+
+  @override
+  String get adminDescriptionEnHelper => 'Read aloud by screen readers';
+
+  @override
+  String get adminDescriptionAr => 'Description (Arabic)';
+
+  @override
+  String get adminBannerLinkPathLabel => 'Links to (optional)';
+
+  @override
+  String get adminBannerLinkPathHelper =>
+      'A store path, e.g. /c/men or /p/black-shorts';
+
+  @override
+  String get adminBannerLinkPathError =>
+      'A store path starting with / — not a full URL';
+
+  @override
+  String get adminBannerOrderFieldLabel => 'Order';
+
+  @override
+  String get adminBannerOrderFieldHelper => 'Lower numbers show first';
+
+  @override
+  String get adminWholeNumberError => 'A whole number';
+
+  @override
+  String get adminActiveLabel => 'Active';
+
+  @override
+  String get adminCategoryOrderHint =>
+      'Order here is the order they appear in the store nav.';
+
+  @override
+  String get adminCategoryNew => 'New category';
+
+  @override
+  String get adminCategoryEdit => 'Edit category';
+
+  @override
+  String get adminCategoriesEmpty => 'No categories yet.';
+
+  @override
+  String get adminCategoryNoArabicNameSuffix => '  ·  no Arabic name';
+
+  @override
+  String get adminCategoryHiddenSuffix => '  ·  Hidden';
+
+  @override
+  String get adminSetImageTooltip => 'Set image';
+
+  @override
+  String get adminCategoryNameEn => 'Name (English)';
+
+  @override
+  String get adminCategoryNameAr => 'Name (Arabic)';
+
+  @override
+  String get adminCategoryParentLabel => 'Parent (optional)';
+
+  @override
+  String get adminCategoryTopLevel => 'Top level';
+
+  @override
+  String get adminCategorySortOrderLabel => 'Sort order';
+
+  @override
+  String get adminVisibleLabel => 'Visible';
+
+  @override
+  String get adminCategoryVisibleHint => 'Shows in the store nav';
+
+  @override
+  String get adminCategoryRenameHint =>
+      'Renaming does not change the URL — the slug is fixed once created so existing links keep working.';
+
+  @override
+  String get adminCouponsIntro =>
+      'Discounts apply to the goods, never to the delivery fee.';
+
+  @override
+  String get adminCouponNewCode => 'New code';
+
+  @override
+  String get adminCouponEditCode => 'Edit code';
+
+  @override
+  String get adminCouponsEmpty => 'No discount codes yet.';
+
+  @override
+  String adminCouponPercentOff(int value) {
+    return '$value% off';
+  }
+
+  @override
+  String adminCouponAmountOff(String amount) {
+    return '$amount off';
+  }
+
+  @override
+  String get adminCouponLive => 'Live';
+
+  @override
+  String get adminCouponOff => 'Off';
+
+  @override
+  String get adminCouponUsedUp => 'Used up';
+
+  @override
+  String get adminCouponScheduled => 'Scheduled';
+
+  @override
+  String get adminCouponExpired => 'Expired';
+
+  @override
+  String adminCouponMinBasket(String amount) {
+    return 'min basket $amount';
+  }
+
+  @override
+  String adminCouponUsedCount(int count) {
+    return '$count used';
+  }
+
+  @override
+  String adminCouponUsedOfMax(int count, int max) {
+    return '$count of $max used';
+  }
+
+  @override
+  String adminCouponFrom(String date) {
+    return 'from $date';
+  }
+
+  @override
+  String adminCouponUntil(String date) {
+    return 'until $date';
+  }
+
+  @override
+  String get adminCouponCodeLabel => 'Code';
+
+  @override
+  String get adminCouponCodeLockedHelper =>
+      'A code cannot be renamed once customers have it';
+
+  @override
+  String get adminCouponCodeHelper => 'Letters, digits and hyphens';
+
+  @override
+  String get adminCouponCodeInvalid => 'Letters, digits and hyphens only';
+
+  @override
+  String get adminCouponKindLabel => 'Kind';
+
+  @override
+  String get adminCouponPercentageOff => 'Percentage off';
+
+  @override
+  String get adminCouponFixedAmountOff => 'Fixed amount off';
+
+  @override
+  String get adminCouponPercentLabel => 'Percent';
+
+  @override
+  String get adminCouponAmountEgpLabel => 'Amount (EGP)';
+
+  @override
+  String get adminCouponMinBasketLabel => 'Minimum basket (EGP, optional)';
+
+  @override
+  String get adminCouponMinBasketHelper =>
+      'Compared against the goods, before shipping';
+
+  @override
+  String get adminCouponAmountExample => 'Enter an amount like 500.00';
+
+  @override
+  String get adminCouponUsageLimitLabel => 'Usage limit (optional)';
+
+  @override
+  String get adminCouponUsageLimitHelper => 'Leave empty for unlimited';
+
+  @override
+  String get adminCouponUsageLimitError => 'A whole number, 1 or more';
+
+  @override
+  String get adminCouponStartsLabel => 'Starts (optional)';
+
+  @override
+  String get adminCouponEndsLabel => 'Ends (optional)';
+
+  @override
+  String get adminCouponNotSet => 'Not set';
+
+  @override
+  String get adminCouponPickDate => 'Pick a date';
+
+  @override
+  String get adminCouponActiveHint => 'Off stops it regardless of dates';
+
+  @override
+  String get adminCouponPercentRangeError =>
+      'A whole percent between 1 and 100';
+
+  @override
+  String get adminCouponAmountMinError => 'Enter an amount like 50.00';
+
+  @override
+  String get adminCouponEndAfterStartError =>
+      'The end date must be after the start.';
+
+  @override
+  String get adminOrderStatusPending => 'Pending';
+
+  @override
+  String get adminOrderStatusConfirmed => 'Confirmed';
+
+  @override
+  String get adminOrderStatusShipped => 'Shipped';
+
+  @override
+  String get adminOrderStatusDelivered => 'Delivered';
+
+  @override
+  String get adminOrderStatusCancelled => 'Cancelled';
+
+  @override
+  String get adminOrdersAll => 'All';
+
+  @override
+  String get adminOrdersEmpty => 'No orders here.';
+
+  @override
+  String adminOrderItemsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get adminOrderGuestSuffix => '  ·  Guest';
+
+  @override
+  String adminOrderNotesLabel(String notes) {
+    return 'Notes: $notes';
+  }
+
+  @override
+  String adminOrderSummaryLine(String subtotal, String shipping, String total) {
+    return 'Subtotal $subtotal  ·  Shipping $shipping  ·  Total $total';
+  }
+
+  @override
+  String get adminOrderClosed => 'This order is closed.';
+
+  @override
+  String adminOrderMarkAs(String status) {
+    return 'Mark $status';
+  }
+
+  @override
+  String adminOrderCancelTitle(String orderNumber) {
+    return 'Cancel $orderNumber?';
+  }
+
+  @override
+  String get adminOrderCancelBody =>
+      'The items go back into stock and the order cannot be reopened.';
+
+  @override
+  String get adminOrderKeepIt => 'Keep it';
+
+  @override
+  String get adminOrderCancelConfirm => 'Cancel order';
+
+  @override
+  String get adminProductSearchHint => 'Search products';
+
+  @override
+  String get adminProductNew => 'New product';
+
+  @override
+  String get adminProductsEmpty => 'No products yet.';
+
+  @override
+  String adminProductOptionsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count options',
+      one: '1 option',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String adminProductInStock(int count) {
+    return '$count in stock';
+  }
+
+  @override
+  String get adminProductUnlistedSuffix => '  ·  Unlisted';
+
+  @override
+  String get adminProductImagesTooltip => 'Images';
+
+  @override
+  String get adminProductUnlistTooltip => 'Unlist';
+
+  @override
+  String get adminProductAlreadyUnlisted => 'Already unlisted';
+
+  @override
+  String get adminProductUnlistTitle => 'Unlist product?';
+
+  @override
+  String adminProductUnlistBody(String title) {
+    return '$title will stop appearing in the store. Orders that already include it are unaffected, and you can re-list it later.';
+  }
+
+  @override
+  String get adminProductUnlistConfirm => 'Unlist';
+
+  @override
+  String adminProductImagesTitle(String title) {
+    return 'Images — $title';
+  }
+
+  @override
+  String get adminProductImagesHint =>
+      'The first image is the one shown on product cards.';
+
+  @override
+  String get adminProductNoImages => 'No images yet.';
+
+  @override
+  String get adminProductImageCardBadge => 'Card';
+
+  @override
+  String get adminProductRemoveImageTooltip => 'Remove image';
+
+  @override
+  String get adminCloseLabel => 'Close';
+
+  @override
+  String get adminUploadLabel => 'Upload';
+
+  @override
+  String get adminProductEditTitle => 'Edit product';
+
+  @override
+  String get adminProductTitleEn => 'Title (English)';
+
+  @override
+  String get adminProductTitleAr => 'Title (Arabic)';
+
+  @override
+  String get adminProductCategoryLabel => 'Category';
+
+  @override
+  String get adminProductCategoryHiddenSuffix => '  (hidden)';
+
+  @override
+  String get adminProductPickCategoryError => 'Pick a category';
+
+  @override
+  String adminProductCategoriesFailed(String error) {
+    return 'Categories failed to load: $error';
+  }
+
+  @override
+  String get adminProductPriceEgpLabel => 'Price (EGP)';
+
+  @override
+  String get adminProductWasPriceLabel => 'Was price (EGP, optional)';
+
+  @override
+  String get adminProductBadgeLabel => 'Badge';
+
+  @override
+  String get adminProductBadgeNone => 'None';
+
+  @override
+  String get adminProductBadgeNew => 'New';
+
+  @override
+  String get adminProductBadgePreOrder => 'Pre-order';
+
+  @override
+  String get adminProductBadgeSale => 'Sale';
+
+  @override
+  String get adminProductFeaturedLabel => 'Featured';
+
+  @override
+  String get adminProductFeaturedHint => 'Shows in the home carousel';
+
+  @override
+  String get adminProductListedLabel => 'Listed';
+
+  @override
+  String get adminProductListedHint => 'Visible in the store';
+
+  @override
+  String get adminProductOptionsTitle => 'Options';
+
+  @override
+  String get adminProductOptionsHint =>
+      'Each size/colour carries its own stock.';
+
+  @override
+  String get adminProductAddOption => 'Add option';
+
+  @override
+  String get adminProductSizeLabel => 'Size';
+
+  @override
+  String get adminProductColourLabel => 'Colour';
+
+  @override
+  String get adminProductSkuLabel => 'SKU';
+
+  @override
+  String get adminProductStockLabel => 'Stock';
+
+  @override
+  String get adminProductRemoveOptionTooltip => 'Remove option';
+
+  @override
+  String get adminProductPriceExample => 'Enter a price like 749.00';
+
+  @override
+  String get adminProductWasPriceExample => 'Enter a price like 999.00';
+
+  @override
+  String get adminProductWasPriceHigherError => 'Must be higher than the price';
+
+  @override
+  String get adminShippingIntro =>
+      'Turning a governorate off removes it from checkout. Orders already delivered there keep their fee.';
+
+  @override
+  String get adminShippingEmpty =>
+      'No governorates yet — run the shipping seed on the server.';
+
+  @override
+  String get adminShippingFeeLabel => 'Fee (EGP)';
+
+  @override
+  String get adminShippingDeliverLabel => 'Deliver';
+
+  @override
+  String get adminShippingFeeExampleError => 'Enter a fee like 65.00';
+
+  @override
   String dashboardWelcomeMessage(String name) {
     return 'Welcome back, $name';
   }

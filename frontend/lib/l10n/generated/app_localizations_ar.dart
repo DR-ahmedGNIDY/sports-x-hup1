@@ -1207,6 +1207,656 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clubProfileNotAvailable => 'هذا الملف الشخصي للنادي غير متاح.';
 
   @override
+  String get moderatorColumnLabel => 'مشرف';
+
+  @override
+  String get verifiedColumnLabel => 'موثّق';
+
+  @override
+  String get statusActiveLabel => 'نشط';
+
+  @override
+  String get statusSuspendedPermanentLabel => 'موقوف · دائم';
+
+  @override
+  String statusSuspendedUntilLabel(String date) {
+    return 'موقوف · حتى $date';
+  }
+
+  @override
+  String get adminUsersTabPlayers => 'لاعبين';
+
+  @override
+  String get adminUsersTabCoaches => 'مدربين';
+
+  @override
+  String get adminUsersTabClubs => 'أندية';
+
+  @override
+  String get adminUsersTabPlatform => 'إدارة المنصة';
+
+  @override
+  String get adminOverviewRefreshTooltip => 'تحديث';
+
+  @override
+  String get adminOverviewRegisteredPlayers => 'اللاعبون المسجلون';
+
+  @override
+  String adminOverviewPlayersWithProfile(int count) {
+    return '$count لديهم ملف شخصي';
+  }
+
+  @override
+  String get adminOverviewRegisteredClubs => 'الأندية المسجلة';
+
+  @override
+  String adminOverviewClubsWithProfile(int count) {
+    return '$count لديها ملف شخصي';
+  }
+
+  @override
+  String get adminOverviewVerifiedClubs => 'الأندية الموثقة';
+
+  @override
+  String get adminOverviewCoaches => 'المدربون';
+
+  @override
+  String get adminOverviewTotalAccounts => 'إجمالي الحسابات';
+
+  @override
+  String get adminOverviewSuspendedAccounts => 'الحسابات الموقوفة';
+
+  @override
+  String get adminOverviewModerators => 'المشرفون';
+
+  @override
+  String get adminOverviewCommunityPosts => 'منشورات المجتمع';
+
+  @override
+  String adminOverviewHiddenPosts(int count) {
+    return '$count مخفي';
+  }
+
+  @override
+  String get adminSuspendAccountTitle => 'إيقاف الحساب';
+
+  @override
+  String adminSuspendAccountBody(String email) {
+    return 'لن يتمكن $email من تسجيل الدخول.';
+  }
+
+  @override
+  String get adminSuspendOneMonth => 'شهر واحد';
+
+  @override
+  String get adminSuspendThreeMonths => '3 أشهر';
+
+  @override
+  String get adminSuspendOneYear => 'سنة واحدة';
+
+  @override
+  String get adminSuspendPermanent => 'دائم';
+
+  @override
+  String get adminSuspendPermanentHint =>
+      'يبقى الحساب موقوفًا حتى يعيد الأدمن تفعيله.';
+
+  @override
+  String get adminSuspendReasonLabel => 'السبب (اختياري)';
+
+  @override
+  String get adminSuspendReasonHint => 'ملاحظة داخلية — لا يراها المستخدم.';
+
+  @override
+  String get adminStoreTabOverview => 'نظرة عامة';
+
+  @override
+  String get adminStoreTabProducts => 'المنتجات';
+
+  @override
+  String get adminStoreTabCategories => 'الأقسام';
+
+  @override
+  String get adminStoreTabBanners => 'البانرات';
+
+  @override
+  String get adminStoreTabOrders => 'الطلبات';
+
+  @override
+  String get adminStoreTabDiscounts => 'الخصومات';
+
+  @override
+  String get adminStoreTabShipping => 'الشحن';
+
+  @override
+  String get adminStoreOrdersToday => 'طلبات اليوم';
+
+  @override
+  String get adminStoreTakingsToday => 'إيرادات اليوم';
+
+  @override
+  String get adminStoreTakingsHint => 'باستثناء الطلبات الملغاة';
+
+  @override
+  String get adminStoreAwaitingYou => 'بانتظارك';
+
+  @override
+  String get adminStoreOutOfStock => 'نفدت الكمية';
+
+  @override
+  String get adminStoreOutOfStockHint => 'معروض، لكن لا يوجد منه ما يُشترى';
+
+  @override
+  String get adminStoreRunningLow => 'كمية منخفضة';
+
+  @override
+  String get adminStoreRunningLowHint => 'مقاس تبقّى منه 3 قطع أو أقل';
+
+  @override
+  String get adminStoreListedProducts => 'المنتجات المعروضة';
+
+  @override
+  String get adminBannersIntro =>
+      'تظهر البانرات بالتناوب في الصفحة الرئيسية للمتجر بهذا الترتيب. لا يظهر البانر إلا بعد إضافة صورة سطح المكتب له.';
+
+  @override
+  String get adminBannerNew => 'بانر جديد';
+
+  @override
+  String get adminBannerEdit => 'تعديل البانر';
+
+  @override
+  String get adminBannersEmpty =>
+      'لا توجد بانرات بعد — تظهر الصفحة الرئيسية بشريط علوي فارغ.';
+
+  @override
+  String get adminBannerSlotDesktop => 'سطح المكتب';
+
+  @override
+  String get adminBannerSlotMobile => 'الموبايل';
+
+  @override
+  String get adminBannerFallsBackToDesktop =>
+      'يعتمد على صورة سطح المكتب عند غيابه';
+
+  @override
+  String get adminBannerNoDescription => 'بدون وصف';
+
+  @override
+  String adminBannerOrderLabel(int order) {
+    return 'الترتيب $order';
+  }
+
+  @override
+  String adminBannerLinksToSuffix(String path) {
+    return '  ·  يوجّه إلى $path';
+  }
+
+  @override
+  String adminBannerNotOnStore(String reason) {
+    return 'غير معروض في المتجر — $reason';
+  }
+
+  @override
+  String get adminBannerSwitchOff => 'إيقاف العرض';
+
+  @override
+  String get adminBannerAlreadyOff => 'متوقف بالفعل';
+
+  @override
+  String get adminBannerClear => 'مسح';
+
+  @override
+  String get adminBannerSaveFirstHint =>
+      'احفظ البانر أولاً، ثم ارفع صوره من القائمة.';
+
+  @override
+  String get adminDescriptionEn => 'الوصف (بالإنجليزية)';
+
+  @override
+  String get adminDescriptionEnHelper => 'يُقرأ بواسطة قارئات الشاشة';
+
+  @override
+  String get adminDescriptionAr => 'الوصف (بالعربية)';
+
+  @override
+  String get adminBannerLinkPathLabel => 'يوجّه إلى (اختياري)';
+
+  @override
+  String get adminBannerLinkPathHelper =>
+      'مسار داخل المتجر، مثل /c/men أو /p/black-shorts';
+
+  @override
+  String get adminBannerLinkPathError => 'مسار يبدأ بـ / — وليس رابطًا كاملاً';
+
+  @override
+  String get adminBannerOrderFieldLabel => 'الترتيب';
+
+  @override
+  String get adminBannerOrderFieldHelper => 'الأرقام الأصغر تظهر أولاً';
+
+  @override
+  String get adminWholeNumberError => 'أدخل رقمًا صحيحًا';
+
+  @override
+  String get adminActiveLabel => 'مفعّل';
+
+  @override
+  String get adminCategoryOrderHint =>
+      'الترتيب هنا هو ترتيب ظهورها في قائمة المتجر.';
+
+  @override
+  String get adminCategoryNew => 'قسم جديد';
+
+  @override
+  String get adminCategoryEdit => 'تعديل القسم';
+
+  @override
+  String get adminCategoriesEmpty => 'لا توجد أقسام بعد.';
+
+  @override
+  String get adminCategoryNoArabicNameSuffix => '  ·  بدون اسم عربي';
+
+  @override
+  String get adminCategoryHiddenSuffix => '  ·  مخفي';
+
+  @override
+  String get adminSetImageTooltip => 'تعيين صورة';
+
+  @override
+  String get adminCategoryNameEn => 'الاسم (بالإنجليزية)';
+
+  @override
+  String get adminCategoryNameAr => 'الاسم (بالعربية)';
+
+  @override
+  String get adminCategoryParentLabel => 'القسم الأب (اختياري)';
+
+  @override
+  String get adminCategoryTopLevel => 'قسم رئيسي';
+
+  @override
+  String get adminCategorySortOrderLabel => 'ترتيب الظهور';
+
+  @override
+  String get adminVisibleLabel => 'ظاهر';
+
+  @override
+  String get adminCategoryVisibleHint => 'يظهر في قائمة المتجر';
+
+  @override
+  String get adminCategoryRenameHint =>
+      'إعادة التسمية لا تغيّر الرابط — يبقى المعرّف ثابتًا بعد الإنشاء حتى تستمر الروابط الحالية بالعمل.';
+
+  @override
+  String get adminCouponsIntro =>
+      'الخصومات تُطبّق على قيمة المنتجات، ولا تشمل رسوم الشحن أبدًا.';
+
+  @override
+  String get adminCouponNewCode => 'كود جديد';
+
+  @override
+  String get adminCouponEditCode => 'تعديل الكود';
+
+  @override
+  String get adminCouponsEmpty => 'لا توجد أكواد خصم بعد.';
+
+  @override
+  String adminCouponPercentOff(int value) {
+    return 'خصم $value%';
+  }
+
+  @override
+  String adminCouponAmountOff(String amount) {
+    return 'خصم $amount';
+  }
+
+  @override
+  String get adminCouponLive => 'فعّال';
+
+  @override
+  String get adminCouponOff => 'متوقف';
+
+  @override
+  String get adminCouponUsedUp => 'نفد';
+
+  @override
+  String get adminCouponScheduled => 'مجدول';
+
+  @override
+  String get adminCouponExpired => 'منتهي';
+
+  @override
+  String adminCouponMinBasket(String amount) {
+    return 'أقل قيمة للسلة $amount';
+  }
+
+  @override
+  String adminCouponUsedCount(int count) {
+    return 'استُخدم $count مرة';
+  }
+
+  @override
+  String adminCouponUsedOfMax(int count, int max) {
+    return 'استُخدم $count من $max';
+  }
+
+  @override
+  String adminCouponFrom(String date) {
+    return 'من $date';
+  }
+
+  @override
+  String adminCouponUntil(String date) {
+    return 'حتى $date';
+  }
+
+  @override
+  String get adminCouponCodeLabel => 'الكود';
+
+  @override
+  String get adminCouponCodeLockedHelper =>
+      'لا يمكن تغيير كود مستخدم بالفعل من قبل العملاء';
+
+  @override
+  String get adminCouponCodeHelper => 'أحرف، أرقام وشرطات فقط';
+
+  @override
+  String get adminCouponCodeInvalid => 'أحرف وأرقام وشرطات فقط';
+
+  @override
+  String get adminCouponKindLabel => 'النوع';
+
+  @override
+  String get adminCouponPercentageOff => 'نسبة مئوية';
+
+  @override
+  String get adminCouponFixedAmountOff => 'مبلغ ثابت';
+
+  @override
+  String get adminCouponPercentLabel => 'النسبة';
+
+  @override
+  String get adminCouponAmountEgpLabel => 'المبلغ (جنيه)';
+
+  @override
+  String get adminCouponMinBasketLabel => 'أقل قيمة للسلة (جنيه، اختياري)';
+
+  @override
+  String get adminCouponMinBasketHelper => 'تُقارن بقيمة المنتجات، قبل الشحن';
+
+  @override
+  String get adminCouponAmountExample => 'أدخل مبلغًا مثل 500.00';
+
+  @override
+  String get adminCouponUsageLimitLabel => 'حد الاستخدام (اختياري)';
+
+  @override
+  String get adminCouponUsageLimitHelper => 'اتركه فارغًا لاستخدام غير محدود';
+
+  @override
+  String get adminCouponUsageLimitError => 'رقم صحيح، 1 أو أكثر';
+
+  @override
+  String get adminCouponStartsLabel => 'يبدأ (اختياري)';
+
+  @override
+  String get adminCouponEndsLabel => 'ينتهي (اختياري)';
+
+  @override
+  String get adminCouponNotSet => 'غير محدد';
+
+  @override
+  String get adminCouponPickDate => 'اختر تاريخًا';
+
+  @override
+  String get adminCouponActiveHint => 'الإيقاف يوقفه بغض النظر عن التواريخ';
+
+  @override
+  String get adminCouponPercentRangeError => 'نسبة صحيحة بين 1 و100';
+
+  @override
+  String get adminCouponAmountMinError => 'أدخل مبلغًا مثل 50.00';
+
+  @override
+  String get adminCouponEndAfterStartError =>
+      'يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.';
+
+  @override
+  String get adminOrderStatusPending => 'قيد الانتظار';
+
+  @override
+  String get adminOrderStatusConfirmed => 'مؤكد';
+
+  @override
+  String get adminOrderStatusShipped => 'تم الشحن';
+
+  @override
+  String get adminOrderStatusDelivered => 'تم التوصيل';
+
+  @override
+  String get adminOrderStatusCancelled => 'ملغي';
+
+  @override
+  String get adminOrdersAll => 'الكل';
+
+  @override
+  String get adminOrdersEmpty => 'لا توجد طلبات هنا.';
+
+  @override
+  String adminOrderItemsCount(int count) {
+    return '$count قطعة';
+  }
+
+  @override
+  String get adminOrderGuestSuffix => '  ·  زائر';
+
+  @override
+  String adminOrderNotesLabel(String notes) {
+    return 'ملاحظات: $notes';
+  }
+
+  @override
+  String adminOrderSummaryLine(String subtotal, String shipping, String total) {
+    return 'المجموع الفرعي $subtotal  ·  الشحن $shipping  ·  الإجمالي $total';
+  }
+
+  @override
+  String get adminOrderClosed => 'هذا الطلب مغلق.';
+
+  @override
+  String adminOrderMarkAs(String status) {
+    return 'تحديد كـ $status';
+  }
+
+  @override
+  String adminOrderCancelTitle(String orderNumber) {
+    return 'إلغاء الطلب $orderNumber؟';
+  }
+
+  @override
+  String get adminOrderCancelBody =>
+      'سترجع المنتجات إلى المخزون ولا يمكن إعادة فتح الطلب.';
+
+  @override
+  String get adminOrderKeepIt => 'التراجع';
+
+  @override
+  String get adminOrderCancelConfirm => 'إلغاء الطلب';
+
+  @override
+  String get adminProductSearchHint => 'ابحث عن منتج';
+
+  @override
+  String get adminProductNew => 'منتج جديد';
+
+  @override
+  String get adminProductsEmpty => 'لا توجد منتجات بعد.';
+
+  @override
+  String adminProductOptionsCount(int count) {
+    return '$count خيار';
+  }
+
+  @override
+  String adminProductInStock(int count) {
+    return '$count بالمخزون';
+  }
+
+  @override
+  String get adminProductUnlistedSuffix => '  ·  غير معروض';
+
+  @override
+  String get adminProductImagesTooltip => 'الصور';
+
+  @override
+  String get adminProductUnlistTooltip => 'إلغاء العرض';
+
+  @override
+  String get adminProductAlreadyUnlisted => 'غير معروض بالفعل';
+
+  @override
+  String get adminProductUnlistTitle => 'إلغاء عرض المنتج؟';
+
+  @override
+  String adminProductUnlistBody(String title) {
+    return 'سيتوقف $title عن الظهور في المتجر. الطلبات التي تتضمنه بالفعل لن تتأثر، ويمكنك إعادة عرضه لاحقًا.';
+  }
+
+  @override
+  String get adminProductUnlistConfirm => 'إلغاء العرض';
+
+  @override
+  String adminProductImagesTitle(String title) {
+    return 'صور — $title';
+  }
+
+  @override
+  String get adminProductImagesHint =>
+      'الصورة الأولى هي التي تظهر في بطاقات المنتج.';
+
+  @override
+  String get adminProductNoImages => 'لا توجد صور بعد.';
+
+  @override
+  String get adminProductImageCardBadge => 'بطاقة';
+
+  @override
+  String get adminProductRemoveImageTooltip => 'إزالة الصورة';
+
+  @override
+  String get adminCloseLabel => 'إغلاق';
+
+  @override
+  String get adminUploadLabel => 'رفع';
+
+  @override
+  String get adminProductEditTitle => 'تعديل المنتج';
+
+  @override
+  String get adminProductTitleEn => 'العنوان (بالإنجليزية)';
+
+  @override
+  String get adminProductTitleAr => 'العنوان (بالعربية)';
+
+  @override
+  String get adminProductCategoryLabel => 'القسم';
+
+  @override
+  String get adminProductCategoryHiddenSuffix => '  (مخفي)';
+
+  @override
+  String get adminProductPickCategoryError => 'اختر قسمًا';
+
+  @override
+  String adminProductCategoriesFailed(String error) {
+    return 'تعذّر تحميل الأقسام: $error';
+  }
+
+  @override
+  String get adminProductPriceEgpLabel => 'السعر (جنيه)';
+
+  @override
+  String get adminProductWasPriceLabel => 'السعر قبل الخصم (جنيه، اختياري)';
+
+  @override
+  String get adminProductBadgeLabel => 'الشارة';
+
+  @override
+  String get adminProductBadgeNone => 'بدون';
+
+  @override
+  String get adminProductBadgeNew => 'جديد';
+
+  @override
+  String get adminProductBadgePreOrder => 'طلب مسبق';
+
+  @override
+  String get adminProductBadgeSale => 'تخفيض';
+
+  @override
+  String get adminProductFeaturedLabel => 'مميز';
+
+  @override
+  String get adminProductFeaturedHint => 'يظهر في الشريط الرئيسي';
+
+  @override
+  String get adminProductListedLabel => 'معروض';
+
+  @override
+  String get adminProductListedHint => 'ظاهر في المتجر';
+
+  @override
+  String get adminProductOptionsTitle => 'الخيارات';
+
+  @override
+  String get adminProductOptionsHint => 'لكل مقاس/لون مخزونه الخاص.';
+
+  @override
+  String get adminProductAddOption => 'إضافة خيار';
+
+  @override
+  String get adminProductSizeLabel => 'المقاس';
+
+  @override
+  String get adminProductColourLabel => 'اللون';
+
+  @override
+  String get adminProductSkuLabel => 'SKU';
+
+  @override
+  String get adminProductStockLabel => 'المخزون';
+
+  @override
+  String get adminProductRemoveOptionTooltip => 'إزالة الخيار';
+
+  @override
+  String get adminProductPriceExample => 'أدخل سعرًا مثل 749.00';
+
+  @override
+  String get adminProductWasPriceExample => 'أدخل سعرًا مثل 999.00';
+
+  @override
+  String get adminProductWasPriceHigherError => 'يجب أن يكون أعلى من السعر';
+
+  @override
+  String get adminShippingIntro =>
+      'إيقاف محافظة يزيلها من صفحة إتمام الطلب. الطلبات التي وصلت إليها بالفعل تحتفظ برسومها.';
+
+  @override
+  String get adminShippingEmpty =>
+      'لا توجد محافظات بعد — شغّل seed الشحن على السيرفر.';
+
+  @override
+  String get adminShippingFeeLabel => 'الرسوم (جنيه)';
+
+  @override
+  String get adminShippingDeliverLabel => 'التوصيل';
+
+  @override
+  String get adminShippingFeeExampleError => 'أدخل رسومًا مثل 65.00';
+
+  @override
   String dashboardWelcomeMessage(String name) {
     return 'أهلاً بعودتك، $name';
   }

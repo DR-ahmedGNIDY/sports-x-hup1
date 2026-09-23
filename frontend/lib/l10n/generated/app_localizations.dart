@@ -2353,6 +2353,1176 @@ abstract class AppLocalizations {
   /// **'هذا الملف الشخصي للنادي غير متاح.'**
   String get clubProfileNotAvailable;
 
+  /// No description provided for @moderatorColumnLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشرف'**
+  String get moderatorColumnLabel;
+
+  /// No description provided for @verifiedColumnLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'موثّق'**
+  String get verifiedColumnLabel;
+
+  /// No description provided for @statusActiveLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشط'**
+  String get statusActiveLabel;
+
+  /// No description provided for @statusSuspendedPermanentLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقوف · دائم'**
+  String get statusSuspendedPermanentLabel;
+
+  /// No description provided for @statusSuspendedUntilLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقوف · حتى {date}'**
+  String statusSuspendedUntilLabel(String date);
+
+  /// No description provided for @adminUsersTabPlayers.
+  ///
+  /// In ar, this message translates to:
+  /// **'لاعبين'**
+  String get adminUsersTabPlayers;
+
+  /// No description provided for @adminUsersTabCoaches.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدربين'**
+  String get adminUsersTabCoaches;
+
+  /// No description provided for @adminUsersTabClubs.
+  ///
+  /// In ar, this message translates to:
+  /// **'أندية'**
+  String get adminUsersTabClubs;
+
+  /// No description provided for @adminUsersTabPlatform.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة المنصة'**
+  String get adminUsersTabPlatform;
+
+  /// No description provided for @adminOverviewRefreshTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث'**
+  String get adminOverviewRefreshTooltip;
+
+  /// No description provided for @adminOverviewRegisteredPlayers.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللاعبون المسجلون'**
+  String get adminOverviewRegisteredPlayers;
+
+  /// No description provided for @adminOverviewPlayersWithProfile.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} لديهم ملف شخصي'**
+  String adminOverviewPlayersWithProfile(int count);
+
+  /// No description provided for @adminOverviewRegisteredClubs.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأندية المسجلة'**
+  String get adminOverviewRegisteredClubs;
+
+  /// No description provided for @adminOverviewClubsWithProfile.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} لديها ملف شخصي'**
+  String adminOverviewClubsWithProfile(int count);
+
+  /// No description provided for @adminOverviewVerifiedClubs.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأندية الموثقة'**
+  String get adminOverviewVerifiedClubs;
+
+  /// No description provided for @adminOverviewCoaches.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدربون'**
+  String get adminOverviewCoaches;
+
+  /// No description provided for @adminOverviewTotalAccounts.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الحسابات'**
+  String get adminOverviewTotalAccounts;
+
+  /// No description provided for @adminOverviewSuspendedAccounts.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحسابات الموقوفة'**
+  String get adminOverviewSuspendedAccounts;
+
+  /// No description provided for @adminOverviewModerators.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشرفون'**
+  String get adminOverviewModerators;
+
+  /// No description provided for @adminOverviewCommunityPosts.
+  ///
+  /// In ar, this message translates to:
+  /// **'منشورات المجتمع'**
+  String get adminOverviewCommunityPosts;
+
+  /// No description provided for @adminOverviewHiddenPosts.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مخفي'**
+  String adminOverviewHiddenPosts(int count);
+
+  /// No description provided for @adminSuspendAccountTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف الحساب'**
+  String get adminSuspendAccountTitle;
+
+  /// No description provided for @adminSuspendAccountBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لن يتمكن {email} من تسجيل الدخول.'**
+  String adminSuspendAccountBody(String email);
+
+  /// No description provided for @adminSuspendOneMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهر واحد'**
+  String get adminSuspendOneMonth;
+
+  /// No description provided for @adminSuspendThreeMonths.
+  ///
+  /// In ar, this message translates to:
+  /// **'3 أشهر'**
+  String get adminSuspendThreeMonths;
+
+  /// No description provided for @adminSuspendOneYear.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنة واحدة'**
+  String get adminSuspendOneYear;
+
+  /// No description provided for @adminSuspendPermanent.
+  ///
+  /// In ar, this message translates to:
+  /// **'دائم'**
+  String get adminSuspendPermanent;
+
+  /// No description provided for @adminSuspendPermanentHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يبقى الحساب موقوفًا حتى يعيد الأدمن تفعيله.'**
+  String get adminSuspendPermanentHint;
+
+  /// No description provided for @adminSuspendReasonLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السبب (اختياري)'**
+  String get adminSuspendReasonLabel;
+
+  /// No description provided for @adminSuspendReasonHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة داخلية — لا يراها المستخدم.'**
+  String get adminSuspendReasonHint;
+
+  /// No description provided for @adminStoreTabOverview.
+  ///
+  /// In ar, this message translates to:
+  /// **'نظرة عامة'**
+  String get adminStoreTabOverview;
+
+  /// No description provided for @adminStoreTabProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'المنتجات'**
+  String get adminStoreTabProducts;
+
+  /// No description provided for @adminStoreTabCategories.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأقسام'**
+  String get adminStoreTabCategories;
+
+  /// No description provided for @adminStoreTabBanners.
+  ///
+  /// In ar, this message translates to:
+  /// **'البانرات'**
+  String get adminStoreTabBanners;
+
+  /// No description provided for @adminStoreTabOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلبات'**
+  String get adminStoreTabOrders;
+
+  /// No description provided for @adminStoreTabDiscounts.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخصومات'**
+  String get adminStoreTabDiscounts;
+
+  /// No description provided for @adminStoreTabShipping.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشحن'**
+  String get adminStoreTabShipping;
+
+  /// No description provided for @adminStoreOrdersToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات اليوم'**
+  String get adminStoreOrdersToday;
+
+  /// No description provided for @adminStoreTakingsToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيرادات اليوم'**
+  String get adminStoreTakingsToday;
+
+  /// No description provided for @adminStoreTakingsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'باستثناء الطلبات الملغاة'**
+  String get adminStoreTakingsHint;
+
+  /// No description provided for @adminStoreAwaitingYou.
+  ///
+  /// In ar, this message translates to:
+  /// **'بانتظارك'**
+  String get adminStoreAwaitingYou;
+
+  /// No description provided for @adminStoreOutOfStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفدت الكمية'**
+  String get adminStoreOutOfStock;
+
+  /// No description provided for @adminStoreOutOfStockHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'معروض، لكن لا يوجد منه ما يُشترى'**
+  String get adminStoreOutOfStockHint;
+
+  /// No description provided for @adminStoreRunningLow.
+  ///
+  /// In ar, this message translates to:
+  /// **'كمية منخفضة'**
+  String get adminStoreRunningLow;
+
+  /// No description provided for @adminStoreRunningLowHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقاس تبقّى منه 3 قطع أو أقل'**
+  String get adminStoreRunningLowHint;
+
+  /// No description provided for @adminStoreListedProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'المنتجات المعروضة'**
+  String get adminStoreListedProducts;
+
+  /// No description provided for @adminBannersIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'تظهر البانرات بالتناوب في الصفحة الرئيسية للمتجر بهذا الترتيب. لا يظهر البانر إلا بعد إضافة صورة سطح المكتب له.'**
+  String get adminBannersIntro;
+
+  /// No description provided for @adminBannerNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'بانر جديد'**
+  String get adminBannerNew;
+
+  /// No description provided for @adminBannerEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل البانر'**
+  String get adminBannerEdit;
+
+  /// No description provided for @adminBannersEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بانرات بعد — تظهر الصفحة الرئيسية بشريط علوي فارغ.'**
+  String get adminBannersEmpty;
+
+  /// No description provided for @adminBannerSlotDesktop.
+  ///
+  /// In ar, this message translates to:
+  /// **'سطح المكتب'**
+  String get adminBannerSlotDesktop;
+
+  /// No description provided for @adminBannerSlotMobile.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموبايل'**
+  String get adminBannerSlotMobile;
+
+  /// No description provided for @adminBannerFallsBackToDesktop.
+  ///
+  /// In ar, this message translates to:
+  /// **'يعتمد على صورة سطح المكتب عند غيابه'**
+  String get adminBannerFallsBackToDesktop;
+
+  /// No description provided for @adminBannerNoDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون وصف'**
+  String get adminBannerNoDescription;
+
+  /// No description provided for @adminBannerOrderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترتيب {order}'**
+  String adminBannerOrderLabel(int order);
+
+  /// No description provided for @adminBannerLinksToSuffix.
+  ///
+  /// In ar, this message translates to:
+  /// **'  ·  يوجّه إلى {path}'**
+  String adminBannerLinksToSuffix(String path);
+
+  /// No description provided for @adminBannerNotOnStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير معروض في المتجر — {reason}'**
+  String adminBannerNotOnStore(String reason);
+
+  /// No description provided for @adminBannerSwitchOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف العرض'**
+  String get adminBannerSwitchOff;
+
+  /// No description provided for @adminBannerAlreadyOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوقف بالفعل'**
+  String get adminBannerAlreadyOff;
+
+  /// No description provided for @adminBannerClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح'**
+  String get adminBannerClear;
+
+  /// No description provided for @adminBannerSaveFirstHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'احفظ البانر أولاً، ثم ارفع صوره من القائمة.'**
+  String get adminBannerSaveFirstHint;
+
+  /// No description provided for @adminDescriptionEn.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصف (بالإنجليزية)'**
+  String get adminDescriptionEn;
+
+  /// No description provided for @adminDescriptionEnHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُقرأ بواسطة قارئات الشاشة'**
+  String get adminDescriptionEnHelper;
+
+  /// No description provided for @adminDescriptionAr.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصف (بالعربية)'**
+  String get adminDescriptionAr;
+
+  /// No description provided for @adminBannerLinkPathLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوجّه إلى (اختياري)'**
+  String get adminBannerLinkPathLabel;
+
+  /// No description provided for @adminBannerLinkPathHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسار داخل المتجر، مثل /c/men أو /p/black-shorts'**
+  String get adminBannerLinkPathHelper;
+
+  /// No description provided for @adminBannerLinkPathError.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسار يبدأ بـ / — وليس رابطًا كاملاً'**
+  String get adminBannerLinkPathError;
+
+  /// No description provided for @adminBannerOrderFieldLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترتيب'**
+  String get adminBannerOrderFieldLabel;
+
+  /// No description provided for @adminBannerOrderFieldHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرقام الأصغر تظهر أولاً'**
+  String get adminBannerOrderFieldHelper;
+
+  /// No description provided for @adminWholeNumberError.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رقمًا صحيحًا'**
+  String get adminWholeNumberError;
+
+  /// No description provided for @adminActiveLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفعّل'**
+  String get adminActiveLabel;
+
+  /// No description provided for @adminCategoryOrderHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترتيب هنا هو ترتيب ظهورها في قائمة المتجر.'**
+  String get adminCategoryOrderHint;
+
+  /// No description provided for @adminCategoryNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'قسم جديد'**
+  String get adminCategoryNew;
+
+  /// No description provided for @adminCategoryEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل القسم'**
+  String get adminCategoryEdit;
+
+  /// No description provided for @adminCategoriesEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد أقسام بعد.'**
+  String get adminCategoriesEmpty;
+
+  /// No description provided for @adminCategoryNoArabicNameSuffix.
+  ///
+  /// In ar, this message translates to:
+  /// **'  ·  بدون اسم عربي'**
+  String get adminCategoryNoArabicNameSuffix;
+
+  /// No description provided for @adminCategoryHiddenSuffix.
+  ///
+  /// In ar, this message translates to:
+  /// **'  ·  مخفي'**
+  String get adminCategoryHiddenSuffix;
+
+  /// No description provided for @adminSetImageTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين صورة'**
+  String get adminSetImageTooltip;
+
+  /// No description provided for @adminCategoryNameEn.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم (بالإنجليزية)'**
+  String get adminCategoryNameEn;
+
+  /// No description provided for @adminCategoryNameAr.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم (بالعربية)'**
+  String get adminCategoryNameAr;
+
+  /// No description provided for @adminCategoryParentLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'القسم الأب (اختياري)'**
+  String get adminCategoryParentLabel;
+
+  /// No description provided for @adminCategoryTopLevel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قسم رئيسي'**
+  String get adminCategoryTopLevel;
+
+  /// No description provided for @adminCategorySortOrderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترتيب الظهور'**
+  String get adminCategorySortOrderLabel;
+
+  /// No description provided for @adminVisibleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ظاهر'**
+  String get adminVisibleLabel;
+
+  /// No description provided for @adminCategoryVisibleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يظهر في قائمة المتجر'**
+  String get adminCategoryVisibleHint;
+
+  /// No description provided for @adminCategoryRenameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة التسمية لا تغيّر الرابط — يبقى المعرّف ثابتًا بعد الإنشاء حتى تستمر الروابط الحالية بالعمل.'**
+  String get adminCategoryRenameHint;
+
+  /// No description provided for @adminCouponsIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخصومات تُطبّق على قيمة المنتجات، ولا تشمل رسوم الشحن أبدًا.'**
+  String get adminCouponsIntro;
+
+  /// No description provided for @adminCouponNewCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود جديد'**
+  String get adminCouponNewCode;
+
+  /// No description provided for @adminCouponEditCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الكود'**
+  String get adminCouponEditCode;
+
+  /// No description provided for @adminCouponsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد أكواد خصم بعد.'**
+  String get adminCouponsEmpty;
+
+  /// No description provided for @adminCouponPercentOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصم {value}%'**
+  String adminCouponPercentOff(int value);
+
+  /// No description provided for @adminCouponAmountOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصم {amount}'**
+  String adminCouponAmountOff(String amount);
+
+  /// No description provided for @adminCouponLive.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّال'**
+  String get adminCouponLive;
+
+  /// No description provided for @adminCouponOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوقف'**
+  String get adminCouponOff;
+
+  /// No description provided for @adminCouponUsedUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفد'**
+  String get adminCouponUsedUp;
+
+  /// No description provided for @adminCouponScheduled.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجدول'**
+  String get adminCouponScheduled;
+
+  /// No description provided for @adminCouponExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتهي'**
+  String get adminCouponExpired;
+
+  /// No description provided for @adminCouponMinBasket.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل قيمة للسلة {amount}'**
+  String adminCouponMinBasket(String amount);
+
+  /// No description provided for @adminCouponUsedCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'استُخدم {count} مرة'**
+  String adminCouponUsedCount(int count);
+
+  /// No description provided for @adminCouponUsedOfMax.
+  ///
+  /// In ar, this message translates to:
+  /// **'استُخدم {count} من {max}'**
+  String adminCouponUsedOfMax(int count, int max);
+
+  /// No description provided for @adminCouponFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {date}'**
+  String adminCouponFrom(String date);
+
+  /// No description provided for @adminCouponUntil.
+  ///
+  /// In ar, this message translates to:
+  /// **'حتى {date}'**
+  String adminCouponUntil(String date);
+
+  /// No description provided for @adminCouponCodeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكود'**
+  String get adminCouponCodeLabel;
+
+  /// No description provided for @adminCouponCodeLockedHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن تغيير كود مستخدم بالفعل من قبل العملاء'**
+  String get adminCouponCodeLockedHelper;
+
+  /// No description provided for @adminCouponCodeHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'أحرف، أرقام وشرطات فقط'**
+  String get adminCouponCodeHelper;
+
+  /// No description provided for @adminCouponCodeInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'أحرف وأرقام وشرطات فقط'**
+  String get adminCouponCodeInvalid;
+
+  /// No description provided for @adminCouponKindLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع'**
+  String get adminCouponKindLabel;
+
+  /// No description provided for @adminCouponPercentageOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة مئوية'**
+  String get adminCouponPercentageOff;
+
+  /// No description provided for @adminCouponFixedAmountOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبلغ ثابت'**
+  String get adminCouponFixedAmountOff;
+
+  /// No description provided for @adminCouponPercentLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'النسبة'**
+  String get adminCouponPercentLabel;
+
+  /// No description provided for @adminCouponAmountEgpLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ (جنيه)'**
+  String get adminCouponAmountEgpLabel;
+
+  /// No description provided for @adminCouponMinBasketLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل قيمة للسلة (جنيه، اختياري)'**
+  String get adminCouponMinBasketLabel;
+
+  /// No description provided for @adminCouponMinBasketHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'تُقارن بقيمة المنتجات، قبل الشحن'**
+  String get adminCouponMinBasketHelper;
+
+  /// No description provided for @adminCouponAmountExample.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل مبلغًا مثل 500.00'**
+  String get adminCouponAmountExample;
+
+  /// No description provided for @adminCouponUsageLimitLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حد الاستخدام (اختياري)'**
+  String get adminCouponUsageLimitLabel;
+
+  /// No description provided for @adminCouponUsageLimitHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتركه فارغًا لاستخدام غير محدود'**
+  String get adminCouponUsageLimitHelper;
+
+  /// No description provided for @adminCouponUsageLimitError.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم صحيح، 1 أو أكثر'**
+  String get adminCouponUsageLimitError;
+
+  /// No description provided for @adminCouponStartsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'يبدأ (اختياري)'**
+  String get adminCouponStartsLabel;
+
+  /// No description provided for @adminCouponEndsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ينتهي (اختياري)'**
+  String get adminCouponEndsLabel;
+
+  /// No description provided for @adminCouponNotSet.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير محدد'**
+  String get adminCouponNotSet;
+
+  /// No description provided for @adminCouponPickDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر تاريخًا'**
+  String get adminCouponPickDate;
+
+  /// No description provided for @adminCouponActiveHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإيقاف يوقفه بغض النظر عن التواريخ'**
+  String get adminCouponActiveHint;
+
+  /// No description provided for @adminCouponPercentRangeError.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة صحيحة بين 1 و100'**
+  String get adminCouponPercentRangeError;
+
+  /// No description provided for @adminCouponAmountMinError.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل مبلغًا مثل 50.00'**
+  String get adminCouponAmountMinError;
+
+  /// No description provided for @adminCouponEndAfterStartError.
+  ///
+  /// In ar, this message translates to:
+  /// **'يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.'**
+  String get adminCouponEndAfterStartError;
+
+  /// No description provided for @adminOrderStatusPending.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد الانتظار'**
+  String get adminOrderStatusPending;
+
+  /// No description provided for @adminOrderStatusConfirmed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مؤكد'**
+  String get adminOrderStatusConfirmed;
+
+  /// No description provided for @adminOrderStatusShipped.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الشحن'**
+  String get adminOrderStatusShipped;
+
+  /// No description provided for @adminOrderStatusDelivered.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التوصيل'**
+  String get adminOrderStatusDelivered;
+
+  /// No description provided for @adminOrderStatusCancelled.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملغي'**
+  String get adminOrderStatusCancelled;
+
+  /// No description provided for @adminOrdersAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get adminOrdersAll;
+
+  /// No description provided for @adminOrdersEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد طلبات هنا.'**
+  String get adminOrdersEmpty;
+
+  /// No description provided for @adminOrderItemsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} قطعة'**
+  String adminOrderItemsCount(int count);
+
+  /// No description provided for @adminOrderGuestSuffix.
+  ///
+  /// In ar, this message translates to:
+  /// **'  ·  زائر'**
+  String get adminOrderGuestSuffix;
+
+  /// No description provided for @adminOrderNotesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات: {notes}'**
+  String adminOrderNotesLabel(String notes);
+
+  /// No description provided for @adminOrderSummaryLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموع الفرعي {subtotal}  ·  الشحن {shipping}  ·  الإجمالي {total}'**
+  String adminOrderSummaryLine(String subtotal, String shipping, String total);
+
+  /// No description provided for @adminOrderClosed.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا الطلب مغلق.'**
+  String get adminOrderClosed;
+
+  /// No description provided for @adminOrderMarkAs.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد كـ {status}'**
+  String adminOrderMarkAs(String status);
+
+  /// No description provided for @adminOrderCancelTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الطلب {orderNumber}؟'**
+  String adminOrderCancelTitle(String orderNumber);
+
+  /// No description provided for @adminOrderCancelBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سترجع المنتجات إلى المخزون ولا يمكن إعادة فتح الطلب.'**
+  String get adminOrderCancelBody;
+
+  /// No description provided for @adminOrderKeepIt.
+  ///
+  /// In ar, this message translates to:
+  /// **'التراجع'**
+  String get adminOrderKeepIt;
+
+  /// No description provided for @adminOrderCancelConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الطلب'**
+  String get adminOrderCancelConfirm;
+
+  /// No description provided for @adminProductSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث عن منتج'**
+  String get adminProductSearchHint;
+
+  /// No description provided for @adminProductNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتج جديد'**
+  String get adminProductNew;
+
+  /// No description provided for @adminProductsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد منتجات بعد.'**
+  String get adminProductsEmpty;
+
+  /// No description provided for @adminProductOptionsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} خيار'**
+  String adminProductOptionsCount(int count);
+
+  /// No description provided for @adminProductInStock.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} بالمخزون'**
+  String adminProductInStock(int count);
+
+  /// No description provided for @adminProductUnlistedSuffix.
+  ///
+  /// In ar, this message translates to:
+  /// **'  ·  غير معروض'**
+  String get adminProductUnlistedSuffix;
+
+  /// No description provided for @adminProductImagesTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصور'**
+  String get adminProductImagesTooltip;
+
+  /// No description provided for @adminProductUnlistTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء العرض'**
+  String get adminProductUnlistTooltip;
+
+  /// No description provided for @adminProductAlreadyUnlisted.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير معروض بالفعل'**
+  String get adminProductAlreadyUnlisted;
+
+  /// No description provided for @adminProductUnlistTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء عرض المنتج؟'**
+  String get adminProductUnlistTitle;
+
+  /// No description provided for @adminProductUnlistBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتوقف {title} عن الظهور في المتجر. الطلبات التي تتضمنه بالفعل لن تتأثر، ويمكنك إعادة عرضه لاحقًا.'**
+  String adminProductUnlistBody(String title);
+
+  /// No description provided for @adminProductUnlistConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء العرض'**
+  String get adminProductUnlistConfirm;
+
+  /// No description provided for @adminProductImagesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'صور — {title}'**
+  String adminProductImagesTitle(String title);
+
+  /// No description provided for @adminProductImagesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة الأولى هي التي تظهر في بطاقات المنتج.'**
+  String get adminProductImagesHint;
+
+  /// No description provided for @adminProductNoImages.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد صور بعد.'**
+  String get adminProductNoImages;
+
+  /// No description provided for @adminProductImageCardBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'بطاقة'**
+  String get adminProductImageCardBadge;
+
+  /// No description provided for @adminProductRemoveImageTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الصورة'**
+  String get adminProductRemoveImageTooltip;
+
+  /// No description provided for @adminCloseLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إغلاق'**
+  String get adminCloseLabel;
+
+  /// No description provided for @adminUploadLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفع'**
+  String get adminUploadLabel;
+
+  /// No description provided for @adminProductEditTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المنتج'**
+  String get adminProductEditTitle;
+
+  /// No description provided for @adminProductTitleEn.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان (بالإنجليزية)'**
+  String get adminProductTitleEn;
+
+  /// No description provided for @adminProductTitleAr.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان (بالعربية)'**
+  String get adminProductTitleAr;
+
+  /// No description provided for @adminProductCategoryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'القسم'**
+  String get adminProductCategoryLabel;
+
+  /// No description provided for @adminProductCategoryHiddenSuffix.
+  ///
+  /// In ar, this message translates to:
+  /// **'  (مخفي)'**
+  String get adminProductCategoryHiddenSuffix;
+
+  /// No description provided for @adminProductPickCategoryError.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر قسمًا'**
+  String get adminProductPickCategoryError;
+
+  /// No description provided for @adminProductCategoriesFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحميل الأقسام: {error}'**
+  String adminProductCategoriesFailed(String error);
+
+  /// No description provided for @adminProductPriceEgpLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر (جنيه)'**
+  String get adminProductPriceEgpLabel;
+
+  /// No description provided for @adminProductWasPriceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر قبل الخصم (جنيه، اختياري)'**
+  String get adminProductWasPriceLabel;
+
+  /// No description provided for @adminProductBadgeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشارة'**
+  String get adminProductBadgeLabel;
+
+  /// No description provided for @adminProductBadgeNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون'**
+  String get adminProductBadgeNone;
+
+  /// No description provided for @adminProductBadgeNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'جديد'**
+  String get adminProductBadgeNew;
+
+  /// No description provided for @adminProductBadgePreOrder.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب مسبق'**
+  String get adminProductBadgePreOrder;
+
+  /// No description provided for @adminProductBadgeSale.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخفيض'**
+  String get adminProductBadgeSale;
+
+  /// No description provided for @adminProductFeaturedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مميز'**
+  String get adminProductFeaturedLabel;
+
+  /// No description provided for @adminProductFeaturedHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يظهر في الشريط الرئيسي'**
+  String get adminProductFeaturedHint;
+
+  /// No description provided for @adminProductListedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'معروض'**
+  String get adminProductListedLabel;
+
+  /// No description provided for @adminProductListedHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ظاهر في المتجر'**
+  String get adminProductListedHint;
+
+  /// No description provided for @adminProductOptionsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخيارات'**
+  String get adminProductOptionsTitle;
+
+  /// No description provided for @adminProductOptionsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لكل مقاس/لون مخزونه الخاص.'**
+  String get adminProductOptionsHint;
+
+  /// No description provided for @adminProductAddOption.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة خيار'**
+  String get adminProductAddOption;
+
+  /// No description provided for @adminProductSizeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المقاس'**
+  String get adminProductSizeLabel;
+
+  /// No description provided for @adminProductColourLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون'**
+  String get adminProductColourLabel;
+
+  /// No description provided for @adminProductSkuLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'SKU'**
+  String get adminProductSkuLabel;
+
+  /// No description provided for @adminProductStockLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المخزون'**
+  String get adminProductStockLabel;
+
+  /// No description provided for @adminProductRemoveOptionTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الخيار'**
+  String get adminProductRemoveOptionTooltip;
+
+  /// No description provided for @adminProductPriceExample.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل سعرًا مثل 749.00'**
+  String get adminProductPriceExample;
+
+  /// No description provided for @adminProductWasPriceExample.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل سعرًا مثل 999.00'**
+  String get adminProductWasPriceExample;
+
+  /// No description provided for @adminProductWasPriceHigherError.
+  ///
+  /// In ar, this message translates to:
+  /// **'يجب أن يكون أعلى من السعر'**
+  String get adminProductWasPriceHigherError;
+
+  /// No description provided for @adminShippingIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف محافظة يزيلها من صفحة إتمام الطلب. الطلبات التي وصلت إليها بالفعل تحتفظ برسومها.'**
+  String get adminShippingIntro;
+
+  /// No description provided for @adminShippingEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد محافظات بعد — شغّل seed الشحن على السيرفر.'**
+  String get adminShippingEmpty;
+
+  /// No description provided for @adminShippingFeeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرسوم (جنيه)'**
+  String get adminShippingFeeLabel;
+
+  /// No description provided for @adminShippingDeliverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التوصيل'**
+  String get adminShippingDeliverLabel;
+
+  /// No description provided for @adminShippingFeeExampleError.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رسومًا مثل 65.00'**
+  String get adminShippingFeeExampleError;
+
   /// No description provided for @dashboardWelcomeMessage.
   ///
   /// In ar, this message translates to:

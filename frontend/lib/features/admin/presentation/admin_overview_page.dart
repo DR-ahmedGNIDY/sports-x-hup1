@@ -6,6 +6,7 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/profile_colors.dart';
 import '../../../core/widgets/error_state.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../application/admin_stats_controller.dart';
 import '../domain/entities/admin_stats.dart';
 
@@ -19,6 +20,7 @@ class AdminOverviewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final statsAsync = ref.watch(adminStatsProvider);
 
     return Padding(
@@ -30,11 +32,11 @@ class AdminOverviewPage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Admin — Overview',
+                l10n.dashboardAdminOverview,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               IconButton(
-                tooltip: 'Refresh',
+                tooltip: l10n.adminOverviewRefreshTooltip,
                 icon: const Icon(Icons.refresh),
                 onPressed: () => ref.invalidate(adminStatsProvider),
               ),
@@ -64,59 +66,60 @@ class _StatCardGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Registered players and clubs lead, because they are the numbers the
     // dashboard exists to answer; the moderation counts follow.
     final cards = <_StatCardData>[
       _StatCardData(
-        label: 'Registered players',
+        label: l10n.adminOverviewRegisteredPlayers,
         value: stats.players,
         icon: Icons.person_outline,
         color: AppColors.brandBlue,
-        footnote: '${stats.playerProfiles} with a profile',
+        footnote: l10n.adminOverviewPlayersWithProfile(stats.playerProfiles),
       ),
       _StatCardData(
-        label: 'Registered clubs',
+        label: l10n.adminOverviewRegisteredClubs,
         value: stats.clubs,
         icon: Icons.shield_outlined,
         color: AppColors.brandBlueLight,
-        footnote: '${stats.clubProfiles} with a profile',
+        footnote: l10n.adminOverviewClubsWithProfile(stats.clubProfiles),
       ),
       _StatCardData(
-        label: 'Verified clubs',
+        label: l10n.adminOverviewVerifiedClubs,
         value: stats.verifiedClubs,
         icon: Icons.verified_outlined,
         color: AppColors.success,
       ),
       _StatCardData(
-        label: 'Coaches',
+        label: l10n.adminOverviewCoaches,
         value: stats.coaches,
         icon: Icons.sports,
         color: AppColors.brandBlueDark,
       ),
       _StatCardData(
-        label: 'Total accounts',
+        label: l10n.adminOverviewTotalAccounts,
         value: stats.totalUsers,
         icon: Icons.groups_outlined,
         color: AppColors.grey,
       ),
       _StatCardData(
-        label: 'Suspended accounts',
+        label: l10n.adminOverviewSuspendedAccounts,
         value: stats.suspended,
         icon: Icons.block_outlined,
         color: AppColors.error,
       ),
       _StatCardData(
-        label: 'Moderators',
+        label: l10n.adminOverviewModerators,
         value: stats.moderators,
         icon: Icons.gavel_outlined,
         color: AppColors.warning,
       ),
       _StatCardData(
-        label: 'Community posts',
+        label: l10n.adminOverviewCommunityPosts,
         value: stats.posts,
         icon: Icons.photo_library_outlined,
         color: AppColors.brandBlue,
-        footnote: '${stats.hiddenPosts} hidden',
+        footnote: l10n.adminOverviewHiddenPosts(stats.hiddenPosts),
       ),
     ];
 

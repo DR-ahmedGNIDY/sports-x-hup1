@@ -69,7 +69,10 @@ export class AdminController {
 
   @Get('users')
   async listUsers(@Query() query: PaginationQueryDto) {
-    const result = await this.usersService.findAll(query.page ?? 1);
+    const result = await this.usersService.findAll(
+      query.page ?? 1,
+      query.role,
+    );
     return { ...result, items: result.items.map(toAdminUser) };
   }
 

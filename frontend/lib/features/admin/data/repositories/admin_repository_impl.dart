@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/authorized_request.dart';
 import '../../../../core/storage/session_storage.dart';
 import '../../../../core/storage/session_storage_provider.dart';
+import '../../../auth/domain/entities/user_role.dart';
 import '../../domain/entities/admin_club_summary.dart';
 import '../../domain/entities/admin_player_summary.dart';
 import '../../domain/entities/admin_stats.dart';
@@ -25,10 +26,11 @@ class AdminRepositoryImpl implements AdminRepository {
       runAuthorized(_ref, _storage, call);
 
   @override
-  Future<AdminPage<AdminUser>> getUsers({int page = 1}) => _authorized((token) async {
-    final json = await _remote.getUsers(token, page: page);
-    return _toPage(json, AdminUserModel.fromJson);
-  });
+  Future<AdminPage<AdminUser>> getUsers({int page = 1, UserRole? role}) =>
+      _authorized((token) async {
+        final json = await _remote.getUsers(token, page: page, role: role?.wireValue);
+        return _toPage(json, AdminUserModel.fromJson);
+      });
 
   @override
   Future<void> setUserStatus(String userId, String status) =>
