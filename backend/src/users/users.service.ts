@@ -13,6 +13,7 @@ import { CoachesService } from '../coaches/coaches.service';
 import { PlayersService } from '../players/players.service';
 import { VideosService } from '../videos/videos.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SuspensionDuration, suspensionEndDate } from './suspension';
 import {
   User,
   UserDocument,
@@ -180,8 +181,87 @@ export class UsersService {
   async updateStatus(id: string, status: UserStatus): Promise<UserDocument> {
     const user = await this.findByIdOrThrow(id);
     user.status = status;
+    if (status === UserStatus.ACTIVE) {
+      user.suspendedUntil = undefined;
+      user.suspensionReason = undefined;
+    }
     await user.save();
     return user;
+  }
+
+  // Suspends for a fixed term (or forever, for PERMANENT). Re-suspending an
+  // already-suspended user just overwrites the term, which is what an admin
+  // extending or shortening a suspension expects.
+  async suspend(
+    id: string,
+    duration: SuspensionDuration,
+    reason?: string,
+  ): Promise<UserDocument> {
+    const user = await this.findByIdOrThrow(id);
+    user.status = UserStatus.SUSPENDED;
+    user.suspendedUntil = suspensionEndDate(duration);
+    user.suspensionReason = reason?.trim() || undefined;
+    await user.save();
+    return user;
+  }
+
+  async reactivate(id: string): Promise<UserDocument> {
+    return this.updateStatus(id, UserStatus.ACTIVE);
+  }
+
+  // Ends a suspension whose term has elapsed, so the account comes back on
+  // its own without an admin (or a cron job) touching it. Returns the user
+  // unchanged in every other case, which lets callers treat it as a plain
+  // "normalise before checking status" step.
+  async liftExpiredSuspension(user: UserDocument): Promise<UserDocument> {
+    if (user.status !== UserStatus.SUSPENDED) return user;
+    if (!user.suspendedUntil) return user; // permanent
+    if (user.suspendedUntil.getTime() > Date.now()) return user;
+
+    user.status = UserStatus.ACTIVE;
+    user.suspendedUntil = undefined;
+    user.suspensionReason = undefined;
+    await user.save();
+    return user;
+  }
+
+  async setModerator(id: string, isModerator: boolean): Promise<UserDocument> {
+    const user = await this.findByIdOrThrow(id);
+    user.isModerator = isModerator;
+    await user.save();
+    return user;
+  }
+
+  // Powers the admin dashboard's overview cards. Counts run in parallel and
+  // read straight off indexed fields, so this stays one cheap round trip.
+  async countsByRole(): Promise<{
+    totalUsers: number;
+    players: number;
+    clubs: number;
+    coaches: number;
+    admins: number;
+    suspended: number;
+    moderators: number;
+  }> {
+    const [totalUsers, players, clubs, coaches, admins, suspended, moderators] =
+      await Promise.all([
+        this.userModel.countDocuments(),
+        this.userModel.countDocuments({ role: UserRole.PLAYER }),
+        this.userModel.countDocuments({ role: UserRole.CLUB }),
+        this.userModel.countDocuments({ role: UserRole.COACH }),
+        this.userModel.countDocuments({ role: UserRole.ADMIN }),
+        this.userModel.countDocuments({ status: UserStatus.SUSPENDED }),
+        this.userModel.countDocuments({ isModerator: true }),
+      ]);
+    return {
+      totalUsers,
+      players,
+      clubs,
+      coaches,
+      admins,
+      suspended,
+      moderators,
+    };
   }
 
   // Cascades the deletion so nothing reachable is left pointing at a user

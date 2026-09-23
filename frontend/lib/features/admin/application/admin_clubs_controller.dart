@@ -24,6 +24,27 @@ class AdminClubsController extends AsyncNotifier<List<AdminClubSummary>> {
     state = AsyncData([...state.valueOrNull ?? const [], ...result.items]);
   }
 
+  /// Grants or revokes the verification check mark. Updates the row in
+  /// place rather than refetching — only one field changed, and a refetch
+  /// would collapse any pages already loaded via [loadMore].
+  Future<void> setVerified(String clubId, bool verified) async {
+    await ref.read(adminRepositoryProvider).setClubVerified(clubId, verified);
+    final current = state.valueOrNull ?? const <AdminClubSummary>[];
+    state = AsyncData([
+      for (final club in current)
+        if (club.id == clubId)
+          AdminClubSummary(
+            id: club.id,
+            name: club.name,
+            country: club.country,
+            city: club.city,
+            isVerified: verified,
+          )
+        else
+          club,
+    ]);
+  }
+
   Future<void> deleteClub(String clubId) async {
     await ref.read(adminRepositoryProvider).deleteClub(clubId);
     final current = state.valueOrNull ?? const [];

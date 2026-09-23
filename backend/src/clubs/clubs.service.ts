@@ -207,6 +207,28 @@ export class ClubsService {
     return { items, page, pageSize: CLUB_LIST_PAGE_SIZE, total };
   }
 
+  // Admin — grants or revokes the club's verification badge. `verifiedAt`
+  // is rewritten on every grant so it always reflects the current badge,
+  // and cleared on revoke so no stale date survives.
+  async setVerification(
+    id: string,
+    verified: boolean,
+  ): Promise<ClubProfileDocument> {
+    const profile = await this.findByIdOrThrow(id);
+    profile.isVerified = verified;
+    profile.verifiedAt = verified ? new Date() : undefined;
+    await profile.save();
+    return profile;
+  }
+
+  countAll(): Promise<number> {
+    return this.clubProfileModel.countDocuments();
+  }
+
+  countVerified(): Promise<number> {
+    return this.clubProfileModel.countDocuments({ isVerified: true });
+  }
+
   async deleteProfileAndLogo(id: string): Promise<void> {
     if (!Types.ObjectId.isValid(id)) {
       throw new NotFoundException('Club not found.');

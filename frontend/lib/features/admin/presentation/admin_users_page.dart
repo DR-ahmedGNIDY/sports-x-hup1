@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/error_state.dart';
+import '../application/admin_stats_controller.dart';
 import '../application/admin_users_controller.dart';
 import '../domain/entities/admin_user.dart';
+import 'suspend_user_dialog.dart';
 
 /// Desktop only — per the roadmap, admin tooling does not need a mobile
 /// layout for V1, so this skips the ResponsiveLayout fork every other
@@ -34,6 +36,32 @@ class AdminUsersPage extends ConsumerWidget {
     if (confirmed == true) {
       await ref.read(adminUsersControllerProvider.notifier).deleteUser(user.id);
     }
+  }
+
+  Future<void> _suspend(BuildContext context, WidgetRef ref, AdminUser user) async {
+    final choice = await showSuspendUserDialog(context, user);
+    if (choice == null) return;
+    await ref
+        .read(adminUsersControllerProvider.notifier)
+        .suspend(user.id, choice.duration, reason: choice.reason);
+    // The counts on the overview page include suspended accounts.
+    ref.invalidate(adminStatsProvider);
+  }
+
+  Future<void> _reactivate(WidgetRef ref, AdminUser user) async {
+    await ref.read(adminUsersControllerProvider.notifier).reactivate(user.id);
+    ref.invalidate(adminStatsProvider);
+  }
+
+  /// "Active", or how long the suspension still has to run. Reads the
+  /// missing end date as permanent — see [AdminUser.suspendedUntil].
+  static String _statusLabel(AdminUser user) {
+    if (!user.isSuspended) return 'ACTIVE';
+    if (user.suspendedUntil == null) return 'SUSPENDED · permanent';
+    final until = user.suspendedUntil!;
+    final date = '${until.year}-${until.month.toString().padLeft(2, '0')}'
+        '-${until.day.toString().padLeft(2, '0')}';
+    return 'SUSPENDED · until $date';
   }
 
   @override
@@ -72,6 +100,7 @@ class AdminUsersPage extends ConsumerWidget {
                           DataColumn(label: Text('Email')),
                           DataColumn(label: Text('Role')),
                           DataColumn(label: Text('Status')),
+                          DataColumn(label: Text('Moderator')),
                           DataColumn(label: Text('Actions')),
                         ],
                         rows: users
@@ -81,31 +110,41 @@ class AdminUsersPage extends ConsumerWidget {
                                   DataCell(Text(user.email)),
                                   DataCell(Text(user.role.wireValue)),
                                   DataCell(
-                                    Text(
-                                      user.status,
-                                      style: TextStyle(
-                                        color: user.status == 'SUSPENDED'
-                                            ? AppColors.error
-                                            : AppColors.success,
+                                    Tooltip(
+                                      // The admin's own note, if they left
+                                      // one — worth surfacing here rather
+                                      // than hiding it behind another click.
+                                      message: user.suspensionReason ?? '',
+                                      child: Text(
+                                        _statusLabel(user),
+                                        style: TextStyle(
+                                          color: user.isSuspended
+                                              ? AppColors.error
+                                              : AppColors.success,
+                                        ),
                                       ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Switch(
+                                      value: user.isModerator,
+                                      onChanged: (value) async {
+                                        await ref
+                                            .read(adminUsersControllerProvider.notifier)
+                                            .setModerator(user.id, value);
+                                        ref.invalidate(adminStatsProvider);
+                                      },
                                     ),
                                   ),
                                   DataCell(
                                     Row(
                                       children: [
                                         TextButton(
-                                          onPressed: () => ref
-                                              .read(adminUsersControllerProvider.notifier)
-                                              .setStatus(
-                                                user.id,
-                                                user.status == 'SUSPENDED'
-                                                    ? 'ACTIVE'
-                                                    : 'SUSPENDED',
-                                              ),
+                                          onPressed: () => user.isSuspended
+                                              ? _reactivate(ref, user)
+                                              : _suspend(context, ref, user),
                                           child: Text(
-                                            user.status == 'SUSPENDED'
-                                                ? 'Activate'
-                                                : 'Suspend',
+                                            user.isSuspended ? 'Activate' : 'Suspend',
                                           ),
                                         ),
                                         IconButton(

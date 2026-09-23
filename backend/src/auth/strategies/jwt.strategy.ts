@@ -31,10 +31,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // short-lived access token happens to expire — the Phase 4 acceptance
   // criterion is "immediately loses access."
   async validate(payload: JwtPayload): Promise<JwtPayload> {
-    const user = await this.usersService.findById(payload.sub);
+    const found = await this.usersService.findById(payload.sub);
+    // A fixed-term suspension ends on its own: this is the hook that lets
+    // the account come back the moment it is next used, with no cron job.
+    const user = found
+      ? await this.usersService.liftExpiredSuspension(found)
+      : null;
     if (!user || user.status !== UserStatus.ACTIVE) {
       throw new UnauthorizedException('This account has been suspended.');
     }
-    return payload;
+    // Read live rather than trusted from the token, so an admin granting or
+    // revoking moderation is effective on the very next request.
+    return { ...payload, isModerator: user.isModerator ?? false };
   }
 }

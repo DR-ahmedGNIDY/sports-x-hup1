@@ -4,6 +4,7 @@ import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../application/calendar_events_controller.dart';
 import '../shared/day_events_panel.dart';
 import '../shared/month_calendar_grid.dart';
@@ -26,6 +27,7 @@ class _CalendarPageDesktopState extends ConsumerState<CalendarPageDesktop> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final eventsAsync = widget.isClub
         ? ref.watch(calendarEventsProvider(_monthKey))
         : ref.watch(playerCalendarEventsProvider(_monthKey));
@@ -46,6 +48,7 @@ class _CalendarPageDesktopState extends ConsumerState<CalendarPageDesktop> {
               Row(
                 children: [
                   IconButton(
+                    tooltip: l10n.calendarPreviousMonth,
                     icon: const Icon(Icons.chevron_right),
                     onPressed: () => setState(
                       () => _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month - 1),
@@ -62,6 +65,7 @@ class _CalendarPageDesktopState extends ConsumerState<CalendarPageDesktop> {
                     ),
                   ),
                   IconButton(
+                    tooltip: l10n.calendarNextMonth,
                     icon: const Icon(Icons.chevron_left),
                     onPressed: () => setState(
                       () => _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month + 1),

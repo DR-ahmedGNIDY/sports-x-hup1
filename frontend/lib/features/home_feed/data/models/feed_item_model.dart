@@ -12,6 +12,7 @@ extension FeedAuthorModel on FeedAuthor {
       displayName: json['displayName'] as String,
       profilePhotoUrl: json['profilePhotoUrl'] as String?,
       country: json['country'] as String?,
+      isVerified: json['isVerified'] as bool? ?? false,
     );
   }
 }
@@ -30,6 +31,9 @@ extension FeedItemModel on FeedItem {
       commentCount: (json['commentCount'] as num?)?.toInt() ?? 0,
       createdAt: DateTime.parse(json['createdAt'] as String),
       author: authorJson != null ? FeedAuthorModel.fromJson(authorJson) : null,
+      isHidden: json['isHidden'] as bool? ?? false,
+      canDelete: json['canDelete'] as bool? ?? false,
+      canModerate: json['canModerate'] as bool? ?? false,
     );
   }
 }

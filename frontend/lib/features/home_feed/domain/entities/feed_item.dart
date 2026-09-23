@@ -28,6 +28,9 @@ class FeedItem {
     required this.createdAt,
     this.isLikedByMe = false,
     this.author,
+    this.isHidden = false,
+    this.canDelete = false,
+    this.canModerate = false,
   });
 
   final FeedItemKind kind;
@@ -45,7 +48,25 @@ class FeedItem {
   final bool isLikedByMe;
   final FeedAuthor? author;
 
-  FeedItem copyWith({int? likeCount, int? commentCount, bool? isLikedByMe}) {
+  /// Hidden from the public feed by a moderator. Only a moderator ever
+  /// receives such an item at all, and they receive it flagged so the card
+  /// can mark it and offer to put it back.
+  final bool isHidden;
+
+  /// Whether this viewer may delete the item — true for the author's own
+  /// posts and for a moderator on anyone's. Decided by the server, not
+  /// re-derived here.
+  final bool canDelete;
+
+  /// Whether this viewer may hide/unhide the item. Moderators only.
+  final bool canModerate;
+
+  FeedItem copyWith({
+    int? likeCount,
+    int? commentCount,
+    bool? isLikedByMe,
+    bool? isHidden,
+  }) {
     return FeedItem(
       kind: kind,
       id: id,
@@ -58,6 +79,9 @@ class FeedItem {
       createdAt: createdAt,
       isLikedByMe: isLikedByMe ?? this.isLikedByMe,
       author: author,
+      isHidden: isHidden ?? this.isHidden,
+      canDelete: canDelete,
+      canModerate: canModerate,
     );
   }
 }

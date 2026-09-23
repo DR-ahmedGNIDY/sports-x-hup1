@@ -25,10 +25,23 @@ class HomeBanner extends StatelessWidget {
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 760;
 
+        // The banner is a fixed height because the photograph behind the
+        // text needs a bounded box to cover — but the text over it scales
+        // with the reader's font size, and at the system maximum it ran 68
+        // pixels past the bottom on a 320px phone (measured, not guessed).
+        //
+        // So the height scales with the text rather than the text being
+        // clamped to the height: the greeting is content, not chrome, and
+        // clipping someone's own club name because they enlarged their font
+        // is the wrong half of the trade. Capped at 2x so an extreme
+        // accessibility setting can't hand the banner the whole screen.
+        final textScale = MediaQuery.textScalerOf(context).scale(14) / 14;
+        final height = (wide ? 220.0 : 176.0) * textScale.clamp(1.0, 2.0);
+
         return ClipRRect(
           borderRadius: BorderRadius.circular(AppRadius.lg),
           child: SizedBox(
-            height: wide ? 220 : 176,
+            height: height,
             child: Stack(
               fit: StackFit.expand,
               children: [

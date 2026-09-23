@@ -13,6 +13,7 @@ extension ClubProfileModel on ClubProfile {
       description: json['description'] as String?,
       foundedYear: json['foundedYear'] as int?,
       level: json['level'] as String?,
+      isVerified: json['isVerified'] as bool? ?? false,
     );
   }
 }

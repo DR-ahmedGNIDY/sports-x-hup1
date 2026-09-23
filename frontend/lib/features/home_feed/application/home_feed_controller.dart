@@ -134,6 +134,37 @@ class HomeFeedController extends AsyncNotifier<HomeFeedState> {
     );
   }
 
+  /// Removes the item from the feed for good. Only called for an item the
+  /// server already marked [FeedItem.canDelete], and the local list is
+  /// updated after the call succeeds so a rejected delete leaves the feed
+  /// exactly as it was.
+  Future<void> deleteItem(FeedItem item) async {
+    await ref.read(feedRepositoryProvider).deleteFeedItem(item.kind, item.id);
+    final current = state.valueOrNull;
+    if (current == null) return;
+    state = AsyncData(
+      current.copyWith(
+        page: FeedPage(
+          items: current.page.items.where((i) => i.id != item.id).toList(),
+          page: current.page.page,
+          pageSize: current.page.pageSize,
+          total: current.page.total > 0 ? current.page.total - 1 : 0,
+        ),
+      ),
+    );
+  }
+
+  /// Moderator action. The item stays in this moderator's own feed, just
+  /// flagged — that is deliberate: they need it in front of them to be able
+  /// to undo the hide, and they are the only role the server still sends
+  /// hidden items to.
+  Future<void> setItemHidden(FeedItem item, bool hidden) async {
+    await ref
+        .read(feedRepositoryProvider)
+        .setFeedItemHidden(item.kind, item.id, hidden);
+    patchItem(item.id, (i) => i.copyWith(isHidden: hidden));
+  }
+
   void incrementCommentCount(String id, int delta) {
     patchItem(id, (i) => i.copyWith(commentCount: i.commentCount + delta));
   }

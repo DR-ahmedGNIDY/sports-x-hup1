@@ -30,6 +30,32 @@ class AdminUsersController extends AsyncNotifier<List<AdminUser>> {
     await future;
   }
 
+  /// Suspends for a fixed term, or forever. Re-reads the list afterwards
+  /// because the row now has to show the end date the server computed.
+  Future<void> suspend(
+    String userId,
+    SuspensionDuration duration, {
+    String? reason,
+  }) async {
+    await ref
+        .read(adminRepositoryProvider)
+        .suspendUser(userId, duration, reason: reason);
+    ref.invalidateSelf();
+    await future;
+  }
+
+  Future<void> reactivate(String userId) async {
+    await ref.read(adminRepositoryProvider).reactivateUser(userId);
+    ref.invalidateSelf();
+    await future;
+  }
+
+  Future<void> setModerator(String userId, bool isModerator) async {
+    await ref.read(adminRepositoryProvider).setUserModerator(userId, isModerator);
+    ref.invalidateSelf();
+    await future;
+  }
+
   Future<void> deleteUser(String userId) async {
     await ref.read(adminRepositoryProvider).deleteUser(userId);
     final current = state.valueOrNull ?? const [];

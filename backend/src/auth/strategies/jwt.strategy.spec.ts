@@ -7,7 +7,13 @@ describe('JwtStrategy', () => {
   const fakeConfig = { get: () => 'a'.repeat(32) };
 
   function buildStrategy(user: { status: UserStatus } | null) {
-    const usersService = { findById: jest.fn().mockResolvedValue(user) };
+    const usersService = {
+      findById: jest.fn().mockResolvedValue(user),
+      // The strategy routes every user through this before checking their
+      // status, so a fixed-term suspension ends on its own. Nothing here
+      // is expired, so it hands the user straight back.
+      liftExpiredSuspension: jest.fn(async (u: unknown) => u),
+    };
     const strategy = new JwtStrategy(
       fakeConfig as never,
       usersService as never,
@@ -35,7 +41,12 @@ describe('JwtStrategy', () => {
     const strategy = buildStrategy({ status: UserStatus.ACTIVE });
     const payload = { sub: 'user-1', email: 'a@b.com', role: 'PLAYER' };
 
-    await expect(strategy.validate(payload)).resolves.toBe(payload);
+    // Not `toBe`: validate now stamps the live `isModerator` onto the
+    // payload it returns, so it is a new object carrying the same claims.
+    await expect(strategy.validate(payload)).resolves.toEqual({
+      ...payload,
+      isModerator: false,
+    });
   });
 
   // Regression test for CWE-347 / OWASP ASVS 3.5 (algorithm confusion):

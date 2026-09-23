@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/presentation/admin_overview_page.dart';
 import '../../features/admin/presentation/admin_players_clubs_page.dart';
 import '../../features/admin/presentation/admin_store_page.dart';
 import '../../features/admin/presentation/admin_users_page.dart';
@@ -555,6 +556,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
             state: state,
             child: ClubContextGate(child: EventDetailPage(eventId: state.pathParameters['id']!)),
           ),
+        ),
+      ],
+      AppBranch.adminOverview => [
+        GoRoute(
+          path: '/admin/overview',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const AdminOverviewPage()),
         ),
       ],
       AppBranch.adminUsers => [

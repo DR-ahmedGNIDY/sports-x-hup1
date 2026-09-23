@@ -107,6 +107,11 @@ class HomeFeedSliver extends ConsumerWidget {
                   onCommentCountChanged: (delta) =>
                       controller.incrementCommentCount(item.id, delta),
                 ),
+                // Passed unconditionally — the card only surfaces the menu
+                // entries the server said this viewer may use (canDelete /
+                // canModerate on the item).
+                onDelete: () => controller.deleteItem(item),
+                onSetHidden: (hidden) => controller.setItemHidden(item, hidden),
               );
             },
           );

@@ -7,6 +7,7 @@ extension AdminClubSummaryModel on AdminClubSummary {
       name: json['name'] as String?,
       country: json['country'] as String?,
       city: json['city'] as String?,
+      isVerified: json['isVerified'] as bool? ?? false,
     );
   }
 }

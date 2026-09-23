@@ -99,6 +99,11 @@ enum AppBranch {
     icon: Icons.calendar_month_outlined,
     selectedIcon: Icons.calendar_month,
   ),
+  adminOverview(
+    rootPath: '/admin/overview',
+    icon: Icons.insights_outlined,
+    selectedIcon: Icons.insights,
+  ),
   adminUsers(
     rootPath: '/admin/users',
     icon: Icons.people_outline,
@@ -157,6 +162,7 @@ enum AppBranch {
     community => l10n.communityNavLabel,
     store => l10n.storeNavLabel,
     calendar => l10n.calendarNavLabel,
+    adminOverview => l10n.dashboardAdminOverview,
     adminUsers => l10n.dashboardAdminUsers,
     adminPlayersClubs => l10n.dashboardAdminPlayersClubs,
     adminStore => l10n.dashboardAdminStore,
@@ -262,6 +268,7 @@ final Map<String, AppRouteMeta> _routeMeta = {
     ownsChrome: true,
   ),
   '/community': AppRouteMeta(title: (l10n) => l10n.communityNavLabel),
+  '/admin/overview': AppRouteMeta(title: (l10n) => l10n.dashboardAdminOverview),
   '/admin/users': AppRouteMeta(title: (l10n) => l10n.dashboardAdminUsers),
   '/admin/players-clubs': AppRouteMeta(
     title: (l10n) => l10n.dashboardAdminPlayersClubs,
@@ -332,22 +339,27 @@ AppRouteMeta? routeMetaFor(String path) {
 
 /// The bottom-navigation tabs for [role], in order.
 ///
-/// A Player gets Home, Profile, Skills; a Club gets Home, Club Profile, Club
-/// Players, Search; Admin keeps a minimal three. Everything a role can reach
-/// but doesn't need a permanent tab for lives in the account sheet behind the
-/// last slot — five tabs is the practical ceiling before labels start
-/// truncating on a 320px phone.
+/// A Player gets Home, Profile, Search, Community; a Club gets Home, Club
+/// Profile, Club Players, Calendar. Everything a role can reach but doesn't
+/// need a permanent tab for lives in the account sheet behind the last slot
+/// — **four** tabs beside that slot is the ceiling: a fifth overflows the
+/// bar on a 320px phone at doubled text (see mobile_shell_test).
 ///
 /// Traits is deliberately not a Player tab: it's already shown read-only
 /// inside the Profile page (see `TraitsSection`), so a tab for it would be a
 /// duplicate.
 List<AppBranch> tabBranchesFor(UserRole? role) => switch (role) {
+  // Search is an account-sheet entry rather than a fifth tab: Calendar took
+  // the slot when the club calendar shipped, and four tabs beside the
+  // account slot is the ceiling — a fifth overflows the bar outright at
+  // 320px with doubled text, not merely truncating. A club reaches Search
+  // daily but from a standing start (it is a task, not a place), whereas
+  // the Calendar is the screen it opens to see what this week holds.
   UserRole.club => const [
     AppBranch.home,
     AppBranch.clubProfile,
     AppBranch.clubPlayers,
     AppBranch.calendar,
-    AppBranch.search,
   ],
   // Skills is not a tab: it is already rendered in full inside the Profile
   // page (see SkillsSection), so a tab for it was a second door to one
@@ -389,6 +401,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // not. `/notifications` stays a real route, reached from the bell's
     // panel.
     UserRole.club => const [
+      AppBranch.search,
       AppBranch.clubCoaches,
       AppBranch.clubInvitations,
       AppBranch.savedPlayers,
@@ -414,6 +427,9 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
       AppBranch.settings,
     ],
     UserRole.admin => const [
+      // First, so it is the dashboard's landing screen — the counts are
+      // what an admin wants to see before drilling into a list.
+      AppBranch.adminOverview,
       AppBranch.adminUsers,
       AppBranch.adminPlayersClubs,
       AppBranch.adminStore,

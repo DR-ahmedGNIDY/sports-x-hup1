@@ -47,6 +47,19 @@ export class ClubProfile {
   // so those not-yet-backfilled documents don't all collide on null.
   @Prop({ unique: true, sparse: true, trim: true })
   publicCode?: string;
+
+  // Admin-granted "this is a real, vetted club" mark. Drives the check
+  // badge shown next to the club's name everywhere it appears (profile,
+  // search results, Home-feed posts), so it is part of the public view and
+  // not an admin-only field. Only an admin can set it — see
+  // `AdminController.setClubVerification`.
+  @Prop({ required: true, default: false })
+  isVerified: boolean;
+
+  // When the badge was granted. Cleared when verification is revoked, so
+  // "verified but no date" never happens.
+  @Prop({ type: Date, required: false })
+  verifiedAt?: Date;
 }
 
 export const ClubProfileSchema = SchemaFactory.createForClass(ClubProfile);

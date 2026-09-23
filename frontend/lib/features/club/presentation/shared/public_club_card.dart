@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/utils/app_image.dart';
+import '../../../../core/widgets/verified_badge.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/club_profile.dart';
 
@@ -46,9 +47,22 @@ class PublicClubCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      club.name?.isNotEmpty == true ? club.name! : l10n.unnamedClub,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            club.name?.isNotEmpty == true
+                                ? club.name!
+                                : l10n.unnamedClub,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        if (club.isVerified) ...[
+                          const SizedBox(width: 4),
+                          const VerifiedBadge(size: 16),
+                        ],
+                      ],
                     ),
                     if (location.isNotEmpty)
                       Text(location, style: Theme.of(context).textTheme.bodySmall),

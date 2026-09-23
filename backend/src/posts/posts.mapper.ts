@@ -18,6 +18,9 @@ export interface FeedAuthorView {
   displayName: string;
   profilePhotoUrl?: string;
   country?: string;
+  // Only ever true for a CLUB author — the verification badge is a club
+  // concept, so a player or coach author always reports false.
+  isVerified: boolean;
 }
 
 function playerAuthorView(
@@ -34,6 +37,7 @@ function playerAuthorView(
     displayName: name || 'Player',
     profilePhotoUrl: profilePhotoUrl(profile),
     country: profile.country,
+    isVerified: false,
   };
 }
 
@@ -47,6 +51,7 @@ function clubAuthorView(
     displayName: profile.name || 'Club',
     profilePhotoUrl: profile.logo?.secureUrl,
     country: profile.country,
+    isVerified: profile.isVerified ?? false,
   };
 }
 
@@ -60,6 +65,7 @@ function coachAuthorView(
     displayName: coachDisplayName(profile) ?? 'Coach',
     profilePhotoUrl: profile.profilePhoto?.secureUrl,
     country: profile.country,
+    isVerified: false,
   };
 }
 
@@ -70,9 +76,22 @@ function coachAuthorView(
 // existing Community feed's response contract is load-bearing for the
 // frontend already and must not change just because Home now needs a
 // slightly different (unified-author) shape.
+// What the current viewer is allowed to do with one feed item. Drives the
+// three-dot menu on the card: nothing to show means no menu at all.
+export interface FeedItemPermissions {
+  isMine: boolean;
+  canModerate: boolean;
+}
+
+const NO_PERMISSIONS: FeedItemPermissions = {
+  isMine: false,
+  canModerate: false,
+};
+
 export function videoFeedItem(
   video: VideoDocument,
   authorProfile: PlayerProfileDocument | null,
+  permissions: FeedItemPermissions = NO_PERMISSIONS,
 ) {
   return {
     kind: 'VIDEO' as const,
@@ -89,6 +108,9 @@ export function videoFeedItem(
     commentCount: video.commentCount,
     createdAt: (video as VideoDocument & { createdAt: Date }).createdAt,
     author: playerAuthorView(authorProfile),
+    isHidden: false, // a video leaves the feed by going PRIVATE, not by a flag
+    canDelete: permissions.isMine || permissions.canModerate,
+    canModerate: permissions.canModerate,
   };
 }
 
@@ -96,6 +118,7 @@ export function photoFeedItem(
   photo: PhotoPostDocument,
   authorProfile:
     PlayerProfileDocument | ClubProfileDocument | CoachProfileDocument | null,
+  permissions: FeedItemPermissions = NO_PERMISSIONS,
 ) {
   return {
     kind: 'PHOTO' as const,
@@ -113,6 +136,11 @@ export function photoFeedItem(
         : photo.authorRole === PostAuthorRole.COACH
           ? coachAuthorView(authorProfile as CoachProfileDocument | null)
           : playerAuthorView(authorProfile as PlayerProfileDocument | null),
+    // Only a moderator ever receives a hidden post, and they receive it
+    // flagged so the card can mark it and offer "unhide".
+    isHidden: photo.isHidden ?? false,
+    canDelete: permissions.isMine || permissions.canModerate,
+    canModerate: permissions.canModerate,
   };
 }
 

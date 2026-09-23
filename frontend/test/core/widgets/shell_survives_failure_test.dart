@@ -124,6 +124,9 @@ void main() {
 
     final l10n = lookupAppLocalizations(const Locale('en'));
     expect(find.text(l10n.clubPlayersTitle), findsOneWidget);
-    expect(find.text(l10n.mobileSearchNavLabel), findsOneWidget);
+    // Calendar, not Search: Search is an account-sheet entry for a Club (see
+    // tabBranchesFor). The point of the assertion is that the bar still
+    // renders its tabs after the failure, so any Club tab serves.
+    expect(find.text(l10n.calendarNavLabel), findsOneWidget);
   });
 }

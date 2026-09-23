@@ -1382,6 +1382,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get feedCopyPostLinkLabel => 'نسخ رابط المنشور';
 
   @override
+  String get feedDeletePostLabel => 'حذف المنشور';
+
+  @override
+  String get feedHidePostLabel => 'إخفاء المنشور';
+
+  @override
+  String get feedUnhidePostLabel => 'إظهار المنشور';
+
+  @override
+  String get feedHiddenBadge => 'مخفي';
+
+  @override
+  String get feedDeletePostConfirmTitle => 'حذف هذا المنشور؟';
+
+  @override
+  String get feedDeletePostConfirmBody =>
+      'هيتم حذف المنشور وصورته نهائيًا، ومش هينفع التراجع.';
+
+  @override
+  String get feedPostDeleted => 'تم حذف المنشور.';
+
+  @override
+  String get feedPostHidden => 'تم إخفاء المنشور من الصفحة الرئيسية.';
+
+  @override
+  String get feedPostUnhidden => 'المنشور ظاهر تاني.';
+
+  @override
+  String get feedVerifiedClubTooltip => 'نادٍ معتمد';
+
+  @override
   String get feedPlayVideoLabel => 'تشغيل الفيديو';
 
   @override
@@ -1987,7 +2018,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboardAdminStore => 'المتجر';
 
   @override
+  String get dashboardAdminOverview => 'الأدمن — نظرة عامة';
+
+  @override
   String get calendarNavLabel => 'التقويم';
+
+  @override
+  String get calendarPreviousMonth => 'الشهر السابق';
+
+  @override
+  String get calendarNextMonth => 'الشهر التالي';
 
   @override
   String get storeNavLabel => 'المتجر';

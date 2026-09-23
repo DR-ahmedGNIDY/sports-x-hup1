@@ -9,6 +9,7 @@ class ClubProfile {
     this.description,
     this.foundedYear,
     this.level,
+    this.isVerified = false,
   });
 
   final String id;
@@ -26,4 +27,9 @@ class ClubProfile {
   final String? description;
   final int? foundedYear;
   final String? level;
+
+  /// Whether an admin has granted this club the verification check mark.
+  /// Set only from the admin dashboard; every other surface just renders
+  /// the badge.
+  final bool isVerified;
 }

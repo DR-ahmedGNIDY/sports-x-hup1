@@ -11,6 +11,7 @@ class FeedAuthor {
     required this.displayName,
     this.profilePhotoUrl,
     this.country,
+    this.isVerified = false,
   });
 
   /// 'PLAYER' or 'CLUB'.
@@ -21,6 +22,10 @@ class FeedAuthor {
   final String displayName;
   final String? profilePhotoUrl;
   final String? country;
+
+  /// Only ever true for a club: the admin-granted verification check mark
+  /// shown next to the name.
+  final bool isVerified;
 
   bool get isClub => role == 'CLUB';
   bool get isCoach => role == 'COACH';

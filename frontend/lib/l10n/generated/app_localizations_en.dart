@@ -1396,6 +1396,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedCopyPostLinkLabel => 'Copy post link';
 
   @override
+  String get feedDeletePostLabel => 'Delete post';
+
+  @override
+  String get feedHidePostLabel => 'Hide post';
+
+  @override
+  String get feedUnhidePostLabel => 'Unhide post';
+
+  @override
+  String get feedHiddenBadge => 'Hidden';
+
+  @override
+  String get feedDeletePostConfirmTitle => 'Delete this post?';
+
+  @override
+  String get feedDeletePostConfirmBody =>
+      'The post and its image will be removed permanently. This can\'t be undone.';
+
+  @override
+  String get feedPostDeleted => 'Post deleted.';
+
+  @override
+  String get feedPostHidden => 'Post hidden from the feed.';
+
+  @override
+  String get feedPostUnhidden => 'Post is visible again.';
+
+  @override
+  String get feedVerifiedClubTooltip => 'Verified club';
+
+  @override
   String get feedPlayVideoLabel => 'Play video';
 
   @override
@@ -2003,7 +2034,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardAdminStore => 'Store';
 
   @override
+  String get dashboardAdminOverview => 'Admin — Overview';
+
+  @override
   String get calendarNavLabel => 'Calendar';
+
+  @override
+  String get calendarPreviousMonth => 'Previous month';
+
+  @override
+  String get calendarNextMonth => 'Next month';
 
   @override
   String get storeNavLabel => 'Store';

@@ -77,6 +77,14 @@ class FeedRepositoryImpl implements FeedRepository {
   @override
   Future<void> deleteComment(FeedItemKind kind, String id, String commentId) =>
       _authorized((token) => _remote.deleteComment(token, kind, id, commentId));
+
+  @override
+  Future<void> deleteFeedItem(FeedItemKind kind, String id) =>
+      _authorized((token) => _remote.deleteFeedItem(token, kind, id));
+
+  @override
+  Future<void> setFeedItemHidden(FeedItemKind kind, String id, bool hidden) =>
+      _authorized((token) => _remote.setFeedItemHidden(token, kind, id, hidden));
 }
 
 final feedRepositoryProvider = Provider<FeedRepository>(

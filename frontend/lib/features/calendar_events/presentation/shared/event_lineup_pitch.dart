@@ -190,7 +190,10 @@ class EventLineupPitch extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: AppColors.black.withValues(alpha: 0.72),
-                  borderRadius: BorderRadius.circular(6),
+                  // xxs, not a literal 6: this name chip is only a couple
+                  // of pixels tall, and at that size the token reads the
+                  // same while keeping the radius scale a closed set.
+                  borderRadius: BorderRadius.circular(AppRadius.xxs),
                 ),
                 child: Text(
                   player.name,

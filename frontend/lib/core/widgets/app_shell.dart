@@ -161,6 +161,7 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
   UserRole.admin => const [
     AppBranch.home,
     AppBranch.community,
+    AppBranch.adminOverview,
     AppBranch.adminUsers,
     AppBranch.adminPlayersClubs,
     AppBranch.adminStore,

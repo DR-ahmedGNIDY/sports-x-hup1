@@ -33,4 +33,12 @@ abstract class FeedRepository {
   Future<VideoComment> addComment(FeedItemKind kind, String id, String text);
 
   Future<void> deleteComment(FeedItemKind kind, String id, String commentId);
+
+  /// Deletes a post — the caller's own, or anyone's if they moderate.
+  /// Final: it removes the underlying media too.
+  Future<void> deleteFeedItem(FeedItemKind kind, String id);
+
+  /// Hides a post from the public feed, or puts it back. Moderators only,
+  /// and reversible — the preferred action over [deleteFeedItem].
+  Future<void> setFeedItemHidden(FeedItemKind kind, String id, bool hidden);
 }

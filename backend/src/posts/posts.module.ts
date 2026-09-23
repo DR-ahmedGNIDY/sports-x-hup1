@@ -47,5 +47,7 @@ import { PhotoPost, PhotoPostSchema } from './schemas/photo-post.schema';
   ],
   controllers: [PostsController],
   providers: [PostsService],
+  // AdminModule reads the post counts for its overview cards.
+  exports: [PostsService],
 })
 export class PostsModule {}

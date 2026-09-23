@@ -2671,6 +2671,66 @@ abstract class AppLocalizations {
   /// **'نسخ رابط المنشور'**
   String get feedCopyPostLinkLabel;
 
+  /// No description provided for @feedDeletePostLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف المنشور'**
+  String get feedDeletePostLabel;
+
+  /// No description provided for @feedHidePostLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إخفاء المنشور'**
+  String get feedHidePostLabel;
+
+  /// No description provided for @feedUnhidePostLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار المنشور'**
+  String get feedUnhidePostLabel;
+
+  /// No description provided for @feedHiddenBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'مخفي'**
+  String get feedHiddenBadge;
+
+  /// No description provided for @feedDeletePostConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف هذا المنشور؟'**
+  String get feedDeletePostConfirmTitle;
+
+  /// No description provided for @feedDeletePostConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيتم حذف المنشور وصورته نهائيًا، ومش هينفع التراجع.'**
+  String get feedDeletePostConfirmBody;
+
+  /// No description provided for @feedPostDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حذف المنشور.'**
+  String get feedPostDeleted;
+
+  /// No description provided for @feedPostHidden.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إخفاء المنشور من الصفحة الرئيسية.'**
+  String get feedPostHidden;
+
+  /// No description provided for @feedPostUnhidden.
+  ///
+  /// In ar, this message translates to:
+  /// **'المنشور ظاهر تاني.'**
+  String get feedPostUnhidden;
+
+  /// No description provided for @feedVerifiedClubTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'نادٍ معتمد'**
+  String get feedVerifiedClubTooltip;
+
   /// No description provided for @feedPlayVideoLabel.
   ///
   /// In ar, this message translates to:
@@ -3762,11 +3822,29 @@ abstract class AppLocalizations {
   /// **'المتجر'**
   String get dashboardAdminStore;
 
+  /// No description provided for @dashboardAdminOverview.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأدمن — نظرة عامة'**
+  String get dashboardAdminOverview;
+
   /// No description provided for @calendarNavLabel.
   ///
   /// In ar, this message translates to:
   /// **'التقويم'**
   String get calendarNavLabel;
+
+  /// No description provided for @calendarPreviousMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهر السابق'**
+  String get calendarPreviousMonth;
+
+  /// No description provided for @calendarNextMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهر التالي'**
+  String get calendarNextMonth;
 
   /// No description provided for @storeNavLabel.
   ///

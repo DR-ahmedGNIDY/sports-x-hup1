@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UploadedFile,
@@ -23,7 +24,9 @@ import { UserRole } from '../users/schemas/user.schema';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePhotoPostDto } from './dto/create-photo-post.dto';
 import { FeedDto } from './dto/feed.dto';
-import { PostsService } from './posts.service';
+import { ParseFeedItemKindPipe } from './dto/feed-item-kind.param';
+import { ModerateVisibilityDto } from './dto/moderate-visibility.dto';
+import { FeedItemKind, PostsService } from './posts.service';
 
 @Controller()
 export class PostsController {
@@ -51,8 +54,50 @@ export class PostsController {
   // category filter for browsing).
   @Get('feed')
   @UseGuards(JwtAuthGuard)
-  async homeFeed(@Query() dto: FeedDto) {
-    return this.postsService.homeFeed(dto.sport, dto.page);
+  async homeFeed(@CurrentUser() user: JwtPayload, @Query() dto: FeedDto) {
+    // The viewer decides what comes back: a moderator also sees hidden
+    // posts (flagged), and every card is stamped with what this viewer may
+    // do with it, so the client never has to re-derive permissions.
+    return this.postsService.homeFeed(dto.sport, dto.page, {
+      userId: user.sub,
+      role: user.role,
+      isModerator: user.isModerator,
+    });
+  }
+
+  // Author-or-moderator. Final: it removes the Cloudinary asset too, so a
+  // moderator wanting something reversible should hide it instead.
+  @Delete('feed/:kind/:id')
+  @UseGuards(JwtAuthGuard)
+  async deleteFeedItem(
+    @CurrentUser() user: JwtPayload,
+    @Param('kind', ParseFeedItemKindPipe) kind: FeedItemKind,
+    @Param('id') id: string,
+  ) {
+    await this.postsService.deleteFeedItem(
+      { userId: user.sub, role: user.role, isModerator: user.isModerator },
+      kind,
+      id,
+    );
+    return { deleted: true };
+  }
+
+  // Moderators only, and reversible — see PostsService's moderation notes.
+  @Patch('feed/:kind/:id/visibility')
+  @UseGuards(JwtAuthGuard)
+  async setFeedItemVisibility(
+    @CurrentUser() user: JwtPayload,
+    @Param('kind', ParseFeedItemKindPipe) kind: FeedItemKind,
+    @Param('id') id: string,
+    @Body() dto: ModerateVisibilityDto,
+  ) {
+    await this.postsService.setFeedItemHidden(
+      { userId: user.sub, role: user.role, isModerator: user.isModerator },
+      kind,
+      id,
+      dto.hidden,
+    );
+    return { hidden: dto.hidden };
   }
 
   @Post('posts/:id/like')

@@ -11,7 +11,11 @@ import { randomBytes, createHmac } from 'node:crypto';
 import { Model } from 'mongoose';
 import { UsersService } from '../users/users.service';
 import { toPublicUser } from '../users/users.mapper';
-import { UserRole, UserStatus } from '../users/schemas/user.schema';
+import {
+  UserDocument,
+  UserRole,
+  UserStatus,
+} from '../users/schemas/user.schema';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { MailService } from './mail/mail.service';
@@ -74,9 +78,8 @@ export class AuthService {
     if (!user || !matches) {
       throw new UnauthorizedException('Invalid credentials.');
     }
-    if (user.status !== UserStatus.ACTIVE) {
-      throw new UnauthorizedException('This account has been suspended.');
-    }
+    await this.usersService.liftExpiredSuspension(user);
+    this.assertNotSuspended(user);
     return this.issueTokens(user.id, user.email, user.role, user);
   }
 
@@ -94,10 +97,22 @@ export class AuthService {
       stored.userId.toString(),
     );
     await this.refreshTokenModel.deleteOne({ _id: stored._id }); // rotate on use
-    if (user.status !== UserStatus.ACTIVE) {
-      throw new UnauthorizedException('This account has been suspended.');
-    }
+    await this.usersService.liftExpiredSuspension(user);
+    this.assertNotSuspended(user);
     return this.issueTokens(user.id, user.email, user.role, user);
+  }
+
+  // Tells a suspended user when they can come back, so a one-month ban does
+  // not read like a permanent one. The reason stays admin-only — it can be
+  // an internal note — so it is deliberately not echoed here.
+  private assertNotSuspended(user: UserDocument): void {
+    if (user.status === UserStatus.ACTIVE) return;
+    const until = user.suspendedUntil;
+    throw new UnauthorizedException(
+      until
+        ? `This account has been suspended until ${until.toISOString().slice(0, 10)}.`
+        : 'This account has been suspended.',
+    );
   }
 
   async logout(refreshToken: string): Promise<void> {

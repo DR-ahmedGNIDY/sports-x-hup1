@@ -126,8 +126,13 @@ class EventDetailBody extends ConsumerWidget {
             Consumer(
               builder: (context, ref, _) {
                 final profileAsync = ref.watch(publicPlayerProfileProvider(participant.playerId));
-                final name = profileAsync.value != null
-                    ? '${profileAsync.value!.firstName ?? ''} ${profileAsync.value!.lastName ?? ''}'.trim()
+                // valueOrNull, not value: `value` rethrows when the
+                // provider is in an error state, which would take the whole
+                // roster sheet down over one player whose profile failed to
+                // load. Falling back to the id degrades that one row instead.
+                final profile = profileAsync.valueOrNull;
+                final name = profile != null
+                    ? '${profile.firstName ?? ''} ${profile.lastName ?? ''}'.trim()
                     : participant.playerId;
                 return ListTile(
                   title: Text(name.isEmpty ? participant.playerId : name),

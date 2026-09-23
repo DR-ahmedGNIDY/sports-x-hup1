@@ -282,6 +282,35 @@ export class VideosService {
     ]);
   }
 
+  // Moderation — the Home feed mixes videos and photo posts, so a
+  // moderator's "hide" / "delete" has to reach a video too or the same
+  // menu would work on one kind of card and not the other.
+  //
+  // Hiding a video means flipping it back to PRIVATE: the owner keeps it
+  // on their own profile, it just leaves every public feed. That reuses
+  // the visibility the schema already has instead of adding a second,
+  // overlapping "hidden" flag that the feed queries would have to AND
+  // together.
+  async moderateSetHidden(videoId: string, hidden: boolean): Promise<void> {
+    const video = await this.findVideoOrThrow(videoId);
+    video.visibility = hidden
+      ? VideoVisibility.PRIVATE
+      : VideoVisibility.PUBLIC;
+    await video.save();
+  }
+
+  // Same cleanup as `deleteVideo` but without the owner check — callers
+  // must have already established the caller is a moderator or an admin.
+  async moderateDelete(videoId: string): Promise<void> {
+    const video = await this.findVideoOrThrow(videoId);
+    await this.cloudinary.deleteAsset(video.publicId, 'video');
+    await this.videoModel.deleteOne({ _id: video._id });
+    await Promise.all([
+      this.videoLikeModel.deleteMany({ videoId: video._id }),
+      this.videoCommentModel.deleteMany({ videoId: video._id }),
+    ]);
+  }
+
   async communityFeed(
     sport: string,
     category: string | undefined,

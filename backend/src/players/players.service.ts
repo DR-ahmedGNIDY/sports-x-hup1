@@ -330,6 +330,11 @@ export class PlayersService {
     return { items, page, pageSize: ADMIN_LIST_PAGE_SIZE, total };
   }
 
+  // Admin overview cards — how many player profiles exist in total.
+  countAll(): Promise<number> {
+    return this.playerProfileModel.countDocuments();
+  }
+
   async deleteProfileAndMedia(id: string): Promise<void> {
     if (!Types.ObjectId.isValid(id)) {
       throw new NotFoundException('Player not found.');

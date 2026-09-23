@@ -42,6 +42,29 @@ export class User {
 
   @Prop({ required: true, enum: UserStatus, default: UserStatus.ACTIVE })
   status: UserStatus;
+
+  // When a SUSPENDED user becomes eligible to log in again. Absent means
+  // the suspension is permanent — there is no date to wait for. It is only
+  // meaningful while `status` is SUSPENDED; reactivating clears it.
+  //
+  // The lift is lazy: rather than a scheduled job sweeping the collection,
+  // both login (AuthService) and every authenticated request (JwtStrategy)
+  // route the user through `UsersService.liftExpiredSuspension` first, so
+  // an expired suspension ends the moment the account is next used.
+  @Prop({ type: Date, required: false })
+  suspendedUntil?: Date;
+
+  // Admin-written note explaining the suspension. Shown back to the admin
+  // in the dashboard, never to the suspended user.
+  @Prop({ required: false, trim: true })
+  suspensionReason?: string;
+
+  // Community moderation: lets a non-admin user hide or delete other
+  // people's Home-feed posts. Orthogonal to `role` on purpose — a player,
+  // a club or a coach can each be made a moderator without becoming an
+  // ADMIN (which would also unlock the whole admin dashboard).
+  @Prop({ required: true, default: false })
+  isModerator: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

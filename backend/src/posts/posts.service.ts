@@ -43,6 +43,19 @@ const DUPLICATE_KEY_ERROR_CODE = 11000;
 const FEED_PAGE_SIZE = 12;
 const COMMENTS_PAGE_SIZE = 20;
 
+// The Home feed carries two kinds of item (see posts.mapper) and both are
+// moderatable, so every moderation entry point is addressed by kind + id.
+export type FeedItemKind = 'PHOTO' | 'VIDEO';
+
+// Who is reading (or acting on) the feed. Drives two things the response
+// shape depends on: whether hidden posts are visible at all, and which
+// per-item actions the card should offer.
+export interface FeedViewer {
+  userId?: string;
+  role?: string;
+  isModerator?: boolean;
+}
+
 export interface FeedResult {
   items: Array<
     ReturnType<typeof videoFeedItem> | ReturnType<typeof photoFeedItem>
@@ -174,15 +187,25 @@ export class PostsService {
   // re-fetching earlier pages' rows on every request, which is a
   // non-issue at this app's scale (this isn't built for deep infinite
   // scroll over millions of posts).
-  async homeFeed(sport: string, page = 1): Promise<FeedResult> {
+  async homeFeed(
+    sport: string,
+    page = 1,
+    viewer: FeedViewer = {},
+  ): Promise<FeedResult> {
     await this.sportsService.assertSportExists(sport);
     const upTo = page * FEED_PAGE_SIZE;
+
+    // A moderator keeps seeing hidden posts (flagged as such by the mapper)
+    // so they can review and unhide them; everyone else never sees them.
+    const canModerate =
+      viewer.isModerator === true || viewer.role === UserRole.ADMIN;
+    const photoFilter = canModerate ? { sport } : { sport, isHidden: false };
 
     const [videos, videoTotal, photos, photoTotal] = await Promise.all([
       this.videosService.findPublicForFeed(sport, upTo),
       this.videosService.countPublicForSport(sport),
-      this.photoModel.find({ sport }).sort({ createdAt: -1 }).limit(upTo),
-      this.photoModel.countDocuments({ sport }),
+      this.photoModel.find(photoFilter).sort({ createdAt: -1 }).limit(upTo),
+      this.photoModel.countDocuments(photoFilter),
     ]);
 
     const playerIds = [...new Set(videos.map((v) => v.playerId.toString()))];
@@ -202,6 +225,10 @@ export class PostsService {
         item: videoFeedItem(
           video,
           videoAuthorById.get(video.playerId.toString()) ?? null,
+          {
+            isMine: video.userId.toString() === viewer.userId,
+            canModerate,
+          },
         ),
       })),
       ...photos.map((photo) => ({
@@ -209,6 +236,10 @@ export class PostsService {
         item: photoFeedItem(
           photo,
           photoAuthorById.get(photo._id.toString()) ?? null,
+          {
+            isMine: photo.authorUserId.toString() === viewer.userId,
+            canModerate,
+          },
         ),
       })),
     ];
@@ -287,6 +318,82 @@ export class PostsService {
       result.set(photo._id.toString(), author);
     }
     return result;
+  }
+
+  // --- Moderation -------------------------------------------------------
+  //
+  // Two separate powers, deliberately not collapsed into one:
+  //   * delete  — the author's own post, or any post if you moderate.
+  //   * hide    — moderators only, and reversible.
+  // Hiding is the one a moderator should reach for first: it takes the post
+  // out of the feed without destroying the author's media, and it can be
+  // undone. Deleting removes the Cloudinary asset, so it is final.
+
+  private assertCanModerate(viewer: FeedViewer): void {
+    if (viewer.isModerator === true || viewer.role === UserRole.ADMIN) return;
+    throw new ForbiddenException(
+      'Only a moderator can change a post’s visibility.',
+    );
+  }
+
+  async deleteFeedItem(
+    viewer: FeedViewer,
+    kind: FeedItemKind,
+    id: string,
+  ): Promise<void> {
+    const canModerate =
+      viewer.isModerator === true || viewer.role === UserRole.ADMIN;
+
+    if (kind === 'VIDEO') {
+      if (canModerate) {
+        await this.videosService.moderateDelete(id);
+      } else {
+        // Owner-scoped: this throws NotFound for someone else's video.
+        await this.videosService.deleteVideo(viewer.userId as string, id);
+      }
+      return;
+    }
+
+    const photo = await this.findPhotoOrThrow(id);
+    if (!canModerate && photo.authorUserId.toString() !== viewer.userId) {
+      throw new ForbiddenException('You can only delete your own posts.');
+    }
+    await this.cloudinary.deleteAsset(photo.publicId, 'image');
+    await this.photoModel.deleteOne({ _id: photo._id });
+    await Promise.all([
+      this.photoLikeModel.deleteMany({ photoId: photo._id }),
+      this.photoCommentModel.deleteMany({ photoId: photo._id }),
+    ]);
+  }
+
+  async setFeedItemHidden(
+    viewer: FeedViewer,
+    kind: FeedItemKind,
+    id: string,
+    hidden: boolean,
+  ): Promise<void> {
+    this.assertCanModerate(viewer);
+
+    if (kind === 'VIDEO') {
+      await this.videosService.moderateSetHidden(id, hidden);
+      return;
+    }
+
+    const photo = await this.findPhotoOrThrow(id);
+    photo.isHidden = hidden;
+    photo.hiddenByUserId = hidden
+      ? new Types.ObjectId(viewer.userId)
+      : undefined;
+    photo.hiddenAt = hidden ? new Date() : undefined;
+    await photo.save();
+  }
+
+  countAllPosts(): Promise<number> {
+    return this.photoModel.countDocuments();
+  }
+
+  countHiddenPosts(): Promise<number> {
+    return this.photoModel.countDocuments({ isHidden: true });
   }
 
   private assertViewable(): void {

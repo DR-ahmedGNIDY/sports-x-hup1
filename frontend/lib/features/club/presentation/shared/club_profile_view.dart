@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_image.dart';
+import '../../../../core/widgets/verified_badge.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../invitations/presentation/shared/public_code_chip.dart';
 import '../../domain/entities/club_profile.dart';
@@ -56,9 +57,22 @@ class ClubProfileView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    profile.name?.isNotEmpty == true ? profile.name! : l10n.unnamedClub,
-                    style: textTheme.headlineSmall,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          profile.name?.isNotEmpty == true
+                              ? profile.name!
+                              : l10n.unnamedClub,
+                          style: textTheme.headlineSmall,
+                        ),
+                      ),
+                      if (profile.isVerified) ...[
+                        const SizedBox(width: AppSpacing.sm),
+                        const VerifiedBadge(size: 20),
+                      ],
+                    ],
                   ),
                   if (location.isNotEmpty) Text(location, style: textTheme.bodyMedium),
                   // The code is what a player quotes to ask to join, so it

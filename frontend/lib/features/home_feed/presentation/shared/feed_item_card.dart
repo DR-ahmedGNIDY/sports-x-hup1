@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 
+import '../../../../core/errors/app_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -13,6 +14,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/profile_colors.dart';
 import '../../../../core/utils/app_image.dart';
 import '../../../../core/widgets/skeleton_box.dart';
+import '../../../../core/widgets/verified_badge.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../videos/presentation/shared/video_player_screen.dart';
 import '../../domain/entities/feed_author.dart';
@@ -125,11 +127,22 @@ class FeedItemCard extends StatelessWidget {
     required this.item,
     required this.onToggleLike,
     required this.onCommentTap,
+    this.onDelete,
+    this.onSetHidden,
   });
 
   final FeedItem item;
   final Future<void> Function() onToggleLike;
   final VoidCallback onCommentTap;
+
+  /// Deletes this post. Wired up only where the feed can act on it (the
+  /// Home feed); the card still renders fine without it, and the menu
+  /// entry is also gated on [FeedItem.canDelete] from the server.
+  final Future<void> Function()? onDelete;
+
+  /// Hides or unhides this post — moderators only, gated on
+  /// [FeedItem.canModerate].
+  final Future<void> Function(bool hidden)? onSetHidden;
 
   void _openVideo(BuildContext context) {
     Navigator.of(
@@ -150,6 +163,50 @@ class FeedItemCard extends StatelessWidget {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.feedSharePostLinkCopied)));
+  }
+
+  Future<void> _confirmAndDelete(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.feedDeletePostConfirmTitle),
+        content: Text(l10n.feedDeletePostConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancelLabel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.deleteLabel),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await onDelete!();
+      messenger.showSnackBar(SnackBar(content: Text(l10n.feedPostDeleted)));
+    } on AppException catch (error) {
+      messenger.showSnackBar(SnackBar(content: Text(error.message)));
+    }
+  }
+
+  Future<void> _setHidden(BuildContext context, bool hidden) async {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await onSetHidden!(hidden);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(hidden ? l10n.feedPostHidden : l10n.feedPostUnhidden),
+        ),
+      );
+    } on AppException catch (error) {
+      messenger.showSnackBar(SnackBar(content: Text(error.message)));
+    }
   }
 
   @override
@@ -192,7 +249,17 @@ class FeedItemCard extends StatelessWidget {
                   author: item.author,
                   createdAt: item.createdAt,
                   compact: compact,
+                  isHidden: item.isHidden,
                   onCopyLink: () => _share(context),
+                  // Both are doubly gated: the server decides whether this
+                  // viewer may act (canDelete/canModerate), and the host
+                  // screen decides whether it can carry the action out.
+                  onDelete: (item.canDelete && onDelete != null)
+                      ? () => _confirmAndDelete(context)
+                      : null,
+                  onSetHidden: (item.canModerate && onSetHidden != null)
+                      ? (hidden) => _setHidden(context, hidden)
+                      : null,
                 ),
               ),
               if (hasCaption)
@@ -276,18 +343,58 @@ class FeedItemCard extends StatelessWidget {
 /// post's overflow menu. The menu holds only actions the API actually
 /// supports for a feed post (copying its media link); there is no
 /// edit/delete endpoint for posts, so no edit/delete entry is offered.
+/// Marks a post that a moderator has hidden. Only moderators are ever sent
+/// a hidden post, so this chip is by definition only visible to them — it
+/// is what tells them the hide took effect and that the post is still
+/// there to be restored.
+class _HiddenChip extends StatelessWidget {
+  const _HiddenChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
+      child: Text(
+        label,
+        style: AppTextStyles.caption.copyWith(
+          color: AppColors.warning,
+          fontWeight: FontWeight.w600,
+          fontSize: 10,
+        ),
+      ),
+    );
+  }
+}
+
 class _AuthorRow extends StatelessWidget {
   const _AuthorRow({
     required this.author,
     required this.createdAt,
     required this.compact,
+    required this.isHidden,
     required this.onCopyLink,
+    this.onDelete,
+    this.onSetHidden,
   });
 
   final FeedAuthor? author;
   final DateTime createdAt;
   final bool compact;
+  final bool isHidden;
   final VoidCallback onCopyLink;
+
+  /// Null when this viewer can't delete the post — the menu entry is then
+  /// simply not built.
+  final VoidCallback? onDelete;
+
+  /// Null for everyone but a moderator.
+  final void Function(bool hidden)? onSetHidden;
 
   @override
   Widget build(BuildContext context) {
@@ -323,15 +430,30 @@ class _AuthorRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                (name == null || name.isEmpty) ? (isClub ? 'Club' : 'Player') : name,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.bodyStrong.copyWith(
-                  color: colors.text,
-                  fontSize: compact ? 14 : 15,
-                  fontWeight: FontWeight.w700,
-                  height: 1.3,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      (name == null || name.isEmpty) ? (isClub ? 'Club' : 'Player') : name,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.bodyStrong.copyWith(
+                        color: colors.text,
+                        fontSize: compact ? 14 : 15,
+                        fontWeight: FontWeight.w700,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                  if (author?.isVerified ?? false) ...[
+                    const SizedBox(width: 4),
+                    VerifiedBadge(size: compact ? 14 : 16),
+                  ],
+                  if (isHidden) ...[
+                    const SizedBox(width: AppSpacing.sm),
+                    _HiddenChip(label: l10n.feedHiddenBadge),
+                  ],
+                ],
               ),
               const SizedBox(height: 2),
               Text(
@@ -366,6 +488,41 @@ class _AuthorRow extends StatelessWidget {
                 ],
               ),
             ),
+            // Hide before delete, and delete last: hiding is the reversible
+            // action a moderator should reach for first, and putting the
+            // destructive one at the bottom makes it harder to hit by
+            // accident.
+            if (onSetHidden != null)
+              PopupMenuItem<void>(
+                onTap: () => onSetHidden!(!isHidden),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isHidden ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                      size: 18,
+                      color: colors.textMuted,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(isHidden ? l10n.feedUnhidePostLabel : l10n.feedHidePostLabel),
+                  ],
+                ),
+              ),
+            if (onDelete != null)
+              PopupMenuItem<void>(
+                onTap: onDelete,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.delete_outline, size: 18, color: AppColors.error),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      l10n.feedDeletePostLabel,
+                      style: const TextStyle(color: AppColors.error),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ],

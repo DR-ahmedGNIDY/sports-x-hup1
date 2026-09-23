@@ -33,6 +33,65 @@ class AdminRemoteDataSource {
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
   }
 
+  Future<Map<String, dynamic>> getStats(String accessToken) async {
+    final response = await _client.get('/admin/stats', headers: _bearer(accessToken));
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
+  Future<void> suspendUser(
+    String accessToken,
+    String userId,
+    String duration,
+    String? reason,
+  ) async {
+    final response = await _client.post(
+      '/admin/users//suspend',
+      headers: _bearer(accessToken),
+      body: {'duration': duration, 'reason': ?reason},
+    );
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw apiExceptionFromResponse(response);
+    }
+  }
+
+  Future<void> reactivateUser(String accessToken, String userId) async {
+    final response = await _client.post(
+      '/admin/users//reactivate',
+      headers: _bearer(accessToken),
+      body: const <String, dynamic>{},
+    );
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw apiExceptionFromResponse(response);
+    }
+  }
+
+  Future<void> setUserModerator(
+    String accessToken,
+    String userId,
+    bool isModerator,
+  ) async {
+    final response = await _client.patch(
+      '/admin/users//moderator',
+      headers: _bearer(accessToken),
+      body: {'isModerator': isModerator},
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+  }
+
+  Future<void> setClubVerified(
+    String accessToken,
+    String clubId,
+    bool verified,
+  ) async {
+    final response = await _client.patch(
+      '/admin/clubs//verification',
+      headers: _bearer(accessToken),
+      body: {'verified': verified},
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+  }
+
   Future<void> deleteUser(String accessToken, String userId) async {
     final response = await _client.delete(
       '/admin/users/$userId',

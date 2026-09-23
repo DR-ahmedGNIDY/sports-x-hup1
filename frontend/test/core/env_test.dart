@@ -24,7 +24,13 @@ void main() {
   });
 
   test('and the defaults are readable afterwards', () async {
-    await Env.load();
+    // Seeded empty rather than via Env.load(): whether load() finds a file
+    // depends on whether the machine running the test happens to have a
+    // real .env beside the project, so going through it here asserted the
+    // absence of the developer's own config rather than the behaviour.
+    // Empty *is* the state load()'s fallback leaves dotenv in — see its
+    // catch branch — so this checks the same thing, deterministically.
+    dotenv.loadFromString(envString: '', isOptional: true);
 
     // dotenv throws NotInitializedError on every read until it has been
     // initialized once, so "it didn't throw" is not enough — the fallbacks

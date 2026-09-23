@@ -27,6 +27,7 @@ describe('AuthService', () => {
     findByIdOrThrow: jest.Mock;
     createPlayerOrClub: jest.Mock;
     findByEmail: jest.Mock;
+    liftExpiredSuspension: jest.Mock;
   };
   let service: AuthService;
 
@@ -52,6 +53,10 @@ describe('AuthService', () => {
       findByIdOrThrow: jest.fn().mockResolvedValue(fakeUser),
       createPlayerOrClub: jest.fn().mockResolvedValue(fakeUser),
       findByEmail: jest.fn().mockResolvedValue(fakeUser),
+      // Login and refresh both run the user through this first so a
+      // fixed-term suspension lifts itself; nothing in these tests is
+      // expired, so it just hands the user back.
+      liftExpiredSuspension: jest.fn(async (user: unknown) => user),
     };
 
     service = new AuthService(

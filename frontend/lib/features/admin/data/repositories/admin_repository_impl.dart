@@ -5,11 +5,13 @@ import '../../../../core/storage/session_storage.dart';
 import '../../../../core/storage/session_storage_provider.dart';
 import '../../domain/entities/admin_club_summary.dart';
 import '../../domain/entities/admin_player_summary.dart';
+import '../../domain/entities/admin_stats.dart';
 import '../../domain/entities/admin_user.dart';
 import '../../domain/repositories/admin_repository.dart';
 import '../datasources/admin_remote_data_source.dart';
 import '../models/admin_club_summary_model.dart';
 import '../models/admin_player_summary_model.dart';
+import '../models/admin_stats_model.dart';
 import '../models/admin_user_model.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
@@ -35,6 +37,31 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<void> deleteUser(String userId) =>
       _authorized((token) => _remote.deleteUser(token, userId));
+
+  @override
+  Future<AdminStats> getStats() =>
+      _authorized((token) async => AdminStatsModel.fromJson(await _remote.getStats(token)));
+
+  @override
+  Future<void> suspendUser(
+    String userId,
+    SuspensionDuration duration, {
+    String? reason,
+  }) => _authorized(
+    (token) => _remote.suspendUser(token, userId, duration.wireValue, reason),
+  );
+
+  @override
+  Future<void> reactivateUser(String userId) =>
+      _authorized((token) => _remote.reactivateUser(token, userId));
+
+  @override
+  Future<void> setUserModerator(String userId, bool isModerator) =>
+      _authorized((token) => _remote.setUserModerator(token, userId, isModerator));
+
+  @override
+  Future<void> setClubVerified(String clubId, bool verified) =>
+      _authorized((token) => _remote.setClubVerified(token, clubId, verified));
 
   @override
   Future<AdminPage<AdminPlayerSummary>> getPlayers({int page = 1}) =>

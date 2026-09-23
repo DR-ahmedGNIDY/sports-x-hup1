@@ -118,6 +118,40 @@ class FeedRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
+  /// Deletes a feed item outright — the author's own, or anyone's if this
+  /// user moderates. Unlike the like/comment routes this is not under
+  /// `/videos` or `/posts`: moderation is addressed by kind on `/feed`, so
+  /// one route covers both collections.
+  Future<void> deleteFeedItem(
+    String accessToken,
+    FeedItemKind kind,
+    String id,
+  ) async {
+    final response = await _client.delete(
+      '/feed/${kind.wireValue}/$id',
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw apiExceptionFromResponse(response);
+    }
+  }
+
+  /// Hides or unhides a feed item. Moderators only — the server rejects
+  /// anyone else with 403.
+  Future<void> setFeedItemHidden(
+    String accessToken,
+    FeedItemKind kind,
+    String id,
+    bool hidden,
+  ) async {
+    final response = await _client.patch(
+      '/feed/${kind.wireValue}/$id/visibility',
+      headers: _bearer(accessToken),
+      body: {'hidden': hidden},
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+  }
+
   Future<void> deleteComment(
     String accessToken,
     FeedItemKind kind,

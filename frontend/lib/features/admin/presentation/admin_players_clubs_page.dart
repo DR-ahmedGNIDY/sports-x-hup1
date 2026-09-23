@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/widgets/error_state.dart';
+import '../../../core/widgets/verified_badge.dart';
 import '../application/admin_clubs_controller.dart';
+import '../application/admin_stats_controller.dart';
 import '../application/admin_players_controller.dart';
 import '../domain/entities/admin_club_summary.dart';
 import '../domain/entities/admin_player_summary.dart';
@@ -199,6 +201,7 @@ class _ClubsTab extends ConsumerWidget {
                     DataColumn(label: Text('Name')),
                     DataColumn(label: Text('Country')),
                     DataColumn(label: Text('City')),
+                    DataColumn(label: Text('Verified')),
                     DataColumn(label: Text('Actions')),
                   ],
                   rows: clubs
@@ -206,10 +209,37 @@ class _ClubsTab extends ConsumerWidget {
                         (club) => DataRow(
                           cells: [
                             DataCell(
-                              Text(club.name?.isNotEmpty == true ? club.name! : 'Unnamed'),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    club.name?.isNotEmpty == true
+                                        ? club.name!
+                                        : 'Unnamed',
+                                  ),
+                                  // The same badge the rest of the app
+                                  // shows, so the admin sees exactly what
+                                  // granting verification produces.
+                                  if (club.isVerified) ...[
+                                    const SizedBox(width: 4),
+                                    const VerifiedBadge(size: 16),
+                                  ],
+                                ],
+                              ),
                             ),
                             DataCell(Text(club.country ?? '')),
                             DataCell(Text(club.city ?? '')),
+                            DataCell(
+                              Switch(
+                                value: club.isVerified,
+                                onChanged: (value) async {
+                                  await ref
+                                      .read(adminClubsControllerProvider.notifier)
+                                      .setVerified(club.id, value);
+                                  ref.invalidate(adminStatsProvider);
+                                },
+                              ),
+                            ),
                             DataCell(
                               IconButton(
                                 tooltip: 'Remove profile',

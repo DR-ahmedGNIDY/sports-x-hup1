@@ -43,6 +43,19 @@ export class PhotoPost {
 
   @Prop({ default: 0 })
   commentCount: number;
+
+  // Moderation — a hidden post stays in the collection (so the action is
+  // reversible and auditable) but is filtered out of the Home feed for
+  // everyone except moderators, who still see it flagged so they can put
+  // it back. Indexed because the feed query now filters on it.
+  @Prop({ required: true, default: false, index: true })
+  isHidden: boolean;
+
+  @Prop({ type: Types.ObjectId, required: false, ref: 'User' })
+  hiddenByUserId?: Types.ObjectId;
+
+  @Prop({ type: Date, required: false })
+  hiddenAt?: Date;
 }
 
 export const PhotoPostSchema = SchemaFactory.createForClass(PhotoPost);

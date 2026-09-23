@@ -13,6 +13,10 @@ function baseView(profile: ClubProfileDocument) {
     description: profile.description,
     foundedYear: profile.foundedYear,
     level: profile.level,
+    // Public on purpose: the check badge has to render anywhere a club's
+    // name is shown, not just inside the admin dashboard.
+    isVerified: profile.isVerified ?? false,
+    verifiedAt: profile.verifiedAt,
   };
 }
 
