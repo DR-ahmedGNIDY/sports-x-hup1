@@ -120,6 +120,22 @@ class SessionController extends Notifier<SessionState> {
       return false;
     }
   }
+
+  /// Returns `null` on success (the session is then signed out and the
+  /// router takes the user to login), or the message to show. The error is
+  /// handed back rather than written to [SessionState.errorMessage] so it
+  /// doesn't also surface under the email/password forms on the same page.
+  Future<String?> deleteAccount(String password) async {
+    try {
+      await ref.read(authRepositoryProvider).deleteAccount(password);
+      state = const SessionState(status: SessionStatus.unauthenticated);
+      return null;
+    } on AppException catch (e) {
+      return e.message;
+    } catch (_) {
+      return _genericError();
+    }
+  }
 }
 
 final sessionControllerProvider = NotifierProvider<SessionController, SessionState>(

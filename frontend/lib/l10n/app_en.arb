@@ -409,6 +409,11 @@
   "passwordUpdatedMessage": "Password updated.",
   "currentPasswordLabel": "Current password",
   "changePasswordLabel": "Change password",
+  "deleteAccountLabel": "Delete account",
+  "deleteAccountWarning": "Your account and all data linked to it will be permanently deleted: profile, photos, videos, comments and likes. This cannot be undone.",
+  "deleteAccountPasswordLabel": "Enter your password to confirm",
+  "deleteAccountConfirmTitle": "Permanently delete your account?",
+  "deleteAccountConfirmButton": "Permanently delete my account",
 
   "playersClubsNavLabel": "Players & Clubs",
   "usersTabLabel": "Users",

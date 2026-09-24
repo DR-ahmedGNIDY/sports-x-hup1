@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/backend_status_indicator.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
+import '../../../auth/domain/entities/user_role.dart';
 import '../shared/change_email_form.dart';
 import '../shared/change_password_form.dart';
+import '../shared/delete_account_form.dart';
 
 class SettingsPageDesktop extends ConsumerWidget {
   const SettingsPageDesktop({super.key});
@@ -36,6 +38,13 @@ class SettingsPageDesktop extends ConsumerWidget {
                 icon: const Icon(Icons.logout_outlined),
                 label: const Text('Log out'),
               ),
+              // Admins can't self-delete (the backend refuses).
+              if (session.user?.role != UserRole.admin) ...[
+                const SizedBox(height: 40),
+                const Divider(),
+                const SizedBox(height: 24),
+                const DeleteAccountForm(),
+              ],
               const SizedBox(height: 32),
               const Center(child: BackendStatusIndicator()),
             ],

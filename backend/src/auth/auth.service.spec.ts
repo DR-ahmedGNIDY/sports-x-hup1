@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
 import { UserRole, UserStatus } from '../users/schemas/user.schema';
@@ -13,6 +13,7 @@ describe('AuthService', () => {
   const fakeRefreshTokenModel = {
     create: jest.fn(),
     deleteOne: jest.fn(),
+    deleteMany: jest.fn(),
     findOne: jest.fn(),
   };
   const fakePasswordResetTokenModel = {
@@ -28,6 +29,7 @@ describe('AuthService', () => {
     createPlayerOrClub: jest.Mock;
     findByEmail: jest.Mock;
     liftExpiredSuspension: jest.Mock;
+    deleteById: jest.Mock;
   };
   let service: AuthService;
 
@@ -57,6 +59,7 @@ describe('AuthService', () => {
       // fixed-term suspension lifts itself; nothing in these tests is
       // expired, so it just hands the user back.
       liftExpiredSuspension: jest.fn(async (user: unknown) => user),
+      deleteById: jest.fn(),
     };
 
     service = new AuthService(
@@ -158,6 +161,41 @@ describe('AuthService', () => {
       expect(emailArg).toBe('player@example.com');
       expect(tokenArg).not.toBe(created.tokenHash);
       expect(correlationArg).toBe('reset-token-doc-id');
+    });
+  });
+
+  describe('deleteAccount', () => {
+    it('rejects the wrong password and deletes nothing', async () => {
+      await expect(
+        service.deleteAccount('user-1', 'wrong-password'),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+      expect(fakeUsersService.deleteById).not.toHaveBeenCalled();
+      expect(fakeRefreshTokenModel.deleteMany).not.toHaveBeenCalled();
+    });
+
+    it('refuses to self-delete an admin account', async () => {
+      fakeUsersService.findByIdOrThrow.mockResolvedValueOnce({
+        _id: 'admin-1',
+        passwordHash,
+        role: UserRole.ADMIN,
+      });
+
+      await expect(
+        service.deleteAccount('admin-1', 'correct-password'),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+      expect(fakeUsersService.deleteById).not.toHaveBeenCalled();
+    });
+
+    it('cascades the user deletion and clears every refresh/reset token', async () => {
+      await service.deleteAccount('user-1', 'correct-password');
+
+      expect(fakeUsersService.deleteById).toHaveBeenCalledWith('user-1');
+      expect(fakeRefreshTokenModel.deleteMany).toHaveBeenCalledWith({
+        userId: 'user-1',
+      });
+      expect(fakePasswordResetTokenModel.deleteMany).toHaveBeenCalledWith({
+        userId: 'user-1',
+      });
     });
   });
 });

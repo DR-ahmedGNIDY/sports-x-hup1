@@ -2,8 +2,11 @@ import { NotFoundException } from '@nestjs/common';
 import { ClubAccessService } from '../club-access/club-access.service';
 import { ClubsService } from '../clubs/clubs.service';
 import { CoachesService } from '../coaches/coaches.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PlayersService } from '../players/players.service';
+import { PostsService } from '../posts/posts.service';
 import { VideosService } from '../videos/videos.service';
+import { AccountRelationsCleanupService } from './account-relations-cleanup.service';
 import { UsersService } from './users.service';
 import { UserRole } from './schemas/user.schema';
 
@@ -15,7 +18,9 @@ describe('UsersService', () => {
       create: jest.fn().mockImplementation((doc) => Promise.resolve(doc)),
       deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 }),
     };
+    const playerProfile = { _id: 'profile-1' };
     const playersService = {
+      findByUserId: jest.fn().mockResolvedValue(playerProfile),
       deleteProfileAndMediaByUserId: jest.fn(),
     } as unknown as PlayersService;
     const clubsService = {
@@ -28,8 +33,17 @@ describe('UsersService', () => {
       deleteProfileAndMediaByUserId: jest.fn(),
     } as unknown as CoachesService;
     const clubAccess = {
-      endAllForUser: jest.fn(),
+      deleteAllForUser: jest.fn(),
     } as unknown as ClubAccessService;
+    const postsService = {
+      deleteAllForUser: jest.fn(),
+    } as unknown as PostsService;
+    const notificationsService = {
+      deleteAllForUser: jest.fn(),
+    } as unknown as NotificationsService;
+    const relationsCleanup = {
+      deleteAllForUser: jest.fn().mockResolvedValue(['invitation-1']),
+    } as unknown as AccountRelationsCleanupService;
     const service = new UsersService(
       model as never,
       playersService,
@@ -37,6 +51,9 @@ describe('UsersService', () => {
       videosService,
       coachesService,
       clubAccess,
+      postsService,
+      notificationsService,
+      relationsCleanup,
     );
     return {
       service,
@@ -46,6 +63,9 @@ describe('UsersService', () => {
       videosService,
       coachesService,
       clubAccess,
+      postsService,
+      notificationsService,
+      relationsCleanup,
     };
   }
 
@@ -81,7 +101,45 @@ describe('UsersService', () => {
       'user-3',
     );
     expect(playersService.deleteProfileAndMediaByUserId).not.toHaveBeenCalled();
-    expect(clubAccess.endAllForUser).toHaveBeenCalledWith('user-3');
+    expect(clubAccess.deleteAllForUser).toHaveBeenCalledWith('user-3');
+  });
+
+  it('removes relationships, notifications and posts, handing the roster cleanup the player profile id', async () => {
+    const {
+      service,
+      model,
+      relationsCleanup,
+      notificationsService,
+      postsService,
+    } = buildService({ role: UserRole.PLAYER });
+
+    await service.deleteById('user-1');
+
+    expect(relationsCleanup.deleteAllForUser).toHaveBeenCalledWith(
+      'user-1',
+      'profile-1',
+    );
+    // Notifications about the deleted invitations/events go too.
+    expect(notificationsService.deleteAllForUser).toHaveBeenCalledWith(
+      'user-1',
+      ['invitation-1'],
+    );
+    expect(postsService.deleteAllForUser).toHaveBeenCalledWith('user-1');
+    expect(model.deleteOne).toHaveBeenCalledWith({ _id: 'user-1' });
+  });
+
+  it('does not look up a player profile for a club', async () => {
+    const { service, playersService, relationsCleanup } = buildService({
+      role: UserRole.CLUB,
+    });
+
+    await service.deleteById('user-2');
+
+    expect(playersService.findByUserId).not.toHaveBeenCalled();
+    expect(relationsCleanup.deleteAllForUser).toHaveBeenCalledWith(
+      'user-2',
+      undefined,
+    );
   });
 
   it('cascade-deletes a club user profile and viewer footprint', async () => {

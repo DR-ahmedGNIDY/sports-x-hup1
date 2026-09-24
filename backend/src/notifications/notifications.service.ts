@@ -155,4 +155,26 @@ export class NotificationsService {
     );
     return result.modifiedCount;
   }
+
+  /**
+   * Account deletion. Removes everything addressed to [userId] plus any
+   * notification — to anyone — about an entity that is being deleted along
+   * with the account ([entityIds]: their invitations, their club's events),
+   * which would otherwise open onto something that no longer exists. Also
+   * drops the user's push subscriptions.
+   */
+  async deleteAllForUser(
+    userId: string,
+    entityIds: Types.ObjectId[] = [],
+  ): Promise<void> {
+    await Promise.all([
+      this.notificationModel.deleteMany({
+        $or: [
+          { userId: new Types.ObjectId(userId) },
+          ...(entityIds.length > 0 ? [{ entityId: { $in: entityIds } }] : []),
+        ],
+      }),
+      this.push.unsubscribeAll(userId),
+    ]);
+  }
 }

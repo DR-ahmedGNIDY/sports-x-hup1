@@ -101,8 +101,22 @@ class ApiClient {
     ),
   );
 
-  Future<http.Response> delete(String path, {Map<String, String>? headers}) =>
-      _send(() => _client.delete(resolve(path), headers: _withContext(headers)));
+  /// [body] is for the rare DELETE that needs one (account deletion carries
+  /// the password confirming it); without one the request is sent bare, as
+  /// every other DELETE here always has been.
+  Future<http.Response> delete(
+    String path, {
+    Object? body,
+    Map<String, String>? headers,
+  }) => _send(
+    () => body == null
+        ? _client.delete(resolve(path), headers: _withContext(headers))
+        : _client.delete(
+            resolve(path),
+            headers: _jsonHeaders(headers),
+            body: jsonEncode(body),
+          ),
+  );
 
   /// Multipart upload (a single file field plus optional string fields).
   /// Used for Cloudinary media uploads — the only endpoint that isn't JSON.

@@ -10,8 +10,10 @@ import '../../../../core/widgets/mobile/app_sheet.dart';
 import '../../../../core/widgets/mobile/inset_grouped_list.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/application/session_controller.dart';
+import '../../../auth/domain/entities/user_role.dart';
 import '../shared/change_email_form.dart';
 import '../shared/change_password_form.dart';
+import '../shared/delete_account_form.dart';
 
 /// Settings, rebuilt on the M3 component library.
 ///
@@ -117,6 +119,23 @@ class SettingsPageMobile extends ConsumerWidget {
                     onTap: () =>
                         ref.read(sessionControllerProvider.notifier).logout(),
                   ),
+                  // Admins can't self-delete (the backend refuses), so the
+                  // row isn't offered to them at all.
+                  if (session.user?.role != UserRole.admin)
+                    AppListRow(
+                      icon: Icons.delete_forever_outlined,
+                      label: l10n.deleteAccountLabel,
+                      destructive: true,
+                      onTap: () => AppSheet.show<void>(
+                        context: context,
+                        title: l10n.deleteAccountLabel,
+                        builder: (sheetContext) => _SheetForm(
+                          child: DeleteAccountForm(
+                            onDeleted: () => Navigator.of(sheetContext).pop(),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(height: AppSpacing.xl),

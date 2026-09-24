@@ -1108,6 +1108,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePasswordLabel => 'تغيير كلمة المرور';
 
   @override
+  String get deleteAccountLabel => 'حذف الحساب';
+
+  @override
+  String get deleteAccountWarning =>
+      'سيتم حذف حسابك وكل البيانات المرتبطة به نهائيًا: البروفايل، والصور، والفيديوهات، والتعليقات، والإعجابات. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get deleteAccountPasswordLabel => 'اكتب كلمة المرور للتأكيد';
+
+  @override
+  String get deleteAccountConfirmTitle => 'حذف حسابك نهائيًا؟';
+
+  @override
+  String get deleteAccountConfirmButton => 'حذف حسابي نهائيًا';
+
+  @override
   String get playersClubsNavLabel => 'اللاعبون والأندية';
 
   @override

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -174,6 +175,26 @@ export class AuthService {
     await Promise.all([
       this.passwordResetTokenModel.deleteMany({ userId: stored.userId }),
       this.refreshTokenModel.deleteMany({ userId: stored.userId }),
+    ]);
+  }
+
+  // Self-service account deletion (required by Google Play). Reuses the
+  // admin cascade in UsersService.deleteById, then clears the auth-side
+  // tokens that UsersModule can't reach on its own (see the note there).
+  async deleteAccount(userId: string, password: string): Promise<void> {
+    const user = await this.usersService.findByIdOrThrow(userId);
+    if (user.role === UserRole.ADMIN) {
+      // Keeps the platform from ever losing its last admin by accident.
+      throw new ForbiddenException('Admin accounts cannot be self-deleted.');
+    }
+    if (!(await bcrypt.compare(password, user.passwordHash))) {
+      throw new UnauthorizedException('Incorrect password.');
+    }
+
+    await this.usersService.deleteById(userId);
+    await Promise.all([
+      this.refreshTokenModel.deleteMany({ userId: user._id }),
+      this.passwordResetTokenModel.deleteMany({ userId: user._id }),
     ]);
   }
 

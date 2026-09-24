@@ -88,6 +88,15 @@ class AuthRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
+  Future<void> deleteAccount(String accessToken, String password) async {
+    final response = await _client.delete(
+      '/auth/account',
+      headers: _bearer(accessToken),
+      body: {'password': password},
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+  }
+
   Map<String, String> _bearer(String accessToken) => {
     'Authorization': 'Bearer $accessToken',
   };

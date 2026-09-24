@@ -10,8 +10,11 @@ import { Model } from 'mongoose';
 import { ClubAccessService } from '../club-access/club-access.service';
 import { ClubsService } from '../clubs/clubs.service';
 import { CoachesService } from '../coaches/coaches.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PlayersService } from '../players/players.service';
+import { PostsService } from '../posts/posts.service';
 import { VideosService } from '../videos/videos.service';
+import { AccountRelationsCleanupService } from './account-relations-cleanup.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SuspensionDuration, suspensionEndDate } from './suspension';
 import {
@@ -40,6 +43,9 @@ export class UsersService {
     private readonly videosService: VideosService,
     private readonly coachesService: CoachesService,
     private readonly clubAccess: ClubAccessService,
+    private readonly postsService: PostsService,
+    private readonly notificationsService: NotificationsService,
+    private readonly relationsCleanup: AccountRelationsCleanupService,
   ) {}
 
   async createPlayerOrClub(
@@ -268,19 +274,38 @@ export class UsersService {
     };
   }
 
-  // Cascades the deletion so nothing reachable is left pointing at a user
-  // that no longer exists: the corresponding PlayerProfile/ClubProfile
-  // (with their Cloudinary media and, for a player, every video/like/
-  // comment they own), plus this user's own footprint as a viewer of other
-  // people's videos (likes/comments left elsewhere).
+  // Cascades the deletion so nothing is left pointing at a user that no
+  // longer exists, and none of their data outlives the account:
+  //  - relationships with other accounts: invitations, club memberships,
+  //    coach staff memberships, club-managed ownership, bookmarks, a club's
+  //    calendar and a player's place on rosters (store orders are kept but
+  //    unlinked — see AccountRelationsCleanupService);
+  //  - notifications to the user, and to anyone about what was deleted;
+  //  - the PlayerProfile/ClubProfile/CoachProfile with its Cloudinary media
+  //    and, for a player, every video (with its likes/comments);
+  //  - photo posts, and the likes/comments left on other people's content.
   //
-  // NOTE: stale refreshtokens/passwordresettokens for this user are not
-  // cleaned up here — those schemas are registered inside AuthModule, and
-  // AuthModule imports UsersModule, so importing AuthModule back into
-  // UsersModule to reach them would be a circular module dependency. They
-  // expire on their own and are rejected once the user no longer exists.
+  // NOTE: refreshtokens/passwordresettokens are cleared by
+  // AuthService.deleteAccount on self-service deletion, not here — those
+  // schemas are registered inside AuthModule, which imports UsersModule, so
+  // reaching them from here would be a circular module dependency. On admin
+  // deletion they expire on their own and are rejected once the user no
+  // longer exists.
   async deleteById(id: string): Promise<void> {
     const user = await this.findByIdOrThrow(id);
+
+    // Rosters reference the profile, not the user, so its id is needed
+    // before the profile itself is deleted below.
+    const playerProfile =
+      user.role === UserRole.PLAYER
+        ? await this.playersService.findByUserId(id)
+        : null;
+    const deletedEntityIds = await this.relationsCleanup.deleteAllForUser(
+      id,
+      playerProfile?._id,
+    );
+    await this.notificationsService.deleteAllForUser(id, deletedEntityIds);
+
     if (user.role === UserRole.PLAYER) {
       await this.playersService.deleteProfileAndMediaByUserId(id);
     } else if (user.role === UserRole.CLUB) {
@@ -289,8 +314,9 @@ export class UsersService {
       await this.coachesService.deleteProfileAndMediaByUserId(id);
     }
     // Either side of a coach's staff memberships.
-    await this.clubAccess.endAllForUser(id);
+    await this.clubAccess.deleteAllForUser(id);
     await this.videosService.deleteUserFootprint(id);
+    await this.postsService.deleteAllForUser(id);
     await this.userModel.deleteOne({ _id: id });
   }
 }

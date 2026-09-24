@@ -409,6 +409,11 @@
   "passwordUpdatedMessage": "تم تحديث كلمة المرور.",
   "currentPasswordLabel": "كلمة المرور الحالية",
   "changePasswordLabel": "تغيير كلمة المرور",
+  "deleteAccountLabel": "حذف الحساب",
+  "deleteAccountWarning": "سيتم حذف حسابك وكل البيانات المرتبطة به نهائيًا: البروفايل، والصور، والفيديوهات، والتعليقات، والإعجابات. لا يمكن التراجع عن هذا الإجراء.",
+  "deleteAccountPasswordLabel": "اكتب كلمة المرور للتأكيد",
+  "deleteAccountConfirmTitle": "حذف حسابك نهائيًا؟",
+  "deleteAccountConfirmButton": "حذف حسابي نهائيًا",
 
   "playersClubsNavLabel": "اللاعبون والأندية",
   "usersTabLabel": "المستخدمون",

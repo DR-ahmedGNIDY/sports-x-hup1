@@ -31,4 +31,8 @@ abstract class AuthRepository {
     String? currentPassword,
     String? newPassword,
   });
+
+  /// Permanently deletes the signed-in account and everything tied to it,
+  /// then clears the local session. [password] re-confirms the action.
+  Future<void> deleteAccount(String password);
 }

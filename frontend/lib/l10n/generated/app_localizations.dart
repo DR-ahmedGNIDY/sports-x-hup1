@@ -2167,6 +2167,36 @@ abstract class AppLocalizations {
   /// **'تغيير كلمة المرور'**
   String get changePasswordLabel;
 
+  /// No description provided for @deleteAccountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف الحساب'**
+  String get deleteAccountLabel;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم حذف حسابك وكل البيانات المرتبطة به نهائيًا: البروفايل، والصور، والفيديوهات، والتعليقات، والإعجابات. لا يمكن التراجع عن هذا الإجراء.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @deleteAccountPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب كلمة المرور للتأكيد'**
+  String get deleteAccountPasswordLabel;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف حسابك نهائيًا؟'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف حسابي نهائيًا'**
+  String get deleteAccountConfirmButton;
+
   /// No description provided for @playersClubsNavLabel.
   ///
   /// In ar, this message translates to:

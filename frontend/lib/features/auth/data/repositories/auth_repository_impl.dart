@@ -106,6 +106,24 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<void> deleteAccount(String password) async {
+    Future<void> attempt() async {
+      final accessToken = await _storage.accessToken;
+      await _remote.deleteAccount(accessToken!, password);
+    }
+
+    try {
+      await attempt();
+    } on AppException {
+      if (!await _tryRefresh()) rethrow;
+      await attempt();
+    }
+    // The server has already revoked every refresh token for this account,
+    // so there's nothing to log out of — just drop the local copies.
+    await _storage.clear();
+  }
+
   Future<AppUser> _persistAndReturnUser(Map<String, dynamic> json) async {
     await _storage.saveTokens(
       accessToken: json['accessToken'] as String,

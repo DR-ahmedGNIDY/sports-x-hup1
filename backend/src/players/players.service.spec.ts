@@ -48,6 +48,7 @@ describe('PlayersService', () => {
     };
     const savedPlayerModel = {
       countDocuments: jest.fn().mockResolvedValue(savedByClubsCount),
+      deleteMany: jest.fn().mockResolvedValue({}),
     };
     const cloudinary = {
       deleteAsset: jest.fn(),
@@ -132,6 +133,20 @@ describe('PlayersService', () => {
     await service.deleteProfileAndMedia(id);
 
     expect(videosService.deleteAllForPlayer).toHaveBeenCalledWith(id);
+  });
+
+  it('removes clubs bookmarks of the player when the profile is deleted', async () => {
+    const profileId = new Types.ObjectId();
+    const { service, savedPlayerModel } = buildService({
+      _id: profileId,
+      media: [],
+    });
+
+    await service.deleteProfileAndMedia(profileId.toString());
+
+    expect(savedPlayerModel.deleteMany).toHaveBeenCalledWith({
+      playerId: profileId,
+    });
   });
 
   it('rejects deleting a profile that does not exist', async () => {

@@ -614,4 +614,50 @@ export class PostsService {
       { $inc: { commentCount: -1 } },
     );
   }
+
+  // Cascade helper for UsersService.deleteById — the photo-post equivalent
+  // of VideosService.deleteAllForPlayer + deleteUserFootprint in one: every
+  // post this user authored (with its Cloudinary asset and the likes/
+  // comments on it), then the likes/comments they left on other people's
+  // posts, with those posts' counters brought back down to match.
+  async deleteAllForUser(userId: string): Promise<void> {
+    const authorId = new Types.ObjectId(userId);
+    const photos = await this.photoModel.find({ authorUserId: authorId });
+    if (photos.length > 0) {
+      await Promise.all(
+        photos.map((photo) =>
+          this.cloudinary.deleteAsset(photo.publicId, 'image'),
+        ),
+      );
+      const photoIds = photos.map((photo) => photo._id);
+      await Promise.all([
+        this.photoModel.deleteMany({ _id: { $in: photoIds } }),
+        this.photoLikeModel.deleteMany({ photoId: { $in: photoIds } }),
+        this.photoCommentModel.deleteMany({ photoId: { $in: photoIds } }),
+      ]);
+    }
+
+    const [likes, comments] = await Promise.all([
+      this.photoLikeModel.find({ userId: authorId }),
+      this.photoCommentModel.find({ userId: authorId }),
+    ]);
+    await Promise.all([
+      this.photoLikeModel.deleteMany({ userId: authorId }),
+      this.photoCommentModel.deleteMany({ userId: authorId }),
+    ]);
+    await Promise.all([
+      ...likes.map((like) =>
+        this.photoModel.updateOne(
+          { _id: like.photoId, likeCount: { $gt: 0 } },
+          { $inc: { likeCount: -1 } },
+        ),
+      ),
+      ...comments.map((comment) =>
+        this.photoModel.updateOne(
+          { _id: comment.photoId, commentCount: { $gt: 0 } },
+          { $inc: { commentCount: -1 } },
+        ),
+      ),
+    ]);
+  }
 }

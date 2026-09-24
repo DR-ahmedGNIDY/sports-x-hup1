@@ -353,6 +353,9 @@ export class PlayersService {
     // entries in the Community feed, with their Cloudinary assets and
     // likes/comments never cleaned up.
     await this.videosService.deleteAllForPlayer(id);
+    // Clubs' bookmarks of this player would otherwise list a profile that
+    // no longer resolves.
+    await this.savedPlayerModel.deleteMany({ playerId: profile._id });
     await this.playerProfileModel.deleteOne({ _id: id });
   }
 

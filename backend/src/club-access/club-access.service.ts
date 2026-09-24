@@ -195,14 +195,12 @@ export class ClubAccessService {
     return ended;
   }
 
-  // Admin delete-user: whichever side the deleted account was on.
-  async endAllForUser(userId: string): Promise<void> {
-    await this.membershipModel.updateMany(
-      {
-        $or: [{ clubUserId: userId }, { coachUserId: userId }],
-        status: MembershipStatus.ACTIVE,
-      },
-      { $set: { status: MembershipStatus.ENDED, endedAt: new Date() } },
-    );
+  // Account deletion (self-service or admin): whichever side the deleted
+  // account was on. Removed outright, ended ones included, rather than
+  // marked ENDED — a deleted account keeps no history here.
+  async deleteAllForUser(userId: string): Promise<void> {
+    await this.membershipModel.deleteMany({
+      $or: [{ clubUserId: userId }, { coachUserId: userId }],
+    });
   }
 }

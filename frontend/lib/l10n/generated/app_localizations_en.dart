@@ -1119,6 +1119,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changePasswordLabel => 'Change password';
 
   @override
+  String get deleteAccountLabel => 'Delete account';
+
+  @override
+  String get deleteAccountWarning =>
+      'Your account and all data linked to it will be permanently deleted: profile, photos, videos, comments and likes. This cannot be undone.';
+
+  @override
+  String get deleteAccountPasswordLabel => 'Enter your password to confirm';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Permanently delete your account?';
+
+  @override
+  String get deleteAccountConfirmButton => 'Permanently delete my account';
+
+  @override
   String get playersClubsNavLabel => 'Players & Clubs';
 
   @override

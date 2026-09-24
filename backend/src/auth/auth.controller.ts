@@ -1,11 +1,25 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
+import {
+  CurrentUser,
+  JwtPayload,
+} from './decorators/current-user.decorator';
+import { DeleteAccountDto } from './dto/delete-account.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 // Credential/account-creation endpoints get a much stricter limit than the
 // app-wide default (ThrottlerModule.forRoot in app.module.ts) — these are
@@ -57,6 +71,20 @@ export class AuthController {
   @Throttle(AUTH_THROTTLE)
   async resetPassword(@Body() dto: ResetPasswordDto) {
     await this.authService.resetPassword(dto.token, dto.newPassword);
+    return { success: true };
+  }
+
+  // Lives here rather than in UsersController because it also has to clear
+  // refresh/reset tokens, which only AuthModule can reach.
+  @Delete('account')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Throttle(AUTH_THROTTLE)
+  async deleteAccount(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: DeleteAccountDto,
+  ) {
+    await this.authService.deleteAccount(user.sub, dto.password);
     return { success: true };
   }
 }

@@ -112,6 +112,11 @@ export class PushService {
     await this.subscriptionModel.deleteOne({ userId, endpoint });
   }
 
+  /** Account deletion: every browser this user ever registered. */
+  async unsubscribeAll(userId: string): Promise<void> {
+    await this.subscriptionModel.deleteMany({ userId });
+  }
+
   /**
    * Send one notification to every browser [userId] has registered.
    *
