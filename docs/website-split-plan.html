@@ -1,0 +1,274 @@
+<title>خطة فصل موقع SportXHub</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: vertical deck of full-width "slides", RTL, device mockups drawn in CSS */
+:root{
+  --bg:#f4f5f7; --surface:#ffffff; --ink:#0a0a0a; --muted:#5b6170; --line:#e2e5ea;
+  --blue:#1476FF; --blue-soft:#e6f0ff; --warn:#b45309; --warn-soft:#fef3c7; --ok:#15803d; --ok-soft:#dcfce7;
+  --screen:#ffffff; --screen-ink:#0a0a0a; --frame:#16181d;
+  --f-display:"Tajawal",system-ui,sans-serif; --f-body:"Tajawal",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c0d10; --surface:#15171c; --ink:#f3f4f6; --muted:#9aa1ae; --line:#262a33;
+  --blue:#4f9bff; --blue-soft:#10223d; --warn:#fbbf24; --warn-soft:#3a2a08; --ok:#4ade80; --ok-soft:#0f2e1a;
+  --screen:#0f1115; --screen-ink:#f3f4f6; --frame:#000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c0d10; --surface:#15171c; --ink:#f3f4f6; --muted:#9aa1ae; --line:#262a33;
+  --blue:#4f9bff; --blue-soft:#10223d; --warn:#fbbf24; --warn-soft:#3a2a08; --ok:#4ade80; --ok-soft:#0f2e1a;
+  --screen:#0f1115; --screen-ink:#f3f4f6; --frame:#000; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.7;padding-inline:16px;padding-block:24px}
+.deck{max-width:1100px;margin-inline:auto;display:flex;flex-direction:column;gap:28px}
+.slide{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(20px,4vw,48px);display:flex;flex-direction:column;gap:18px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--blue)}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.25}
+h1{font-size:clamp(32px,6vw,56px);font-weight:800}
+h2{font-size:clamp(24px,3.4vw,34px);font-weight:800}
+h3{font-size:19px;font-weight:700}
+p{margin:0;max-width:68ch;color:var(--muted)}
+ul{margin:0;padding-inline-start:20px;display:grid;gap:6px}
+li{color:var(--muted)} li b{color:var(--ink)}
+code{font-family:var(--f-mono);font-size:.85em;background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:4px;direction:ltr;unicode-bidi:embed}
+.cover{background:var(--ink);color:var(--bg);border:none}
+.cover p{color:color-mix(in srgb,var(--bg) 70%,transparent)}
+.cover .eyebrow{color:var(--blue)}
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.box{border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box.frozen{border-color:var(--ok);background:var(--ok-soft)}
+.box.new{border-color:var(--blue);background:var(--blue-soft)}
+.tag{align-self:flex-start;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;border:1px solid currentColor}
+.tag.ok{color:var(--ok)} .tag.new{color:var(--blue)} .tag.warn{color:var(--warn)}
+.domain{font-family:var(--f-mono);direction:ltr;text-align:right;font-size:14px;color:var(--ink)}
+/* phases */
+.phases{display:grid;gap:12px}
+.phase{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start;border-top:1px solid var(--line);padding-top:14px}
+.phase .n{font-family:var(--f-mono);font-size:28px;color:var(--blue);line-height:1}
+.phase div{min-width:0;display:flex;flex-direction:column;gap:4px}
+/* device mockups */
+.shots{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:center}
+.desk{flex:1 1 520px;max-width:640px;min-width:0}
+.desk .bar{background:var(--frame);border-radius:10px 10px 0 0;padding:8px 12px;display:flex;gap:6px;align-items:center}
+.desk .bar i{width:9px;height:9px;border-radius:50%;background:#555;display:block}
+.desk .bar span{margin-inline-start:10px;flex:1;background:#2a2d35;color:#aab;font-family:var(--f-mono);font-size:11px;border-radius:5px;padding:2px 10px;direction:ltr;text-align:left}
+.desk .scr{border:6px solid var(--frame);border-top:none;border-radius:0 0 10px 10px;background:var(--screen);color:var(--screen-ink);aspect-ratio:16/10;overflow:hidden;display:flex;flex-direction:column;font-size:11px;line-height:1.4}
+.phone{width:210px;flex:0 0 auto;max-width:100%}
+.phone .scr{border:8px solid var(--frame);border-radius:26px;background:var(--screen);color:var(--screen-ink);aspect-ratio:9/19;overflow:hidden;display:flex;flex-direction:column;font-size:10px;line-height:1.4}
+.cap{text-align:center;font-size:13px;color:var(--muted);margin-top:8px}
+/* mock UI inside screens */
+.nav{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.logo{font-weight:800;letter-spacing:.02em}
+.nav .links{display:flex;gap:10px;margin-inline-start:auto;color:var(--muted)}
+.nav .links b{color:var(--screen-ink)}
+.burger{margin-inline-start:auto;width:16px;height:10px;border-block:2px solid currentColor;position:relative}
+.burger::after{content:"";position:absolute;inset-inline:0;top:2px;border-top:2px solid currentColor}
+.m{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
+.hero{background:var(--frame);color:#fff;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.hero .t{font-weight:800;font-size:1.6em;line-height:1.15}
+.hero .s{color:#b8bcc6}
+.btn{display:inline-block;background:var(--blue);color:#fff;border-radius:6px;padding:4px 10px;font-weight:700;align-self:flex-start}
+.btn.ghost{background:transparent;border:1px solid currentColor;color:inherit}
+.row{display:flex;gap:6px}
+.row>*{flex:1;min-width:0}
+.tile{border:1px solid var(--line);border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:3px}
+.ph{height:6px;border-radius:3px;background:var(--line)}
+.ph.s{width:60%}
+.img{background:linear-gradient(135deg,var(--line),transparent);border-radius:6px;min-height:34px}
+.store-card{border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.store-card.gp{background:var(--frame);color:#fff}
+.store-card.web{border:2px solid var(--blue)}
+.social{display:flex;gap:5px;flex-wrap:wrap}
+.social span{width:20px;height:20px;border-radius:50%;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:9px}
+.foot{margin-top:auto;border-top:1px solid var(--line);padding:6px 12px;color:var(--muted);font-size:.9em}
+/* table */
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+th,td{text-align:right;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:700}
+td:first-child{font-weight:700;white-space:nowrap}
+.risk{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:99px}
+.risk.h{background:var(--warn-soft);color:var(--warn)} .risk.l{background:var(--ok-soft);color:var(--ok)}
+.q{border-inline-start:3px solid var(--blue);padding-inline-start:14px;display:flex;flex-direction:column;gap:4px}
+@media (max-width:560px){.phase{grid-template-columns:36px 1fr}.phase .n{font-size:20px}}
+</style>
+
+<div class="deck" dir="rtl" lang="ar">
+
+<section class="slide cover">
+  <span class="eyebrow">SPORTXHUB · خطة تنفيذ · سبتمبر 2026</span>
+  <h1>فصل الموقع التعريفي عن التطبيق</h1>
+  <p>موقع تعريفي خفيف على الدومين الأساسي، ونسخة التطبيق (الويب وجوجل بلاي) معزولة في فولدر خاص بيها ومش هتتغير. العرض ده بيشرح كل مرحلة والصفحات وشكل الشاشات قبل ما نبدأ التنفيذ.</p>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">الصورة النهائية</span>
+  <h2>ثلاثة أجزاء، وكل جزء ليه مكانه</h2>
+  <div class="grid g3">
+    <div class="box new">
+      <span class="tag new">جديد</span>
+      <h3>الموقع + المتجر</h3>
+      <div class="domain">sportxhup.com · sportxhup.com/store</div>
+      <p>فولدر <code>website/</code>. فيه الصفحات التعريفية، والمتجر كامل للزوار: الأقسام والمنتجات والسلة والطلب. مفيش فيه تسجيل دخول للمنصة.</p>
+    </div>
+    <div class="box frozen">
+      <span class="tag ok">تعديل محدود</span>
+      <h3>التطبيق</h3>
+      <div class="domain">app.sportxhup.com + Google Play</div>
+      <p>فولدر <code>frontend/</code>. بيفتح على تسجيل الدخول على طول، ومفيهوش واجهة متجر. زرار "المتجر" بيفتح متجر الموقع في المتصفح.</p>
+    </div>
+    <div class="box">
+      <span class="tag warn">إضافة بسيطة</span>
+      <h3>الباك إند ولوحة التحكم</h3>
+      <div class="domain">api.sportxhup.com</div>
+      <p>لوحة التحكم تفضل زي ما هي، بما فيها إدارة المتجر (منتجات وطلبات وكوبونات وشحن). بيتضاف لها بس تبويب "إعدادات الموقع".</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">المراحل</span>
+  <h2>عشر مراحل، والترتيب مهم</h2>
+  <div class="phases">
+    <div class="phase"><span class="n">0</span><div><h3>تأمين نقطة البداية <span class="tag ok" style="font-size:12px">اتنفذت</span></h3><p>branch اسمه <code>feature/website-split</code>، وcommit لتعديلات أقسام المتجر، وtag باسم <code>v-before-split</code> نقدر نرجع له في أي وقت.</p></div></div>
+    <div class="phase"><span class="n">1</span><div><h3>عزل التطبيق</h3><p><code>frontend/</code> يفضل باسمه ومكانه، ونكتب قاعدة في README إن شغل الموقع ممنوع يلمسه. نتأكد إن build الـ AAB بيطلع بنفس الـ package والتوقيع.</p></div></div>
+    <div class="phase"><span class="n">2</span><div><h3>إعدادات الموقع في الباك إند</h3><p>module جديد <code>site-settings</code> فيه السوشيال والتليفونات والإيميل ورابط Google Play. القراءة public، والتعديل للأدمن بس.</p></div></div>
+    <div class="phase"><span class="n">3</span><div><h3>تبويب في لوحة التحكم</h3><p>"إعدادات الموقع" كتبويب جديد جوه لوحة الأدمن الحالية. إضافة بس، من غير أي تعديل على الموجود.</p></div></div>
+    <div class="phase"><span class="n">4</span><div><h3>بناء الموقع التعريفي</h3><p>مشروع Astro في <code>website/</code> بالتصميم المعتمد: الرئيسية، وتحميل التطبيق، وتواصل معنا. عربي وإنجليزي.</p></div></div>
+    <div class="phase"><span class="n">5</span><div><h3>نقل المتجر للموقع</h3><p>واجهة المتجر كاملة على <code>sportxhup.com/store</code>: الأقسام (رجالي وحريمي وأطفالي) وفئاتها، وصفحة المنتج، والسلة، والكوبون، والطلب، وتتبع الطلب. كلها على نفس الـ API الحالي، فالطلبات هتظهر في لوحة التحكم زي ما هي.</p></div></div>
+    <div class="phase"><span class="n">6</span><div><h3>تعديلات التطبيق</h3><p>التطبيق يفتح على تسجيل الدخول، وتتشال منه صفحات الموقع التعريفي. تتشال كمان واجهة المتجر (الصفحة الرئيسية والقوائم والمنتج والسلة والدفع والطلبات)، وتفضل ملفات البيانات اللي لوحة الأدمن بتستخدمها. زرار المتجر يفتح <code>sportxhup.com/store</code> في المتصفح عن طريق <code>url_launcher</code>، وده موجود في المشروع أصلًا.</p></div></div>
+    <div class="phase"><span class="n">7</span><div><h3>الدومينات والسيرفر</h3><p>DNS للـ <code>app.</code>، وnginx، وSSL، وCORS. أي أمر محتاج <code>sudo</code> هكتبهولك وإنت تشغله.</p></div></div>
+    <div class="phase"><span class="n">8</span><div><h3>النقل بالترتيب</h3><p>ننشر الموقع ومتجره الأول ونجرب إن الطلبات بتوصل. بعدها ننقل نسخة الويب لـ <code>app.</code>، ونعمل redirects 301 للروابط القديمة.</p></div></div>
+    <div class="phase"><span class="n">9</span><div><h3>تحديث Google Play</h3><p>نرفع AAB جديد برقم إصدار أعلى، بس بعد ما متجر الموقع يكون شغال. لو اترفع قبله، الزرار هيودي على صفحة مش موجودة.</p></div></div>
+  </div>
+</section>
+
+<section class="slide" style="border-color:var(--blue)">
+  <span class="eyebrow">التصميم النهائي</span>
+  <h2>التصميم الاحترافي الكامل للموقع</h2>
+  <p>الرسومات اللي جاية بتوضح هيكل كل صفحة بس. التصميم النهائي التفاعلي، بالصفحات الأربع والتبديل بين الموبايل والديسكتوب، موجود هنا:</p>
+  <a class="domain" style="color:var(--blue);font-weight:700" href="https://claude.ai/artifact/MzHoE1tQRvJCiWAZnfZeKL">claude.ai/artifact/MzHoE1tQRvJCiWAZnfZeKL ↗</a>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">صفحة 1 من 4 · الرئيسية</span>
+  <h2>الرئيسية</h2>
+  <p>الهيدر فيه لوجو SXH الأساسي. تحته Hero بيعرف المنصة، وبعده أقسام للمستخدمين (لاعب ونادي ومدرب). المميزات معروضة في كروت غامقة، وكل كارت فيه معاينة للميزة (البحث، الفيديوهات، الدعوات، المجتمع، التقويم، المتجر، الأندية الموثقة)، وفي الآخر زرار واحد واضح "حمل التطبيق". مفيش أي زرار لتسجيل الدخول في أي مكان.</p>
+  <div class="shots">
+    <div class="desk"><div class="bar"><i></i><i></i><i></i><span>sportxhup.com</span></div>
+      <div class="scr"><div class="nav"><span class="logo">SXH</span><div class="links"><b>الرئيسية</b><span>المتجر</span><span>تحميل التطبيق</span><span>تواصل معنا</span></div></div>
+        <div class="m"><div class="hero"><span class="t">منصتك لاكتشاف المواهب الرياضية</span><span class="s">لاعبين وأندية ومدربين في مكان واحد</span><span class="btn">حمّل التطبيق</span></div>
+          <div class="row"><div class="tile"><b>للاعبين</b><div class="ph"></div><div class="ph s"></div></div><div class="tile"><b>للأندية</b><div class="ph"></div><div class="ph s"></div></div><div class="tile"><b>للمدربين</b><div class="ph"></div><div class="ph s"></div></div></div>
+          <div class="row"><div class="img"></div><div class="img"></div></div></div>
+        <div class="foot">© SportXHub · سياسة الخصوصية · حذف الحساب</div></div>
+      <div class="cap">ديسكتوب</div></div>
+    <div class="phone"><div class="scr"><div class="nav"><span class="logo">SXH</span><span class="burger"></span></div>
+      <div class="m"><div class="hero"><span class="t">منصتك لاكتشاف المواهب</span><span class="s">لاعبين وأندية ومدربين</span><span class="btn">حمّل التطبيق</span></div>
+        <div class="tile"><b>للاعبين</b><div class="ph"></div></div><div class="tile"><b>للأندية</b><div class="ph"></div></div><div class="tile"><b>للمدربين</b><div class="ph"></div></div><div class="img" style="min-height:60px"></div></div>
+      <div class="foot">© SportXHub</div></div><div class="cap">موبايل: القائمة بتفتح من ☰</div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">صفحة 2 من 4 · تحميل التطبيق</span>
+  <h2>تحميل التطبيق</h2>
+  <p>فيها كارتين. كارت Google Play بيفتح صفحة التطبيق على المتجر. وكارت "نسخة الويب لمستخدمي iOS" بيدخل على <code>app.sportxhup.com</code>، وتحته شرح بسيط لخطوة "إضافة للشاشة الرئيسية" على iPhone.</p>
+  <div class="shots">
+    <div class="desk"><div class="bar"><i></i><i></i><i></i><span>sportxhup.com/download</span></div>
+      <div class="scr"><div class="nav"><span class="logo">SXH</span><div class="links"><span>الرئيسية</span><span>المتجر</span><b>تحميل التطبيق</b><span>تواصل معنا</span></div></div>
+        <div class="m"><b style="font-size:1.5em">حمّل SportXHub</b>
+          <div class="row"><div class="store-card gp"><b>Google Play</b><span>لأجهزة أندرويد</span><span class="btn">تحميل</span></div>
+          <div class="store-card web"><b>نسخة الويب</b><span>لمستخدمي iPhone وiOS</span><span class="btn">افتح نسخة الويب</span></div></div>
+          <div class="tile"><b>على iPhone: افتح Safari ← مشاركة ← إضافة للشاشة الرئيسية</b></div></div>
+        <div class="foot">© SportXHub</div></div><div class="cap">ديسكتوب</div></div>
+    <div class="phone"><div class="scr"><div class="nav"><span class="logo">SXH</span><span class="burger"></span></div>
+      <div class="m"><b style="font-size:1.4em">حمّل SportXHub</b>
+        <div class="store-card gp"><b>Google Play</b><span>لأجهزة أندرويد</span><span class="btn">تحميل</span></div>
+        <div class="store-card web"><b>نسخة الويب</b><span>لمستخدمي iOS</span><span class="btn">افتح</span></div>
+        <div class="tile"><b>إضافة للشاشة الرئيسية</b><div class="ph"></div></div></div></div>
+      <div class="cap">موبايل: الكارت المناسب لنوع الجهاز بيظهر الأول</div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">صفحة 3 من 4 · تواصل معنا</span>
+  <h2>تواصل معنا</h2>
+  <p>أيقونات السوشيال ميديا، وأرقام التليفونات (فيها واتساب)، والإيميل. كل ده بيتعدل من لوحة التحكم ومش مكتوب ثابت في الكود. نموذج التواصل الحالي (<code>contact_controller</code>) بيتنقل للموقع ويفضل بيبعت على نفس الـ API.</p>
+  <div class="shots">
+    <div class="desk"><div class="bar"><i></i><i></i><i></i><span>sportxhup.com/contact</span></div>
+      <div class="scr"><div class="nav"><span class="logo">SXH</span><div class="links"><span>الرئيسية</span><span>المتجر</span><span>تحميل التطبيق</span><b>تواصل معنا</b></div></div>
+        <div class="m"><b style="font-size:1.5em">تواصل معنا</b>
+          <div class="row"><div class="tile"><b>التليفون</b><span dir="ltr">+20 10x xxx xxxx</span><b>واتساب</b><span dir="ltr">+20 11x xxx xxxx</span><b>الإيميل</b><span>info@…</span><div class="social"><span>f</span><span>ig</span><span>x</span><span>tk</span><span>yt</span></div></div>
+          <div class="tile"><b>ابعت رسالة</b><div class="ph"></div><div class="ph"></div><div class="ph" style="height:30px"></div><span class="btn">إرسال</span></div></div></div>
+        <div class="foot">© SportXHub</div></div><div class="cap">ديسكتوب: البيانات ونموذج التواصل جنب بعض</div></div>
+    <div class="phone"><div class="scr"><div class="nav"><span class="logo">SXH</span><span class="burger"></span></div>
+      <div class="m"><b style="font-size:1.4em">تواصل معنا</b><div class="social"><span>f</span><span>ig</span><span>x</span><span>tk</span><span>yt</span></div>
+        <div class="tile"><b>اتصل بينا</b><span dir="ltr">+20 10x xxx xxxx</span></div><div class="tile"><b>واتساب</b><span dir="ltr">+20 11x xxx xxxx</span></div>
+        <div class="tile"><b>ابعت رسالة</b><div class="ph"></div><div class="ph" style="height:24px"></div><span class="btn">إرسال</span></div></div></div>
+      <div class="cap">موبايل: الضغط على الرقم بيتصل على طول</div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">صفحة 4 من 4 · المتجر</span>
+  <h2>المتجر: نفس أقسام المتجر الحالي بصورها</h2>
+  <p>صفحة المتجر في الموقع بتعرض الأقسام الثلاثة بنفس الصور المرفوعة في المتجر الحالي. تحت كل قسم الفئات الثلاث، والمتجر كله بقى جوه الموقع نفسه على <code>sportxhup.com/store</code>: المنتجات والسلة والطلب.</p>
+  <div class="grid g3">
+    <div class="box"><h3>رجالي</h3><ul><li>ملابس</li><li>أحذية رياضية</li><li>أدوات رياضية</li></ul><div class="domain">/store/c/men</div></div>
+    <div class="box"><h3>حريمي</h3><ul><li>ملابس</li><li>أحذية رياضية</li><li>أدوات رياضية</li></ul><div class="domain">/store/c/women</div></div>
+    <div class="box"><h3>أطفالي</h3><ul><li>ملابس</li><li>أحذية رياضية</li><li>أدوات رياضية</li></ul><div class="domain">/store/c/kids</div></div>
+  </div>
+  <p>الصور والأقسام بتتجاب من الـ API الحالي (<code>/store/categories</code>)، فأي صورة تتغير من لوحة التحكم بتتغير في الموقع كمان.</p>
+  <div class="grid g2">
+    <div class="box"><h3>من التطبيق</h3><p>زرار "المتجر" في التطبيق بيفتح <code>sportxhup.com/store</code> في المتصفح، فالمستخدم بيخرج من التطبيق للموقع.</p></div>
+    <div class="box"><h3>الروابط القديمة</h3><p>أي رابط قديم <code>sportxhup.com/store/...</code> بيفضل شغال، لأن المتجر لسه على نفس الدومين.</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">لوحة التحكم</span>
+  <h2>لوحة التحكم زي ما هي، ومعاها تبويب جديد</h2>
+  <p>كل الشاشات الحالية ما بتتغيرش. بيتضاف تبويب "إعدادات الموقع" وفيه الحقول دي:</p>
+  <div class="shots">
+    <div class="desk"><div class="bar"><i></i><i></i><i></i><span>app.sportxhup.com/admin/site-settings</span></div>
+      <div class="scr" style="flex-direction:row">
+        <div style="width:26%;border-inline-end:1px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:6px;color:var(--muted)"><b style="color:var(--screen-ink)">لوحة التحكم</b><span>الإحصائيات</span><span>المستخدمين</span><span>الأندية</span><span>المجتمع</span><span>المتجر</span><span class="btn">إعدادات الموقع ●</span></div>
+        <div class="m"><b style="font-size:1.4em">إعدادات الموقع</b>
+          <div class="row"><div class="tile"><b>Facebook</b><div class="ph"></div></div><div class="tile"><b>Instagram</b><div class="ph"></div></div><div class="tile"><b>X</b><div class="ph"></div></div></div>
+          <div class="row"><div class="tile"><b>TikTok</b><div class="ph"></div></div><div class="tile"><b>YouTube</b><div class="ph"></div></div><div class="tile"><b>واتساب</b><div class="ph"></div></div></div>
+          <div class="row"><div class="tile"><b>أرقام التليفون (+ إضافة)</b><div class="ph"></div></div><div class="tile"><b>الإيميل</b><div class="ph"></div></div><div class="tile"><b>رابط Google Play</b><div class="ph"></div></div></div>
+          <span class="btn">حفظ</span></div></div>
+      <div class="cap">كل حقل ممكن يتساب فاضي، والأيقونة بتاعته بتختفي من الموقع</div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">العقبات</span>
+  <h2>العقبات المتوقعة وحل كل واحدة</h2>
+  <div class="tw"><table>
+    <thead><tr><th>العقبة</th><th>الخطورة</th><th>الحل</th></tr></thead>
+    <tbody>
+      <tr><td>روابط Google Play Console</td><td><span class="risk h">عالية</span></td><td>روابط سياسة الخصوصية وحذف الحساب المتسجلة في Console لازم تفضل شغالة. هنسيبها على الدومين الأساسي بنفس المسار بالظبط.</td></tr>
+      <tr><td>السيرفر المشترك</td><td><span class="risk h">عالية</span></td><td>غلطة في nginx بتوقع 12 موقع. لازم <code>nginx -t</code> قبل أي reload، وملف config منفصل للـ <code>app.</code>، والتنفيذ بإيدك.</td></tr>
+      <tr><td>الروابط القديمة المتشاركة</td><td><span class="risk h">عالية</span></td><td>بروفايلات ومتجر اتشاركوا على <code>sportxhup.com/...</code>. هنعمل redirects 301 لأي مسار مش تابع للموقع.</td></tr>
+      <tr><td>روابط الإيميلات</td><td><span class="risk h">متوسطة</span></td><td>روابط استعادة كلمة المرور والدعوات لو مبنية على الدومين الأساسي، هنغيرها في إعدادات الباك إند لـ <code>app.</code>. ده تعديل إعدادات بس، مش كود التطبيق.</td></tr>
+      <tr><td>Service Worker القديم</td><td><span class="risk h">متوسطة</span></td><td>الزوار القدام عندهم نسخة Flutter متخزنة على الدومين الأساسي. الموقع الجديد هيحط SW صغير بيلغيها ويمسح الكاش.</td></tr>
+      <tr><td>CORS</td><td><span class="risk l">منخفضة</span></td><td>نضيف <code>app.sportxhup.com</code> في الـ origins المسموحة قبل ما نقلب الدومين.</td></tr>
+      <tr><td>App Links في أندرويد</td><td><span class="risk l">منخفضة</span></td><td>لو التطبيق بيفتح روابط الدومين الأساسي، نسيب <code>assetlinks.json</code> في مكانه. من غير أي تعديل في التطبيق.</td></tr>
+      <tr><td>iOS على الويب</td><td><span class="risk l">منخفضة</span></td><td>الإشعارات محدودة في Safari. هنكتب شرح "إضافة للشاشة الرئيسية" في كارت التحميل.</td></tr>
+      <tr><td>SEO</td><td><span class="risk l">منخفضة</span></td><td><code>sitemap</code> و<code>robots</code> يتنقلوا للموقع، ونسخة <code>app.</code> تاخد <code>noindex</code> ما عدا البروفايلات العامة.</td></tr>
+    </tbody></table></div>
+</section>
+
+<section class="slide">
+  <span class="eyebrow">القرارات</span>
+  <h2>المتفق عليه ونقطة محتاجة قرار</h2>
+  <div class="q"><h3>المتفق عليه</h3>
+    <p>الموقع بـ Astro. التطبيق يفتح على تسجيل الدخول. واجهة المتجر تتشال من التطبيق وتتنقل للموقع، وزرار المتجر يفتح الموقع. إدارة المتجر تفضل في لوحة التحكم. صفحات الخصوصية وحذف الحساب تفضل على الدومين الأساسي.</p></div>
+  <div class="q"><h3>الطلبات القديمة للمستخدمين المسجلين</h3>
+    <p>الباك إند فيه دلوقتي طلب كزائر (<code>POST /store/orders</code>) وتتبع public (<code>/store/orders/track</code>)، فمتجر الموقع هيشتغل من غير تسجيل دخول. اللي هيضيع هو "طلباتي" للمستخدم المسجل (<code>/orders/mine</code>). اقتراحي إننا نستغنى عنها، والعميل يتابع طلبه برقم الطلب. ولا تحب نضيف تسجيل دخول للمتجر بس؟</p></div>
+  <div class="q"><h3>البيانات اللي محتاجها</h3>
+    <p>روابط السوشيال ميديا، وأرقام التليفونات، ورابط التطبيق على Google Play. ممكن تتدخل بعدين من لوحة التحكم.</p></div>
+</section>
+
+</div>
