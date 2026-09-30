@@ -45,13 +45,23 @@ export class StoreProductsService {
     const filter: FilterQuery<StoreProduct> = {};
     if (!includeInactive) filter.isActive = true;
 
+    // A department ("Men") is browsed by its own slug but holds no products
+    // directly — those sit on its children ("Men > Shoes"). So the filter is
+    // always the category *and* its descendants, which for a leaf is just
+    // itself and costs one extra indexed lookup.
     if (dto.categorySlug) {
       const category = await this.categories.findBySlugOrThrow(
         dto.categorySlug,
       );
-      filter.categoryId = category._id;
+      filter.categoryId = {
+        $in: await this.categories.selfAndDescendantIds(category._id),
+      };
     } else if (dto.categoryId) {
-      filter.categoryId = new Types.ObjectId(dto.categoryId);
+      filter.categoryId = {
+        $in: await this.categories.selfAndDescendantIds(
+          new Types.ObjectId(dto.categoryId),
+        ),
+      };
     }
 
     if (dto.featured !== undefined) filter.isFeatured = dto.featured;

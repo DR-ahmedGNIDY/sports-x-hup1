@@ -2499,6 +2499,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get storeNavOrders => 'طلباتي';
 
   @override
+  String get storeExitToApp => 'العودة إلى سبورت اكس هب';
+
+  @override
   String get storeShopBestSellers => 'تسوّق الأكثر مبيعاً';
 
   @override
@@ -2539,6 +2542,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get storeSearchHint => 'ابحث عن منتج';
+
+  @override
+  String get storeAllProducts => 'كل المنتجات';
+
+  @override
+  String storeAllInCategory(String category) {
+    return 'كل $category';
+  }
 
   @override
   String get storeNoProducts => 'لا توجد منتجات مطابقة.';

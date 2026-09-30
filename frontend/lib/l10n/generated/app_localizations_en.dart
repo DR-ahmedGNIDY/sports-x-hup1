@@ -2531,6 +2531,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storeNavOrders => 'My orders';
 
   @override
+  String get storeExitToApp => 'Back to Sport X Hub';
+
+  @override
   String get storeShopBestSellers => 'Shop best sellers';
 
   @override
@@ -2571,6 +2574,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get storeSearchHint => 'Search products';
+
+  @override
+  String get storeAllProducts => 'All products';
+
+  @override
+  String storeAllInCategory(String category) {
+    return 'All $category';
+  }
 
   @override
   String get storeNoProducts => 'No products match that.';

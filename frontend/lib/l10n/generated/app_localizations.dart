@@ -4656,6 +4656,12 @@ abstract class AppLocalizations {
   /// **'طلباتي'**
   String get storeNavOrders;
 
+  /// No description provided for @storeExitToApp.
+  ///
+  /// In ar, this message translates to:
+  /// **'العودة إلى سبورت اكس هب'**
+  String get storeExitToApp;
+
   /// No description provided for @storeShopBestSellers.
   ///
   /// In ar, this message translates to:
@@ -4739,6 +4745,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ابحث عن منتج'**
   String get storeSearchHint;
+
+  /// No description provided for @storeAllProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل المنتجات'**
+  String get storeAllProducts;
+
+  /// No description provided for @storeAllInCategory.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل {category}'**
+  String storeAllInCategory(String category);
 
   /// No description provided for @storeNoProducts.
   ///

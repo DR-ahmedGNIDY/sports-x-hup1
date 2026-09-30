@@ -80,13 +80,22 @@ class _StoreHeader extends ConsumerWidget implements PreferredSizeWidget {
             // feature list.
             Expanded(
               child: categories.maybeWhen(
+                // Centred in the bar rather than trailing the logo: the
+                // departments are the store's whole navigation, and centring
+                // them is what makes the header read as a shop's rather than
+                // as a logo with links stuck behind it.
+                //
+                // The padding is symmetric for the same reason — a trailing
+                // gap on the last item alone would pull the group off centre
+                // by half of it.
                 data: (items) => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     for (final category in items.where(
                       (item) => item.parentId == null,
                     ))
                       Padding(
-                        padding: const EdgeInsetsDirectional.only(end: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: InkWell(
                           onTap: () => context.go(StorePaths.category(category.slug)),
                           child: Text(
@@ -105,6 +114,19 @@ class _StoreHeader extends ConsumerWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        // The way out. The shell's own tabs are hidden inside the store (see
+        // AppRouteMeta.ownsBottomBar), so without this a phone customer has
+        // no route back to the rest of Sport X Hub at all.
+        //
+        // It goes to '/', which is not a page but the router's landing
+        // decision: a member is sent to their dashboard, a guest to the
+        // marketing home. Naming either one here would hardcode a choice the
+        // router already makes correctly for both.
+        IconButton(
+          tooltip: AppLocalizations.of(context)!.storeExitToApp,
+          onPressed: () => context.go('/'),
+          icon: const Icon(Icons.apps_outlined, size: 22),
+        ),
         IconButton(
           tooltip: AppLocalizations.of(context)!.storeNavSearch,
           onPressed: () => context.go(StorePaths.search),
@@ -170,9 +192,19 @@ class _StoreBottomBar extends ConsumerWidget {
     final location = GoRouterState.of(context).uri.path;
     final cartCount = ref.watch(cartCountProvider);
 
-    const destinations = ['/', '/cart', '/search', '/orders'];
+    // Built from StorePaths, not written bare: '/cart' is not the store's
+    // cart, it is a path in the surrounding app that does not exist — which
+    // is exactly the mistake StorePaths was introduced to make impossible.
+    const destinations = [
+      StorePaths.home,
+      StorePaths.cart,
+      StorePaths.search,
+      StorePaths.orders,
+    ];
     final selected = destinations.indexWhere(
-      (path) => path == '/' ? location == '/' : location.startsWith(path),
+      (path) => path == StorePaths.home
+          ? location == StorePaths.home
+          : location.startsWith(path),
     );
 
     return Column(

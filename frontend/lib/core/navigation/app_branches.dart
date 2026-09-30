@@ -177,7 +177,18 @@ class AppRouteMeta {
     required this.title,
     this.parentPath,
     this.ownsChrome = false,
+    this.ownsBottomBar = false,
   });
+
+  /// `true` on a screen that draws its own bottom navigation, so the shell
+  /// renders none. Separate from [ownsChrome] because owning the top bar and
+  /// owning the bottom one are independent: a migrated screen draws its own
+  /// app bar but still wants the shell's tabs beneath it.
+  ///
+  /// Only the storefront sets this. It is a shop with its own navigation —
+  /// shop, bag, search, orders — and stacking the app's tabs underneath gave
+  /// a phone two bottom bars, one above the other.
+  final bool ownsBottomBar;
 
   /// `true` once the screen has moved to `AppScaffoldMobile` and draws its own
   /// collapsing, blurred app bar. The shell then stands down: it renders no
@@ -332,7 +343,11 @@ AppRouteMeta? routeMetaFor(String path) {
   // its generic bar on every route below '/store' too, stacking a second,
   // untitled, back-button-less bar above the store's own.
   if (path == '/store' || path.startsWith('/store/')) {
-    return AppRouteMeta(title: (l10n) => l10n.storeNavLabel, ownsChrome: true);
+    return AppRouteMeta(
+      title: (l10n) => l10n.storeNavLabel,
+      ownsChrome: true,
+      ownsBottomBar: true,
+    );
   }
   return null;
 }

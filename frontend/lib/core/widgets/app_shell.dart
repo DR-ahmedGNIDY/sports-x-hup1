@@ -268,11 +268,21 @@ class _Sidebar extends ConsumerWidget {
                 ),
               Padding(
                 padding: const EdgeInsets.all(12),
-                child: _SidebarLogoutButton(
-                  label: l10n.logoutTooltip,
-                  onTap: () =>
-                      ref.read(sessionControllerProvider.notifier).logout(),
-                ),
+                // A guest reaches this shell through the storefront, which
+                // is open to everyone. Offering them "sign out" is nonsense
+                // and, worse, the one thing they cannot do — so the same
+                // slot offers the way in instead.
+                child: role == null
+                    ? _SidebarLogoutButton(
+                        label: l10n.authLogIn,
+                        icon: Icons.login_outlined,
+                        onTap: () => context.go('/login'),
+                      )
+                    : _SidebarLogoutButton(
+                        label: l10n.logoutTooltip,
+                        onTap: () =>
+                            ref.read(sessionControllerProvider.notifier).logout(),
+                      ),
               ),
             ],
           ),
@@ -448,10 +458,18 @@ class _SidebarPromoCard extends StatelessWidget {
 }
 
 class _SidebarLogoutButton extends StatelessWidget {
-  const _SidebarLogoutButton({required this.label, required this.onTap});
+  const _SidebarLogoutButton({
+    required this.label,
+    required this.onTap,
+    this.icon = Icons.logout_outlined,
+  });
 
   final String label;
   final VoidCallback onTap;
+
+  /// The slot is shared with a guest's "sign in", which points the other
+  /// way — so the icon travels with the label rather than being fixed here.
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -468,7 +486,7 @@ class _SidebarLogoutButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                const Icon(Icons.logout_outlined, color: AppColors.white),
+                Icon(icon, color: AppColors.white),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
@@ -695,24 +713,29 @@ class _MobileShellState extends ConsumerState<_MobileShell> {
           child: widget.navigationShell,
         ),
       ),
-      bottomNavigationBar: _MobileTabBar(
-        tabs: tabs,
-        l10n: l10n,
-        translucent: ownsChrome,
-        selectedTab: isOverflowActive ? null : selectedTab,
-        onSelect: (index) => _selectBranch(
-          widget.navigationShell,
-          tabs[index].index,
-          scrollController: _scrollControllers[tabs[index].index],
-        ),
-        accountSlot: overflow.isEmpty
-            ? null
-            : _AccountTabSlot(
-                selected: isOverflowActive,
-                label: l10n.moreNavLabel,
-                onTap: () => _openAccountSheet(overflow),
+      // The storefront brings its own bottom bar (see StoreScaffold), so the
+      // shell stands down there the way it already does for the app bar
+      // above — otherwise a phone shows two bottom bars stacked.
+      bottomNavigationBar: (meta?.ownsBottomBar ?? false)
+          ? null
+          : _MobileTabBar(
+              tabs: tabs,
+              l10n: l10n,
+              translucent: ownsChrome,
+              selectedTab: isOverflowActive ? null : selectedTab,
+              onSelect: (index) => _selectBranch(
+                widget.navigationShell,
+                tabs[index].index,
+                scrollController: _scrollControllers[tabs[index].index],
               ),
-      ),
+              accountSlot: overflow.isEmpty
+                  ? null
+                  : _AccountTabSlot(
+                      selected: isOverflowActive,
+                      label: l10n.moreNavLabel,
+                      onTap: () => _openAccountSheet(overflow),
+                    ),
+            ),
     );
   }
 }

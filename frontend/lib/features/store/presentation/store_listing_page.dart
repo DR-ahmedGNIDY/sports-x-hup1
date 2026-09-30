@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/utils/breakpoints.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../application/catalog_providers.dart';
+import '../domain/entities/store_category.dart';
 import 'widgets/product_card.dart';
 import 'widgets/store_scaffold.dart';
 import 'store_paths.dart';
@@ -75,6 +76,7 @@ class _StoreListingPageState extends ConsumerState<StoreListingPage> {
                 }),
               ),
             ),
+          _CategoryChips(currentSlug: widget.categorySlug),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -145,6 +147,90 @@ class _StoreListingPageState extends ConsumerState<StoreListingPage> {
             ),
             orElse: () => const SizedBox.shrink(),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The row of chips that walks the two-level catalogue: the departments
+/// (Men / Women / Kids) at the top, and inside one of them the shelves it
+/// holds (Clothing / Shoes / Equipment).
+///
+/// It navigates rather than filtering in place — each chip is a category URL
+/// the customer can bookmark or share, and the grid above already rebuilds
+/// from the route's slug. Which level it shows follows from where the
+/// customer is, so one widget serves `/store/shop`, a department and a shelf.
+class _CategoryChips extends ConsumerWidget {
+  const _CategoryChips({required this.currentSlug});
+
+  /// Null on `/store/shop`, where the whole catalogue is listed.
+  final String? currentSlug;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    // A failed or pending nav is not worth a spinner or an error above the
+    // grid: the products are the page, and the chips are a shortcut.
+    final categories = ref.watch(storeCategoriesProvider).valueOrNull;
+    if (categories == null) return const SizedBox.shrink();
+
+    StoreCategory? current;
+    for (final category in categories) {
+      if (category.slug == currentSlug) current = category;
+    }
+
+    // Standing on a shelf, the useful siblings are the other shelves of the
+    // same department — not the other departments.
+    final String? departmentId = current == null
+        ? null
+        : (current.parentId ?? current.id);
+    StoreCategory? department;
+    for (final category in categories) {
+      if (category.id == departmentId) department = category;
+    }
+
+    final siblings = categories
+        .where((item) => item.parentId == departmentId)
+        .toList();
+    if (siblings.isEmpty) return const SizedBox.shrink();
+
+    // "All" means the whole catalogue at the top level, and the whole
+    // department once inside one.
+    final allLabel = department == null
+        ? l10n.storeAllProducts
+        : l10n.storeAllInCategory(department.name.resolve(isArabic));
+    final allSelected = current == null || current.id == departmentId;
+
+    return SizedBox(
+      height: 56,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
+        children: [
+          ChoiceChip(
+            label: Text(allLabel),
+            selected: allSelected,
+            onSelected: (_) => context.go(
+              department == null
+                  ? StorePaths.shop
+                  : StorePaths.category(department.slug),
+            ),
+          ),
+          for (final sibling in siblings)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 8),
+              child: ChoiceChip(
+                label: Text(sibling.name.resolve(isArabic)),
+                selected: sibling.id == current?.id,
+                onSelected: (_) =>
+                    context.go(StorePaths.category(sibling.slug)),
+              ),
+            ),
         ],
       ),
     );

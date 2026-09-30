@@ -52,6 +52,7 @@ import '../../features/store/presentation/store_checkout_page.dart';
 import '../../features/store/presentation/store_home_page.dart';
 import '../../features/store/presentation/store_listing_page.dart';
 import '../../features/store/presentation/store_order_pages.dart';
+import '../../features/store/presentation/store_paths.dart';
 import '../../features/store/presentation/store_product_page.dart';
 import '../../features/store/presentation/store_section.dart';
 import '../navigation/app_branches.dart';
@@ -75,6 +76,20 @@ const _marketingRoutes = {'/home', '/about', '/pricing', '/contact', '/players',
 bool _isPublicPlayerProfile(String path) => path.startsWith('/players/');
 bool _isPublicClubProfile(String path) => path.startsWith('/clubs/');
 bool _isPublicCoachProfile(String path) => path.startsWith('/coaches/');
+
+/// The storefront is a shop, not a member area. Anyone can browse it, fill a
+/// bag and check out as a guest — the checkout asks for a name, a phone and
+/// an address, never a password, and `/store/track` exists precisely so a
+/// guest can follow the order afterwards with the number they were given.
+/// Requiring an account to see a price defeats all of that, so these paths
+/// pass the session gate the way the marketing site does.
+///
+/// `/store/orders` is the one exception: it lists the orders belonging to
+/// whoever is signed in, which is a member area, so it falls through to the
+/// gate below like any other private route.
+bool _isPublicStoreRoute(String path) =>
+    (path == StorePaths.home || path.startsWith('${StorePaths.home}/')) &&
+    path != StorePaths.orders;
 
 /// The in-shell path for a public profile URL, or `null` if [path] is not
 /// one. `/players/abc` becomes `/search/players/abc`.
@@ -156,6 +171,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // cold load renders the page directly instead of being forced through
       // '/' and losing the requested path once restore() resolves.
       if (_isMarketingRoute(path)) return null;
+
+      // Same pass-through, same reason — and placed here rather than in
+      // `_isMarketingRoute` because the store is not marketing: it is a
+      // separate surface with its own theme and chrome that simply shares
+      // this property. See [_isPublicStoreRoute].
+      if (_isPublicStoreRoute(path)) return null;
 
       // Session-independent for the same reason: it renders components, not
       // anyone's data.

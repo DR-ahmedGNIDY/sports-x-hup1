@@ -24,6 +24,9 @@ describe('StoreProductsService', () => {
     const categories = {
       existsById: jest.fn().mockResolvedValue(true),
       findBySlugOrThrow: jest.fn(),
+      selfAndDescendantIds: jest
+        .fn()
+        .mockImplementation((id: unknown) => Promise.resolve([id])),
     };
     const images = {
       upload: jest.fn().mockResolvedValue({
@@ -77,7 +80,26 @@ describe('StoreProductsService', () => {
       await service.list({ categorySlug: 'men-tops' });
 
       expect(categories.findBySlugOrThrow).toHaveBeenCalledWith('men-tops');
-      expect(filterFrom(model).categoryId).toBe('cat-1');
+      expect(filterFrom(model).categoryId).toEqual({ $in: ['cat-1'] });
+    });
+
+    it('lists a department by including the shelves beneath it', async () => {
+      const { service, model, categories } = buildService();
+      categories.findBySlugOrThrow.mockResolvedValue({ _id: 'men' });
+      // The products themselves are filed on the children, so filtering on
+      // the department alone would render an empty "Men" page.
+      categories.selfAndDescendantIds.mockResolvedValue([
+        'men',
+        'men-clothing',
+        'men-shoes',
+        'men-equipment',
+      ]);
+
+      await service.list({ categorySlug: 'men' });
+
+      expect(filterFrom(model).categoryId).toEqual({
+        $in: ['men', 'men-clothing', 'men-shoes', 'men-equipment'],
+      });
     });
 
     it('rejects an inverted price range instead of returning nothing', async () => {

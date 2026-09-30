@@ -36,6 +36,18 @@ export class StoreCategoriesService {
     return this.categoryModel.find().sort({ sortOrder: 1, _id: 1 }).exec();
   }
 
+  // Browsing a department ("Men") has to show what hangs under it, because
+  // the products themselves sit on the leaves ("Men > Shoes") — a filter on
+  // the parent alone matches nothing. One extra query rather than an ancestor
+  // path denormalised onto every product: the tree is two levels deep by
+  // design (see `parentId`), so the children are a single indexed lookup.
+  async selfAndDescendantIds(id: Types.ObjectId): Promise<Types.ObjectId[]> {
+    const children = await this.categoryModel
+      .find({ parentId: id }, { _id: 1 })
+      .exec();
+    return [id, ...children.map((child) => child._id)];
+  }
+
   // An indexed `_id` existence check rather than loading the document —
   // the product writes only need to know the category is real.
   async existsById(id: string): Promise<boolean> {
