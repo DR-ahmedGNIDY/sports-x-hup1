@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import { href, t, type Lang } from '../lib/i18n';
+import { loadSettings, webAppUrl } from '../lib/settings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t[lang];
+const s = await loadSettings();
+---
+<Base lang={lang} page="download" title={d.navDownload} description={d.dlLead}>
+  <main>
+    <section class="phero"><div class="wrap">
+      <span class="crumbs"><a href={href(lang, '')}>{d.crumbsHome}</a> / <b>{d.navDownload}</b></span>
+      <h1>{d.dlTitle}</h1>
+      <p>{d.dlLead}</p>
+    </div></section>
+
+    <section class="sec" style="padding-top:0"><div class="wrap">
+      <div class="dl">
+        <article class="dlcard android">
+          <span class="recommend">{d.dlAndroidTag}</span>
+          <div class="plat"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.5l1.7-3a.4.4 0 00-.7-.4l-1.8 3A10.4 10.4 0 0012 8a10.4 10.4 0 00-4.8 1.1l-1.8-3a.4.4 0 00-.7.4l1.7 3A9.6 9.6 0 002 17h20a9.6 9.6 0 00-4.4-7.5zM7 14.3a1 1 0 110-2 1 1 0 010 2zm10 0a1 1 0 110-2 1 1 0 010 2z"/></svg></span>Android</div>
+          <h2>{d.dlAndroidTitle}</h2>
+          <p>{d.dlAndroidLead}</p>
+          <a class="cta go" href={s.googlePlayUrl || '#'} data-setting="googlePlayUrl" hidden={!s.googlePlayUrl} target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3.6 2.3l10.5 10.3L3.6 22.8c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1z"/><path fill="#fff" opacity=".7" d="M17.6 9.2l-3.5 3.4 3.5 3.4 3.9-2.2c1.1-.6 1.1-1.8 0-2.4z"/></svg>
+            {d.dlAndroidCta}
+          </a>
+          <span class="cta go outline" data-setting-empty="googlePlayUrl" hidden={Boolean(s.googlePlayUrl)} aria-disabled="true">{d.dlAndroidSoon}</span>
+        </article>
+
+        <article class="dlcard ios">
+          <div class="plat"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.5 2-3.6-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.9-3-.8a4.5 4.5 0 00-3.8 2.3c-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3a10 10 0 001.3-2.6s-2.5-1-2.5-3.7zM14.2 5.6c.6-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.1 1.8-1 2.9 1.1.1 2.1-.6 2.8-1.4z"/></svg></span>{d.dlIosPlat}</div>
+          <h2>{d.dlIosTitle}</h2>
+          <p>{d.dlIosLead}</p>
+          <ul>
+            <li><span class="n">1</span>{d.dlIosStep1}</li>
+            <li><span class="n">2</span>{d.dlIosStep2}</li>
+            <li><span class="n">3</span>{d.dlIosStep3}</li>
+          </ul>
+          <a class="cta light go" href={webAppUrl(s)} data-setting="webAppUrl">{d.dlIosCta} ↗</a>
+        </article>
+      </div>
+    </div></section>
+
+    <section class="sec alt"><div class="wrap">
+      <div class="sec-head"><span class="eyebrow">{d.faqEyebrow}</span><h2>{d.faqTitle}</h2></div>
+      <div class="faq">
+        {d.faq.map(([q, a], i) => <details open={i === 0}><summary>{q}</summary><p>{a}</p></details>)}
+      </div>
+    </div></section>
+  </main>
+</Base>

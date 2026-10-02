@@ -1,0 +1,168 @@
+---
+import '../styles/site.css';
+import SocialIcon from '../components/SocialIcon.astro';
+import { href, t, type Lang } from '../lib/i18n';
+import { API_BASE_URL, loadSettings, webAppUrl } from '../lib/settings';
+
+type Page = '' | 'download' | 'contact' | 'store';
+interface Props {
+  lang: Lang;
+  page: Page;
+  title?: string;
+  description?: string;
+}
+
+const { lang, page, title, description } = Astro.props;
+const d = t[lang];
+const other: Lang = lang === 'ar' ? 'en' : 'ar';
+const settings = await loadSettings();
+const canonical = new URL(href(lang, page), Astro.site).href;
+const socials = [
+  ['facebook', settings.facebookUrl, 'Facebook'],
+  ['instagram', settings.instagramUrl, 'Instagram'],
+  ['x', settings.xUrl, 'X'],
+  ['tiktok', settings.tiktokUrl, 'TikTok'],
+  ['youtube', settings.youtubeUrl, 'YouTube'],
+] as const;
+const nav = [
+  ['', d.navHome],
+  ['download', d.navDownload],
+  ['store', d.navStore],
+  ['contact', d.navContact],
+] as const;
+---
+<!doctype html>
+<html lang={lang} dir={d.dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title ? `${title} | SportXHub` : d.metaTitle}</title>
+    <meta name="description" content={description ?? d.metaDescription} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="ar" href={new URL(href('ar', page), Astro.site).href} />
+    <link rel="alternate" hreflang="en" href={new URL(href('en', page), Astro.site).href} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="theme-color" content="#07090d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title ?? d.metaTitle} />
+    <meta property="og:description" content={description ?? d.metaDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/img/icon-192.png', Astro.site).href} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap"
+    />
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap">
+        <a class="brand" href={href(lang, '')} aria-label="SportXHub">
+          <img class="logo-img" src="/img/logo-white.png" alt="SportXHub" width="114" height="34" />
+        </a>
+        <nav class="menu">
+          {nav.map(([p, label]) => (
+            <a href={href(lang, p)} aria-current={p === page ? 'page' : undefined}>{label}</a>
+          ))}
+        </nav>
+        <a class="lang" href={href(other, page)} hreflang={other}>{d.otherLang}</a>
+        <a class="cta" href={href(lang, 'download')}>{d.cta}</a>
+        <button class="burger" id="burger" aria-label={d.menu} aria-expanded="false" aria-controls="drawer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+        </button>
+      </div>
+      <div class="drawer" id="drawer">
+        {nav.map(([p, label]) => <a href={href(lang, p)}>{label}</a>)}
+        <a href={href(other, page)} hreflang={other}>{d.otherLang}</a>
+        <a class="cta" href={href(lang, 'download')}>{d.cta}</a>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer>
+      <div class="wrap">
+        <div class="cols">
+          <div>
+            <a class="brand" href={href(lang, '')}>
+              <img class="logo-img" src="/img/logo-white.png" alt="SportXHub" width="134" height="40" />
+            </a>
+            <p style="margin-top:14px;max-width:34ch">{d.footAbout}</p>
+            <div class="socials">
+              {socials.map(([name, url, label]) => (
+                <a href={url || '#'} data-setting={`${name}Url`} target="_blank" rel="noopener" aria-label={label} hidden={!url}>
+                  <SocialIcon name={name} />
+                </a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4>{d.footSite}</h4>
+            <ul>{nav.map(([p, label]) => <li><a href={href(lang, p)}>{label}</a></li>)}</ul>
+          </div>
+          <div>
+            <h4>{d.footApp}</h4>
+            <ul>
+              <li>
+                <a href={settings.googlePlayUrl || href(lang, 'download')} data-setting="googlePlayUrl" data-fallback={href(lang, 'download')}>Google Play</a>
+              </li>
+              <li><a href={webAppUrl(settings)} data-setting="webAppUrl">{d.webVersion}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>{d.footLegal}</h4>
+            <ul>
+              <li><a href="/privacy.html">{d.footPrivacy}</a></li>
+              <li><a href={lang === 'ar' ? '/privacy.html#delete-account-ar' : '/privacy.html#delete-account'}>{d.footDelete}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="bottom">
+          <span>© {new Date().getFullYear()} SportXHub. {d.footRights}</span>
+          <span dir="ltr">sportxhup.com</span>
+        </div>
+      </div>
+    </footer>
+
+    <script is:inline define:vars={{ api: API_BASE_URL }}>
+      // Mobile menu.
+      const burger = document.getElementById('burger');
+      const drawer = document.getElementById('drawer');
+      burger?.addEventListener('click', () => {
+        const open = drawer.classList.toggle('on');
+        burger.setAttribute('aria-expanded', String(open));
+      });
+
+      // The page is built with the settings as they were at build time. This
+      // refresh applies whatever the admin has saved since, so a new link
+      // shows up without rebuilding the site. Elements opt in with
+      // data-setting="<field>"; an empty value hides them.
+      fetch(api + '/site-settings')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((s) => {
+          if (!s) return;
+          document.querySelectorAll('[data-setting]').forEach((el) => {
+            const key = el.getAttribute('data-setting');
+            const value = s[key] || '';
+            const fallback = el.getAttribute('data-fallback');
+            if (key === 'webAppUrl' && !value) return;
+            if (value) {
+              el.setAttribute('href', value);
+              el.hidden = false;
+            } else if (fallback) {
+              el.setAttribute('href', fallback);
+            } else {
+              el.hidden = true;
+            }
+          });
+          // The opposite: placeholders ("coming soon") shown only while a
+          // setting is still empty.
+          document.querySelectorAll('[data-setting-empty]').forEach((el) => {
+            el.hidden = Boolean(s[el.getAttribute('data-setting-empty')]);
+          });
+        })
+        .catch(() => {});
+    </script>
+  </body>
+</html>

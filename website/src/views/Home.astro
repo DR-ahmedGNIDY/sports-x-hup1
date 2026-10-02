@@ -1,0 +1,203 @@
+---
+import Base from '../layouts/Base.astro';
+import { href, t, type Lang } from '../lib/i18n';
+import { loadSettings, webAppUrl } from '../lib/settings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t[lang];
+const ar = lang === 'ar';
+const s = await loadSettings();
+
+const roles = ar
+  ? [
+      { cls: 'p', tag: 'لاعب', title: 'اعرض موهبتك', lead: 'ملف رياضي كامل بإحصائياتك وفيديوهاتك ومركزك في الملعب.', items: ['ملف احترافي قابل للمشاركة', 'رفع فيديوهات المهارات', 'استقبال دعوات الاختبارات'] },
+      { cls: 'c', tag: 'نادي', title: 'لاقي اللاعب الصح', lead: 'بحث بالمركز والسن والمدينة، وقائمة محفوظين، ودعوات مباشرة.', items: ['بحث متقدم بالفلاتر', 'حفظ اللاعبين ومقارنتهم', 'شارة نادي موثق'] },
+      { cls: 'k', tag: 'مدرب', title: 'تابع لاعبينك', lead: 'نظّم فريقك، وتابع تطورهم، وخلي مواعيد التمارين في تقويم واحد.', items: ['إدارة لاعبي الفريق', 'تقويم الفعاليات', 'تواصل مع الأندية'] },
+    ]
+  : [
+      { cls: 'p', tag: 'Player', title: 'Show your talent', lead: 'A full sports profile with your stats, clips and position on the pitch.', items: ['A shareable pro profile', 'Upload skill videos', 'Receive trial invitations'] },
+      { cls: 'c', tag: 'Club', title: 'Find the right player', lead: 'Search by position, age and city, keep a shortlist, invite directly.', items: ['Advanced filtered search', 'Save and compare players', 'Verified club badge'] },
+      { cls: 'k', tag: 'Coach', title: 'Follow your squad', lead: 'Organise your team, track their progress, keep training in one calendar.', items: ['Manage your players', 'Events calendar', 'Talk to clubs'] },
+    ];
+
+const steps = ar
+  ? [
+      ['حمّل التطبيق', 'من Google Play لأندرويد، أو افتح نسخة الويب من أي iPhone.'],
+      ['اعمل ملفك', 'اختار دورك، وكمّل بياناتك ومركزك، وارفع أول فيديو.'],
+      ['استقبل الفرص', 'الأندية بتلاقيك في البحث وتبعتلك دعوات على طول.'],
+    ]
+  : [
+      ['Get the app', 'From Google Play on Android, or open the web version on any iPhone.'],
+      ['Build your profile', 'Pick your role, fill in your details and position, upload your first clip.'],
+      ['Receive offers', 'Clubs find you in search and send you invitations directly.'],
+    ];
+
+const f = ar
+  ? {
+      forClubs: 'للأندية', searchTitle: 'بحث ذكي عن المواهب', searchLead: 'فلتر بالمركز والسن والمدينة والقدم المفضلة، وتلاقي اللاعب المناسب في ثواني.',
+      searchQ: 'جناح أيسر، أقل من 21 سنة', chips: ['جناح أيسر', 'U21', 'القاهرة', 'القدم اليسرى', 'متاح'],
+      res: [['يوسف أحمد', '19 سنة · القاهرة · 24 مباراة', '8.4'], ['عمر خالد', '20 سنة · الجيزة · 18 مباراة', '7.9'], ['مازن سعيد', '18 سنة · الإسكندرية · 15 مباراة', '7.6']],
+      forPlayers: 'للاعبين', vidTitle: 'فيديوهات المهارات', vidLead: 'ارفع لقطاتك من الملعب، وتظهر في ملفك قدام كل نادي بيدور.',
+      invTitle: 'دعوات مباشرة', invLead: 'النادي بيبعتلك دعوة، وإنت بتقبلها من التطبيق.', invCard: 'دعوة لاختبار', invWhen: 'نادي الشروق · الخميس 5م', accept: 'قبول', later: 'لاحقًا',
+      comTitle: 'المجتمع', comLead: 'أخبار ومنشورات الأندية واللاعبين في مكان واحد.', comWho: 'أكاديمية النجوم', comments: 'تعليقات',
+      calTitle: 'تقويم الفعاليات', calLead: 'تمارين ومباريات واختبارات في جدول واحد.', days: ['س', 'ح', 'ن', 'ث', 'ر', 'خ', 'ج'],
+      shopTitle: 'متجر رياضي', shopLead: 'ملابس وأحذية وأدوات رياضية.', shopTag: 'رجالي · حريمي · أطفالي',
+      safety: 'أمان', verTitle: 'أندية موثقة', verLead: 'الأندية بتتراجع قبل ما تاخد شارة التوثيق، علشان تبقى متأكد إن الدعوة جاية من جهة حقيقية.',
+      clubs: [['نادي الشروق', 'نادي موثق'], ['أكاديمية النجوم', 'أكاديمية موثقة']],
+      phName: 'يوسف أحمد', phMeta: 'جناح أيسر · 19 سنة · القاهرة', phChips: ['القدم اليسرى', '178 سم', 'متاح'], phStats: ['مباراة', 'هدف', 'صناعة'],
+      fc1: ['دعوة لاختبار', 'نادي الشروق · الخميس'], fc2: ['+38 مشاهدة', 'لملفك الأسبوع ده'], initial: 'ي',
+    }
+  : {
+      forClubs: 'For clubs', searchTitle: 'Smart talent search', searchLead: 'Filter by position, age, city and preferred foot, and find the right player in seconds.',
+      searchQ: 'Left winger, under 21', chips: ['Left winger', 'U21', 'Cairo', 'Left foot', 'Available'],
+      res: [['Youssef Ahmed', '19 · Cairo · 24 matches', '8.4'], ['Omar Khaled', '20 · Giza · 18 matches', '7.9'], ['Mazen Saeed', '18 · Alexandria · 15 matches', '7.6']],
+      forPlayers: 'For players', vidTitle: 'Skill videos', vidLead: 'Upload your clips from the pitch and they appear on your profile for every club searching.',
+      invTitle: 'Direct invitations', invLead: 'A club sends you an invitation, you accept it in the app.', invCard: 'Trial invitation', invWhen: 'El Shorouk Club · Thu 5pm', accept: 'Accept', later: 'Later',
+      comTitle: 'Community', comLead: 'News and posts from clubs and players in one place.', comWho: 'Stars Academy', comments: 'comments',
+      calTitle: 'Events calendar', calLead: 'Training, matches and trials in one schedule.', days: ['S', 'S', 'M', 'T', 'W', 'T', 'F'],
+      shopTitle: 'Sports store', shopLead: 'Clothing, shoes and sports equipment.', shopTag: 'Men · Women · Kids',
+      safety: 'Safety', verTitle: 'Verified clubs', verLead: 'Clubs are reviewed before they get the verified badge, so you know an invitation comes from a real club.',
+      clubs: [['El Shorouk Club', 'Verified club'], ['Stars Academy', 'Verified academy']],
+      phName: 'Youssef Ahmed', phMeta: 'Left winger · 19 · Cairo', phChips: ['Left foot', '178 cm', 'Available'], phStats: ['matches', 'goals', 'assists'],
+      fc1: ['Trial invitation', 'El Shorouk Club · Thu'], fc2: ['+38 views', 'on your profile this week'], initial: 'Y',
+    };
+const badge = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 2.1 3.2-.3.9 3.1 2.8 1.6-1 3 1 3-2.8 1.6-.9 3.1-3.2-.3L12 22l-2.4-2.1-3.2.3-.9-3.1-2.8-1.6 1-3-1-3 2.8-1.6.9-3.1 3.2.3z"/><path d="M8.5 12l2.3 2.3 4.7-4.7" stroke="#0c1019" stroke-width="2" fill="none"/></svg>';
+---
+<Base lang={lang} page="">
+  <main>
+    <section class="hero">
+      <svg class="pitch" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="2" aria-hidden="true">
+        <rect x="40" y="40" width="1120" height="620" rx="4"/><line x1="600" y1="40" x2="600" y2="660"/><circle cx="600" cy="350" r="95"/><circle cx="600" cy="350" r="4" fill="rgba(255,255,255,.12)"/>
+        <rect x="40" y="200" width="170" height="300"/><rect x="40" y="275" width="60" height="150"/><path d="M210 290 a70 70 0 0 1 0 120"/>
+        <rect x="990" y="200" width="170" height="300"/><rect x="1100" y="275" width="60" height="150"/><path d="M990 290 a70 70 0 0 0 0 120"/>
+      </svg>
+      <div class="wrap">
+        <div>
+          <span class="kicker"><b></b>{d.kicker}</span>
+          <h1>{d.heroA}<br /><em>{d.heroB}</em></h1>
+          <p class="lead">{d.heroLead}</p>
+          <div class="actions">
+            <a class="cta" href={href(lang, 'download')}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14"/></svg>
+              {d.heroCta}
+            </a>
+            <a class="cta outline" href={href(lang, 'store')}>{d.heroStore}</a>
+          </div>
+          <div class="trust">
+            <div><span class="num">3</span><span>{d.trustRoles}</span></div>
+            <div><span class="num">AR · EN</span><span>{d.trustLangs}</span></div>
+            <div><span class="num">24/7</span><span>{d.trustAlways}</span></div>
+          </div>
+        </div>
+        <div class="device" aria-hidden="true">
+          <div class="ph">
+            <div class="cover"></div>
+            <div class="avatar">{f.initial}</div>
+            <div class="who"><b>{f.phName}</b><span>{f.phMeta}</span></div>
+            <div class="chips">{f.phChips.map((c) => <i>{c}</i>)}</div>
+            <div class="stats">
+              <div><span class="num">24</span><span>{f.phStats[0]}</span></div>
+              <div><span class="num">11</span><span>{f.phStats[1]}</span></div>
+              <div><span class="num">7</span><span>{f.phStats[2]}</span></div>
+            </div>
+            <div class="clip"></div>
+          </div>
+          <div class="float-card fc1"><span class="ic" style="background:var(--blue)">✓</span><div><b>{f.fc1[0]}</b>{f.fc1[1]}</div></div>
+          <div class="float-card fc2"><span class="ic" style="background:var(--gold);color:#0a0c10">★</span><div><b>{f.fc2[0]}</b>{f.fc2[1]}</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">{d.rolesEyebrow}</span>
+          <h2>{d.rolesTitle}</h2>
+          <p>{d.rolesLead}</p>
+        </div>
+        <div class="roles">
+          {roles.map((r, i) => (
+            <article class={`role ${r.cls}`}>
+              <span class="big">0{i + 1}</span><span class="tag">{r.tag}</span><h3>{r.title}</h3><p>{r.lead}</p>
+              <ul>{r.items.map((it) => <li>{it}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="sec feats">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">{d.featsEyebrow}</span>
+          <h2>{d.featsTitle}</h2>
+          <p>{d.featsLead}</p>
+        </div>
+        <div class="bento">
+          <article class="feat w2 h2">
+            <div class="vis" style="flex:1" aria-hidden="true">
+              <div class="searchmock">
+                <div class="bar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>{f.searchQ}</div>
+                <div class="filters">{f.chips.map((c, i) => <span class={i < 2 ? 'on' : undefined}>{c}</span>)}</div>
+                {f.res.map(([n, m, r]) => <div class="res"><i></i><div><b>{n}</b>{m}</div><span class="num">{r}</span></div>)}
+              </div>
+            </div>
+            <div class="txt"><span class="lbl">{f.forClubs}</span><h3>{f.searchTitle}</h3><p>{f.searchLead}</p></div>
+          </article>
+          <article class="feat w2">
+            <div class="vis" aria-hidden="true"><div class="clips"><div><span>0:42</span></div><div><span>1:15</span></div><div><span>0:28</span></div></div></div>
+            <div class="txt"><span class="lbl">{f.forPlayers}</span><h3>{f.vidTitle}</h3><p>{f.vidLead}</p></div>
+          </article>
+          <article class="feat">
+            <div class="vis" aria-hidden="true"><div class="invite"><div class="h"><i>ESC</i><div><b>{f.invCard}</b><small>{f.invWhen}</small></div></div><div class="ac"><span>{f.accept}</span><span>{f.later}</span></div></div></div>
+            <div class="txt"><h3>{f.invTitle}</h3><p>{f.invLead}</p></div>
+          </article>
+          <article class="feat">
+            <div class="vis" aria-hidden="true"><div class="post"><div class="h"><i></i><b>{f.comWho}</b></div><div class="img"></div><div class="r"><span>♥ 128</span><span>14 {f.comments}</span></div></div></div>
+            <div class="txt"><h3>{f.comTitle}</h3><p>{f.comLead}</p></div>
+          </article>
+          <article class="feat">
+            <div class="vis" aria-hidden="true"><div class="cal">{f.days.map((x) => <span class="d">{x}</span>)}<span>3</span><span class="ev">4</span><span>5</span><span class="ev2">6</span><span>7</span><span class="ev">8</span><span>9</span></div></div>
+            <div class="txt"><h3>{f.calTitle}</h3><p>{f.calLead}</p></div>
+          </article>
+          <a class="feat" href={href(lang, 'store')}>
+            <div class="vis shopvis" style="background-image:url('/img/store-men.jpg')"><em>{f.shopTag}</em></div>
+            <div class="txt"><h3>{f.shopTitle}</h3><p>{f.shopLead}</p></div>
+          </a>
+          <article class="feat w2">
+            <div class="vis verified" aria-hidden="true">
+              {f.clubs.map(([n, k]) => <div class="club"><i>{n.slice(0, 3).toUpperCase()}</i><div><b>{n} <Fragment set:html={badge} /></b><small>{k}</small></div></div>)}
+            </div>
+            <div class="txt"><span class="lbl">{f.safety}</span><h3>{f.verTitle}</h3><p>{f.verLead}</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="wrap">
+        <div class="sec-head"><span class="eyebrow">{d.stepsEyebrow}</span><h2>{d.stepsTitle}</h2></div>
+        <div class="steps">{steps.map(([h, p]) => <div class="step"><h3>{h}</h3><p>{p}</p></div>)}</div>
+      </div>
+    </section>
+
+    <section class="sec" style="padding-top:0">
+      <div class="wrap">
+        <div class="band">
+          <div><h2>{d.bandTitle}</h2><p>{d.bandLead}</p></div>
+          <div class="stores">
+            <a class="storebtn" href={s.googlePlayUrl || href(lang, 'download')} data-setting="googlePlayUrl" data-fallback={href(lang, 'download')}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#34A853" d="M3.6 2.3l10.5 10.3L3.6 22.8c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1z"/><path fill="#FBBC04" d="M17.6 9.2l-3.5 3.4 3.5 3.4 3.9-2.2c1.1-.6 1.1-1.8 0-2.4z"/><path fill="#4285F4" d="M3.6 2.3c.3-.2.8-.2 1.2 0l12.8 6.9-3.5 3.4z"/><path fill="#EA4335" d="M14.1 12.6l3.5 3.4-12.8 6.9c-.4.2-.9.2-1.2 0z"/></svg>
+              <span><small>{d.getItOn}</small><b>Google Play</b></span><span class="arr">{ar ? '←' : '→'}</span>
+            </a>
+            <a class="storebtn web" href={webAppUrl(s)} data-setting="webAppUrl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></svg>
+              <span><small>{d.forIphone}</small><b>{d.webVersion}</b></span><span class="arr">{ar ? '←' : '→'}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

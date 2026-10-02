@@ -1,0 +1,147 @@
+---
+import Base from '../layouts/Base.astro';
+import SocialIcon from '../components/SocialIcon.astro';
+import { href, t, type Lang } from '../lib/i18n';
+import { API_BASE_URL, loadSettings, telLink, whatsappLink } from '../lib/settings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t[lang];
+const s = await loadSettings();
+
+const socials = [
+  ['facebook', s.facebookUrl, 'Facebook', '#1877F2'],
+  ['instagram', s.instagramUrl, 'Instagram', 'linear-gradient(45deg,#F58529,#DD2A7B,#8134AF)'],
+  ['x', s.xUrl, 'X', '#000'],
+  ['tiktok', s.tiktokUrl, 'TikTok', '#111'],
+  ['youtube', s.youtubeUrl, 'YouTube', '#FF0000'],
+] as const;
+const hasChannels = Boolean(s.whatsappNumber || s.email || s.phones.length);
+---
+<Base lang={lang} page="contact" title={d.navContact} description={d.ctLead}>
+  <main>
+    <section class="phero"><div class="wrap">
+      <span class="crumbs"><a href={href(lang, '')}>{d.crumbsHome}</a> / <b>{d.navContact}</b></span>
+      <h1>{d.ctTitle}</h1>
+      <p>{d.ctLead}</p>
+    </div></section>
+
+    <section class="sec" style="padding-top:0"><div class="wrap">
+      <div class="cgrid">
+        <div class="channels">
+          <template id="ch-icons">
+            <span class="i" data-kind="whatsapp" style="background:#25D366"><SocialIcon name="whatsapp" /></span>
+            <span class="i" data-kind="phone" style="background:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"/></svg></span>
+            <span class="i" data-kind="email" style="background:#0a0c10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+          </template>
+          <div class="channels" id="channels">
+            {s.whatsappNumber && (
+              <a class="ch" href={whatsappLink(s.whatsappNumber)} target="_blank" rel="noopener">
+                <span class="i" style="background:#25D366"><SocialIcon name="whatsapp" /></span>
+                <div><small>{d.ctWhatsapp}</small><b>{s.whatsappNumber}</b></div>
+              </a>
+            )}
+            {s.phones.map((p) => (
+              <a class="ch" href={telLink(p.number)}>
+                <span class="i" style="background:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"/></svg></span>
+                <div><small>{p.label || d.ctPhone}</small><b>{p.number}</b></div>
+              </a>
+            ))}
+            {s.email && (
+              <a class="ch" href={`mailto:${s.email}`}>
+                <span class="i" style="background:#0a0c10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+                <div><small>{d.ctEmail}</small><b>{s.email}</b></div>
+              </a>
+            )}
+            {!hasChannels && <p class="ch-none">{d.ctNone}</p>}
+          </div>
+          <div class="follow" style="margin-top:10px;font-weight:800" hidden={!socials.some(([, u]) => u)} id="follow">{d.ctFollow}</div>
+          <div class="social-grid">
+            {socials.map(([name, url, label, bg]) => (
+              <a href={url || '#'} data-setting={`${name}Url`} hidden={!url} style={`background:${bg}`} target="_blank" rel="noopener" aria-label={label}>
+                <SocialIcon name={name} />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <form class="formcard" id="cform" novalidate>
+          <h2>{d.ctFormTitle}</h2>
+          <div class="fr">
+            <div class="field"><label for="f-name">{d.ctName}</label><input id="f-name" name="name" required maxlength="200" placeholder={d.ctNamePh} autocomplete="name" /></div>
+            <div class="field"><label for="f-phone">{d.ctMobile}</label><input id="f-phone" name="phone" dir="ltr" inputmode="tel" placeholder="+20" autocomplete="tel" /></div>
+          </div>
+          <div class="field"><label for="f-mail">{d.ctMail}</label><input id="f-mail" name="email" type="email" dir="ltr" required placeholder="name@example.com" autocomplete="email" /></div>
+          <div class="field"><label for="f-type">{d.ctType}</label><select id="f-type" name="type">{d.ctTypes.map((x) => <option>{x}</option>)}</select></div>
+          <div class="field"><label for="f-msg">{d.ctMsg}</label><textarea id="f-msg" name="message" required maxlength="4500" placeholder={d.ctMsgPh}></textarea></div>
+          <button class="cta" type="submit" style="justify-content:center;padding-block:15px">{d.ctSend}</button>
+          <div class="sent" id="sent" role="status"></div>
+        </form>
+      </div>
+    </div></section>
+  </main>
+
+  <script is:inline define:vars={{ api: API_BASE_URL, d: { send: d.ctSend, sending: d.ctSending, sent: d.ctSent, failed: d.ctFailed, whatsapp: d.ctWhatsapp, phone: d.ctPhone, email: d.ctEmail, none: d.ctNone } }}>
+    // Rebuild the channel cards from the live settings, so a number the admin
+    // changed after the last deploy shows here at once.
+    const list = document.getElementById('channels');
+    const icons = {};
+    document.getElementById('ch-icons').content.querySelectorAll('.i').forEach((i) => {
+      icons[i.dataset.kind] = i.outerHTML;
+    });
+    const esc = (v) => String(v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const card = (href, icon, small, big, external) =>
+      '<a class="ch" href="' + esc(href) + '"' + (external ? ' target="_blank" rel="noopener"' : '') + '>' + icon +
+      '<div><small>' + esc(small) + '</small><b>' + esc(big) + '</b></div></a>';
+    fetch(api + '/site-settings')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => {
+        if (!s) return;
+        let html = '';
+        if (s.whatsappNumber) html += card('https://wa.me/' + s.whatsappNumber.replace(/[^0-9]/g, ''), icons.whatsapp, d.whatsapp, s.whatsappNumber, true);
+        (s.phones || []).forEach((p) => { html += card('tel:' + p.number.replace(/[^0-9+]/g, ''), icons.phone, p.label || d.phone, p.number, false); });
+        if (s.email) html += card('mailto:' + s.email, icons.email, d.email, s.email, false);
+        list.innerHTML = html || '<p class="ch-none">' + esc(d.none) + '</p>';
+        const any = ['facebookUrl', 'instagramUrl', 'xUrl', 'tiktokUrl', 'youtubeUrl'].some((k) => s[k]);
+        document.getElementById('follow').hidden = !any;
+      })
+      .catch(() => {});
+
+    const form = document.getElementById('cform');
+    const status = document.getElementById('sent');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      const data = new FormData(form);
+      const btn = form.querySelector('button');
+      // The API stores name, email and message; the topic and phone ride
+      // along at the top of the message so support sees them.
+      const phone = String(data.get('phone') || '').trim();
+      const header = '[' + data.get('type') + ']' + (phone ? ' ' + phone : '');
+      btn.disabled = true;
+      btn.textContent = d.sending;
+      status.className = 'sent';
+      try {
+        const res = await fetch(api + '/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: String(data.get('name')).trim(),
+            email: String(data.get('email')).trim(),
+            message: header + '\n\n' + String(data.get('message')).trim(),
+          }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        status.textContent = d.sent;
+        status.className = 'sent on';
+        form.reset();
+      } catch {
+        status.textContent = d.failed;
+        status.className = 'sent on err';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = d.send;
+      }
+    });
+  </script>
+</Base>
