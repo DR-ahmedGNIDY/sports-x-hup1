@@ -3065,4 +3065,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminSiteSettingsSaved => 'Website settings saved';
+
+  @override
+  String get storeOpenOnWebsite => 'Open the store';
 }

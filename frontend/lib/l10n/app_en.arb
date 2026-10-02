@@ -1135,5 +1135,6 @@
   "adminSiteSettingsUrlError": "Enter a full link starting with https://",
   "adminSiteSettingsPhoneError": "Digits only, optionally starting with +",
   "adminSiteSettingsEmailError": "Enter a valid email address",
-  "adminSiteSettingsSaved": "Website settings saved"
+  "adminSiteSettingsSaved": "Website settings saved",
+  "storeOpenOnWebsite": "Open the store"
 }

@@ -16,7 +16,6 @@ import 'core/utils/app_scroll_behavior.dart';
 import 'core/utils/breakpoints.dart';
 import 'core/utils/safe_area_insets.dart';
 import 'features/auth/application/session_controller.dart';
-import 'features/store/application/cart_controller.dart';
 import 'l10n/generated/app_localizations.dart';
 
 Future<void> main() async {
@@ -35,7 +34,6 @@ Future<void> main() async {
       overrides: [
         sessionStorageProvider.overrideWithValue(sessionStorage),
         localeStorageProvider.overrideWithValue(LocaleStorage(prefs)),
-        cartPreferencesProvider.overrideWithValue(prefs),
       ],
       child: const SportXHubApp(),
     ),

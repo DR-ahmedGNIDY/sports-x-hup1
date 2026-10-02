@@ -346,17 +346,10 @@ AppRouteMeta? routeMetaFor(String path) {
     );
   }
 
-  // Every storefront screen, not just its root. StoreScaffold (see
-  // store_scaffold.dart) already gives each one its own header — and, on
-  // mobile, sometimes its own bottom bar — so without this the shell drew
-  // its generic bar on every route below '/store' too, stacking a second,
-  // untitled, back-button-less bar above the store's own.
-  if (path == '/store' || path.startsWith('/store/')) {
-    return AppRouteMeta(
-      title: (l10n) => l10n.storeNavLabel,
-      ownsChrome: true,
-      ownsBottomBar: true,
-    );
+  // The store moved to the website; '/store' is only the page that links
+  // out to it (see ExternalStorePage).
+  if (path == '/store') {
+    return AppRouteMeta(title: (l10n) => l10n.storeNavLabel);
   }
   return null;
 }

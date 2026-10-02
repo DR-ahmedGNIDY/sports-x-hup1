@@ -33,4 +33,9 @@ abstract final class Env {
       dotenv.get('API_BASE_URL', fallback: 'http://localhost:3000');
 
   static String get appEnv => dotenv.get('APP_ENV', fallback: 'development');
+
+  /// The storefront on the website. The app has no store of its own any
+  /// more; its Store tab opens this in the browser.
+  static String get storeUrl =>
+      dotenv.get('STORE_URL', fallback: 'https://sportxhup.com/store');
 }

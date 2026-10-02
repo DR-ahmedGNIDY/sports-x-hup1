@@ -5675,6 +5675,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اتحفظت إعدادات الموقع'**
   String get adminSiteSettingsSaved;
+
+  /// No description provided for @storeOpenOnWebsite.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح المتجر'**
+  String get storeOpenOnWebsite;
 }
 
 class _AppLocalizationsDelegate

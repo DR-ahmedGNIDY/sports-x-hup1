@@ -3031,4 +3031,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminSiteSettingsSaved => 'اتحفظت إعدادات الموقع';
+
+  @override
+  String get storeOpenOnWebsite => 'افتح المتجر';
 }

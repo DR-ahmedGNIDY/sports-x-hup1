@@ -33,10 +33,6 @@ import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/invitations/presentation/club_invitations_page.dart';
 import '../../features/invitations/presentation/player_invitations_page.dart';
 import '../../features/notifications/presentation/notifications_page.dart';
-import '../../features/marketing/presentation/about_page.dart';
-import '../../features/marketing/presentation/contact_page.dart';
-import '../../features/marketing/presentation/home_page.dart';
-import '../../features/marketing/presentation/pricing_page.dart';
 import '../../features/player/presentation/edit_profile_page.dart';
 import '../../features/player/presentation/my_profile_preview_page.dart';
 import '../../features/player/presentation/my_skills_page.dart';
@@ -48,27 +44,26 @@ import '../../features/search/presentation/search_players_page.dart';
 import '../../features/settings/presentation/mobile/settings_page_mobile.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/splash/presentation/splash_page.dart';
-import '../../features/store/presentation/store_cart_page.dart';
-import '../../features/store/presentation/store_checkout_page.dart';
-import '../../features/store/presentation/store_home_page.dart';
-import '../../features/store/presentation/store_listing_page.dart';
-import '../../features/store/presentation/store_order_pages.dart';
-import '../../features/store/presentation/store_paths.dart';
-import '../../features/store/presentation/store_product_page.dart';
-import '../../features/store/presentation/store_section.dart';
 import '../navigation/app_branches.dart';
+import '../navigation/external_store.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/mobile/component_gallery_page.dart';
 import 'app_page_transitions.dart';
 import 'go_router_refresh_notifier.dart';
 
 // Guest-only auth pages — an authenticated user is bounced away from these.
-const _publicRoutes = {'/login', '/register', '/forgot-password', '/reset-password'};
+const _publicRoutes = {
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+};
 
-// The public marketing site (Phase 5) — reachable with or without a
-// session, and never bounces an authenticated user away either: a logged-in
-// Club can still browse About/Pricing, same as anyone else.
-const _marketingRoutes = {'/home', '/about', '/pricing', '/contact', '/players', '/clubs'};
+// Public listings — reachable with or without a session, and never bounce
+// an authenticated user away either. The marketing pages that used to sit
+// here (/home, /about, /pricing, /contact) moved to the website on
+// sportxhup.com; the app opens on sign-in instead.
+const _marketingRoutes = {'/players', '/clubs'};
 
 /// Public player profiles and public club profiles are shareable URLs:
 /// reachable with or without a session, so unlike [_publicRoutes] they
@@ -78,19 +73,11 @@ bool _isPublicPlayerProfile(String path) => path.startsWith('/players/');
 bool _isPublicClubProfile(String path) => path.startsWith('/clubs/');
 bool _isPublicCoachProfile(String path) => path.startsWith('/coaches/');
 
-/// The storefront is a shop, not a member area. Anyone can browse it, fill a
-/// bag and check out as a guest — the checkout asks for a name, a phone and
-/// an address, never a password, and `/store/track` exists precisely so a
-/// guest can follow the order afterwards with the number they were given.
-/// Requiring an account to see a price defeats all of that, so these paths
-/// pass the session gate the way the marketing site does.
-///
-/// `/store/orders` is the one exception: it lists the orders belonging to
-/// whoever is signed in, which is a member area, so it falls through to the
-/// gate below like any other private route.
-bool _isPublicStoreRoute(String path) =>
-    (path == StorePaths.home || path.startsWith('${StorePaths.home}/')) &&
-    path != StorePaths.orders;
+/// The storefront moved to the website. `/store` and anything below it (an
+/// old shared product link on the web build) is public and lands on the one
+/// page that links out to sportxhup.com/store.
+bool _isStoreRoute(String path) =>
+    path == '/store' || path.startsWith('/store/');
 
 /// The in-shell path for a public profile URL, or `null` if [path] is not
 /// one. `/players/abc` becomes `/search/players/abc`.
@@ -173,11 +160,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // '/' and losing the requested path once restore() resolves.
       if (_isMarketingRoute(path)) return null;
 
-      // Same pass-through, same reason — and placed here rather than in
-      // `_isMarketingRoute` because the store is not marketing: it is a
-      // separate surface with its own theme and chrome that simply shares
-      // this property. See [_isPublicStoreRoute].
-      if (_isPublicStoreRoute(path)) return null;
+      // Session-independent too: it only links out to the website's store.
+      if (_isStoreRoute(path)) return path == '/store' ? null : '/store';
 
       // Session-independent for the same reason: it renders components, not
       // anyone's data.
@@ -195,9 +179,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       // Root '/' is the technical splash/session-restore route, not a page
       // in its own right — once restore() resolves, send the visitor
-      // straight to their dashboard or to the marketing home page.
+      // straight to their dashboard or to sign-in. The marketing home page
+      // lives on the website now, so the app opens on the login screen.
       if (path == '/') {
-        return isAuthenticated ? _landingRoute(session) : '/home';
+        return isAuthenticated ? _landingRoute(session) : '/login';
       }
 
       final isPublicRoute = _publicRoutes.contains(path);
@@ -246,10 +231,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           builder: (context, state) => const SettingsPageMobile(),
         ),
       ],
-      GoRoute(path: '/home', builder: (context, state) => const HomePage()),
-      GoRoute(path: '/about', builder: (context, state) => const AboutPage()),
-      GoRoute(path: '/pricing', builder: (context, state) => const PricingPage()),
-      GoRoute(path: '/contact', builder: (context, state) => const ContactPage()),
       GoRoute(
         path: '/players',
         builder: (context, state) => const PublicPlayersListingPage(),
@@ -259,7 +240,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const PublicClubsListingPage(),
       ),
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
-      GoRoute(path: '/register', builder: (context, state) => const RegisterPage()),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterPage(),
+      ),
       GoRoute(
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordPage(),
@@ -357,39 +341,53 @@ StatefulShellBranch _branchFor(AppBranch branch) {
       AppBranch.clubProfile => [
         GoRoute(
           path: '/club/preview',
-          pageBuilder: (context, state) =>
-              fadePage(state: state, child: const ClubContextGate(child: MyClubProfilePage())),
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: const ClubContextGate(child: MyClubProfilePage()),
+          ),
         ),
         GoRoute(
           path: '/club/edit',
-          pageBuilder: (context, state) =>
-              slidePage(state: state, child: const ClubContextGate(child: EditClubProfilePage())),
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: const ClubContextGate(child: EditClubProfilePage()),
+          ),
         ),
       ],
       AppBranch.clubPlayers => [
         GoRoute(
           path: '/club/players',
-          pageBuilder: (context, state) =>
-              fadePage(state: state, child: const ClubContextGate(child: ClubPlayersPage())),
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: const ClubContextGate(child: ClubPlayersPage()),
+          ),
         ),
         GoRoute(
           path: '/club/players/new',
-          pageBuilder: (context, state) =>
-              slidePage(state: state, child: const ClubContextGate(child: AddClubPlayerPage())),
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: const ClubContextGate(child: AddClubPlayerPage()),
+          ),
         ),
         GoRoute(
           path: '/club/players/:userId/edit',
           pageBuilder: (context, state) => slidePage(
             state: state,
-            child: ClubContextGate(child: EditClubPlayerPage(userId: state.pathParameters['userId']!)),
+            child: ClubContextGate(
+              child: EditClubPlayerPage(
+                userId: state.pathParameters['userId']!,
+              ),
+            ),
           ),
         ),
       ],
       AppBranch.clubInvitations => [
         GoRoute(
           path: '/club/invitations',
-          pageBuilder: (context, state) =>
-              fadePage(state: state, child: const ClubContextGate(child: ClubInvitationsPage())),
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: const ClubContextGate(child: ClubInvitationsPage()),
+          ),
         ),
       ],
       AppBranch.clubCoaches => [
@@ -442,7 +440,9 @@ StatefulShellBranch _branchFor(AppBranch branch) {
           path: '/search/players/:id',
           pageBuilder: (context, state) => fadePage(
             state: state,
-            child: PublicPlayerProfilePage(playerId: state.pathParameters['id']!),
+            child: PublicPlayerProfilePage(
+              playerId: state.pathParameters['id']!,
+            ),
           ),
         ),
         GoRoute(
@@ -474,109 +474,31 @@ StatefulShellBranch _branchFor(AppBranch branch) {
               fadePage(state: state, child: const CommunityPage()),
         ),
       ],
-      // The storefront, mounted inside the app rather than on its own
-      // origin. Every route is wrapped in StoreSection, which applies the
-      // store's own near-monochrome theme without touching the rest of the
-      // app — see store_section.dart.
+      // The store lives on the website now. The tab opens it in the browser
+      // (see _selectBranch in app_shell.dart); this page only catches a
+      // direct visit to '/store'.
       AppBranch.store => [
         GoRoute(
           path: '/store',
-          pageBuilder: (context, state) => fadePage(
-            state: state,
-            child: const StoreSection(child: StoreHomePage()),
-          ),
-          routes: [
-            GoRoute(
-              path: 'shop',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: const StoreSection(child: StoreListingPage()),
-              ),
-            ),
-            GoRoute(
-              path: 'search',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: const StoreSection(
-                  child: StoreListingPage(showSearchField: true),
-                ),
-              ),
-            ),
-            GoRoute(
-              path: 'c/:slug',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: StoreSection(
-                  child: StoreListingPage(
-                    categorySlug: state.pathParameters['slug'],
-                  ),
-                ),
-              ),
-            ),
-            GoRoute(
-              path: 'p/:slug',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: StoreSection(
-                  child: StoreProductPage(
-                    slug: state.pathParameters['slug']!,
-                  ),
-                ),
-              ),
-            ),
-            GoRoute(
-              path: 'cart',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: const StoreSection(child: StoreCartPage()),
-              ),
-            ),
-            GoRoute(
-              path: 'checkout',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: const StoreSection(child: StoreCheckoutPage()),
-              ),
-            ),
-            GoRoute(
-              path: 'order/:orderNumber',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: StoreSection(
-                  child: StoreOrderConfirmationPage(
-                    orderNumber: state.pathParameters['orderNumber']!,
-                  ),
-                ),
-              ),
-            ),
-            GoRoute(
-              path: 'track',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: const StoreSection(child: StoreTrackOrderPage()),
-              ),
-            ),
-            GoRoute(
-              path: 'orders',
-              pageBuilder: (context, state) => fadePage(
-                state: state,
-                child: const StoreSection(child: StoreMyOrdersPage()),
-              ),
-            ),
-          ],
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const ExternalStorePage()),
         ),
       ],
       AppBranch.calendar => [
         GoRoute(
           path: '/calendar',
-          pageBuilder: (context, state) =>
-              fadePage(state: state, child: const ClubContextGate(child: CalendarPage())),
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: const ClubContextGate(child: CalendarPage()),
+          ),
         ),
         GoRoute(
           path: '/calendar/:id',
           pageBuilder: (context, state) => slidePage(
             state: state,
-            child: ClubContextGate(child: EventDetailPage(eventId: state.pathParameters['id']!)),
+            child: ClubContextGate(
+              child: EventDetailPage(eventId: state.pathParameters['id']!),
+            ),
           ),
         ),
       ],

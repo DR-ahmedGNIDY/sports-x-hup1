@@ -1136,5 +1136,6 @@
   "adminSiteSettingsUrlError": "اكتب الرابط كامل يبدأ بـ https://",
   "adminSiteSettingsPhoneError": "أرقام بس، وممكن يبدأ بـ +",
   "adminSiteSettingsEmailError": "اكتب إيميل صحيح",
-  "adminSiteSettingsSaved": "اتحفظت إعدادات الموقع"
+  "adminSiteSettingsSaved": "اتحفظت إعدادات الموقع",
+  "storeOpenOnWebsite": "افتح المتجر"
 }

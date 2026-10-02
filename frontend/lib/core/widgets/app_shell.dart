@@ -12,6 +12,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../locale/language_toggle_button.dart';
 import '../../features/notifications/presentation/shared/notification_bell.dart';
 import '../navigation/app_branches.dart';
+import '../navigation/external_store.dart';
 import '../theme/app_blur.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_motion.dart';
@@ -62,10 +63,18 @@ class AppShell extends ConsumerWidget {
 /// from here would search upwards past it and find nothing. Desktop has no
 /// per-branch controller and passes null.
 void _selectBranch(
+  BuildContext context,
   StatefulNavigationShell navigationShell,
   int index, {
   ScrollController? scrollController,
 }) {
+  // The store moved to the website; its tab is a link out, not a section.
+  if (index == AppBranch.store.index) {
+    AppHaptics.selection();
+    openExternalStore(context);
+    return;
+  }
+
   // The lightest feedback in the vocabulary: switching tabs is the most
   // frequent gesture in the app, and anything stronger turns routine
   // navigation into a series of thuds.
@@ -99,10 +108,7 @@ class _DesktopShell extends ConsumerWidget {
     return Scaffold(
       body: Row(
         children: [
-          _Sidebar(
-            role: role,
-            navigationShell: navigationShell,
-          ),
+          _Sidebar(role: role, navigationShell: navigationShell),
           Expanded(
             child: Column(
               children: [
@@ -256,8 +262,11 @@ class _Sidebar extends ConsumerWidget {
                         label: branch.label(l10n),
                         selected: navigationShell.currentIndex == branch.index,
                         appIsDark: appIsDark,
-                        onTap: () =>
-                            _selectBranch(navigationShell, branch.index),
+                        onTap: () => _selectBranch(
+                          context,
+                          navigationShell,
+                          branch.index,
+                        ),
                       ),
                   ],
                 ),
@@ -281,8 +290,9 @@ class _Sidebar extends ConsumerWidget {
                       )
                     : _SidebarLogoutButton(
                         label: l10n.logoutTooltip,
-                        onTap: () =>
-                            ref.read(sessionControllerProvider.notifier).logout(),
+                        onTap: () => ref
+                            .read(sessionControllerProvider.notifier)
+                            .logout(),
                       ),
               ),
             ],
@@ -659,6 +669,7 @@ class _MobileShellState extends ConsumerState<_MobileShell> {
         onSelect: (branch) {
           Navigator.of(sheetContext).pop();
           _selectBranch(
+            context,
             widget.navigationShell,
             branch.index,
             scrollController: _scrollControllers[branch.index],
@@ -725,6 +736,7 @@ class _MobileShellState extends ConsumerState<_MobileShell> {
               translucent: ownsChrome,
               selectedTab: isOverflowActive ? null : selectedTab,
               onSelect: (index) => _selectBranch(
+                context,
                 widget.navigationShell,
                 tabs[index].index,
                 scrollController: _scrollControllers[tabs[index].index],
