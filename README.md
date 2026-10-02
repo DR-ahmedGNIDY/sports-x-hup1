@@ -21,12 +21,25 @@ This is **Version 1 (MVP)**. Scope, architecture rules, and the phase-by-phase e
 
 ```
 sport x hub/
-  frontend/          Flutter Web app (Desktop + Mobile, buildable for Android)
-  backend/            NestJS API
+  frontend/          The app: Google Play build + web build on app.sportxhup.com
+  website/            Public site on sportxhup.com (marketing pages + storefront)
+  backend/            NestJS API, shared by both
   docs/
     PROJECT_ROADMAP.md   Official phase-by-phase execution plan (binding)
   logo.png            Official brand asset — do not redesign
 ```
+
+## App and website are separate
+
+`frontend/` and `website/` are independent projects. Work on the website
+**never touches `frontend/`**: no shared files, no imports across the two,
+no build step that reads the other folder. The only things they share are the
+backend API and the brand assets, which `website/` keeps its own copies of.
+
+A change to `frontend/` ships to users only through a new Google Play release
+and a redeploy of `app.sportxhup.com`, so it is made deliberately and on its
+own commit — never as a side effect of website work. See
+`docs/website-split-plan.html` for the plan this follows.
 
 ## Frontend (`frontend/`)
 

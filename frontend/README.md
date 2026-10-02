@@ -1,17 +1,28 @@
-# sport_x_hub
+# Sport X Hub — App
 
-A new Flutter project.
+This folder is the app. It is the only source for both:
 
-## Getting Started
+- the **Android build** published on Google Play (`com.sportxhub.sport_x_hub`)
+- the **web build** served on `app.sportxhup.com`
 
-This project is a starting point for a Flutter application.
+The public website on `sportxhup.com` lives in `../website/` and is a separate
+project. Website work must not modify anything in this folder.
 
-A few resources to get you started if this is your first Flutter project:
+## Rules for changing this folder
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Each change here is its own commit, made on purpose. A website task is never
+  a reason to edit a file in `frontend/`.
+- Every Google Play upload needs a higher build number than the last one:
+  bump `version:` in `pubspec.yaml` (the `+N` part is the Play `versionCode`).
+- Release signing reads `android/key.properties` and
+  `android/app/upload-keystore.jks`. Both are git-ignored and must never be
+  committed. Losing them means losing the ability to update the Play listing.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Building
+
+```bash
+flutter build appbundle --release   # Google Play
+flutter build web --release         # app.sportxhup.com
+```
+
+Production builds use the production `.env`; see `../DEPLOY.md`.
