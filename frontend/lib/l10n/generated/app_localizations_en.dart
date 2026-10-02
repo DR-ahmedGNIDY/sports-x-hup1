@@ -3079,10 +3079,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminProductPhotosTitle => 'Product photos';
 
   @override
-  String get adminProductPhotosAfterSave =>
-      'Save the product first; the photo upload button appears here after.';
-
-  @override
-  String get adminProductSavedAddPhotos =>
-      'Product saved. Add its photos now under “Product photos”.';
+  String adminProductSomePhotosFailed(String names) {
+    return 'The product was saved, but these photos did not upload: $names. Try them again here.';
+  }
 }

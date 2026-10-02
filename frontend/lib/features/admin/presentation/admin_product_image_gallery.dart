@@ -42,43 +42,13 @@ class _ProductImageGalleryState extends ConsumerState<ProductImageGallery> {
           children: [
             for (var i = 0; i < _product.images.length; i++)
               _Thumb(
-                url: _product.images[i].url,
+                image: NetworkImage(_product.images[i].url),
                 isPrimary: i == 0,
                 onRemove: _busy ? null : () => _remove(i),
               ),
             // The upload control sits in the grid, where the next photo will
-            // appear, so it reads as "add one here" rather than a far-off
-            // dialog action.
-            SizedBox(
-              width: 96,
-              height: 128,
-              child: OutlinedButton(
-                onPressed: _busy ? null : _pickAndUpload,
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.xs),
-                  ),
-                ),
-                child: _busy
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.add_photo_alternate_outlined),
-                          const SizedBox(height: 6),
-                          Text(
-                            l10n.adminUploadLabel,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      ),
-              ),
-            ),
+            // appear, so it reads as "add one here".
+            _UploadTile(busy: _busy, onTap: _busy ? null : _pickAndUpload),
           ],
         ),
         if (_error != null) ...[
@@ -143,12 +113,12 @@ class _ProductImageGalleryState extends ConsumerState<ProductImageGallery> {
 
 class _Thumb extends StatelessWidget {
   const _Thumb({
-    required this.url,
+    required this.image,
     required this.isPrimary,
     required this.onRemove,
   });
 
-  final String url;
+  final ImageProvider image;
   final bool isPrimary;
   final VoidCallback? onRemove;
 
@@ -161,8 +131,8 @@ class _Thumb extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            url,
+          Image(
+            image: image,
             fit: BoxFit.cover,
             errorBuilder: (_, _, _) => ColoredBox(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -192,6 +162,106 @@ class _Thumb extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Photos chosen for a product that does not exist yet. The API attaches an
+/// image to a saved product only, so these wait in memory and the editor
+/// uploads them, in this order, right after the product is created.
+class PendingImagePicker extends StatelessWidget {
+  const PendingImagePicker({
+    super.key,
+    required this.files,
+    required this.onChanged,
+    this.enabled = true,
+  });
+
+  final List<PlatformFile> files;
+  final ValueChanged<List<PlatformFile>> onChanged;
+  final bool enabled;
+
+  Future<void> _pick() async {
+    final picked = await FilePicker.pickFiles(
+      type: FileType.image,
+      allowMultiple: true,
+      withData: true,
+    );
+    final chosen = [
+      for (final f in picked?.files ?? const <PlatformFile>[])
+        if (f.bytes != null) f,
+    ];
+    if (chosen.isEmpty) return;
+    onChanged([...files, ...chosen]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.adminProductImagesHint, style: const TextStyle(fontSize: 12)),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (var i = 0; i < files.length; i++)
+              _Thumb(
+                image: MemoryImage(files[i].bytes!),
+                isPrimary: i == 0,
+                onRemove: enabled
+                    ? () => onChanged([...files]..removeAt(i))
+                    : null,
+              ),
+            _UploadTile(busy: false, onTap: enabled ? _pick : null),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _UploadTile extends StatelessWidget {
+  const _UploadTile({required this.busy, required this.onTap});
+
+  final bool busy;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return SizedBox(
+      width: 96,
+      height: 128,
+      child: OutlinedButton(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.xs),
+          ),
+        ),
+        child: busy
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.add_photo_alternate_outlined),
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.adminUploadLabel,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,10 +31,14 @@ class _ProductEditor extends ConsumerStatefulWidget {
 
 class _ProductEditorState extends ConsumerState<_ProductEditor> {
   final _formKey = GlobalKey<FormState>();
-  // The product being edited — null until a new one is first saved, after
-  // which the editor stays open on it so its photos can be added (the API
-  // attaches images to an existing product only).
+  // The product being edited — null for a new one. Set after creation only
+  // when some picked photos failed to upload, so the editor can stay open on
+  // the saved product and offer them again.
   late StoreProduct? _product = widget.product;
+
+  // Photos picked before a new product's first save; uploaded by [_save]
+  // right after the product is created.
+  List<PlatformFile> _pendingImages = const [];
 
   // Arabic only: the store is Arabic-first. The API still requires English
   // text, so [_save] fills it — see there.
@@ -251,9 +256,11 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                 ),
                 const SizedBox(height: 8),
                 if (_product == null)
-                  Text(
-                    l10n.adminProductPhotosAfterSave,
-                    style: const TextStyle(fontSize: 12),
+                  PendingImagePicker(
+                    files: _pendingImages,
+                    enabled: !_busy,
+                    onChanged: (files) =>
+                        setState(() => _pendingImages = files),
                   )
                 else
                   ProductImageGallery(
@@ -385,18 +392,34 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
       final controller = ref.read(adminProductsControllerProvider.notifier);
       final existing = _product;
       if (existing == null) {
-        // Stay open on the new product so its photos can go in next.
         final created = await controller.create(body);
-        if (mounted) {
-          setState(() => _product = created);
-          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-            SnackBar(
-              content: Text(
-                AppLocalizations.of(context)!.adminProductSavedAddPhotos,
-              ),
-            ),
-          );
+        var latest = created;
+        final failed = <String>[];
+        for (final file in _pendingImages) {
+          try {
+            latest = await controller.addImage(
+              created.id,
+              file.bytes!,
+              file.name,
+            );
+          } catch (_) {
+            failed.add(file.name);
+          }
         }
+        if (!mounted) return;
+        if (failed.isEmpty) {
+          Navigator.of(context).pop();
+          return;
+        }
+        // The product exists now; keep the editor open on it, with the
+        // uploaded photos in the live gallery, so the rest can be retried.
+        setState(() {
+          _product = latest;
+          _pendingImages = const [];
+          _error = AppLocalizations.of(
+            context,
+          )!.adminProductSomePhotosFailed(failed.join('، '));
+        });
         return;
       }
       await controller.save(existing.id, body);

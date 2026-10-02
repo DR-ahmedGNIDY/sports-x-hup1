@@ -3045,10 +3045,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminProductPhotosTitle => 'صور المنتج';
 
   @override
-  String get adminProductPhotosAfterSave =>
-      'احفظ المنتج الأول، وبعدها هيظهر هنا زرار رفع الصور.';
-
-  @override
-  String get adminProductSavedAddPhotos =>
-      'اتحفظ المنتج. ضيف صوره دلوقتي من جزء «صور المنتج».';
+  String adminProductSomePhotosFailed(String names) {
+    return 'اتحفظ المنتج، بس الصور دي ما اترفعتش: $names. جرب ترفعها تاني من هنا.';
+  }
 }

@@ -1140,6 +1140,6 @@
   "adminProductNameLabel": "Product name",
   "adminProductDescriptionLabel": "Description",
   "adminProductPhotosTitle": "Product photos",
-  "adminProductPhotosAfterSave": "Save the product first; the photo upload button appears here after.",
-  "adminProductSavedAddPhotos": "Product saved. Add its photos now under “Product photos”."
+  "adminProductSomePhotosFailed": "The product was saved, but these photos did not upload: {names}. Try them again here.",
+  "@adminProductSomePhotosFailed": {"placeholders":{"names":{"type":"String"}}}
 }

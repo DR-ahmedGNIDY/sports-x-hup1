@@ -5700,17 +5700,11 @@ abstract class AppLocalizations {
   /// **'صور المنتج'**
   String get adminProductPhotosTitle;
 
-  /// No description provided for @adminProductPhotosAfterSave.
+  /// No description provided for @adminProductSomePhotosFailed.
   ///
   /// In ar, this message translates to:
-  /// **'احفظ المنتج الأول، وبعدها هيظهر هنا زرار رفع الصور.'**
-  String get adminProductPhotosAfterSave;
-
-  /// No description provided for @adminProductSavedAddPhotos.
-  ///
-  /// In ar, this message translates to:
-  /// **'اتحفظ المنتج. ضيف صوره دلوقتي من جزء «صور المنتج».'**
-  String get adminProductSavedAddPhotos;
+  /// **'اتحفظ المنتج، بس الصور دي ما اترفعتش: {names}. جرب ترفعها تاني من هنا.'**
+  String adminProductSomePhotosFailed(String names);
 }
 
 class _AppLocalizationsDelegate

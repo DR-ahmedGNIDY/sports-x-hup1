@@ -1141,6 +1141,6 @@
   "adminProductNameLabel": "اسم المنتج",
   "adminProductDescriptionLabel": "الوصف",
   "adminProductPhotosTitle": "صور المنتج",
-  "adminProductPhotosAfterSave": "احفظ المنتج الأول، وبعدها هيظهر هنا زرار رفع الصور.",
-  "adminProductSavedAddPhotos": "اتحفظ المنتج. ضيف صوره دلوقتي من جزء «صور المنتج»."
+  "adminProductSomePhotosFailed": "اتحفظ المنتج، بس الصور دي ما اترفعتش: {names}. جرب ترفعها تاني من هنا.",
+  "@adminProductSomePhotosFailed": {"placeholders":{"names":{"type":"String"}}}
 }
