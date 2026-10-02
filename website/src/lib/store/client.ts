@@ -10,11 +10,12 @@ import type { StoreDict } from './strings';
 
 type Lang = 'ar' | 'en';
 type L10n = { en: string; ar?: string };
-interface Image { publicId: string; secureUrl: string }
+interface Image { publicId: string; secureUrl: string; colour?: string }
+interface Colour { name: string; hex: string }
 interface Category { id: string; name: L10n; slug: string; parentId?: string; image?: Image; sortOrder: number }
 interface Card {
   id: string; title: L10n; slug: string; priceMinor: number; compareAtPriceMinor?: number;
-  image?: Image; badge?: 'new' | 'pre_order' | 'sale'; inStock: boolean;
+  image?: Image; badge?: 'new' | 'pre_order' | 'sale'; inStock: boolean; colours?: Colour[];
 }
 interface Variant { id: string; size?: string; colour?: string; sku?: string; inStock: boolean }
 interface Product extends Card { description?: L10n; categoryId: string; images: Image[]; variants: Variant[] }
@@ -97,8 +98,19 @@ function cardHtml(p: Card) {
       ${p.badge ? `<span class="pbadge ${p.badge}">${esc(s.badge[p.badge])}</span>` : ''}
       ${!p.inStock ? `<span class="pbadge out">${esc(s.soldOut)}</span>` : ''}</div>
     <div class="pinfo"><b>${esc(loc(p.title))}</b>
-      <span class="price">${money(p.priceMinor)}${sale ? ` <s>${money(p.compareAtPriceMinor!)}</s>` : ''}</span></div>
+      <span class="price">${money(p.priceMinor)}${sale ? ` <s>${money(p.compareAtPriceMinor!)}</s>` : ''}</span>
+      ${swatchRow(p.colours)}</div>
   </a>`;
+}
+
+/// The colours a product comes in, as small dots under its tile.
+function swatchRow(colours?: Colour[]) {
+  if (!colours?.length) return '';
+  const shown = colours.slice(0, 6);
+  const more = colours.length - shown.length;
+  return `<span class="swatches" aria-label="${esc(s.colour)}: ${esc(colours.map((c) => c.name).join('، '))}">${shown
+    .map((c) => `<i style="background:${esc(c.hex)}" title="${esc(c.name)}"></i>`)
+    .join('')}${more > 0 ? `<em>+${more}</em>` : ''}</span>`;
 }
 const skeleton = (n: number) => Array.from({ length: n }, () => '<div class="pcard sk"><div class="pimg"></div><div class="pinfo"><i></i><i></i></div></div>').join('');
 const errorBox = (msg: string = s.error) => `<p class="st-msg err">${esc(msg)}</p>`;
@@ -224,23 +236,41 @@ async function product() {
   }
   document.title = `${loc(p.title)} | ${s.title}`;
   const sizes = [...new Set(p.variants.map((v) => v.size).filter(Boolean))] as string[];
-  const colours = [...new Set(p.variants.map((v) => v.colour).filter(Boolean))] as string[];
+  // Colours in the merchant's order, with their shades; a product saved
+  // before colours had shades falls back to the names on its variants.
+  const palette: Colour[] = p.colours?.length
+    ? p.colours
+    : ([...new Set(p.variants.map((v) => v.colour).filter(Boolean))] as string[]).map((name) => ({ name, hex: '' }));
+  const colours = palette.map((c) => c.name);
   let size = sizes.length === 1 ? sizes[0] : '';
-  let colour = colours.length === 1 ? colours[0] : '';
+  // Open on the first colour that can actually be bought, so the photos
+  // and the button match something in stock.
+  let colour =
+    colours.find((c) => p.variants.some((v) => v.colour === c && v.inStock)) ?? colours[0] ?? '';
   const sale = p.compareAtPriceMinor && p.compareAtPriceMinor > p.priceMinor;
-  const images = p.images.length ? p.images : p.image ? [p.image] : [];
+  const allImages = p.images.length ? p.images : p.image ? [p.image] : [];
+  /// The photos for a colour: its own first, then the general ones. A
+  /// colour with no photos of its own shows the general set (or everything).
+  const imagesFor = (c: string) => {
+    const own = allImages.filter((i) => c && i.colour === c);
+    const general = allImages.filter((i) => !i.colour);
+    const set = [...own, ...general];
+    return set.length ? set : allImages;
+  };
+  let images = imagesFor(colour);
 
   root.innerHTML = `
-    <div class="gallery">
-      <div class="gmain">${images[0] ? `<img id="gimg" src="${esc(img(images[0].secureUrl, 1000))}" alt="${esc(loc(p.title))}">` : ''}</div>
-      ${images.length > 1 ? `<div class="thumbs">${images.map((im, i) => `<button type="button" data-i="${i}" class="${i ? '' : 'on'}"><img src="${esc(img(im.secureUrl, 160))}" alt=""></button>`).join('')}</div>` : ''}
-    </div>
+    <div class="gallery" id="gallery"></div>
     <div class="pdetail">
       ${p.badge ? `<span class="pbadge static ${p.badge}">${esc(s.badge[p.badge])}</span>` : ''}
       <h1>${esc(loc(p.title))}</h1>
       <div class="price big">${money(p.priceMinor)}${sale ? ` <s>${money(p.compareAtPriceMinor!)}</s>` : ''}</div>
       ${sizes.length ? `<div class="opt"><span>${esc(s.size)}</span><div class="opts" id="sizes">${sizes.map((x) => `<button type="button" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>` : ''}
-      ${colours.length ? `<div class="opt"><span>${esc(s.colour)}</span><div class="opts" id="colours">${colours.map((x) => `<button type="button" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>` : ''}
+      ${palette.length ? `<div class="opt"><span>${esc(s.colour)}: <b id="colourname"></b></span><div class="opts swatch-opts" id="colours">${palette
+        .map((c) => c.hex
+          ? `<button type="button" class="swatch" data-v="${esc(c.name)}" title="${esc(c.name)}" aria-label="${esc(c.name)}"><i style="background:${esc(c.hex)}"></i></button>`
+          : `<button type="button" data-v="${esc(c.name)}">${esc(c.name)}</button>`)
+        .join('')}</div></div>` : ''}
       <div class="opt"><span>${esc(s.quantity)}</span><div class="qty"><button type="button" id="qminus" aria-label="-">−</button><output id="qty">1</output><button type="button" id="qplus" aria-label="+">+</button></div></div>
       <button class="cta add" id="add" type="button"></button>
       <p class="st-msg" id="addmsg" hidden></p>
@@ -248,11 +278,20 @@ async function product() {
       ${p.description ? `<div class="desc">${esc(loc(p.description)).replace(/\n/g, '<br>')}</div>` : ''}
     </div>`;
 
-  root.querySelectorAll<HTMLButtonElement>('.thumbs button').forEach((b) => b.addEventListener('click', () => {
-    root.querySelectorAll('.thumbs button').forEach((x) => x.classList.remove('on'));
+  const gallery = $('#gallery');
+  function renderGallery() {
+    gallery.innerHTML = `
+      <div class="gmain">${images[0] ? `<img id="gimg" src="${esc(img(images[0].secureUrl, 1000))}" alt="${esc(loc(p.title))}${colour ? ` — ${esc(colour)}` : ''}">` : ''}</div>
+      ${images.length > 1 ? `<div class="thumbs">${images.map((im, i) => `<button type="button" data-i="${i}" class="${i ? '' : 'on'}"><img src="${esc(img(im.secureUrl, 160))}" alt=""></button>`).join('')}</div>` : ''}`;
+  }
+  gallery.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.thumbs button');
+    if (!b) return;
+    gallery.querySelectorAll('.thumbs button').forEach((x) => x.classList.remove('on'));
     b.classList.add('on');
     $<HTMLImageElement>('#gimg').src = img(images[Number(b.dataset.i)].secureUrl, 1000);
-  }));
+  });
+  renderGallery();
 
   let qty = 1;
   const variant = () => p.variants.find((v) => (!sizes.length || v.size === size) && (!colours.length || v.colour === colour));
@@ -268,6 +307,8 @@ async function product() {
       b.classList.toggle('on', b.dataset.v === colour);
       b.classList.toggle('na', !avail('colour', b.dataset.v!));
     });
+    const nameEl = root.querySelector('#colourname');
+    if (nameEl) nameEl.textContent = colour;
     $('#qty').textContent = String(qty);
     const v = variant();
     if (sizes.length && !size) { addBtn.textContent = s.selectSize; addBtn.disabled = true; }
@@ -279,7 +320,12 @@ async function product() {
     const b = (e.target as HTMLElement).closest('button'); if (!b) return; size = b.dataset.v!; refresh();
   });
   root.querySelector('#colours')?.addEventListener('click', (e) => {
-    const b = (e.target as HTMLElement).closest('button'); if (!b) return; colour = b.dataset.v!; refresh();
+    const b = (e.target as HTMLElement).closest('button'); if (!b) return;
+    colour = b.dataset.v!;
+    // The photos follow the colour.
+    images = imagesFor(colour);
+    renderGallery();
+    refresh();
   });
   $('#qminus').addEventListener('click', () => { qty = Math.max(1, qty - 1); refresh(); });
   $('#qplus').addEventListener('click', () => { qty = Math.min(50, qty + 1); refresh(); });
@@ -289,7 +335,7 @@ async function product() {
     const existing = lines.find((l) => l.variantId === v.id);
     if (existing) existing.quantity = Math.min(50, existing.quantity + qty);
     else lines.push({
-      productId: p.id, variantId: v.id, slug: p.slug, title: p.title, imageUrl: images[0]?.secureUrl,
+      productId: p.id, variantId: v.id, slug: p.slug, title: p.title, imageUrl: imagesFor(v.colour ?? '')[0]?.secureUrl,
       size: v.size, colour: v.colour, unitPriceMinor: p.priceMinor, quantity: qty,
     });
     writeCart(lines);

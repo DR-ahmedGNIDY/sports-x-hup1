@@ -154,3 +154,15 @@
 }
 .st-top h1:empty{display:none}
 .st-top:has(h1:empty){justify-content:flex-end}
+
+/* colour swatches */
+.swatches{display:flex;gap:5px;align-items:center;margin-top:4px}
+.swatches i{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);display:block}
+.swatches em{font-style:normal;font-size:12px;color:var(--muted)}
+.swatch-opts{gap:10px}
+.opts button.swatch{min-width:0;width:40px;height:40px;padding:3px;border-radius:50%;background:var(--paper);border:2px solid var(--line)}
+.opts button.swatch i{display:block;width:100%;height:100%;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
+.opts button.swatch.on{border-color:var(--ink);background:var(--paper);color:inherit}
+.opts button.swatch.na{text-decoration:none;opacity:.35;position:relative}
+.opts button.swatch.na::after{content:"";position:absolute;inset:50% 2px auto;height:2px;background:var(--ink);transform:rotate(-45deg)}
+.opt>span b{font-weight:700;color:var(--muted)}
