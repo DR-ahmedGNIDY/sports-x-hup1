@@ -1136,5 +1136,10 @@
   "adminSiteSettingsPhoneError": "Digits only, optionally starting with +",
   "adminSiteSettingsEmailError": "Enter a valid email address",
   "adminSiteSettingsSaved": "Website settings saved",
-  "storeOpenOnWebsite": "Open the store"
+  "storeOpenOnWebsite": "Open the store",
+  "adminProductNameLabel": "Product name",
+  "adminProductDescriptionLabel": "Description",
+  "adminProductPhotosTitle": "Product photos",
+  "adminProductPhotosAfterSave": "Save the product first; the photo upload button appears here after.",
+  "adminProductSavedAddPhotos": "Product saved. Add its photos now under “Product photos”."
 }

@@ -42,9 +42,12 @@ class AdminProductsController extends AsyncNotifier<List<StoreProduct>> {
     state = AsyncData([...?state.valueOrNull, ...more]);
   }
 
-  Future<void> create(Map<String, dynamic> body) async {
-    await ref.read(adminStoreRepositoryProvider).createProduct(body);
+  Future<StoreProduct> create(Map<String, dynamic> body) async {
+    final created = await ref
+        .read(adminStoreRepositoryProvider)
+        .createProduct(body);
     await _reload();
+    return created;
   }
 
   Future<void> save(String id, Map<String, dynamic> body) async {
@@ -228,7 +231,6 @@ final adminCouponsControllerProvider =
     AsyncNotifierProvider<AdminCouponsController, List<StoreCoupon>>(
       AdminCouponsController.new,
     );
-
 
 /// The hero's slides, including the unfinished ones the storefront hides.
 class AdminBannersController extends AsyncNotifier<List<AdminBanner>> {

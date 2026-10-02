@@ -5,6 +5,8 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_category.dart';
 import '../../store/domain/entities/store_product.dart';
 import '../application/admin_store_controllers.dart';
+import 'admin_product_image_gallery.dart';
+import 'admin_store_categories_tab.dart' show categoryTree;
 import 'admin_store_page.dart';
 
 /// Opens the create/edit form. [product] null means "new".
@@ -28,13 +30,18 @@ class _ProductEditor extends ConsumerStatefulWidget {
 
 class _ProductEditorState extends ConsumerState<_ProductEditor> {
   final _formKey = GlobalKey<FormState>();
-  late final _titleEn = TextEditingController(text: widget.product?.title.en);
-  late final _titleAr = TextEditingController(text: widget.product?.title.ar);
-  late final _descriptionEn = TextEditingController(
-    text: widget.product?.description?.en,
+  // The product being edited — null until a new one is first saved, after
+  // which the editor stays open on it so its photos can be added (the API
+  // attaches images to an existing product only).
+  late StoreProduct? _product = widget.product;
+
+  // Arabic only: the store is Arabic-first. The API still requires English
+  // text, so [_save] fills it — see there.
+  late final _titleAr = TextEditingController(
+    text: widget.product?.title.resolve(true),
   );
   late final _descriptionAr = TextEditingController(
-    text: widget.product?.description?.ar,
+    text: widget.product?.description?.resolve(true),
   );
   late final _price = TextEditingController(
     text: widget.product == null
@@ -66,14 +73,7 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
 
   @override
   void dispose() {
-    for (final c in [
-      _titleEn,
-      _titleAr,
-      _descriptionEn,
-      _descriptionAr,
-      _price,
-      _compareAt,
-    ]) {
+    for (final c in [_titleAr, _descriptionAr, _price, _compareAt]) {
       c.dispose();
     }
     super.dispose();
@@ -85,7 +85,9 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
     final categories = ref.watch(adminCategoriesControllerProvider);
 
     return AlertDialog(
-      title: Text(widget.product == null ? l10n.adminProductNew : l10n.adminProductEditTitle),
+      title: Text(
+        _product == null ? l10n.adminProductNew : l10n.adminProductEditTitle,
+      ),
       content: SizedBox(
         width: 640,
         child: SingleChildScrollView(
@@ -94,47 +96,48 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _Pair(
-                  left: _field(l10n, _titleEn, l10n.adminProductTitleEn, required: true),
-                  right: _field(l10n, _titleAr, l10n.adminProductTitleAr),
+                _field(
+                  l10n,
+                  _titleAr,
+                  l10n.adminProductNameLabel,
+                  required: true,
                 ),
-                _Pair(
-                  left: _field(
-                    l10n,
-                    _descriptionEn,
-                    l10n.adminDescriptionEn,
-                    maxLines: 3,
-                  ),
-                  right: _field(
-                    l10n,
-                    _descriptionAr,
-                    l10n.adminDescriptionAr,
-                    maxLines: 3,
-                  ),
+                _field(
+                  l10n,
+                  _descriptionAr,
+                  l10n.adminProductDescriptionLabel,
+                  maxLines: 3,
                 ),
                 categories.when(
                   data: (items) => DropdownButtonFormField<String>(
-                    initialValue: _validCategory(items),
+                    initialValue: _validCategory(_shelves(items)),
                     isExpanded: true,
-                    decoration: InputDecoration(labelText: l10n.adminProductCategoryLabel),
+                    decoration: InputDecoration(
+                      labelText: l10n.adminProductCategoryLabel,
+                    ),
+                    // Shelves only, each named with its department ("رجالي ←
+                    // ملابس"): a product is filed on a shelf, and the bare
+                    // shelf names repeat across departments.
                     items: [
-                      for (final category in items)
+                      for (final category in _shelves(items))
                         DropdownMenuItem(
                           value: category.id,
                           child: Text(
-                            category.name.en +
+                            _shelfLabel(category, items) +
                                 (category.isActive == false
                                     ? l10n.adminProductCategoryHiddenSuffix
                                     : ''),
                           ),
                         ),
                     ],
-                    validator: (value) =>
-                        value == null ? l10n.adminProductPickCategoryError : null,
+                    validator: (value) => value == null
+                        ? l10n.adminProductPickCategoryError
+                        : null,
                     onChanged: (value) => setState(() => _categoryId = value),
                   ),
                   loading: () => const LinearProgressIndicator(),
-                  error: (error, _) => Text(l10n.adminProductCategoriesFailed('$error')),
+                  error: (error, _) =>
+                      Text(l10n.adminProductCategoriesFailed('$error')),
                 ),
                 const SizedBox(height: 12),
                 _Pair(
@@ -160,7 +163,9 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                     Expanded(
                       child: DropdownButtonFormField<ProductBadge>(
                         initialValue: _badge,
-                        decoration: InputDecoration(labelText: l10n.adminProductBadgeLabel),
+                        decoration: InputDecoration(
+                          labelText: l10n.adminProductBadgeLabel,
+                        ),
                         items: [
                           DropdownMenuItem(
                             value: ProductBadge.none,
@@ -239,6 +244,22 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                     draft: _variants[i],
                     onRemove: () => setState(() => _variants.removeAt(i)),
                   ),
+                const Divider(height: 32),
+                Text(
+                  l10n.adminProductPhotosTitle,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                if (_product == null)
+                  Text(
+                    l10n.adminProductPhotosAfterSave,
+                    style: const TextStyle(fontSize: 12),
+                  )
+                else
+                  ProductImageGallery(
+                    key: ValueKey(_product!.id),
+                    product: _product!,
+                  ),
                 if (_error != null) ...[
                   const SizedBox(height: 16),
                   Text(
@@ -275,6 +296,19 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
   /// A product whose category was hidden still names it, but the dropdown
   /// would throw on a value not in its item list — so an unknown id falls
   /// back to unset rather than crashing the editor.
+  /// Leaf categories in tree order. A department with no shelves stays
+  /// pickable so a store that has not split its departments still works.
+  List<StoreCategory> _shelves(List<StoreCategory> items) {
+    final parentIds = {for (final c in items) c.parentId}..remove(null);
+    return categoryTree(items).where((c) => !parentIds.contains(c.id)).toList();
+  }
+
+  String _shelfLabel(StoreCategory category, List<StoreCategory> items) {
+    final name = category.name.resolve(true);
+    final parent = items.where((c) => c.id == category.parentId).firstOrNull;
+    return parent == null ? name : '${parent.name.resolve(true)} ← $name';
+  }
+
   String? _validCategory(List<StoreCategory> items) {
     if (_categoryId == null) return null;
     return items.any((c) => c.id == _categoryId) ? _categoryId : null;
@@ -303,16 +337,28 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
     if (categoryId == null) return;
 
     final compareAt = poundsToMinor(_compareAt.text);
+    final title = _titleAr.text.trim();
+    final description = _descriptionAr.text.trim();
+    // The API requires an English title (and English with any description).
+    // The admin writes Arabic only, so the Arabic text fills English as
+    // well; a product that already had real English text keeps it.
+    final keptEnTitle = _product?.title.en;
+    final keptEnDescription = _product?.description?.en;
     final body = <String, dynamic>{
       'title': {
-        'en': _titleEn.text.trim(),
-        if (_titleAr.text.trim().isNotEmpty) 'ar': _titleAr.text.trim(),
+        'en': keptEnTitle != null && keptEnTitle != _product?.title.ar
+            ? keptEnTitle
+            : title,
+        'ar': title,
       },
-      if (_descriptionEn.text.trim().isNotEmpty)
+      if (description.isNotEmpty)
         'description': {
-          'en': _descriptionEn.text.trim(),
-          if (_descriptionAr.text.trim().isNotEmpty)
-            'ar': _descriptionAr.text.trim(),
+          'en':
+              keptEnDescription != null &&
+                  keptEnDescription != _product?.description?.ar
+              ? keptEnDescription
+              : description,
+          'ar': description,
         },
       'categoryId': categoryId,
       'priceMinor': poundsToMinor(_price.text),
@@ -337,11 +383,23 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
     });
     try {
       final controller = ref.read(adminProductsControllerProvider.notifier);
-      if (widget.product == null) {
-        await controller.create(body);
-      } else {
-        await controller.save(widget.product!.id, body);
+      final existing = _product;
+      if (existing == null) {
+        // Stay open on the new product so its photos can go in next.
+        final created = await controller.create(body);
+        if (mounted) {
+          setState(() => _product = created);
+          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.adminProductSavedAddPhotos,
+              ),
+            ),
+          );
+        }
+        return;
       }
+      await controller.save(existing.id, body);
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
       if (mounted) setState(() => _error = '$error');
@@ -375,8 +433,9 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
       validator:
           validator ??
           (required
-              ? (value) =>
-                    (value ?? '').trim().isEmpty ? l10n.storeRequiredField : null
+              ? (value) => (value ?? '').trim().isEmpty
+                    ? l10n.storeRequiredField
+                    : null
               : null),
     ),
   );
@@ -412,7 +471,10 @@ class _VariantRow extends StatelessWidget {
           Expanded(
             child: TextFormField(
               initialValue: draft.size,
-              decoration: InputDecoration(labelText: l10n.adminProductSizeLabel, isDense: true),
+              decoration: InputDecoration(
+                labelText: l10n.adminProductSizeLabel,
+                isDense: true,
+              ),
               onChanged: (value) => draft.size = value,
             ),
           ),
@@ -431,7 +493,10 @@ class _VariantRow extends StatelessWidget {
           Expanded(
             child: TextFormField(
               initialValue: draft.sku,
-              decoration: InputDecoration(labelText: l10n.adminProductSkuLabel, isDense: true),
+              decoration: InputDecoration(
+                labelText: l10n.adminProductSkuLabel,
+                isDense: true,
+              ),
               onChanged: (value) => draft.sku = value,
             ),
           ),

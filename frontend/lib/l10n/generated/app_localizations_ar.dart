@@ -3034,4 +3034,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get storeOpenOnWebsite => 'افتح المتجر';
+
+  @override
+  String get adminProductNameLabel => 'اسم المنتج';
+
+  @override
+  String get adminProductDescriptionLabel => 'الوصف';
+
+  @override
+  String get adminProductPhotosTitle => 'صور المنتج';
+
+  @override
+  String get adminProductPhotosAfterSave =>
+      'احفظ المنتج الأول، وبعدها هيظهر هنا زرار رفع الصور.';
+
+  @override
+  String get adminProductSavedAddPhotos =>
+      'اتحفظ المنتج. ضيف صوره دلوقتي من جزء «صور المنتج».';
 }

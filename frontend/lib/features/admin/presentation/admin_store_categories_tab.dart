@@ -41,14 +41,15 @@ class AdminStoreCategoriesTab extends ConsumerWidget {
             value: categories,
             emptyMessage: l10n.adminCategoriesEmpty,
             onRetry: () => ref.invalidate(adminCategoriesControllerProvider),
-            builder: (context, items) => ListView.separated(
-              itemCount: items.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (context, index) => _CategoryRow(
-                category: items[index],
-                all: items,
-              ),
-            ),
+            builder: (context, items) {
+              final ordered = categoryTree(items);
+              return ListView.separated(
+                itemCount: ordered.length,
+                separatorBuilder: (_, _) => const Divider(height: 1),
+                itemBuilder: (context, index) =>
+                    _CategoryRow(category: ordered[index], all: items),
+              );
+            },
           ),
         ),
       ],
@@ -110,10 +111,9 @@ class _CategoryRow extends ConsumerWidget {
                     ColoredBox(color: scheme.surfaceContainerHighest),
               ),
       ),
-      title: Text(category.name.en),
+      title: Text(category.name.resolve(true)),
       subtitle: Text(
         '/${category.slug}'
-        '${category.name.ar == null ? l10n.adminCategoryNoArabicNameSuffix : ''}'
         '${isVisible ? '' : l10n.adminCategoryHiddenSuffix}',
       ),
       trailing: Row(
@@ -172,8 +172,9 @@ class _CategoryEditor extends ConsumerStatefulWidget {
 
 class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   final _formKey = GlobalKey<FormState>();
-  late final _nameEn = TextEditingController(text: widget.category?.name.en);
-  late final _nameAr = TextEditingController(text: widget.category?.name.ar);
+  late final _nameAr = TextEditingController(
+    text: widget.category?.name.resolve(true),
+  );
   late final _sortOrder = TextEditingController(
     text: '${widget.category?.sortOrder ?? 0}',
   );
@@ -184,7 +185,6 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
 
   @override
   void dispose() {
-    _nameEn.dispose();
     _nameAr.dispose();
     _sortOrder.dispose();
     super.dispose();
@@ -201,7 +201,9 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
 
     return AlertDialog(
       title: Text(
-        widget.category == null ? l10n.adminCategoryNew : l10n.adminCategoryEdit,
+        widget.category == null
+            ? l10n.adminCategoryNew
+            : l10n.adminCategoryEdit,
       ),
       content: SizedBox(
         width: 460,
@@ -211,14 +213,14 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                controller: _nameEn,
-                decoration: InputDecoration(labelText: l10n.adminCategoryNameEn),
-                validator: (value) =>
-                    (value ?? '').trim().isEmpty ? l10n.storeRequiredField : null,
-              ),
-              TextFormField(
                 controller: _nameAr,
-                decoration: InputDecoration(labelText: l10n.adminCategoryNameAr),
+                textDirection: TextDirection.rtl,
+                decoration: InputDecoration(
+                  labelText: l10n.adminCategoryNameAr,
+                ),
+                validator: (value) => (value ?? '').trim().isEmpty
+                    ? l10n.storeRequiredField
+                    : null,
               ),
               DropdownButtonFormField<String?>(
                 initialValue: parents.any((c) => c.id == _parentId)
@@ -229,11 +231,14 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                   labelText: l10n.adminCategoryParentLabel,
                 ),
                 items: [
-                  DropdownMenuItem(value: null, child: Text(l10n.adminCategoryTopLevel)),
+                  DropdownMenuItem(
+                    value: null,
+                    child: Text(l10n.adminCategoryTopLevel),
+                  ),
                   for (final parent in parents)
                     DropdownMenuItem(
                       value: parent.id,
-                      child: Text(parent.name.en),
+                      child: Text(parent.name.resolve(true)),
                     ),
                 ],
                 onChanged: (value) => setState(() => _parentId = value),
@@ -241,9 +246,10 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
               TextFormField(
                 controller: _sortOrder,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: l10n.adminCategorySortOrderLabel),
-                validator: (value) =>
-                    int.tryParse((value ?? '').trim()) == null
+                decoration: InputDecoration(
+                  labelText: l10n.adminCategorySortOrderLabel,
+                ),
+                validator: (value) => int.tryParse((value ?? '').trim()) == null
                     ? l10n.adminWholeNumberError
                     : null,
               ),
@@ -297,10 +303,14 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   Future<void> _save() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
+    final arabic = _nameAr.text.trim();
     final body = <String, dynamic>{
       'name': {
-        'en': _nameEn.text.trim(),
-        if (_nameAr.text.trim().isNotEmpty) 'ar': _nameAr.text.trim(),
+        // The store is Arabic-first and the admin types Arabic only. The API
+        // still requires `en`: an existing category keeps the English name
+        // it has (the English site shows it), a new one reuses the Arabic.
+        'en': widget.category?.name.en ?? arabic,
+        'ar': arabic,
       },
       if (_parentId != null) 'parentId': _parentId,
       'sortOrder': int.parse(_sortOrder.text.trim()),
@@ -325,4 +335,27 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
       if (mounted) setState(() => _busy = false);
     }
   }
+}
+
+/// Departments in their own order, each followed by its own shelves — the
+/// API returns one flat list sorted by `sortOrder` alone, which interleaved
+/// every department's shelves (sortOrder 0, 1, 2) right after the first
+/// department and made them all look like its children.
+List<StoreCategory> categoryTree(List<StoreCategory> items) {
+  int bySort(StoreCategory a, StoreCategory b) =>
+      a.sortOrder.compareTo(b.sortOrder);
+  final ids = {for (final c in items) c.id};
+  // A child whose parent is missing from the list is shown as top-level
+  // rather than dropped.
+  final roots =
+      items
+          .where((c) => c.parentId == null || !ids.contains(c.parentId))
+          .toList()
+        ..sort(bySort);
+  return [
+    for (final root in roots) ...[
+      root,
+      ...(items.where((c) => c.parentId == root.id).toList()..sort(bySort)),
+    ],
+  ];
 }

@@ -3068,4 +3068,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get storeOpenOnWebsite => 'Open the store';
+
+  @override
+  String get adminProductNameLabel => 'Product name';
+
+  @override
+  String get adminProductDescriptionLabel => 'Description';
+
+  @override
+  String get adminProductPhotosTitle => 'Product photos';
+
+  @override
+  String get adminProductPhotosAfterSave =>
+      'Save the product first; the photo upload button appears here after.';
+
+  @override
+  String get adminProductSavedAddPhotos =>
+      'Product saved. Add its photos now under “Product photos”.';
 }

@@ -5681,6 +5681,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'افتح المتجر'**
   String get storeOpenOnWebsite;
+
+  /// No description provided for @adminProductNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المنتج'**
+  String get adminProductNameLabel;
+
+  /// No description provided for @adminProductDescriptionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصف'**
+  String get adminProductDescriptionLabel;
+
+  /// No description provided for @adminProductPhotosTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'صور المنتج'**
+  String get adminProductPhotosTitle;
+
+  /// No description provided for @adminProductPhotosAfterSave.
+  ///
+  /// In ar, this message translates to:
+  /// **'احفظ المنتج الأول، وبعدها هيظهر هنا زرار رفع الصور.'**
+  String get adminProductPhotosAfterSave;
+
+  /// No description provided for @adminProductSavedAddPhotos.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحفظ المنتج. ضيف صوره دلوقتي من جزء «صور المنتج».'**
+  String get adminProductSavedAddPhotos;
 }
 
 class _AppLocalizationsDelegate

@@ -1137,5 +1137,10 @@
   "adminSiteSettingsPhoneError": "أرقام بس، وممكن يبدأ بـ +",
   "adminSiteSettingsEmailError": "اكتب إيميل صحيح",
   "adminSiteSettingsSaved": "اتحفظت إعدادات الموقع",
-  "storeOpenOnWebsite": "افتح المتجر"
+  "storeOpenOnWebsite": "افتح المتجر",
+  "adminProductNameLabel": "اسم المنتج",
+  "adminProductDescriptionLabel": "الوصف",
+  "adminProductPhotosTitle": "صور المنتج",
+  "adminProductPhotosAfterSave": "احفظ المنتج الأول، وبعدها هيظهر هنا زرار رفع الصور.",
+  "adminProductSavedAddPhotos": "اتحفظ المنتج. ضيف صوره دلوقتي من جزء «صور المنتج»."
 }

@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,6 +5,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_product.dart';
 import '../../store/presentation/widgets/money.dart';
 import '../application/admin_store_controllers.dart';
+import 'admin_product_image_gallery.dart';
 import 'admin_store_page.dart';
 import 'admin_store_product_editor.dart';
 
@@ -17,8 +17,7 @@ class AdminStoreProductsTab extends ConsumerStatefulWidget {
       _AdminStoreProductsTabState();
 }
 
-class _AdminStoreProductsTabState
-    extends ConsumerState<AdminStoreProductsTab> {
+class _AdminStoreProductsTabState extends ConsumerState<AdminStoreProductsTab> {
   final _search = TextEditingController();
 
   @override
@@ -67,8 +66,7 @@ class _AdminStoreProductsTabState
           child: AdminAsyncList<StoreProduct>(
             value: products,
             emptyMessage: l10n.adminProductsEmpty,
-            onRetry: () =>
-                ref.invalidate(adminProductsControllerProvider),
+            onRetry: () => ref.invalidate(adminProductsControllerProvider),
             builder: (context, items) => ListView.separated(
               itemCount: items.length + (controller.hasMore ? 1 : 0),
               separatorBuilder: (_, _) => const Divider(height: 1),
@@ -120,7 +118,11 @@ class _ProductRow extends ConsumerWidget {
         child: product.imageUrl == null
             ? ColoredBox(
                 color: scheme.surfaceContainerHighest,
-                child: Icon(Icons.image_outlined, size: 18, color: scheme.outline),
+                child: Icon(
+                  Icons.image_outlined,
+                  size: 18,
+                  color: scheme.outline,
+                ),
               )
             : Image.network(
                 product.imageUrl!,
@@ -129,7 +131,7 @@ class _ProductRow extends ConsumerWidget {
                     ColoredBox(color: scheme.surfaceContainerHighest),
               ),
       ),
-      title: Text(product.title.en),
+      title: Text(product.title.resolve(true)),
       subtitle: Text(
         '${formatMoney(product.priceMinor, isArabic: isArabic)}  ·  '
         '${l10n.adminProductOptionsCount(product.variants.length)}  ·  '
@@ -155,7 +157,9 @@ class _ProductRow extends ConsumerWidget {
             icon: const Icon(Icons.edit_outlined, size: 18),
           ),
           IconButton(
-            tooltip: isListed ? l10n.adminProductUnlistTooltip : l10n.adminProductAlreadyUnlisted,
+            tooltip: isListed
+                ? l10n.adminProductUnlistTooltip
+                : l10n.adminProductAlreadyUnlisted,
             onPressed: isListed ? () => _confirmUnlist(context, ref) : null,
             icon: const Icon(Icons.visibility_off_outlined, size: 18),
           ),
@@ -172,7 +176,7 @@ class _ProductRow extends ConsumerWidget {
         title: Text(l10n.adminProductUnlistTitle),
         // Says what actually happens, because "delete" would be a lie: the
         // document survives so past orders still render.
-        content: Text(l10n.adminProductUnlistBody(product.title.en)),
+        content: Text(l10n.adminProductUnlistBody(product.title.resolve(true))),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -198,189 +202,29 @@ class _ProductRow extends ConsumerWidget {
       );
 }
 
-/// The gallery editor. Order matters — the first image is the one every
-/// storefront tile shows — and the only control over it is upload order, so
-/// that is stated rather than left to be discovered.
-class _ImagesDialog extends ConsumerStatefulWidget {
+/// The gallery, opened from a product's row.
+class _ImagesDialog extends StatelessWidget {
   const _ImagesDialog({required this.product});
 
   final StoreProduct product;
 
   @override
-  ConsumerState<_ImagesDialog> createState() => _ImagesDialogState();
-}
-
-class _ImagesDialogState extends ConsumerState<_ImagesDialog> {
-  late StoreProduct _product = widget.product;
-  bool _busy = false;
-  String? _error;
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(l10n.adminProductImagesTitle(_product.title.en)),
+      title: Text(l10n.adminProductImagesTitle(product.title.resolve(true))),
       content: SizedBox(
         width: 520,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.adminProductImagesHint,
-              style: const TextStyle(fontSize: 12),
-            ),
-            const SizedBox(height: 12),
-            if (_product.images.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Text(l10n.adminProductNoImages),
-              )
-            else
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (var i = 0; i < _product.images.length; i++)
-                    _Thumb(
-                      url: _product.images[i].url,
-                      isPrimary: i == 0,
-                      onRemove: _busy ? null : () => _remove(i),
-                    ),
-                ],
-              ),
-            if (_error != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                _error!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-            ],
-          ],
+        child: SingleChildScrollView(
+          child: ProductImageGallery(product: product),
         ),
       ),
       actions: [
         TextButton(
-          onPressed: _busy ? null : () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(),
           child: Text(l10n.adminCloseLabel),
         ),
-        FilledButton.icon(
-          onPressed: _busy ? null : _pickAndUpload,
-          icon: _busy
-              ? const SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.upload, size: 18),
-          label: Text(l10n.adminUploadLabel),
-        ),
       ],
-    );
-  }
-
-  Future<void> _pickAndUpload() async {
-    final picked = await FilePicker.pickFiles(
-      type: FileType.image,
-      // The bytes are what the multipart request needs, and on web there is
-      // no path to read from anyway.
-      withData: true,
-    );
-    final file = picked?.files.singleOrNull;
-    final bytes = file?.bytes;
-    if (bytes == null) return;
-
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    try {
-      final updated = await ref
-          .read(adminProductsControllerProvider.notifier)
-          .addImage(_product.id, bytes, file!.name);
-      if (mounted) setState(() => _product = updated);
-    } catch (error) {
-      if (mounted) setState(() => _error = '$error');
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _remove(int index) async {
-    // The API addresses an image by its Cloudinary publicId, which the admin
-    // response carries alongside the URL.
-    final publicId = _product.images[index].publicId;
-
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    try {
-      final updated = await ref
-          .read(adminProductsControllerProvider.notifier)
-          .removeImage(_product.id, publicId);
-      if (mounted) setState(() => _product = updated);
-    } catch (error) {
-      if (mounted) setState(() => _error = '$error');
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-}
-
-class _Thumb extends StatelessWidget {
-  const _Thumb({
-    required this.url,
-    required this.isPrimary,
-    required this.onRemove,
-  });
-
-  final String url;
-  final bool isPrimary;
-  final VoidCallback? onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return SizedBox(
-      width: 96,
-      height: 128,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.network(
-            url,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => ColoredBox(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            ),
-          ),
-          if (isPrimary)
-            Positioned(
-              left: 0,
-              top: 0,
-              child: Container(
-                color: Colors.black87,
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                child: Text(
-                  l10n.adminProductImageCardBadge,
-                  style: const TextStyle(color: Colors.white, fontSize: 10),
-                ),
-              ),
-            ),
-          Positioned(
-            right: 0,
-            top: 0,
-            child: IconButton(
-              tooltip: l10n.adminProductRemoveImageTooltip,
-              onPressed: onRemove,
-              icon: const Icon(Icons.close, size: 16, color: Colors.white),
-              style: IconButton.styleFrom(backgroundColor: Colors.black54),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
