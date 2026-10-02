@@ -23,6 +23,7 @@ import { StoreModule } from './store/store.module';
 import { CalendarEventsModule } from './calendar-events/calendar-events.module';
 import { CoachesModule } from './coaches/coaches.module';
 import { CoachInvitationsModule } from './coach-invitations/coach-invitations.module';
+import { SiteSettingsModule } from './site-settings/site-settings.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { CoachInvitationsModule } from './coach-invitations/coach-invitations.mo
     CalendarEventsModule,
     CoachesModule,
     CoachInvitationsModule,
+    SiteSettingsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
