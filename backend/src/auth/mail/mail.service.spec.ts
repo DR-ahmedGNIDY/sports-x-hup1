@@ -21,7 +21,7 @@ describe('MailService', () => {
     expect(provider.sendPasswordResetEmail).toHaveBeenCalledWith({
       to: 'player@example.com',
       resetUrl:
-        'https://app.sportxhub.com/reset-password?token=raw-token-value',
+        'https://app.sportxhub.com/#/reset-password?token=raw-token-value',
     });
   });
 

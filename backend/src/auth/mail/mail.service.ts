@@ -24,7 +24,10 @@ export class MailService {
     correlationId: string,
   ): Promise<void> {
     const frontendUrl = this.config.get<string>('FRONTEND_URL') ?? '';
-    const resetUrl = `${frontendUrl}/reset-password?token=${encodeURIComponent(resetToken)}`;
+    // The web app uses hash routing (app.sportxhup.com/#/login), so the
+    // route has to sit after "#" or the app opens on its start page and the
+    // token is lost.
+    const resetUrl = `${frontendUrl}/#/reset-password?token=${encodeURIComponent(resetToken)}`;
 
     try {
       await this.provider.sendPasswordResetEmail({ to: email, resetUrl });

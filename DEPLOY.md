@@ -24,6 +24,12 @@ takes all of them down, not just this app.
 | Database | MongoDB Atlas (not on this server) |
 | TLS | certbot, auto-renewing |
 
+**Since the website split** `sportxhup.com` serves the website (`website/`)
+from `/var/www/sportxhup-site`, and the app's web build moved to
+`app.sportxhup.com` at `/var/www/sportxhup-app`. The steps below still
+describe how to build and stage each; the web roots, staging dirs and the
+one-time server setup are in `docs/website-split-cutover.md`.
+
 **`sudo` needs a password nobody has here.** Anything touching
 `/var/www`, `/etc/nginx` or systemd is a command *for the user to run*.
 Everything else can be done over SSH directly.
