@@ -1,0 +1,141 @@
+---
+import Base from '../layouts/Base.astro';
+import { href, t, type Lang } from '../lib/i18n';
+import { API_BASE_URL } from '../lib/settings';
+import { storeStrings } from '../lib/store/strings';
+import '../styles/store.css';
+
+export type StorePage = 'home' | 'category' | 'shop' | 'product' | 'cart' | 'checkout' | 'order' | 'track';
+interface Props { lang: Lang; page: StorePage }
+const { lang, page } = Astro.props;
+const d = t[lang];
+const s = storeStrings[lang];
+const base = lang === 'ar' ? '/store' : '/en/store';
+const titles: Record<StorePage, string | undefined> = {
+  home: undefined, category: undefined, shop: s.allProducts, product: undefined,
+  cart: s.cart, checkout: s.checkout, order: s.orderPlaced, track: s.track,
+};
+const heroTitle = page === 'home' ? s.title : titles[page] ?? '';
+const arrow = lang === 'ar' ? '←' : '→';
+---
+<Base lang={lang} page="store" title={titles[page] ?? (page === 'home' ? s.title : undefined)} description={s.lead}>
+  <main data-store-page={page} data-lang={lang} data-api={API_BASE_URL}>
+    <section class="phero store-hero"><div class="wrap">
+      <span class="crumbs"><a href={href(lang, '')}>{d.crumbsHome}</a> / {page === 'home' ? <b>{d.navStore}</b> : <a href={base}>{d.navStore}</a>}</span>
+      <div class="st-top">
+        <h1 id="title">{heroTitle}</h1>
+        <nav class="st-tools" aria-label={d.navStore}>
+          <form action={`${base}/shop`} method="get" class="st-search" role="search">
+            <input id={page === 'shop' ? 'q' : 'hq'} name="q" type="search" placeholder={s.search} aria-label={s.search} />
+          </form>
+          <a class="st-icon" href={`${base}/track`} title={s.track} aria-label={s.track}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+          </a>
+          <a class="st-icon" href={`${base}/cart`} title={s.cart} aria-label={s.cart}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 8h14l-1.4 11.2a2 2 0 01-2 1.8H8.4a2 2 0 01-2-1.8z"/><path d="M9 8a3 3 0 016 0"/></svg>
+            <span class="count" data-cart-count hidden>0</span>
+          </a>
+        </nav>
+      </div>
+      {page === 'home' && <p>{s.lead}</p>}
+      {page === 'category' && <div class="chips" id="chips"></div>}
+    </div></section>
+
+    {page === 'home' && (
+      <>
+        <section class="sec st-sec" style="padding-top:0"><div class="wrap">
+          <div class="st-banner" id="banner" hidden></div>
+          <div class="depts" id="depts">
+            {[0, 1, 2].map(() => <article class="dept sk"><div class="pic"></div><div class="subs"><i></i><i></i><i></i></div></article>)}
+          </div>
+        </div></section>
+        <section class="sec st-sec"><div class="wrap">
+          <div class="st-head"><h2>{s.featured}</h2><a href={`${base}/shop`}>{s.viewAll} {arrow}</a></div>
+          <div class="pgrid" id="featured"></div>
+        </div></section>
+        <section class="sec st-sec alt"><div class="wrap">
+          <div class="st-head"><h2>{s.newArrivals}</h2><a href={`${base}/shop`}>{s.viewAll} {arrow}</a></div>
+          <div class="pgrid" id="newest"></div>
+        </div></section>
+      </>
+    )}
+
+    {(page === 'category' || page === 'shop') && (
+      <section class="sec st-sec"><div class="wrap">
+        <div class="st-bar">
+          <select id="sort" aria-label="sort">
+            <option value="newest">{s.sortNewest}</option>
+            <option value="price_asc">{s.sortPriceAsc}</option>
+            <option value="price_desc">{s.sortPriceDesc}</option>
+          </select>
+        </div>
+        <div class="pgrid" id="grid"></div>
+        <div class="st-more"><button class="cta outline" id="more" type="button" hidden>{s.loadMore}</button></div>
+      </div></section>
+    )}
+
+    {page === 'product' && (
+      <section class="sec st-sec"><div class="wrap"><div class="product" id="product"><div class="gallery sk"><div class="gmain"></div></div><div class="pdetail sk"><i></i><i></i><i></i></div></div></div></section>
+    )}
+
+    {page === 'cart' && (
+      <section class="sec st-sec"><div class="wrap"><div class="cartwrap" id="cart"></div></div></section>
+    )}
+
+    {page === 'checkout' && (
+      <section class="sec st-sec"><div class="wrap">
+        <div class="cartwrap" id="checkout" hidden>
+          <form class="formcard" id="cform" novalidate>
+            <h2>{s.checkoutTitle}</h2>
+            <div class="fr">
+              <div class="field"><label for="c-name">{s.fullName}</label><input id="c-name" name="fullName" autocomplete="name" maxlength="120" /><span class="fmsg"></span></div>
+              <div class="field"><label for="c-phone">{s.phone}</label><input id="c-phone" name="phone" dir="ltr" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx" /><span class="fmsg"></span></div>
+            </div>
+            <div class="field"><label for="c-email">{s.email}</label><input id="c-email" name="email" type="email" dir="ltr" autocomplete="email" /><span class="fmsg"></span></div>
+            <div class="fr">
+              <div class="field"><label for="c-gov">{s.governorate}</label><select id="c-gov" name="governorateCode"></select><span class="fmsg"></span></div>
+              <div class="field"><label for="c-city">{s.city}</label><input id="c-city" name="city" maxlength="120" autocomplete="address-level2" /><span class="fmsg"></span></div>
+            </div>
+            <div class="field"><label for="c-street">{s.street}</label><input id="c-street" name="street" maxlength="400" autocomplete="street-address" /><span class="fmsg"></span></div>
+            <div class="field"><label for="c-notes">{s.notes}</label><textarea id="c-notes" name="notes" maxlength="500" style="min-height:80px"></textarea></div>
+            <div class="field"><span class="flabel">{s.payment}</span><div class="cod">{s.cod}</div></div>
+            <button class="cta full" id="c-submit" type="submit">{s.placeOrder}</button>
+            <div id="cstatus"></div>
+          </form>
+          <aside class="summary">
+            <div id="csum"></div>
+            <div class="coupon">
+              <label for="c-coupon">{s.couponLabel}</label>
+              <div class="crow"><input id="c-coupon" dir="ltr" maxlength="32" /><button type="button" class="cta outline" id="c-apply">{s.couponApply}</button></div>
+              <span class="fmsg" id="c-couponmsg"></span>
+            </div>
+          </aside>
+        </div>
+      </div></section>
+    )}
+
+    {page === 'order' && (
+      <section class="sec st-sec"><div class="wrap"><div class="orderwrap" id="order"></div></div></section>
+    )}
+
+    {page === 'track' && (
+      <section class="sec st-sec"><div class="wrap"><div class="orderwrap">
+        <form class="formcard" id="tform">
+          <h2>{s.trackTitle}</h2>
+          <p class="st-sub">{s.trackLead}</p>
+          <div class="fr">
+            <div class="field"><label for="t-num">{s.orderNumber}</label><input id="t-num" name="orderNumber" dir="ltr" required maxlength="40" /></div>
+            <div class="field"><label for="t-mail">{s.email}</label><input id="t-mail" name="email" type="email" dir="ltr" required /></div>
+          </div>
+          <button class="cta full" type="submit">{s.trackSubmit}</button>
+        </form>
+        <div id="tresult"></div>
+      </div></div></section>
+    )}
+
+    <script type="application/json" id="store-strings" set:html={JSON.stringify(s)} />
+  </main>
+  <script>
+    import '../lib/store/client';
+  </script>
+</Base>

@@ -1,0 +1,8 @@
+---
+import Store from '../../../views/Store.astro';
+import { productSlugs } from '../../../lib/store/build';
+export async function getStaticPaths() {
+  return (await productSlugs()).map((slug) => ({ params: { slug } }));
+}
+---
+<Store lang="ar" page="product" />

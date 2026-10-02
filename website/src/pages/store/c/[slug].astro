@@ -1,0 +1,8 @@
+---
+import Store from '../../../views/Store.astro';
+import { categorySlugs } from '../../../lib/store/build';
+export async function getStaticPaths() {
+  return (await categorySlugs()).map((slug) => ({ params: { slug } }));
+}
+---
+<Store lang="ar" page="category" />
