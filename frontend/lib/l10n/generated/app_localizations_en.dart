@@ -3008,4 +3008,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationJoinRequestFromCoach(String name) {
     return 'Coach $name asked to join your club';
   }
+
+  @override
+  String get dashboardAdminSiteSettings => 'Website';
+
+  @override
+  String get adminSiteSettingsIntro =>
+      'Links and contact details shown on sportxhup.com. Leave a field empty to hide it on the website.';
+
+  @override
+  String get adminSiteSettingsSocialSection => 'Social media';
+
+  @override
+  String get adminSiteSettingsContactSection => 'Contact';
+
+  @override
+  String get adminSiteSettingsWhatsapp => 'WhatsApp number';
+
+  @override
+  String get adminSiteSettingsEmail => 'Email';
+
+  @override
+  String get adminSiteSettingsPhones => 'Phone numbers';
+
+  @override
+  String get adminSiteSettingsPhoneLabel => 'Label (optional)';
+
+  @override
+  String get adminSiteSettingsPhoneNumber => 'Number';
+
+  @override
+  String get adminSiteSettingsAddPhone => 'Add number';
+
+  @override
+  String get adminSiteSettingsRemovePhone => 'Remove number';
+
+  @override
+  String get adminSiteSettingsAppSection => 'Get the app';
+
+  @override
+  String get adminSiteSettingsGooglePlay => 'Google Play link';
+
+  @override
+  String get adminSiteSettingsWebApp => 'Web version link (iPhone users)';
+
+  @override
+  String get adminSiteSettingsUrlError =>
+      'Enter a full link starting with https://';
+
+  @override
+  String get adminSiteSettingsPhoneError =>
+      'Digits only, optionally starting with +';
+
+  @override
+  String get adminSiteSettingsEmailError => 'Enter a valid email address';
+
+  @override
+  String get adminSiteSettingsSaved => 'Website settings saved';
 }

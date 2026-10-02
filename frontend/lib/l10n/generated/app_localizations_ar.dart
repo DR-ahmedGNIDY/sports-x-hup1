@@ -2976,4 +2976,59 @@ class AppLocalizationsAr extends AppLocalizations {
   String notificationJoinRequestFromCoach(String name) {
     return 'المدرب $name يطلب الانضمام لناديك';
   }
+
+  @override
+  String get dashboardAdminSiteSettings => 'إعدادات الموقع';
+
+  @override
+  String get adminSiteSettingsIntro =>
+      'الروابط وبيانات التواصل اللي بتظهر على sportxhup.com. سيب الخانة فاضية علشان تختفي من الموقع.';
+
+  @override
+  String get adminSiteSettingsSocialSection => 'السوشيال ميديا';
+
+  @override
+  String get adminSiteSettingsContactSection => 'التواصل';
+
+  @override
+  String get adminSiteSettingsWhatsapp => 'رقم الواتساب';
+
+  @override
+  String get adminSiteSettingsEmail => 'الإيميل';
+
+  @override
+  String get adminSiteSettingsPhones => 'أرقام التليفون';
+
+  @override
+  String get adminSiteSettingsPhoneLabel => 'الوصف (اختياري)';
+
+  @override
+  String get adminSiteSettingsPhoneNumber => 'الرقم';
+
+  @override
+  String get adminSiteSettingsAddPhone => 'إضافة رقم';
+
+  @override
+  String get adminSiteSettingsRemovePhone => 'حذف الرقم';
+
+  @override
+  String get adminSiteSettingsAppSection => 'تحميل التطبيق';
+
+  @override
+  String get adminSiteSettingsGooglePlay => 'رابط Google Play';
+
+  @override
+  String get adminSiteSettingsWebApp => 'رابط نسخة الويب (لمستخدمي iPhone)';
+
+  @override
+  String get adminSiteSettingsUrlError => 'اكتب الرابط كامل يبدأ بـ https://';
+
+  @override
+  String get adminSiteSettingsPhoneError => 'أرقام بس، وممكن يبدأ بـ +';
+
+  @override
+  String get adminSiteSettingsEmailError => 'اكتب إيميل صحيح';
+
+  @override
+  String get adminSiteSettingsSaved => 'اتحفظت إعدادات الموقع';
 }

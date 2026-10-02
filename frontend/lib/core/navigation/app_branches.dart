@@ -119,6 +119,11 @@ enum AppBranch {
     icon: Icons.storefront_outlined,
     selectedIcon: Icons.storefront,
   ),
+  adminSiteSettings(
+    rootPath: '/admin/site-settings',
+    icon: Icons.language_outlined,
+    selectedIcon: Icons.language,
+  ),
   notifications(
     rootPath: '/notifications',
     icon: Icons.notifications_none,
@@ -166,6 +171,7 @@ enum AppBranch {
     adminUsers => l10n.dashboardAdminUsers,
     adminPlayersClubs => l10n.dashboardAdminPlayersClubs,
     adminStore => l10n.dashboardAdminStore,
+    adminSiteSettings => l10n.dashboardAdminSiteSettings,
     notifications => l10n.notificationsTitle,
     settings => l10n.dashboardNavSettings,
   };
@@ -285,6 +291,9 @@ final Map<String, AppRouteMeta> _routeMeta = {
     title: (l10n) => l10n.dashboardAdminPlayersClubs,
   ),
   '/admin/store': AppRouteMeta(title: (l10n) => l10n.dashboardAdminStore),
+  '/admin/site-settings': AppRouteMeta(
+    title: (l10n) => l10n.dashboardAdminSiteSettings,
+  ),
   '/notifications': AppRouteMeta(
     title: (l10n) => l10n.notificationsTitle,
     ownsChrome: true,
@@ -446,6 +455,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
       AppBranch.adminUsers,
       AppBranch.adminPlayersClubs,
       AppBranch.adminStore,
+      AppBranch.adminSiteSettings,
       AppBranch.settings,
     ],
     _ => const [AppBranch.settings],

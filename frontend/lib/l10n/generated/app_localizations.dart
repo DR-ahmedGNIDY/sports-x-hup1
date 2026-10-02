@@ -5567,6 +5567,114 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'المدرب {name} يطلب الانضمام لناديك'**
   String notificationJoinRequestFromCoach(String name);
+
+  /// No description provided for @dashboardAdminSiteSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الموقع'**
+  String get dashboardAdminSiteSettings;
+
+  /// No description provided for @adminSiteSettingsIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'الروابط وبيانات التواصل اللي بتظهر على sportxhup.com. سيب الخانة فاضية علشان تختفي من الموقع.'**
+  String get adminSiteSettingsIntro;
+
+  /// No description provided for @adminSiteSettingsSocialSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'السوشيال ميديا'**
+  String get adminSiteSettingsSocialSection;
+
+  /// No description provided for @adminSiteSettingsContactSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'التواصل'**
+  String get adminSiteSettingsContactSection;
+
+  /// No description provided for @adminSiteSettingsWhatsapp.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الواتساب'**
+  String get adminSiteSettingsWhatsapp;
+
+  /// No description provided for @adminSiteSettingsEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإيميل'**
+  String get adminSiteSettingsEmail;
+
+  /// No description provided for @adminSiteSettingsPhones.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام التليفون'**
+  String get adminSiteSettingsPhones;
+
+  /// No description provided for @adminSiteSettingsPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصف (اختياري)'**
+  String get adminSiteSettingsPhoneLabel;
+
+  /// No description provided for @adminSiteSettingsPhoneNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم'**
+  String get adminSiteSettingsPhoneNumber;
+
+  /// No description provided for @adminSiteSettingsAddPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة رقم'**
+  String get adminSiteSettingsAddPhone;
+
+  /// No description provided for @adminSiteSettingsRemovePhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف الرقم'**
+  String get adminSiteSettingsRemovePhone;
+
+  /// No description provided for @adminSiteSettingsAppSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحميل التطبيق'**
+  String get adminSiteSettingsAppSection;
+
+  /// No description provided for @adminSiteSettingsGooglePlay.
+  ///
+  /// In ar, this message translates to:
+  /// **'رابط Google Play'**
+  String get adminSiteSettingsGooglePlay;
+
+  /// No description provided for @adminSiteSettingsWebApp.
+  ///
+  /// In ar, this message translates to:
+  /// **'رابط نسخة الويب (لمستخدمي iPhone)'**
+  String get adminSiteSettingsWebApp;
+
+  /// No description provided for @adminSiteSettingsUrlError.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب الرابط كامل يبدأ بـ https://'**
+  String get adminSiteSettingsUrlError;
+
+  /// No description provided for @adminSiteSettingsPhoneError.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام بس، وممكن يبدأ بـ +'**
+  String get adminSiteSettingsPhoneError;
+
+  /// No description provided for @adminSiteSettingsEmailError.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب إيميل صحيح'**
+  String get adminSiteSettingsEmailError;
+
+  /// No description provided for @adminSiteSettingsSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحفظت إعدادات الموقع'**
+  String get adminSiteSettingsSaved;
 }
 
 class _AppLocalizationsDelegate

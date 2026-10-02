@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/admin/presentation/admin_overview_page.dart';
 import '../../features/admin/presentation/admin_players_clubs_page.dart';
+import '../../features/admin/presentation/admin_site_settings_page.dart';
 import '../../features/admin/presentation/admin_store_page.dart';
 import '../../features/admin/presentation/admin_users_page.dart';
 import '../../features/auth/application/session_controller.dart';
@@ -605,6 +606,13 @@ StatefulShellBranch _branchFor(AppBranch branch) {
           path: '/admin/store',
           pageBuilder: (context, state) =>
               fadePage(state: state, child: const AdminStorePage()),
+        ),
+      ],
+      AppBranch.adminSiteSettings => [
+        GoRoute(
+          path: '/admin/site-settings',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const AdminSiteSettingsPage()),
         ),
       ],
       AppBranch.notifications => [

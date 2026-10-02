@@ -163,6 +163,7 @@ List<AppBranch> _sidebarBranchesFor(UserRole? role) => switch (role) {
     AppBranch.adminUsers,
     AppBranch.adminPlayersClubs,
     AppBranch.adminStore,
+    AppBranch.adminSiteSettings,
     AppBranch.settings,
   ],
   null => const [
