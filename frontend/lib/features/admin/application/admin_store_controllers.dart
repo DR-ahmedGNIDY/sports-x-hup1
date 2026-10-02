@@ -63,11 +63,12 @@ class AdminProductsController extends AsyncNotifier<List<StoreProduct>> {
   Future<StoreProduct> addImage(
     String id,
     List<int> bytes,
-    String filename,
-  ) async {
+    String filename, {
+    String? colour,
+  }) async {
     final updated = await ref
         .read(adminStoreRepositoryProvider)
-        .addProductImage(id, bytes, filename);
+        .addProductImage(id, bytes, filename, colour: colour);
     await _reload();
     // Returned as well as reloaded so the editor dialog can show the new
     // gallery without waiting for the table behind it.

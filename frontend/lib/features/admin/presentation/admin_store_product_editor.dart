@@ -6,7 +6,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../store/domain/entities/store_category.dart';
 import '../../store/domain/entities/store_product.dart';
 import '../application/admin_store_controllers.dart';
-import 'admin_product_image_gallery.dart';
+import 'admin_product_options.dart';
 import 'admin_store_categories_tab.dart' show categoryTree;
 import 'admin_store_page.dart';
 
@@ -36,9 +36,57 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
   // the saved product and offer them again.
   late StoreProduct? _product = widget.product;
 
-  // Photos picked before a new product's first save; uploaded by [_save]
-  // right after the product is created.
-  List<PlatformFile> _pendingImages = const [];
+  // Photos already on the product, kept here so a removal shows at once.
+  late List<ProductImage> _liveImages = [...?widget.product?.images];
+
+  // Photos picked in this session, by colour name (null: general photos).
+  // The API takes images for a saved product, and only for colours it
+  // already has, so these all upload in [_save], after the product is.
+  final Map<String?, List<PlatformFile>> _pending = {};
+
+  // Colours, sizes and the stock of every colour × size combination. These
+  // replace hand-typed option rows: the variants sent to the API are
+  // generated from them in [_variantsBody].
+  late List<ProductColour> _colours = _initialColours();
+  late List<String> _sizes = {
+    for (final v in widget.product?.variants ?? const <ProductVariant>[])
+      if ((v.size ?? '').isNotEmpty) v.size!,
+  }.toList();
+  late final Map<String, TextEditingController> _stock = {
+    for (final v in widget.product?.variants ?? const <ProductVariant>[])
+      _key(v.colour, v.size): TextEditingController(text: '${v.stock ?? 0}'),
+  };
+  // Kept so an existing variant's SKU survives a save; the form has no SKU
+  // field any more.
+  late final Map<String, String> _skus = {
+    for (final v in widget.product?.variants ?? const <ProductVariant>[])
+      if ((v.sku ?? '').isNotEmpty) _key(v.colour, v.size): v.sku!,
+  };
+
+  static String _key(String? colour, String? size) =>
+      '${colour ?? ''}|${size ?? ''}';
+
+  /// The product's colours; for a product saved before colours had their
+  /// own field, rebuilt from the colour names on its variants.
+  List<ProductColour> _initialColours() {
+    final product = widget.product;
+    if (product == null) return [];
+    if (product.colours.isNotEmpty) return [...product.colours];
+    final names = {
+      for (final v in product.variants)
+        if ((v.colour ?? '').isNotEmpty) v.colour!,
+    };
+    return [
+      for (final name in names)
+        productColourPresets.firstWhere(
+          (c) => c.name == name,
+          orElse: () => ProductColour(name: name, hex: '#9e9e9e'),
+        ),
+    ];
+  }
+
+  TextEditingController _stockFor(String? colour, String? size) => _stock
+      .putIfAbsent(_key(colour, size), () => TextEditingController(text: '0'));
 
   // Arabic only: the store is Arabic-first. The API still requires English
   // text, so [_save] fills it — see there.
@@ -63,22 +111,19 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
   late ProductBadge _badge = widget.product?.badge ?? ProductBadge.none;
   late bool _isFeatured = widget.product?.isFeatured ?? false;
   late bool _isActive = widget.product?.isActive ?? true;
-  late final List<_VariantDraft> _variants = [
-    for (final variant in widget.product?.variants ?? const <ProductVariant>[])
-      _VariantDraft(
-        size: variant.size ?? '',
-        colour: variant.colour ?? '',
-        sku: variant.sku ?? '',
-        stock: variant.stock ?? 0,
-      ),
-  ];
 
   bool _busy = false;
   String? _error;
 
   @override
   void dispose() {
-    for (final c in [_titleAr, _descriptionAr, _price, _compareAt]) {
+    for (final c in [
+      _titleAr,
+      _descriptionAr,
+      _price,
+      _compareAt,
+      ..._stock.values,
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -221,52 +266,37 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                   ],
                 ),
                 const Divider(height: 32),
-                Row(
-                  children: [
-                    Text(
-                      l10n.adminProductOptionsTitle,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(width: 12),
-                    // Stock lives on the option, not the product, because
-                    // "Black / L is sold out" is the answer the cart needs.
-                    Expanded(
-                      child: Text(
-                        l10n.adminProductOptionsHint,
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ),
-                    TextButton.icon(
-                      onPressed: () =>
-                          setState(() => _variants.add(_VariantDraft())),
-                      icon: const Icon(Icons.add, size: 16),
-                      label: Text(l10n.adminProductAddOption),
-                    ),
-                  ],
-                ),
-                for (var i = 0; i < _variants.length; i++)
-                  _VariantRow(
-                    draft: _variants[i],
-                    onRemove: () => setState(() => _variants.removeAt(i)),
+                _sectionTitle(l10n.adminColoursTitle, l10n.adminColoursHint),
+                for (final colour in _colours) _colourBlock(l10n, colour),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton.icon(
+                    onPressed: _busy || _colours.length >= 12
+                        ? null
+                        : _addColour,
+                    icon: const Icon(Icons.add, size: 16),
+                    label: Text(l10n.adminColourAdd),
                   ),
+                ),
+                const SizedBox(height: 12),
+                _sectionTitle(
+                  _colours.isEmpty
+                      ? l10n.adminProductPhotosTitle
+                      : l10n.adminGeneralPhotosTitle,
+                  _colours.isEmpty
+                      ? l10n.adminProductImagesHint
+                      : l10n.adminGeneralPhotosHint,
+                ),
+                _photoStrip(null),
                 const Divider(height: 32),
-                Text(
-                  l10n.adminProductPhotosTitle,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                _sectionTitle(l10n.adminSizesTitle, l10n.adminSizesHint),
+                SizesInput(
+                  sizes: _sizes,
+                  onChanged: (sizes) => setState(() => _sizes = sizes),
                 ),
-                const SizedBox(height: 8),
-                if (_product == null)
-                  PendingImagePicker(
-                    files: _pendingImages,
-                    enabled: !_busy,
-                    onChanged: (files) =>
-                        setState(() => _pendingImages = files),
-                  )
-                else
-                  ProductImageGallery(
-                    key: ValueKey(_product!.id),
-                    product: _product!,
-                  ),
+                const Divider(height: 32),
+                _sectionTitle(l10n.adminStockTitle, l10n.adminStockHint),
+                _stockGrid(l10n),
                 if (_error != null) ...[
                   const SizedBox(height: 16),
                   Text(
@@ -298,6 +328,178 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
         ),
       ],
     );
+  }
+
+  Widget _sectionTitle(String title, String hint) => Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+        Text(hint, style: const TextStyle(fontSize: 12)),
+      ],
+    ),
+  );
+
+  Widget _colourBlock(AppLocalizations l10n, ProductColour colour) => Padding(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            ColourDot(hex: colour.hex),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                colour.name,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+            IconButton(
+              tooltip: l10n.adminColourRemove,
+              onPressed: _busy
+                  ? null
+                  : () => setState(() {
+                      _colours = _colours.where((c) => c != colour).toList();
+                      _pending.remove(colour.name);
+                    }),
+              icon: const Icon(Icons.delete_outline, size: 18),
+            ),
+          ],
+        ),
+        _photoStrip(colour.name),
+      ],
+    ),
+  );
+
+  Widget _photoStrip(String? colour) {
+    final names = {for (final c in _colours) c.name};
+    return ProductPhotoStrip(
+      // General photos include any whose colour is no longer on the form,
+      // which is what the API turns them into on save.
+      live: _liveImages
+          .where(
+            (i) => colour == null
+                ? i.colour == null || !names.contains(i.colour)
+                : i.colour == colour,
+          )
+          .toList(),
+      pending: _pending[colour] ?? const [],
+      enabled: !_busy,
+      onPendingChanged: (files) => setState(() => _pending[colour] = files),
+      onRemoveLive: _removeLiveImage,
+    );
+  }
+
+  Future<void> _addColour() async {
+    final picked = await pickProductColour(context, [
+      for (final c in _colours) c.name,
+    ]);
+    if (picked == null || !mounted) return;
+    setState(() => _colours = [..._colours, picked]);
+  }
+
+  /// Removing a saved photo takes effect at once (it is a delete on the
+  /// server), the same as it always has from the products list.
+  Future<void> _removeLiveImage(ProductImage image) async {
+    final product = _product;
+    if (product == null) return;
+    setState(() => _busy = true);
+    try {
+      final updated = await ref
+          .read(adminProductsControllerProvider.notifier)
+          .removeImage(product.id, image.publicId);
+      if (mounted) {
+        setState(() {
+          _product = updated;
+          _liveImages = [...updated.images];
+        });
+      }
+    } catch (error) {
+      if (mounted) setState(() => _error = '$error');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// One stock box per colour × size. With neither, a single box: a ball or
+  /// a pair of socks is still one buyable option.
+  Widget _stockGrid(AppLocalizations l10n) {
+    final colours = _colours.isEmpty ? <ProductColour?>[null] : _colours;
+    final sizes = _sizes.isEmpty ? <String?>[null] : _sizes;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final colour in colours)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 110,
+                  child: colour == null
+                      ? Text(l10n.adminProductStockLabel)
+                      : Row(
+                          children: [
+                            ColourDot(hex: colour.hex, size: 16),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                colour.name,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+                Expanded(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final size in sizes)
+                        SizedBox(
+                          width: 84,
+                          child: TextFormField(
+                            controller: _stockFor(colour?.name, size),
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              labelText: size ?? l10n.adminProductStockLabel,
+                            ),
+                            validator: (value) =>
+                                int.tryParse((value ?? '').trim()) == null
+                                ? l10n.adminWholeNumberError
+                                : null,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  List<Map<String, dynamic>> _variantsBody() {
+    final colours = _colours.isEmpty
+        ? <String?>[null]
+        : [for (final c in _colours) c.name];
+    final sizes = _sizes.isEmpty ? <String?>[null] : _sizes;
+    return [
+      for (final colour in colours)
+        for (final size in sizes)
+          {
+            'size': ?size,
+            'colour': ?colour,
+            'sku': ?_skus[_key(colour, size)],
+            'stock': int.tryParse(_stockFor(colour, size).text.trim()) ?? 0,
+          },
+    ];
   }
 
   /// A product whose category was hidden still names it, but the dropdown
@@ -371,14 +573,9 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
       'priceMinor': poundsToMinor(_price.text),
       if (_compareAt.text.trim().isNotEmpty) 'compareAtPriceMinor': compareAt,
       if (_badge != ProductBadge.none) 'badge': _badgeWireValue(_badge),
-      'variants': [
-        for (final draft in _variants)
-          {
-            if (draft.size.trim().isNotEmpty) 'size': draft.size.trim(),
-            if (draft.colour.trim().isNotEmpty) 'colour': draft.colour.trim(),
-            if (draft.sku.trim().isNotEmpty) 'sku': draft.sku.trim(),
-            'stock': draft.stock,
-          },
+      'variants': _variantsBody(),
+      'colours': [
+        for (final c in _colours) {'name': c.name, 'hex': c.hex},
       ],
       'isFeatured': _isFeatured,
       'isActive': _isActive,
@@ -391,39 +588,48 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
     try {
       final controller = ref.read(adminProductsControllerProvider.notifier);
       final existing = _product;
-      if (existing == null) {
-        final created = await controller.create(body);
-        var latest = created;
-        final failed = <String>[];
-        for (final file in _pendingImages) {
+      var latest = existing == null
+          ? await controller.create(body)
+          : await (() async {
+              await controller.save(existing.id, body);
+              return existing;
+            })();
+
+      // Photos go up after the product (and its colours) are saved, in the
+      // order picked; the first general photo is the one tiles show.
+      final failed = <String>[];
+      final remaining = <String?, List<PlatformFile>>{};
+      for (final entry in _pending.entries) {
+        for (final file in entry.value) {
           try {
             latest = await controller.addImage(
-              created.id,
+              latest.id,
               file.bytes!,
               file.name,
+              colour: entry.key,
             );
           } catch (_) {
             failed.add(file.name);
+            (remaining[entry.key] ??= []).add(file);
           }
         }
-        if (!mounted) return;
-        if (failed.isEmpty) {
-          Navigator.of(context).pop();
-          return;
-        }
-        // The product exists now; keep the editor open on it, with the
-        // uploaded photos in the live gallery, so the rest can be retried.
-        setState(() {
-          _product = latest;
-          _pendingImages = const [];
-          _error = AppLocalizations.of(
-            context,
-          )!.adminProductSomePhotosFailed(failed.join('، '));
-        });
+      }
+      if (!mounted) return;
+      if (failed.isEmpty) {
+        Navigator.of(context).pop();
         return;
       }
-      await controller.save(existing.id, body);
-      if (mounted) Navigator.of(context).pop();
+      // The product is saved; stay open on it with what did upload, and
+      // keep the failed photos queued so Save tries them again.
+      final l10n = AppLocalizations.of(context)!;
+      setState(() {
+        _product = latest;
+        _liveImages = [...latest.images];
+        _pending
+          ..clear()
+          ..addAll(remaining);
+        _error = l10n.adminProductSomePhotosFailed(failed.join('، '));
+      });
     } catch (error) {
       if (mounted) setState(() => _error = '$error');
     } finally {
@@ -462,92 +668,6 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
               : null),
     ),
   );
-}
-
-class _VariantDraft {
-  _VariantDraft({
-    this.size = '',
-    this.colour = '',
-    this.sku = '',
-    this.stock = 0,
-  });
-
-  String size;
-  String colour;
-  String sku;
-  int stock;
-}
-
-class _VariantRow extends StatelessWidget {
-  const _VariantRow({required this.draft, required this.onRemove});
-
-  final _VariantDraft draft;
-  final VoidCallback onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              initialValue: draft.size,
-              decoration: InputDecoration(
-                labelText: l10n.adminProductSizeLabel,
-                isDense: true,
-              ),
-              onChanged: (value) => draft.size = value,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextFormField(
-              initialValue: draft.colour,
-              decoration: InputDecoration(
-                labelText: l10n.adminProductColourLabel,
-                isDense: true,
-              ),
-              onChanged: (value) => draft.colour = value,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextFormField(
-              initialValue: draft.sku,
-              decoration: InputDecoration(
-                labelText: l10n.adminProductSkuLabel,
-                isDense: true,
-              ),
-              onChanged: (value) => draft.sku = value,
-            ),
-          ),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: 90,
-            child: TextFormField(
-              initialValue: '${draft.stock}',
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: l10n.adminProductStockLabel,
-                isDense: true,
-              ),
-              validator: (value) =>
-                  int.tryParse((value ?? '').trim()) == null ? '?' : null,
-              onChanged: (value) =>
-                  draft.stock = int.tryParse(value.trim()) ?? 0,
-            ),
-          ),
-          IconButton(
-            tooltip: l10n.adminProductRemoveOptionTooltip,
-            onPressed: onRemove,
-            icon: const Icon(Icons.close, size: 18),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _Pair extends StatelessWidget {

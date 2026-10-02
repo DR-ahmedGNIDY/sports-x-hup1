@@ -8,6 +8,7 @@ import {
   IsMongoId,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
   Min,
   ValidateNested,
@@ -37,6 +38,15 @@ export class ProductVariantDto {
   @IsInt()
   @Min(0)
   stock: number;
+}
+
+export class ProductColourDto {
+  @IsString()
+  @MaxLength(60)
+  name: string;
+
+  @Matches(/^#[0-9a-fA-F]{6}$/, { message: 'hex must look like #a1b2c3.' })
+  hex: string;
 }
 
 export class UpsertProductDto {
@@ -69,6 +79,13 @@ export class UpsertProductDto {
   @ValidateNested({ each: true })
   @Type(() => ProductVariantDto)
   variants?: ProductVariantDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(12)
+  @ValidateNested({ each: true })
+  @Type(() => ProductColourDto)
+  colours?: ProductColourDto[];
 
   @IsOptional()
   @IsEnum(ProductBadge)

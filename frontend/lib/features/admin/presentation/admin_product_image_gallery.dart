@@ -167,64 +167,6 @@ class _Thumb extends StatelessWidget {
   }
 }
 
-/// Photos chosen for a product that does not exist yet. The API attaches an
-/// image to a saved product only, so these wait in memory and the editor
-/// uploads them, in this order, right after the product is created.
-class PendingImagePicker extends StatelessWidget {
-  const PendingImagePicker({
-    super.key,
-    required this.files,
-    required this.onChanged,
-    this.enabled = true,
-  });
-
-  final List<PlatformFile> files;
-  final ValueChanged<List<PlatformFile>> onChanged;
-  final bool enabled;
-
-  Future<void> _pick() async {
-    final picked = await FilePicker.pickFiles(
-      type: FileType.image,
-      allowMultiple: true,
-      withData: true,
-    );
-    final chosen = [
-      for (final f in picked?.files ?? const <PlatformFile>[])
-        if (f.bytes != null) f,
-    ];
-    if (chosen.isEmpty) return;
-    onChanged([...files, ...chosen]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l10n.adminProductImagesHint, style: const TextStyle(fontSize: 12)),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (var i = 0; i < files.length; i++)
-              _Thumb(
-                image: MemoryImage(files[i].bytes!),
-                isPrimary: i == 0,
-                onRemove: enabled
-                    ? () => onChanged([...files]..removeAt(i))
-                    : null,
-              ),
-            _UploadTile(busy: false, onTap: enabled ? _pick : null),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
 class _UploadTile extends StatelessWidget {
   const _UploadTile({required this.busy, required this.onTap});
 

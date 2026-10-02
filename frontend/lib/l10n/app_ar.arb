@@ -1142,5 +1142,21 @@
   "adminProductDescriptionLabel": "الوصف",
   "adminProductPhotosTitle": "صور المنتج",
   "adminProductSomePhotosFailed": "اتحفظ المنتج، بس الصور دي ما اترفعتش: {names}. جرب ترفعها تاني من هنا.",
-  "@adminProductSomePhotosFailed": {"placeholders":{"names":{"type":"String"}}}
+  "@adminProductSomePhotosFailed": {"placeholders":{"names":{"type":"String"}}},
+  "adminColoursTitle": "الألوان",
+  "adminColoursHint": "ضيف كل لون المنتج متاح بيه، وارفع صوره تحته. العميل بيشوف صور اللون اللي بيختاره.",
+  "adminColourAdd": "إضافة لون",
+  "adminColourOther": "لون آخر",
+  "adminColourName": "اسم اللون",
+  "adminColourTaken": "اللون ده مضاف بالفعل",
+  "adminColourShade": "درجة اللون",
+  "adminColourRemove": "حذف اللون",
+  "adminGeneralPhotosTitle": "صور عامة",
+  "adminGeneralPhotosHint": "صور بتظهر مع كل الألوان (اختياري).",
+  "adminSizesTitle": "المقاسات",
+  "adminSizesHint": "اكتب المقاسات المتاحة. سيبها فاضية لو المنتج مقاس واحد.",
+  "adminSizesField": "مقاس أو أكتر (افصل بفاصلة)",
+  "adminSizesAdd": "إضافة",
+  "adminStockTitle": "المخزون",
+  "adminStockHint": "الكمية المتاحة من كل لون وكل مقاس. اللي كميته صفر بيظهر للعميل إنه خلص."
 }

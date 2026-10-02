@@ -17,7 +17,8 @@ const PRODUCT_LIST_PAGE_SIZE = 24;
 
 // Bounded so one product cannot be given a gallery large enough to make its
 // own detail response the slowest thing in the store.
-const MAX_PRODUCT_IMAGES = 10;
+// Room for a handful of photos per colour across a full colour range.
+const MAX_PRODUCT_IMAGES = 30;
 
 export interface ProductPaginatedResult {
   items: StoreProductDocument[];
@@ -152,6 +153,7 @@ export class StoreProductsService {
       // body — they arrive as multipart and go to Cloudinary first.
       images: [],
       variants: dto.variants ?? [],
+      colours: dto.colours ?? [],
       badge: dto.badge,
       tags: dto.tags ?? [],
       isFeatured: dto.isFeatured ?? false,
@@ -175,6 +177,17 @@ export class StoreProductsService {
     product.priceMinor = dto.priceMinor;
     product.compareAtPriceMinor = dto.compareAtPriceMinor;
     if (dto.variants) product.set('variants', dto.variants);
+    if (dto.colours) {
+      product.set('colours', dto.colours);
+      // A colour taken off the product leaves its photos behind as general
+      // ones rather than deleting them: removing a colour by mistake should
+      // not cost the merchant the uploads.
+      const kept = new Set(dto.colours.map((c) => c.name.trim()));
+      for (const image of product.images) {
+        if (image.colour && !kept.has(image.colour)) image.colour = undefined;
+      }
+      product.markModified('images');
+    }
     product.badge = dto.badge;
     if (dto.tags) product.tags = dto.tags;
     if (dto.isFeatured !== undefined) product.isFeatured = dto.isFeatured;
@@ -200,8 +213,15 @@ export class StoreProductsService {
   async addImage(
     id: string,
     file: Express.Multer.File,
+    colour?: string,
   ): Promise<StoreProductDocument> {
     const product = await this.findByIdOrThrow(id);
+    const tag = colour?.trim() || undefined;
+    if (tag && !product.colours.some((c) => c.name === tag)) {
+      throw new BadRequestException(
+        'Add that colour to the product before uploading its photos.',
+      );
+    }
     if (product.images.length >= MAX_PRODUCT_IMAGES) {
       throw new BadRequestException(
         `A product can hold at most ${MAX_PRODUCT_IMAGES} images.`,
@@ -212,7 +232,7 @@ export class StoreProductsService {
       file,
       `sportxhub/store/products/${product._id.toString()}`,
     );
-    product.images.push(image);
+    product.images.push({ ...image, colour: tag });
     return product.save();
   }
 

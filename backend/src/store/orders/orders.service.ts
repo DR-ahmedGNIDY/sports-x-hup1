@@ -184,7 +184,11 @@ export class OrdersService {
         title: { en: product.title.en, ar: product.title.ar },
         size: variant.size,
         colour: variant.colour,
-        imageUrl: product.images[0]?.secureUrl,
+        imageUrl: (
+          product.images.find((i) => i.colour && i.colour === variant.colour) ??
+          product.images.find((i) => !i.colour) ??
+          product.images[0]
+        )?.secureUrl,
         quantity: claim.quantity,
         unitPriceMinor: product.priceMinor,
       };

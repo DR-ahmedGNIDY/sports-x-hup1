@@ -3048,4 +3048,55 @@ class AppLocalizationsAr extends AppLocalizations {
   String adminProductSomePhotosFailed(String names) {
     return 'اتحفظ المنتج، بس الصور دي ما اترفعتش: $names. جرب ترفعها تاني من هنا.';
   }
+
+  @override
+  String get adminColoursTitle => 'الألوان';
+
+  @override
+  String get adminColoursHint =>
+      'ضيف كل لون المنتج متاح بيه، وارفع صوره تحته. العميل بيشوف صور اللون اللي بيختاره.';
+
+  @override
+  String get adminColourAdd => 'إضافة لون';
+
+  @override
+  String get adminColourOther => 'لون آخر';
+
+  @override
+  String get adminColourName => 'اسم اللون';
+
+  @override
+  String get adminColourTaken => 'اللون ده مضاف بالفعل';
+
+  @override
+  String get adminColourShade => 'درجة اللون';
+
+  @override
+  String get adminColourRemove => 'حذف اللون';
+
+  @override
+  String get adminGeneralPhotosTitle => 'صور عامة';
+
+  @override
+  String get adminGeneralPhotosHint => 'صور بتظهر مع كل الألوان (اختياري).';
+
+  @override
+  String get adminSizesTitle => 'المقاسات';
+
+  @override
+  String get adminSizesHint =>
+      'اكتب المقاسات المتاحة. سيبها فاضية لو المنتج مقاس واحد.';
+
+  @override
+  String get adminSizesField => 'مقاس أو أكتر (افصل بفاصلة)';
+
+  @override
+  String get adminSizesAdd => 'إضافة';
+
+  @override
+  String get adminStockTitle => 'المخزون';
+
+  @override
+  String get adminStockHint =>
+      'الكمية المتاحة من كل لون وكل مقاس. اللي كميته صفر بيظهر للعميل إنه خلص.';
 }

@@ -12,8 +12,27 @@ export class ProductImage {
 
   @Prop({ required: true })
   secureUrl: string;
+
+  // The colour this photo shows — one of the product's `colours` names.
+  // Absent means a general photo, shown whichever colour is picked (and
+  // what every product created before colours existed has).
+  @Prop({ trim: true })
+  colour?: string;
 }
 export const ProductImageSchema = SchemaFactory.createForClass(ProductImage);
+
+/// A colour the product comes in. `name` is the same text the variants
+/// carry in `colour` and the images carry in `colour`, so it is the key that
+/// ties the three together; `hex` is only for drawing the swatch.
+@Schema({ _id: false, timestamps: false })
+export class ProductColour {
+  @Prop({ required: true, trim: true })
+  name: string;
+
+  @Prop({ required: true, trim: true, lowercase: true })
+  hex: string;
+}
+export const ProductColourSchema = SchemaFactory.createForClass(ProductColour);
 
 /// One buyable combination — it is the variant that carries stock, not the
 /// product, because "Black / L is sold out" is the answer the cart needs.
@@ -84,6 +103,10 @@ export class StoreProduct {
 
   @Prop({ type: [ProductVariantSchema], default: [] })
   variants: ProductVariant[];
+
+  // In display order. Empty for a product that does not come in colours.
+  @Prop({ type: [ProductColourSchema], default: [] })
+  colours: ProductColour[];
 
   @Prop({ type: String, enum: ProductBadge })
   badge?: ProductBadge;

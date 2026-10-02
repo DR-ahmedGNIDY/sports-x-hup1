@@ -3082,4 +3082,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String adminProductSomePhotosFailed(String names) {
     return 'The product was saved, but these photos did not upload: $names. Try them again here.';
   }
+
+  @override
+  String get adminColoursTitle => 'Colours';
+
+  @override
+  String get adminColoursHint =>
+      'Add each colour the product comes in and upload its photos under it. Shoppers see the photos of the colour they pick.';
+
+  @override
+  String get adminColourAdd => 'Add colour';
+
+  @override
+  String get adminColourOther => 'Another colour';
+
+  @override
+  String get adminColourName => 'Colour name';
+
+  @override
+  String get adminColourTaken => 'That colour is already added';
+
+  @override
+  String get adminColourShade => 'Shade';
+
+  @override
+  String get adminColourRemove => 'Remove colour';
+
+  @override
+  String get adminGeneralPhotosTitle => 'General photos';
+
+  @override
+  String get adminGeneralPhotosHint => 'Shown with every colour (optional).';
+
+  @override
+  String get adminSizesTitle => 'Sizes';
+
+  @override
+  String get adminSizesHint =>
+      'List the sizes available. Leave empty for a one-size product.';
+
+  @override
+  String get adminSizesField => 'One or more sizes (comma-separated)';
+
+  @override
+  String get adminSizesAdd => 'Add';
+
+  @override
+  String get adminStockTitle => 'Stock';
+
+  @override
+  String get adminStockHint =>
+      'How many of each colour and size you have. Zero shows as sold out.';
 }

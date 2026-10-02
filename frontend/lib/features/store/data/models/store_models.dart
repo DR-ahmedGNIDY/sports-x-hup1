@@ -14,10 +14,8 @@ import '../../domain/entities/store_product.dart';
 /// endpoint family, they share [_localized] and the money/optional-field
 /// conventions, and splitting them would mean six files that only ever
 /// change together.
-LocalizedText _localized(Map<String, dynamic> json) => LocalizedText(
-  en: json['en'] as String,
-  ar: json['ar'] as String?,
-);
+LocalizedText _localized(Map<String, dynamic> json) =>
+    LocalizedText(en: json['en'] as String, ar: json['ar'] as String?);
 
 class StoreCategoryModel {
   static StoreCategory fromJson(Map<String, dynamic> json) => StoreCategory(
@@ -43,6 +41,7 @@ class StoreProductModel {
           (e) => ProductImage(
             publicId: (e as Map<String, dynamic>)['publicId'] as String,
             url: e['secureUrl'] as String,
+            colour: e['colour'] as String?,
           ),
         )
         .toList();
@@ -65,6 +64,16 @@ class StoreProductModel {
               ?.map((e) => _variant(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      colours:
+          (json['colours'] as List<dynamic>?)
+              ?.map(
+                (e) => ProductColour(
+                  name: (e as Map<String, dynamic>)['name'] as String,
+                  hex: e['hex'] as String,
+                ),
+              )
+              .toList() ??
+          const [],
       categoryId: json['categoryId'] as String?,
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
@@ -81,9 +90,7 @@ class StoreProductModel {
   static ProductVariant _variant(Map<String, dynamic> json) => ProductVariant(
     id: json['id'] as String,
     stock: json['stock'] as int?,
-    inStock:
-        json['inStock'] as bool? ??
-        ((json['stock'] as int?) ?? 0) > 0,
+    inStock: json['inStock'] as bool? ?? ((json['stock'] as int?) ?? 0) > 0,
     size: json['size'] as String?,
     colour: json['colour'] as String?,
     sku: json['sku'] as String?,

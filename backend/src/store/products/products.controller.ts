@@ -92,8 +92,9 @@ export class AdminStoreProductsController {
   async addImage(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
+    @Body('colour') colour?: string,
   ) {
-    return toAdminProductView(await this.products.addImage(id, file));
+    return toAdminProductView(await this.products.addImage(id, file, colour));
   }
 
   // The Cloudinary publicId, not an index: an index would address a

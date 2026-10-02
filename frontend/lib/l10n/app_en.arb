@@ -1141,5 +1141,21 @@
   "adminProductDescriptionLabel": "Description",
   "adminProductPhotosTitle": "Product photos",
   "adminProductSomePhotosFailed": "The product was saved, but these photos did not upload: {names}. Try them again here.",
-  "@adminProductSomePhotosFailed": {"placeholders":{"names":{"type":"String"}}}
+  "@adminProductSomePhotosFailed": {"placeholders":{"names":{"type":"String"}}},
+  "adminColoursTitle": "Colours",
+  "adminColoursHint": "Add each colour the product comes in and upload its photos under it. Shoppers see the photos of the colour they pick.",
+  "adminColourAdd": "Add colour",
+  "adminColourOther": "Another colour",
+  "adminColourName": "Colour name",
+  "adminColourTaken": "That colour is already added",
+  "adminColourShade": "Shade",
+  "adminColourRemove": "Remove colour",
+  "adminGeneralPhotosTitle": "General photos",
+  "adminGeneralPhotosHint": "Shown with every colour (optional).",
+  "adminSizesTitle": "Sizes",
+  "adminSizesHint": "List the sizes available. Leave empty for a one-size product.",
+  "adminSizesField": "One or more sizes (comma-separated)",
+  "adminSizesAdd": "Add",
+  "adminStockTitle": "Stock",
+  "adminStockHint": "How many of each colour and size you have. Zero shows as sold out."
 }

@@ -66,13 +66,15 @@ class AdminStoreDataSource {
     String token,
     String id,
     List<int> bytes,
-    String filename,
-  ) async => _ok(
+    String filename, {
+    String? colour,
+  }) async => _ok(
     await _client.postMultipart(
       '/admin/store/products/$id/images',
       fileField: 'file',
       fileBytes: bytes,
       filename: filename,
+      fields: colour == null ? null : {'colour': colour},
       headers: _bearer(token),
     ),
   );

@@ -35,8 +35,12 @@ export function toProductCardView(product: StoreProductDocument) {
     slug: product.slug,
     priceMinor: product.priceMinor,
     compareAtPriceMinor: product.compareAtPriceMinor,
-    // Only the first image; the tile shows one.
-    image: product.images[0],
+    // One image for the tile: the first general photo, else the first
+    // photo of any colour.
+    image: product.images.find((i) => !i.colour) ?? product.images[0],
+    // Swatches under the tile, so a shopper sees the range without opening
+    // the product.
+    colours: (product.colours ?? []).map((c) => ({ name: c.name, hex: c.hex })),
     badge: product.badge,
     // Lets the card show "Sold out" without shipping the variant array.
     inStock: product.variants.some((variant) => variant.stock > 0),

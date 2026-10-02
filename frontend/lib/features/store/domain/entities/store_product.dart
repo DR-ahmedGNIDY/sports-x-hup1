@@ -23,10 +23,23 @@ enum ProductBadge {
 /// how the admin API addresses an image for deletion. Deriving it from the
 /// URL would work until Cloudinary changed its URL shape.
 class ProductImage {
-  const ProductImage({required this.publicId, required this.url});
+  const ProductImage({required this.publicId, required this.url, this.colour});
 
   final String publicId;
   final String url;
+
+  /// The [ProductColour.name] this photo shows; null for a general photo.
+  final String? colour;
+}
+
+/// A colour the product comes in. [name] is the key shared with
+/// [ProductVariant.colour] and [ProductImage.colour]; [hex] (`#rrggbb`) is
+/// only for drawing the swatch.
+class ProductColour {
+  const ProductColour({required this.name, required this.hex});
+
+  final String name;
+  final String hex;
 }
 
 /// One buyable combination.
@@ -75,6 +88,7 @@ class StoreProduct {
     this.description,
     this.images = const [],
     this.variants = const [],
+    this.colours = const [],
     this.categoryId,
     this.tags = const [],
     this.isFeatured = false,
@@ -98,6 +112,7 @@ class StoreProduct {
   final LocalizedText? description;
   final List<ProductImage> images;
   final List<ProductVariant> variants;
+  final List<ProductColour> colours;
   final String? categoryId;
   final List<String> tags;
 

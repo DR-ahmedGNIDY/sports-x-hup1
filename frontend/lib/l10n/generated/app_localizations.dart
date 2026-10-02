@@ -5705,6 +5705,102 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اتحفظ المنتج، بس الصور دي ما اترفعتش: {names}. جرب ترفعها تاني من هنا.'**
   String adminProductSomePhotosFailed(String names);
+
+  /// No description provided for @adminColoursTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الألوان'**
+  String get adminColoursTitle;
+
+  /// No description provided for @adminColoursHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف كل لون المنتج متاح بيه، وارفع صوره تحته. العميل بيشوف صور اللون اللي بيختاره.'**
+  String get adminColoursHint;
+
+  /// No description provided for @adminColourAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة لون'**
+  String get adminColourAdd;
+
+  /// No description provided for @adminColourOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون آخر'**
+  String get adminColourOther;
+
+  /// No description provided for @adminColourName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم اللون'**
+  String get adminColourName;
+
+  /// No description provided for @adminColourTaken.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون ده مضاف بالفعل'**
+  String get adminColourTaken;
+
+  /// No description provided for @adminColourShade.
+  ///
+  /// In ar, this message translates to:
+  /// **'درجة اللون'**
+  String get adminColourShade;
+
+  /// No description provided for @adminColourRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف اللون'**
+  String get adminColourRemove;
+
+  /// No description provided for @adminGeneralPhotosTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'صور عامة'**
+  String get adminGeneralPhotosTitle;
+
+  /// No description provided for @adminGeneralPhotosHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'صور بتظهر مع كل الألوان (اختياري).'**
+  String get adminGeneralPhotosHint;
+
+  /// No description provided for @adminSizesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المقاسات'**
+  String get adminSizesTitle;
+
+  /// No description provided for @adminSizesHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب المقاسات المتاحة. سيبها فاضية لو المنتج مقاس واحد.'**
+  String get adminSizesHint;
+
+  /// No description provided for @adminSizesField.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقاس أو أكتر (افصل بفاصلة)'**
+  String get adminSizesField;
+
+  /// No description provided for @adminSizesAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة'**
+  String get adminSizesAdd;
+
+  /// No description provided for @adminStockTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المخزون'**
+  String get adminStockTitle;
+
+  /// No description provided for @adminStockHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكمية المتاحة من كل لون وكل مقاس. اللي كميته صفر بيظهر للعميل إنه خلص.'**
+  String get adminStockHint;
 }
 
 class _AppLocalizationsDelegate

@@ -59,10 +59,12 @@ class AdminStoreRepositoryImpl {
   Future<StoreProduct> addProductImage(
     String id,
     List<int> bytes,
-    String filename,
-  ) async => StoreProductModel.fromJson(
+    String filename, {
+    String? colour,
+  }) async => StoreProductModel.fromJson(
     await _authorized(
-      (token) => _remote.addProductImage(token, id, bytes, filename),
+      (token) =>
+          _remote.addProductImage(token, id, bytes, filename, colour: colour),
     ),
   );
 

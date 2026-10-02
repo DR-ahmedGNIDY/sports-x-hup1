@@ -179,6 +179,7 @@ describe('StoreProductsService', () => {
           publicId: `cl-${i}`,
           secureUrl: `https://img/${i}.jpg`,
         })),
+        colours: [{ name: 'أحمر', hex: '#d32f2f' }],
         save: jest.fn(),
       };
       product.save.mockResolvedValue(product);
@@ -199,14 +200,37 @@ describe('StoreProductsService', () => {
       expect(product.images[0].publicId).toBe('cl-0');
     });
 
-    it('refuses an eleventh image rather than growing the detail response', async () => {
+    it('refuses a 31st image rather than growing the detail response', async () => {
       const { service, model, images } = buildService();
-      model.findById.mockResolvedValue(productWithImages(10));
+      model.findById.mockResolvedValue(productWithImages(30));
 
       await expect(service.addImage('p1', {} as never)).rejects.toBeInstanceOf(
         BadRequestException,
       );
       // Nothing reached Cloudinary, so no orphan is created by the refusal.
+      expect(images.upload).not.toHaveBeenCalled();
+    });
+
+    it('tags an upload with the colour it shows', async () => {
+      const { service, model } = buildService();
+      const product = productWithImages(0);
+      model.findById.mockResolvedValue(product);
+
+      await service.addImage('p1', {} as never, 'أحمر');
+
+      expect(product.images[0]).toMatchObject({
+        publicId: 'cl-1',
+        colour: 'أحمر',
+      });
+    });
+
+    it('refuses a photo for a colour the product does not have', async () => {
+      const { service, model, images } = buildService();
+      model.findById.mockResolvedValue(productWithImages(0));
+
+      await expect(
+        service.addImage('p1', {} as never, 'أزرق'),
+      ).rejects.toBeInstanceOf(BadRequestException);
       expect(images.upload).not.toHaveBeenCalled();
     });
 
