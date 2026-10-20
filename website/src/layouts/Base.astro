@@ -42,7 +42,7 @@ const nav = [
     <link rel="alternate" hreflang="ar" href={new URL(href('ar', page), Astro.site).href} />
     <link rel="alternate" hreflang="en" href={new URL(href('en', page), Astro.site).href} />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <meta name="theme-color" content="#07090d" />
+    <meta name="theme-color" content="#000000" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title ?? d.metaTitle} />
     <meta property="og:description" content={description ?? d.metaDescription} />
@@ -59,7 +59,7 @@ const nav = [
     <header class="nav">
       <div class="wrap">
         <a class="brand" href={href(lang, '')} aria-label="SportXHub">
-          <img class="logo-img" src="/img/logo-white.png" alt="SportXHub" width="114" height="34" />
+          <img class="logo-img" src="/img/logo-mint.png" alt="SportXHub" width="115" height="34" />
         </a>
         <nav class="menu">
           {nav.map(([p, label]) => (
@@ -86,7 +86,7 @@ const nav = [
         <div class="cols">
           <div>
             <a class="brand" href={href(lang, '')}>
-              <img class="logo-img" src="/img/logo-white.png" alt="SportXHub" width="134" height="40" />
+              <img class="logo-img" src="/img/logo-mint.png" alt="SportXHub" width="136" height="40" />
             </a>
             <p style="margin-top:14px;max-width:34ch">{d.footAbout}</p>
             <div class="socials">

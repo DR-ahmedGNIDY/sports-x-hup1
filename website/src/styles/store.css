@@ -9,7 +9,7 @@
 .st-icon{position:relative;width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;color:var(--on-night)}
 .st-icon:hover{background:rgba(255,255,255,.08)}
 .st-icon svg{width:22px;height:22px}
-.st-icon .count{position:absolute;top:-6px;inset-inline-end:-6px;min-width:20px;height:20px;border-radius:99px;background:var(--blue);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;padding-inline:5px}
+.st-icon .count{position:absolute;top:-6px;inset-inline-end:-6px;min-width:20px;height:20px;border-radius:99px;background:var(--blue);color:var(--on-brand);font-size:12px;font-weight:800;display:grid;place-items:center;padding-inline:5px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .chip{padding:7px 16px;border-radius:99px;border:1px solid rgba(255,255,255,.18);color:var(--on-night-muted);font-weight:700;font-size:14px}
 .chip:hover{color:var(--on-night)}
@@ -25,14 +25,14 @@
 .dept.sk .subs i{display:block;height:20px;border-radius:8px;margin:12px}
 .st-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:24px}
 .st-head h2{font-size:clamp(24px,3vw,34px);font-weight:900}
-.st-head a{color:var(--blue);font-weight:800}
+.st-head a{color:var(--blue-ink);font-weight:800}
 .st-bar{display:flex;justify-content:flex-end;margin-bottom:20px}
 .st-bar select,.coupon input{font:inherit;font-size:15px;border:1.5px solid var(--line);background:var(--paper-2);color:var(--ink);border-radius:12px;padding:10px 14px}
 .st-more{display:flex;justify-content:center;margin-top:32px}
 .st-more .cta{color:var(--ink)}
 .st-msg{color:var(--muted);padding:12px 0;grid-column:1/-1}
 .st-msg.err{color:#dc2626}
-.st-msg a{color:var(--blue);font-weight:800}
+.st-msg a{color:var(--blue-ink);font-weight:800}
 .st-sub{color:var(--muted)}
 
 /* product grid */
@@ -43,7 +43,7 @@
 .pcard:hover .pimg img{transform:scale(1.04)}
 .pbadge{position:absolute;top:10px;inset-inline-start:10px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:99px;background:var(--ink);color:var(--paper)}
 .pbadge.sale{background:#dc2626;color:#fff}
-.pbadge.new{background:var(--blue);color:#fff}
+.pbadge.new{background:var(--blue);color:var(--on-brand)}
 .pbadge.out{inset-inline-start:auto;inset-inline-end:10px;background:rgba(7,9,13,.8);color:#fff}
 .pbadge.static{position:static;align-self:flex-start}
 .pinfo{display:flex;flex-direction:column;gap:2px}
@@ -81,7 +81,7 @@
 .cta.add,.cta.full{justify-content:center;padding-block:16px;font-size:17px;width:100%}
 .cta:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .perks{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid var(--line);display:grid;gap:8px;color:var(--muted);font-size:15px}
-.perks li::before{content:"✓";color:var(--blue);font-weight:900;margin-inline-end:8px}
+.perks li::before{content:"✓";color:var(--blue-ink);font-weight:900;margin-inline-end:8px}
 .desc{color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
 
 /* cart + checkout */
@@ -112,7 +112,7 @@
 .fmsg.ok{color:#15803d}
 .field [aria-invalid="true"]{border-color:#dc2626}
 .flabel{font-size:14px;font-weight:700}
-.cod{border:1.5px solid var(--blue);background:rgba(20,118,255,.06);border-radius:12px;padding:12px 14px;font-weight:700}
+.cod{border:1.5px solid var(--blue);background:rgba(125,199,183,.06);border-radius:12px;padding:12px 14px;font-weight:700}
 .coupon{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:14px}
 .coupon label{font-weight:700;font-size:14px}
 .crow{display:flex;gap:8px}
@@ -131,7 +131,7 @@
 .ocard h3{font-size:16px;font-weight:800;margin-top:10px}
 .ohead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center}
 .ostatus{font-size:13px;font-weight:800;padding:4px 12px;border-radius:99px;background:var(--paper-2)}
-.ostatus.confirmed,.ostatus.shipped{background:rgba(20,118,255,.12);color:var(--blue)}
+.ostatus.confirmed,.ostatus.shipped{background:rgba(125,199,183,.12);color:var(--blue-ink)}
 .ostatus.delivered{background:rgba(21,128,61,.12);color:#15803d}
 .ostatus.cancelled{background:rgba(220,38,38,.12);color:#dc2626}
 .sumbox{display:flex;flex-direction:column;gap:8px;margin-top:6px}
