@@ -166,3 +166,4 @@
 .opts button.swatch.na{text-decoration:none;opacity:.35;position:relative}
 .opts button.swatch.na::after{content:"";position:absolute;inset:50% 2px auto;height:2px;background:var(--ink);transform:rotate(-45deg)}
 .opt>span b{font-weight:700;color:var(--muted)}
+.placed .cta.wa{background:#25D366;color:#04110e;margin-top:6px;box-shadow:none}

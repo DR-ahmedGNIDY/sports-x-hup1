@@ -7,6 +7,7 @@
 // /store/coupons/preview, /store/orders (guest) and /store/orders/track.
 
 import type { StoreDict } from './strings';
+import { whatsappLink } from '../settings';
 
 type Lang = 'ar' | 'en';
 type L10n = { en: string; ar?: string };
@@ -505,8 +506,42 @@ function order() {
   const num = new URLSearchParams(location.search).get('n') || '';
   let o: Order | null = null;
   try { o = JSON.parse(sessionStorage.getItem('sxh-last-order') || 'null'); } catch { /* none */ }
-  if (o && o.orderNumber === num) root.innerHTML = orderHtml(o, true);
-  else location.href = `${base}/track?n=${encodeURIComponent(num)}`;
+  if (!o || o.orderNumber !== num) { location.href = `${base}/track?n=${encodeURIComponent(num)}`; return; }
+  root.innerHTML = orderHtml(o, true);
+  const placed = o;
+  // The store's WhatsApp number is set from the admin's site settings; no number, no button.
+  call<{ whatsappNumber?: string }>('/site-settings').then(({ whatsappNumber }) => {
+    if (!whatsappNumber?.trim()) return;
+    const a = document.createElement('a');
+    a.className = 'cta wa';
+    a.href = whatsappLink(whatsappNumber, whatsappMessage(placed));
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = s.waConfirm;
+    const hint = document.createElement('p');
+    hint.className = 'note';
+    hint.textContent = s.waHint;
+    root.querySelector('.placed')!.append(hint, a);
+  }).catch(() => { /* no settings, no button */ });
+}
+
+function whatsappMessage(o: Order) {
+  const a = o.address;
+  return [
+    s.waHello,
+    `${s.orderNumber}: ${o.orderNumber}`,
+    '',
+    ...o.lines.map((l) => `• ${l.quantity}× ${loc(l.title)}${[l.size, l.colour].filter(Boolean).map((v) => ` (${v})`).join('')} — ${money(l.unitPriceMinor * l.quantity)}`),
+    '',
+    `${s.waShipping}: ${money(o.shippingFeeMinor)}`,
+    ...(o.discountMinor ? [`${o.couponCode ?? ''} −${money(o.discountMinor)}`.trim()] : []),
+    `${s.waTotal}: ${money(o.totalMinor)}`,
+    `${s.payment}: ${s.cod}`,
+    '',
+    `${s.waName}: ${a.fullName}`,
+    `${s.waPhone}: ${a.phone}`,
+    `${s.waAddress}: ${[a.street, a.city, loc(a.governorateName)].filter(Boolean).join('، ')}`,
+  ].join('\n');
 }
 
 function track() {

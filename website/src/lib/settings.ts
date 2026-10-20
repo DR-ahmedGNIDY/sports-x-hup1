@@ -47,9 +47,15 @@ export function loadSettings(): Promise<SiteSettings> {
   return cached;
 }
 
-/// `wa.me` wants digits only, no plus and no spaces.
-export const whatsappLink = (number: string) =>
-  `https://wa.me/${number.replace(/[^0-9]/g, '')}`;
+/// `wa.me` wants the international number as digits only. Admins type
+/// Egyptian numbers the local way (01xxxxxxxxx), so the leading 0 becomes 20.
+export const whatsappDigits = (number: string) => {
+  const d = number.replace(/[^0-9]/g, '');
+  return /^01\d{9}$/.test(d) ? `2${d}` : d;
+};
+
+export const whatsappLink = (number: string, text?: string) =>
+  `https://wa.me/${whatsappDigits(number)}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
 
 export const telLink = (number: string) =>
   `tel:${number.replace(/[^0-9+]/g, '')}`;

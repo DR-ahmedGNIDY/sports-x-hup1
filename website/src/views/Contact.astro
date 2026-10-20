@@ -98,7 +98,7 @@ const hasChannels = Boolean(s.whatsappNumber || s.email || s.phones.length);
       .then((s) => {
         if (!s) return;
         let html = '';
-        if (s.whatsappNumber) html += card('https://wa.me/' + s.whatsappNumber.replace(/[^0-9]/g, ''), icons.whatsapp, d.whatsapp, s.whatsappNumber, true);
+        if (s.whatsappNumber) html += card('https://wa.me/' + s.whatsappNumber.replace(/[^0-9]/g, '').replace(/^(01[0-9]{9})$/, '2$1'), icons.whatsapp, d.whatsapp, s.whatsappNumber, true);
         (s.phones || []).forEach((p) => { html += card('tel:' + p.number.replace(/[^0-9+]/g, ''), icons.phone, p.label || d.phone, p.number, false); });
         if (s.email) html += card('mailto:' + s.email, icons.email, d.email, s.email, false);
         list.innerHTML = html || '<p class="ch-none">' + esc(d.none) + '</p>';
