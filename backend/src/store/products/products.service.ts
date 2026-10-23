@@ -1,10 +1,10 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { randomBytes } from 'crypto';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { StoreCategoriesService } from '../categories/categories.service';
 import { StoreImagesService } from '../store-images.service';
@@ -296,8 +296,10 @@ export class StoreProductsService {
       const taken = await this.productModel.exists({ slug: candidate });
       if (!taken) return candidate;
     }
-    throw new ConflictException(
-      'Could not derive a unique slug for this product title.',
-    );
+    // The admin writes Arabic only, which slugifies to nothing, so every
+    // such product shares the `product` base and the numbered suffixes run
+    // out. A random tail keeps creation working; the unique index still
+    // guards the vanishingly unlikely clash.
+    return `${base}-${randomBytes(4).toString('hex')}`;
   }
 }

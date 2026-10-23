@@ -1,10 +1,10 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { randomBytes } from 'crypto';
 import { Model, Types } from 'mongoose';
 import {
   StoreCategory,
@@ -150,8 +150,8 @@ export class StoreCategoriesService {
       const taken = await this.categoryModel.exists({ slug: candidate });
       if (!taken) return candidate;
     }
-    throw new ConflictException(
-      'Could not derive a unique slug for this category name.',
-    );
+    // Arabic-only names slugify to nothing and share one base, so the
+    // numbered suffixes can run out; a random tail keeps creation working.
+    return `${base}-${randomBytes(4).toString('hex')}`;
   }
 }
