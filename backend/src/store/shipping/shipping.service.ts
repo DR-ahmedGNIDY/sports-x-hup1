@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -6,9 +7,14 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
+  ShippingCity,
   ShippingZone,
   ShippingZoneDocument,
 } from '../schemas/shipping-zone.schema';
+import {
+  CreateShippingCityDto,
+  UpdateShippingCityDto,
+} from './dto/upsert-shipping-city.dto';
 import { UpsertShippingZoneDto } from './dto/upsert-shipping-zone.dto';
 
 @Injectable()
@@ -79,5 +85,78 @@ export class ShippingService {
     if (dto.isActive !== undefined) zone.isActive = dto.isActive;
     if (dto.sortOrder !== undefined) zone.sortOrder = dto.sortOrder;
     return zone.save();
+  }
+
+  // Resolved here rather than by the checkout trusting a fee it already has:
+  // a chosen city can be stale or disabled by the time the order is placed.
+  // No `cityCode` and no cities priced yet on this governorate falls back to
+  // the governorate's own fee, so pricing can roll out city by city.
+  resolveFee(
+    zone: ShippingZoneDocument,
+    cityCode?: string,
+  ): { feeMinor: number; city?: ShippingCity } {
+    const activeCities = (zone.cities ?? []).filter((city) => city.isActive);
+
+    if (cityCode) {
+      const city = activeCities.find(
+        (candidate) => candidate.code === cityCode.toLowerCase(),
+      );
+      if (!city) {
+        throw new NotFoundException('We do not deliver to that city.');
+      }
+      return { feeMinor: city.feeMinor, city };
+    }
+
+    if (activeCities.length > 0) {
+      throw new BadRequestException('Choose a city for that governorate.');
+    }
+
+    return { feeMinor: zone.feeMinor };
+  }
+
+  async addCity(
+    zoneId: string,
+    dto: CreateShippingCityDto,
+  ): Promise<ShippingZoneDocument> {
+    const zone = await this.zoneModel.findById(zoneId);
+    if (!zone) throw new NotFoundException('Shipping zone not found.');
+
+    const code = dto.code.toLowerCase();
+    if (zone.cities.some((city) => city.code === code)) {
+      throw new ConflictException(
+        'A city with that code already exists in this governorate.',
+      );
+    }
+
+    zone.cities.push({
+      name: { en: dto.name.en, ar: dto.name.ar },
+      code,
+      feeMinor: dto.feeMinor,
+      isActive: dto.isActive ?? true,
+      sortOrder: dto.sortOrder ?? 0,
+    } as ShippingCity);
+    return (await zone.save()) as ShippingZoneDocument;
+  }
+
+  async updateCity(
+    zoneId: string,
+    cityCode: string,
+    dto: UpdateShippingCityDto,
+  ): Promise<ShippingZoneDocument> {
+    const zone = await this.zoneModel.findById(zoneId);
+    if (!zone) throw new NotFoundException('Shipping zone not found.');
+
+    const city = zone.cities.find(
+      (candidate) => candidate.code === cityCode.toLowerCase(),
+    );
+    if (!city) {
+      throw new NotFoundException('City not found in this governorate.');
+    }
+
+    city.name = { en: dto.name.en, ar: dto.name.ar };
+    city.feeMinor = dto.feeMinor;
+    if (dto.isActive !== undefined) city.isActive = dto.isActive;
+    if (dto.sortOrder !== undefined) city.sortOrder = dto.sortOrder;
+    return (await zone.save()) as ShippingZoneDocument;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../store/domain/entities/admin_banner.dart';
+import '../../store/domain/entities/localized_text.dart';
 import '../../store/domain/entities/shipping_zone.dart';
 import '../../store/domain/entities/store_category.dart';
 import '../../store/domain/entities/store_coupon.dart';
@@ -193,6 +194,40 @@ class AdminShippingController extends AsyncNotifier<List<ShippingZone>> {
       'feeMinor': feeMinor,
       'isActive': isActive,
     });
+    ref.invalidateSelf();
+    await future;
+  }
+
+  Future<void> addCity(
+    ShippingZone zone, {
+    required LocalizedText name,
+    required String code,
+    required int feeMinor,
+  }) async {
+    await ref.read(adminStoreRepositoryProvider).addShippingCity(zone.id, {
+      'name': {'en': name.en, 'ar': name.ar},
+      'code': code,
+      'feeMinor': feeMinor,
+    });
+    ref.invalidateSelf();
+    await future;
+  }
+
+  /// Like [save]: the city's own code is sent back unchanged, since it too
+  /// is an identity past orders may point at.
+  Future<void> saveCity(
+    ShippingZone zone,
+    ShippingCity city, {
+    required int feeMinor,
+    required bool isActive,
+  }) async {
+    await ref
+        .read(adminStoreRepositoryProvider)
+        .updateShippingCity(zone.id, city.code, {
+          'name': {'en': city.name.en, 'ar': city.name.ar},
+          'feeMinor': feeMinor,
+          'isActive': isActive,
+        });
     ref.invalidateSelf();
     await future;
   }

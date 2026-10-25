@@ -94,7 +94,12 @@ const arrow = lang === 'ar' ? '←' : '→';
             <div class="field"><label for="c-email">{s.email}</label><input id="c-email" name="email" type="email" dir="ltr" autocomplete="email" /><span class="fmsg"></span></div>
             <div class="fr">
               <div class="field"><label for="c-gov">{s.governorate}</label><select id="c-gov" name="governorateCode"></select><span class="fmsg"></span></div>
-              <div class="field"><label for="c-city">{s.city}</label><input id="c-city" name="city" maxlength="120" autocomplete="address-level2" /><span class="fmsg"></span></div>
+              <div class="field">
+                <label for="c-city-input">{s.city}</label>
+                <select id="c-city-select" name="cityCode" hidden></select>
+                <input id="c-city-input" name="city" maxlength="120" autocomplete="address-level2" />
+                <span class="fmsg"></span>
+              </div>
             </div>
             <div class="field"><label for="c-street">{s.street}</label><input id="c-street" name="street" maxlength="400" autocomplete="street-address" /><span class="fmsg"></span></div>
             <div class="field"><label for="c-notes">{s.notes}</label><textarea id="c-notes" name="notes" maxlength="500" style="min-height:80px"></textarea></div>

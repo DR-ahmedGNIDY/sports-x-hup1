@@ -213,6 +213,23 @@ class AdminStoreRepositoryImpl {
   ) async => ShippingZoneModel.fromJson(
     await _authorized((token) => _remote.updateShippingZone(token, id, body)),
   );
+
+  Future<ShippingZone> addShippingCity(
+    String zoneId,
+    Map<String, dynamic> body,
+  ) async => ShippingZoneModel.fromJson(
+    await _authorized((token) => _remote.addShippingCity(token, zoneId, body)),
+  );
+
+  Future<ShippingZone> updateShippingCity(
+    String zoneId,
+    String cityCode,
+    Map<String, dynamic> body,
+  ) async => ShippingZoneModel.fromJson(
+    await _authorized(
+      (token) => _remote.updateShippingCity(token, zoneId, cityCode, body),
+    ),
+  );
 }
 
 final adminStoreRepositoryProvider = Provider<AdminStoreRepositoryImpl>(

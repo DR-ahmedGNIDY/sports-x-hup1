@@ -61,6 +61,19 @@ export class OrdersService {
     const zone = await this.shipping.findActiveByCodeOrThrow(
       dto.address.governorateCode,
     );
+    const resolvedShipping = this.shipping.resolveFee(
+      zone,
+      dto.address.cityCode,
+    );
+    // A city resolved from the governorate's own list is the name of
+    // record; a governorate with no cities priced yet still needs the
+    // free-typed one the customer entered.
+    const cityText = resolvedShipping.city
+      ? resolvedShipping.city.name.en
+      : dto.address.city?.trim();
+    if (!cityText) {
+      throw new BadRequestException('City is required.');
+    }
 
     // Two lines for the same variant are merged before anything is checked.
     // Left separate, each would pass its own `stock >= quantity` test while
@@ -104,17 +117,21 @@ export class OrdersService {
         lines: priced.lines,
         address: {
           ...dto.address,
+          city: cityText,
+          cityCode: resolvedShipping.city?.code,
           governorateCode: zone.code,
           governorateName: { en: zone.name.en, ar: zone.name.ar },
         },
         subtotalMinor,
-        shippingFeeMinor: zone.feeMinor,
+        shippingFeeMinor: resolvedShipping.feeMinor,
         couponCode: coupon?.code,
         discountMinor,
         // The discount comes off the goods, not the delivery — shipping is a
         // cost the store actually pays out. The floor at zero means a code
         // worth more than the basket cannot drive the total negative.
-        totalMinor: Math.max(0, subtotalMinor - discountMinor) + zone.feeMinor,
+        totalMinor:
+          Math.max(0, subtotalMinor - discountMinor) +
+          resolvedShipping.feeMinor,
         status: OrderStatus.PENDING,
       });
     } catch (error) {

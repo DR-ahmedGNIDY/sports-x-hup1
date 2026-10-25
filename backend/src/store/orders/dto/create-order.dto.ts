@@ -52,9 +52,19 @@ export class ShippingAddressDto {
   @MaxLength(40)
   governorateCode: string;
 
+  // Optional: once the governorate's cities are priced, `cityCode` picks one
+  // and the server fills this in itself — see OrdersService.create. A
+  // governorate with no cities priced yet still needs the customer to type
+  // it, which is validated there rather than here.
+  @IsOptional()
   @IsString()
   @MaxLength(120)
-  city: string;
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(40)
+  cityCode?: string;
 
   @IsString()
   @MaxLength(400)

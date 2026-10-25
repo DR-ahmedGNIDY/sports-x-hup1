@@ -251,6 +251,31 @@ class AdminStoreDataSource {
       headers: _bearer(token),
     ),
   );
+
+  Future<Map<String, dynamic>> addShippingCity(
+    String token,
+    String zoneId,
+    Map<String, dynamic> body,
+  ) async => _ok(
+    await _client.post(
+      '/admin/store/shipping-zones/$zoneId/cities',
+      body: body,
+      headers: _bearer(token),
+    ),
+  );
+
+  Future<Map<String, dynamic>> updateShippingCity(
+    String token,
+    String zoneId,
+    String cityCode,
+    Map<String, dynamic> body,
+  ) async => _ok(
+    await _client.patch(
+      '/admin/store/shipping-zones/$zoneId/cities/$cityCode',
+      body: body,
+      headers: _bearer(token),
+    ),
+  );
 }
 
 final adminStoreDataSourceProvider = Provider<AdminStoreDataSource>(

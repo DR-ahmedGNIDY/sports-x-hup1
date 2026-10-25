@@ -12,6 +12,10 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { UserRole } from '../../users/schemas/user.schema';
 import { toAdminShippingZoneView, toShippingZoneView } from '../store.mapper';
+import {
+  CreateShippingCityDto,
+  UpdateShippingCityDto,
+} from './dto/upsert-shipping-city.dto';
 import { UpsertShippingZoneDto } from './dto/upsert-shipping-zone.dto';
 import { ShippingService } from './shipping.service';
 
@@ -50,5 +54,25 @@ export class AdminShippingController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpsertShippingZoneDto) {
     return toAdminShippingZoneView(await this.shipping.update(id, dto));
+  }
+
+  @Post(':id/cities')
+  async addCity(
+    @Param('id') id: string,
+    @Body() dto: CreateShippingCityDto,
+  ) {
+    return toAdminShippingZoneView(await this.shipping.addCity(id, dto));
+  }
+
+  // No DELETE here either, for the same reason as the zone itself.
+  @Patch(':id/cities/:cityCode')
+  async updateCity(
+    @Param('id') id: string,
+    @Param('cityCode') cityCode: string,
+    @Body() dto: UpdateShippingCityDto,
+  ) {
+    return toAdminShippingZoneView(
+      await this.shipping.updateCity(id, cityCode, dto),
+    );
   }
 }

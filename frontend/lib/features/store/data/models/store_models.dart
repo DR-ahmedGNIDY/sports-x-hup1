@@ -114,6 +114,21 @@ class ShippingZoneModel {
     code: json['code'] as String,
     feeMinor: json['feeMinor'] as int,
     isActive: json['isActive'] as bool?,
+    cities:
+        (json['cities'] as List<dynamic>?)
+            ?.map((e) => ShippingCityModel.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        const [],
+  );
+}
+
+class ShippingCityModel {
+  static ShippingCity fromJson(Map<String, dynamic> json) => ShippingCity(
+    code: json['code'] as String,
+    name: _localized(json['name'] as Map<String, dynamic>),
+    feeMinor: json['feeMinor'] as int,
+    isActive: json['isActive'] as bool?,
+    sortOrder: json['sortOrder'] as int?,
   );
 }
 

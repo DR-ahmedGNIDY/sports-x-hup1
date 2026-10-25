@@ -50,6 +50,7 @@ describe('OrdersService', () => {
         name: { en: 'Cairo', ar: 'القاهرة' },
         feeMinor: 5500,
       }),
+      resolveFee: jest.fn().mockReturnValue({ feeMinor: 5500 }),
     };
     const publicCodes = {
       allocate: jest.fn().mockResolvedValue('ORD-000001'),

@@ -4,7 +4,10 @@ import { StoreCategoryDocument } from './schemas/category.schema';
 import { CouponDocument } from './schemas/coupon.schema';
 import { StoreOrderDocument } from './schemas/order.schema';
 import { StoreProductDocument } from './schemas/product.schema';
-import { ShippingZoneDocument } from './schemas/shipping-zone.schema';
+import {
+  ShippingCity,
+  ShippingZoneDocument,
+} from './schemas/shipping-zone.schema';
 
 // Sent as both halves rather than resolved server-side: the store front
 // switches language without a round trip (locale lives in the client), and
@@ -89,17 +92,34 @@ export function toAdminCategoryView(category: StoreCategoryDocument) {
   return { ...toCategoryView(category), isActive: category.isActive };
 }
 
+function toCityView(city: ShippingCity) {
+  return { code: city.code, name: toLocalizedView(city.name), feeMinor: city.feeMinor };
+}
+
+const bySortThenCode = (a: ShippingCity, b: ShippingCity) =>
+  a.sortOrder - b.sortOrder || a.code.localeCompare(b.code);
+
 export function toShippingZoneView(zone: ShippingZoneDocument) {
+  // Only the cities the checkout may actually pick, same rule as zones.
+  const cities = (zone.cities ?? [])
+    .filter((city) => city.isActive)
+    .sort(bySortThenCode)
+    .map(toCityView);
   return {
     id: zone._id.toString(),
     name: toLocalizedView(zone.name),
     code: zone.code,
     feeMinor: zone.feeMinor,
+    cities,
   };
 }
 
 export function toAdminShippingZoneView(zone: ShippingZoneDocument) {
-  return { ...toShippingZoneView(zone), isActive: zone.isActive };
+  const cities = (zone.cities ?? [])
+    .slice()
+    .sort(bySortThenCode)
+    .map((city) => ({ ...toCityView(city), isActive: city.isActive, sortOrder: city.sortOrder }));
+  return { ...toShippingZoneView(zone), isActive: zone.isActive, cities };
 }
 
 // One view for the customer and the merchant alike — an order has no field
@@ -131,6 +151,7 @@ export function toOrderView(order: StoreOrderDocument) {
       governorateCode: order.address.governorateCode,
       governorateName: toLocalizedView(order.address.governorateName),
       city: order.address.city,
+      cityCode: order.address.cityCode,
       street: order.address.street,
       notes: order.address.notes,
     },

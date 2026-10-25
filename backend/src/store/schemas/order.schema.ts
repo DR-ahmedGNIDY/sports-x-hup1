@@ -70,6 +70,13 @@ export class ShippingAddress {
   @Prop({ required: true, trim: true })
   city: string;
 
+  // Present only when the governorate has priced its cities and the
+  // customer picked one — see ShippingService.resolveFee. Absent for an
+  // order placed before that governorate had any, or while it still takes
+  // the flat governorate fee.
+  @Prop({ trim: true, lowercase: true })
+  cityCode?: string;
+
   @Prop({ required: true, trim: true })
   street: string;
 

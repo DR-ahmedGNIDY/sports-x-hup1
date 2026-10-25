@@ -21,7 +21,8 @@ interface Card {
 interface Variant { id: string; size?: string; colour?: string; sku?: string; inStock: boolean }
 interface Product extends Card { description?: L10n; categoryId: string; images: Image[]; variants: Variant[] }
 interface Page<T> { items: T[]; page: number; pageSize: number; total: number }
-interface Zone { id: string; name: L10n; code: string; feeMinor: number }
+interface City { code: string; name: L10n; feeMinor: number }
+interface Zone { id: string; name: L10n; code: string; feeMinor: number; cities: City[] }
 interface Banner { id: string; desktopUrl: string; mobileUrl?: string; alt?: L10n }
 interface Order {
   orderNumber: string; email: string; status: keyof StoreDict['status'];
@@ -395,6 +396,8 @@ async function checkout() {
   if (!lines.length) { location.href = `${base}/cart`; return; }
   const form = $<HTMLFormElement>('#cform');
   const gov = $<HTMLSelectElement>('#c-gov');
+  const citySelect = $<HTMLSelectElement>('#c-city-select');
+  const cityInput = $<HTMLInputElement>('#c-city-input');
   const sumEl = $('#csum');
   const status = $('#cstatus');
   let zones: Zone[] = [];
@@ -402,15 +405,38 @@ async function checkout() {
   const sub = subtotalOf(lines);
 
   const linesHtml = lines.map((l) => `<div class="mini"><span>${l.quantity}×</span><span>${esc(loc(l.title))}<small>${[l.size, l.colour].filter(Boolean).map(esc).join(' · ')}</small></span><b>${money(l.unitPriceMinor * l.quantity)}</b></div>`).join('');
+
+  // When the chosen governorate has priced cities, the city field becomes a
+  // picker of exactly those (and the fee comes from the one picked);
+  // otherwise it is the free-text field it always was, priced at the flat
+  // governorate fee.
+  function citiesOf(zone?: Zone) { return zone?.cities ?? []; }
+  function syncCityField() {
+    const zone = zones.find((z) => z.code === gov.value);
+    const cities = citiesOf(zone);
+    const hasCities = cities.length > 0;
+    citySelect.hidden = !hasCities;
+    citySelect.disabled = !hasCities;
+    cityInput.hidden = hasCities;
+    cityInput.disabled = hasCities;
+    citySelect.innerHTML = hasCities
+      ? `<option value="">${esc(s.chooseCity)}</option>` + cities.map((c) => `<option value="${esc(c.code)}">${esc(loc(c.name))}</option>`).join('')
+      : '';
+  }
   function renderSum() {
     const zone = zones.find((z) => z.code === gov.value);
-    sumEl.innerHTML = linesHtml + summaryHtml(sub, coupon?.discountMinor ?? 0, zone ? zone.feeMinor : null);
+    const cities = citiesOf(zone);
+    const city = cities.length ? cities.find((c) => c.code === citySelect.value) : undefined;
+    const fee = !zone ? null : cities.length ? (city ? city.feeMinor : null) : zone.feeMinor;
+    sumEl.innerHTML = linesHtml + summaryHtml(sub, coupon?.discountMinor ?? 0, fee);
   }
   try {
     zones = (await call<{ items: Zone[] }>('/store/shipping-zones')).items;
     gov.innerHTML = `<option value="">${esc(s.chooseGovernorate)}</option>` + zones.map((z) => `<option value="${esc(z.code)}">${esc(loc(z.name))}</option>`).join('');
   } catch { status.innerHTML = errorBox(); }
-  gov.addEventListener('change', renderSum);
+  gov.addEventListener('change', () => { syncCityField(); renderSum(); });
+  citySelect.addEventListener('change', renderSum);
+  syncCityField();
   renderSum();
 
   const couponInput = $<HTMLInputElement>('#c-coupon');
@@ -439,17 +465,20 @@ async function checkout() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
-    const checks: [string, string | null][] = [
-      ['fullName', data.fullName?.trim() ? null : s.required],
-      ['phone', phoneRe.test(data.phone?.replace(/\s/g, '') ?? '') ? null : s.invalidPhone],
-      ['email', emailRe.test(data.email?.trim() ?? '') ? null : s.invalidEmail],
-      ['governorateCode', data.governorateCode ? null : s.required],
-      ['city', data.city?.trim() ? null : s.required],
-      ['street', data.street?.trim() ? null : s.required],
+    // Disabled controls are excluded from FormData, so whichever of the two
+    // city fields is hidden simply contributes nothing here — exactly one
+    // of `city`/`cityCode` is present, matching which one is shown.
+    const cityOk = citySelect.hidden ? Boolean(data.city?.trim()) : Boolean(data.cityCode);
+    const checks: [HTMLElement, string | null][] = [
+      [form.elements.namedItem('fullName') as HTMLElement, data.fullName?.trim() ? null : s.required],
+      [form.elements.namedItem('phone') as HTMLElement, phoneRe.test(data.phone?.replace(/\s/g, '') ?? '') ? null : s.invalidPhone],
+      [form.elements.namedItem('email') as HTMLElement, emailRe.test(data.email?.trim() ?? '') ? null : s.invalidEmail],
+      [form.elements.namedItem('governorateCode') as HTMLElement, data.governorateCode ? null : s.required],
+      [citySelect.hidden ? cityInput : citySelect, cityOk ? null : s.required],
+      [form.elements.namedItem('street') as HTMLElement, data.street?.trim() ? null : s.required],
     ];
     let first: HTMLElement | null = null;
-    for (const [name, err] of checks) {
-      const field = form.elements.namedItem(name) as HTMLInputElement;
+    for (const [field, err] of checks) {
       const msg = field.parentElement!.querySelector('.fmsg')!;
       msg.textContent = err ?? '';
       field.setAttribute('aria-invalid', String(Boolean(err)));
@@ -469,7 +498,8 @@ async function checkout() {
           lines: lines.map((l) => ({ productId: l.productId, variantId: l.variantId, quantity: l.quantity })),
           address: {
             fullName: data.fullName.trim(), phone: data.phone.replace(/\s/g, ''),
-            governorateCode: data.governorateCode, city: data.city.trim(), street: data.street.trim(),
+            governorateCode: data.governorateCode, street: data.street.trim(),
+            ...(citySelect.hidden ? { city: data.city.trim() } : { cityCode: data.cityCode }),
             ...(data.notes?.trim() ? { notes: data.notes.trim() } : {}),
           },
           ...(coupon ? { couponCode: coupon.code } : {}),

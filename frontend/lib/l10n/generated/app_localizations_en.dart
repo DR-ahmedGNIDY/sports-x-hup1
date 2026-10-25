@@ -1901,6 +1901,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminShippingFeeExampleError => 'Enter a fee like 65.00';
 
   @override
+  String get adminShippingCitiesLabel => 'Cities';
+
+  @override
+  String get adminShippingCitiesEmpty =>
+      'No cities priced for this governorate yet — the governorate fee is used.';
+
+  @override
+  String get adminShippingAddCityLabel => 'Add city';
+
+  @override
+  String get adminCityNameEnLabel => 'Name (English)';
+
+  @override
+  String get adminCityNameArLabel => 'Name (Arabic)';
+
+  @override
+  String get adminCityCodeLabel => 'Code';
+
+  @override
+  String get adminCityCodeHint => 'Lowercase letters, digits and hyphens only';
+
+  @override
+  String get adminCityFormError => 'Enter a valid name, code and fee';
+
+  @override
   String dashboardWelcomeMessage(String name) {
     return 'Welcome back, $name';
   }

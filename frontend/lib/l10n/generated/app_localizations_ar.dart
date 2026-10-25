@@ -1873,6 +1873,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminShippingFeeExampleError => 'أدخل رسومًا مثل 65.00';
 
   @override
+  String get adminShippingCitiesLabel => 'المدن';
+
+  @override
+  String get adminShippingCitiesEmpty =>
+      'لا توجد مدن مُسعّرة لهذه المحافظة بعد — يتم استخدام رسم المحافظة.';
+
+  @override
+  String get adminShippingAddCityLabel => 'إضافة مدينة';
+
+  @override
+  String get adminCityNameEnLabel => 'الاسم (إنجليزي)';
+
+  @override
+  String get adminCityNameArLabel => 'الاسم (عربي)';
+
+  @override
+  String get adminCityCodeLabel => 'الكود';
+
+  @override
+  String get adminCityCodeHint => 'حروف إنجليزية صغيرة وأرقام وشرطات فقط';
+
+  @override
+  String get adminCityFormError => 'أدخل اسمًا وكودًا ورسومًا صحيحة';
+
+  @override
   String dashboardWelcomeMessage(String name) {
     return 'أهلاً بعودتك، $name';
   }
