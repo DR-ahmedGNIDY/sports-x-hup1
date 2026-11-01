@@ -38,6 +38,11 @@ import {
   todayInAcademy,
 } from './subscription-dates';
 
+// Ids are stored as ObjectIds (see create), and this codebase does not
+// rely on Mongoose casting a string filter to match them — every query
+// below converts first.
+const oid = (id: string) => new Types.ObjectId(id);
+
 /** How far back the daily job looks for expiries it has not announced. */
 const EXPIRED_LOOKBACK_DAYS = 7;
 
@@ -146,7 +151,7 @@ export class PlayerSubscriptionsService {
     const [profile, history, phone] = await Promise.all([
       this.players.getOrCreateForUser(playerUserId),
       this.subscriptionModel
-        .find({ clubUserId: clubId, playerUserId })
+        .find({ clubUserId: oid(clubId), playerUserId: oid(playerUserId) })
         .sort({ endDate: -1 }),
       this.whatsAppPhoneFor(clubId, playerUserId),
     ]);
@@ -244,7 +249,7 @@ export class PlayerSubscriptionsService {
   async remind(clubId: string, playerUserId: string): Promise<void> {
     await this.requireOnRoster(clubId, playerUserId);
     const latest = await this.subscriptionModel
-      .findOne({ clubUserId: clubId, playerUserId })
+      .findOne({ clubUserId: oid(clubId), playerUserId: oid(playerUserId) })
       .sort({ endDate: -1 });
     if (!latest) {
       throw new NotFoundException('This player has no subscription to renew.');
@@ -279,7 +284,7 @@ export class PlayerSubscriptionsService {
   /** The player's own latest subscription, at whichever club holds it. */
   async mine(playerUserId: string) {
     const latest = await this.subscriptionModel
-      .findOne({ playerUserId })
+      .findOne({ playerUserId: oid(playerUserId) })
       .sort({ endDate: -1 });
     if (!latest) return { status: SubscriptionStatus.NONE, current: null };
     const club = await this.clubs.getOrCreateForUser(
@@ -400,7 +405,10 @@ export class PlayerSubscriptionsService {
   ): Promise<Map<string, PlayerSubscriptionDocument>> {
     if (userIds.length === 0) return new Map();
     const all = await this.subscriptionModel
-      .find({ clubUserId: clubId, playerUserId: { $in: userIds } })
+      .find({
+        clubUserId: oid(clubId),
+        playerUserId: { $in: userIds.map(oid) },
+      })
       .sort({ endDate: -1 });
     const latest = new Map<string, PlayerSubscriptionDocument>();
     for (const subscription of all) {
@@ -454,8 +462,8 @@ export class PlayerSubscriptionsService {
       throw new NotFoundException('Subscription not found.');
     }
     const subscription = await this.subscriptionModel.findOne({
-      _id: id,
-      clubUserId: clubId,
+      _id: oid(id),
+      clubUserId: oid(clubId),
     });
     if (!subscription) throw new NotFoundException('Subscription not found.');
     return subscription;

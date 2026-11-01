@@ -39,9 +39,12 @@ function buildService(
   // Push is optional infrastructure and never throws at its caller; this
   // stands in for it so these tests are about the record, not the banner.
   const push = { send: jest.fn().mockResolvedValue(undefined) };
-  const admins = jest
-    .fn()
-    .mockResolvedValue([{ _id: 'admin-1' }, { _id: 'admin-2' }]);
+  // Real ObjectIds, as `.lean()` returns them: the service must hand
+  // emit() strings, or the rows land where no mailbox query finds them.
+  const admins = jest.fn().mockResolvedValue([
+    { _id: { toString: () => 'admin-1' } },
+    { _id: { toString: () => 'admin-2' } },
+  ]);
   const userModel = {
     find: jest.fn().mockReturnValue({
       select: jest.fn().mockReturnValue({ lean: admins }),

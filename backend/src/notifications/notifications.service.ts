@@ -138,8 +138,13 @@ export class NotificationsService {
       this.logger.error('Failed to look up admins to notify.');
       return;
     }
+    // As a string: that is how every other producer writes `userId`, and the
+    // mailbox and push lookups query with the string — an ObjectId row
+    // would match neither.
     await Promise.all(
-      admins.map((admin) => this.emit({ ...input, userId: admin._id })),
+      admins.map((admin) =>
+        this.emit({ ...input, userId: admin._id.toString() }),
+      ),
     );
   }
 
