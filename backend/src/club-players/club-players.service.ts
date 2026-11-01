@@ -187,6 +187,19 @@ export class ClubPlayersService {
     return { userIds: [...new Set(userIds)], dialCodeByUserId };
   }
 
+  /** Every player on the club's roster — created by it or joined it. */
+  async rosterUserIds(clubId: string): Promise<string[]> {
+    return (await this.rosterForClub(clubId)).userIds;
+  }
+
+  /** The dial code a club-created player was registered with, if any. */
+  async dialCodeFor(clubId: string, userId: string): Promise<string | undefined> {
+    const ownership = await this.clubManagedPlayerModel
+      .findOne({ clubId, userId })
+      .select('dialCode');
+    return ownership?.dialCode;
+  }
+
   // Paginated + optionally filtered by name/phone search and sport/
   // position — see PlayersService.findManyByUserIdsFiltered for how the
   // actual query stays bounded to this club's own roster.

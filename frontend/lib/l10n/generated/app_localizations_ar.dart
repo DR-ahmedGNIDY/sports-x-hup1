@@ -3132,4 +3132,167 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get adminStockHint =>
       'الكمية المتاحة من كل لون وكل مقاس. اللي كميته صفر بيظهر للعميل إنه خلص.';
+
+  @override
+  String get subscriptionsTitle => 'الاشتراكات';
+
+  @override
+  String get mySubscriptionTitle => 'اشتراكي';
+
+  @override
+  String get subscriptionStatusActive => 'ساري';
+
+  @override
+  String get subscriptionStatusExpiring => 'قرّب يخلص';
+
+  @override
+  String get subscriptionStatusExpired => 'منتهي';
+
+  @override
+  String get subscriptionStatusNone => 'من غير اشتراك';
+
+  @override
+  String get subscriptionsAll => 'الكل';
+
+  @override
+  String subscriptionsUnpaidCount(int count) {
+    return '$count مش مدفوع بالكامل';
+  }
+
+  @override
+  String get subscriptionPlanMonthly => 'شهري';
+
+  @override
+  String get subscriptionPlanQuarterly => '3 شهور';
+
+  @override
+  String get subscriptionPlanCustom => 'مدة مخصصة';
+
+  @override
+  String get subscriptionPlanLabel => 'النوع';
+
+  @override
+  String subscriptionEndsOn(String date) {
+    return 'بينتهي $date';
+  }
+
+  @override
+  String subscriptionEndedOn(String date) {
+    return 'انتهى $date';
+  }
+
+  @override
+  String subscriptionPeriod(String start, String end) {
+    return 'من $start إلى $end';
+  }
+
+  @override
+  String subscriptionPaidOf(String paid, String total) {
+    return 'مدفوع $paid من $total';
+  }
+
+  @override
+  String get subscriptionAdd => 'إضافة اشتراك';
+
+  @override
+  String get subscriptionRenew => 'تجديد';
+
+  @override
+  String get subscriptionEdit => 'تعديل';
+
+  @override
+  String get subscriptionDeleteConfirm => 'تحذف الاشتراك ده؟';
+
+  @override
+  String get subscriptionStartDate => 'تاريخ البداية';
+
+  @override
+  String get subscriptionEndDate => 'تاريخ النهاية';
+
+  @override
+  String get subscriptionAmount => 'المبلغ (ج.م)';
+
+  @override
+  String get subscriptionPaidAmount => 'المدفوع (ج.م)';
+
+  @override
+  String get subscriptionNotes => 'ملاحظات';
+
+  @override
+  String get subscriptionHistory => 'سجل الاشتراكات';
+
+  @override
+  String get subscriptionHistoryEmpty => 'مفيش اشتراكات لسه.';
+
+  @override
+  String get subscriptionsEmpty => 'مفيش لاعبين هنا.';
+
+  @override
+  String get subscriptionRemindTitle => 'فكّر اللاعب بالتجديد';
+
+  @override
+  String get subscriptionRemindWhatsApp => 'تذكير على واتساب';
+
+  @override
+  String get subscriptionRemindInApp => 'تذكير داخل التطبيق';
+
+  @override
+  String get subscriptionNoPhone => 'اللاعب ماسجّلش رقم تليفون.';
+
+  @override
+  String get subscriptionReminderSent => 'اتبعت التذكير للاعب.';
+
+  @override
+  String get subscriptionReminderAlreadyToday =>
+      'اتبعت تذكير للاعب ده النهارده.';
+
+  @override
+  String subscriptionWhatsAppExpiring(String name, String club, String date) {
+    return 'أهلاً $name 👋 بنفكّرك إن اشتراكك في $club هينتهي يوم $date. للتجديد تواصل معانا. شكراً!';
+  }
+
+  @override
+  String subscriptionWhatsAppExpired(String name, String club, String date) {
+    return 'أهلاً $name 👋 بنفكّرك إن اشتراكك في $club انتهى يوم $date. للتجديد تواصل معانا. شكراً!';
+  }
+
+  @override
+  String get subscriptionInvalidDates =>
+      'تاريخ النهاية لازم يكون بعد تاريخ البداية.';
+
+  @override
+  String get subscriptionInvalidPaid => 'المدفوع مينفعش يكون أكبر من المبلغ.';
+
+  @override
+  String get mySubscriptionNone => 'مفيش اشتراك متسجّل ليك لسه.';
+
+  @override
+  String mySubscriptionAt(String club) {
+    return 'اشتراكك في $club';
+  }
+
+  @override
+  String notificationSubscriptionExpiringClub(String name, String date) {
+    return 'اشتراك $name هينتهي يوم $date.';
+  }
+
+  @override
+  String notificationSubscriptionExpiredClub(String name, String date) {
+    return 'اشتراك $name انتهى يوم $date.';
+  }
+
+  @override
+  String notificationSubscriptionExpiringPlayer(String club, String date) {
+    return 'اشتراكك في $club هينتهي يوم $date.';
+  }
+
+  @override
+  String notificationSubscriptionExpiredPlayer(String club, String date) {
+    return 'اشتراكك في $club انتهى يوم $date.';
+  }
+
+  @override
+  String notificationSubscriptionReminder(String club) {
+    return '$club بيفكّرك تجدّد اشتراكك.';
+  }
 }

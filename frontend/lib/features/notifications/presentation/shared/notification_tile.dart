@@ -78,6 +78,18 @@ class NotificationTile extends ConsumerWidget {
   /// which inbox holds it depends on who is reading — a club's invitations
   /// live at a different path from a player's.
   String? _destinationFor(WidgetRef ref) {
+    if (notification.entityType == NotificationEntityType.playerSubscription) {
+      // The club lands on the player's page, where the WhatsApp and in-app
+      // reminders are; the player on their own subscription.
+      final playerUserId = notification.subscription?.playerUserId;
+      return switch (ref.read(sessionControllerProvider).user?.role) {
+        UserRole.club when playerUserId != null =>
+          '/club/subscriptions/$playerUserId',
+        UserRole.club => '/club/subscriptions',
+        UserRole.player => '/player/subscription',
+        _ => null,
+      };
+    }
     if (notification.entityType == NotificationEntityType.storeOrder) {
       return '/admin/store';
     }
@@ -118,6 +130,9 @@ class _Leading extends StatelessWidget {
       NotificationType.invitationRejected => Icons.cancel_outlined,
       NotificationType.eventScheduled => Icons.event_available_outlined,
       NotificationType.orderPlaced => Icons.shopping_bag_outlined,
+      NotificationType.subscriptionExpiring => Icons.hourglass_bottom,
+      NotificationType.subscriptionExpired => Icons.event_busy_outlined,
+      NotificationType.subscriptionReminder => Icons.card_membership_outlined,
     };
 
     return SizedBox(

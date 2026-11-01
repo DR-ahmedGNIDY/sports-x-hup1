@@ -28,5 +28,7 @@ import {
   ],
   controllers: [ClubPlayersController],
   providers: [ClubPlayersService],
+  // PlayerSubscriptionsModule asks it who is on a club's roster.
+  exports: [ClubPlayersService],
 })
 export class ClubPlayersModule {}

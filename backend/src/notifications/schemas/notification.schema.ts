@@ -8,6 +8,11 @@ export enum NotificationType {
   EVENT_SCHEDULED = 'EVENT_SCHEDULED',
   // Sent to every admin when the storefront takes an order.
   ORDER_PLACED = 'ORDER_PLACED',
+  // A player's academy subscription, told to both the club and the player.
+  SUBSCRIPTION_EXPIRING = 'SUBSCRIPTION_EXPIRING',
+  SUBSCRIPTION_EXPIRED = 'SUBSCRIPTION_EXPIRED',
+  // The club asking a player to renew. Repeatable — see emitFresh.
+  SUBSCRIPTION_REMINDER = 'SUBSCRIPTION_REMINDER',
 }
 
 // One value today. It exists so the dedupe index and the client's "what do I
@@ -20,6 +25,7 @@ export enum NotificationEntityType {
   COACH_INVITATION = 'COACH_INVITATION',
   CALENDAR_EVENT = 'CALENDAR_EVENT',
   STORE_ORDER = 'STORE_ORDER',
+  PLAYER_SUBSCRIPTION = 'PLAYER_SUBSCRIPTION',
 }
 
 /** Whose name a notification names. */
@@ -59,6 +65,11 @@ export interface NotificationParams {
   // the order, behind the admin endpoints.
   orderNumber?: string;
   orderTotalMinor?: number;
+
+  // Subscriptions only. 'YYYY-MM-DD', and the player the subscription is
+  // for, so the club's tap can open that player's reminder options.
+  subscriptionEndDate?: string;
+  subscriptionPlayerUserId?: string;
 }
 
 @Schema({ timestamps: true, collection: 'notifications' })

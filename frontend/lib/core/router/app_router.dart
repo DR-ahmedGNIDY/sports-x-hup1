@@ -33,6 +33,7 @@ import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/invitations/presentation/club_invitations_page.dart';
 import '../../features/invitations/presentation/player_invitations_page.dart';
 import '../../features/notifications/presentation/notifications_page.dart';
+import '../../features/subscriptions/presentation/subscriptions_pages.dart';
 import '../../features/player/presentation/edit_profile_page.dart';
 import '../../features/player/presentation/my_profile_preview_page.dart';
 import '../../features/player/presentation/my_skills_page.dart';
@@ -115,7 +116,9 @@ bool _isClubRoute(String path) =>
     path.startsWith('/club/players') || path.startsWith('/club/invitations');
 
 // Managing a club's coaching staff is the club account's alone.
-bool _isClubOnlyRoute(String path) => path.startsWith('/club/coaches');
+// So are its players' subscriptions — they are the club's money.
+bool _isClubOnlyRoute(String path) =>
+    path.startsWith('/club/coaches') || path.startsWith('/club/subscriptions');
 
 bool _isCoachRoute(String path) => path.startsWith('/coach/');
 
@@ -124,7 +127,9 @@ bool _isCoachRoute(String path) => path.startsWith('/coach/');
 // the caller's own profile, and a Club simply has none). Invitations is
 // different — its send action is PLAYER-only on the server, so a Club that
 // wandered in would meet a 403 instead of a screen.
-bool _isPlayerRoute(String path) => path.startsWith('/player/invitations');
+bool _isPlayerRoute(String path) =>
+    path.startsWith('/player/invitations') ||
+    path.startsWith('/player/subscription');
 
 // Where an authenticated session lands after splash/login, or gets bounced
 // back to when it hits a route it doesn't own — a Player's home is their
@@ -388,6 +393,29 @@ StatefulShellBranch _branchFor(AppBranch branch) {
             state: state,
             child: const ClubContextGate(child: ClubInvitationsPage()),
           ),
+        ),
+      ],
+      AppBranch.clubSubscriptions => [
+        GoRoute(
+          path: '/club/subscriptions',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const ClubSubscriptionsPage()),
+        ),
+        GoRoute(
+          path: '/club/subscriptions/:playerUserId',
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: ClubPlayerSubscriptionsPage(
+              playerUserId: state.pathParameters['playerUserId']!,
+            ),
+          ),
+        ),
+      ],
+      AppBranch.playerSubscription => [
+        GoRoute(
+          path: '/player/subscription',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const MySubscriptionPage()),
         ),
       ],
       AppBranch.clubCoaches => [

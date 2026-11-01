@@ -1175,5 +1175,125 @@
   "adminSizesField": "مقاس أو أكتر (افصل بفاصلة)",
   "adminSizesAdd": "إضافة",
   "adminStockTitle": "المخزون",
-  "adminStockHint": "الكمية المتاحة من كل لون وكل مقاس. اللي كميته صفر بيظهر للعميل إنه خلص."
+  "adminStockHint": "الكمية المتاحة من كل لون وكل مقاس. اللي كميته صفر بيظهر للعميل إنه خلص.",
+  "subscriptionsTitle": "الاشتراكات",
+  "mySubscriptionTitle": "اشتراكي",
+  "subscriptionStatusActive": "ساري",
+  "subscriptionStatusExpiring": "قرّب يخلص",
+  "subscriptionStatusExpired": "منتهي",
+  "subscriptionStatusNone": "من غير اشتراك",
+  "subscriptionsAll": "الكل",
+  "subscriptionsUnpaidCount": "{count} مش مدفوع بالكامل",
+  "@subscriptionsUnpaidCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "subscriptionPlanMonthly": "شهري",
+  "subscriptionPlanQuarterly": "3 شهور",
+  "subscriptionPlanCustom": "مدة مخصصة",
+  "subscriptionPlanLabel": "النوع",
+  "subscriptionEndsOn": "بينتهي {date}",
+  "@subscriptionEndsOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "subscriptionEndedOn": "انتهى {date}",
+  "@subscriptionEndedOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "subscriptionPeriod": "من {start} إلى {end}",
+  "@subscriptionPeriod": {
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
+  "subscriptionPaidOf": "مدفوع {paid} من {total}",
+  "@subscriptionPaidOf": {
+    "placeholders": {
+      "paid": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "subscriptionAdd": "إضافة اشتراك",
+  "subscriptionRenew": "تجديد",
+  "subscriptionEdit": "تعديل",
+  "subscriptionDeleteConfirm": "تحذف الاشتراك ده؟",
+  "subscriptionStartDate": "تاريخ البداية",
+  "subscriptionEndDate": "تاريخ النهاية",
+  "subscriptionAmount": "المبلغ (ج.م)",
+  "subscriptionPaidAmount": "المدفوع (ج.م)",
+  "subscriptionNotes": "ملاحظات",
+  "subscriptionHistory": "سجل الاشتراكات",
+  "subscriptionHistoryEmpty": "مفيش اشتراكات لسه.",
+  "subscriptionsEmpty": "مفيش لاعبين هنا.",
+  "subscriptionRemindTitle": "فكّر اللاعب بالتجديد",
+  "subscriptionRemindWhatsApp": "تذكير على واتساب",
+  "subscriptionRemindInApp": "تذكير داخل التطبيق",
+  "subscriptionNoPhone": "اللاعب ماسجّلش رقم تليفون.",
+  "subscriptionReminderSent": "اتبعت التذكير للاعب.",
+  "subscriptionReminderAlreadyToday": "اتبعت تذكير للاعب ده النهارده.",
+  "subscriptionWhatsAppExpiring": "أهلاً {name} 👋 بنفكّرك إن اشتراكك في {club} هينتهي يوم {date}. للتجديد تواصل معانا. شكراً!",
+  "@subscriptionWhatsAppExpiring": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "club": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "subscriptionWhatsAppExpired": "أهلاً {name} 👋 بنفكّرك إن اشتراكك في {club} انتهى يوم {date}. للتجديد تواصل معانا. شكراً!",
+  "@subscriptionWhatsAppExpired": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "club": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "subscriptionInvalidDates": "تاريخ النهاية لازم يكون بعد تاريخ البداية.",
+  "subscriptionInvalidPaid": "المدفوع مينفعش يكون أكبر من المبلغ.",
+  "mySubscriptionNone": "مفيش اشتراك متسجّل ليك لسه.",
+  "mySubscriptionAt": "اشتراكك في {club}",
+  "@mySubscriptionAt": {
+    "placeholders": {
+      "club": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionExpiringClub": "اشتراك {name} هينتهي يوم {date}.",
+  "@notificationSubscriptionExpiringClub": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionExpiredClub": "اشتراك {name} انتهى يوم {date}.",
+  "@notificationSubscriptionExpiredClub": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionExpiringPlayer": "اشتراكك في {club} هينتهي يوم {date}.",
+  "@notificationSubscriptionExpiringPlayer": {
+    "placeholders": {
+      "club": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionExpiredPlayer": "اشتراكك في {club} انتهى يوم {date}.",
+  "@notificationSubscriptionExpiredPlayer": {
+    "placeholders": {
+      "club": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionReminder": "{club} بيفكّرك تجدّد اشتراكك.",
+  "@notificationSubscriptionReminder": {
+    "placeholders": {
+      "club": { "type": "String" }
+    }
+  }
 }

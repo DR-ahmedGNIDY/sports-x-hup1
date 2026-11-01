@@ -5861,6 +5861,276 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الكمية المتاحة من كل لون وكل مقاس. اللي كميته صفر بيظهر للعميل إنه خلص.'**
   String get adminStockHint;
+
+  /// No description provided for @subscriptionsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاشتراكات'**
+  String get subscriptionsTitle;
+
+  /// No description provided for @mySubscriptionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكي'**
+  String get mySubscriptionTitle;
+
+  /// No description provided for @subscriptionStatusActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'ساري'**
+  String get subscriptionStatusActive;
+
+  /// No description provided for @subscriptionStatusExpiring.
+  ///
+  /// In ar, this message translates to:
+  /// **'قرّب يخلص'**
+  String get subscriptionStatusExpiring;
+
+  /// No description provided for @subscriptionStatusExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتهي'**
+  String get subscriptionStatusExpired;
+
+  /// No description provided for @subscriptionStatusNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'من غير اشتراك'**
+  String get subscriptionStatusNone;
+
+  /// No description provided for @subscriptionsAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get subscriptionsAll;
+
+  /// No description provided for @subscriptionsUnpaidCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مش مدفوع بالكامل'**
+  String subscriptionsUnpaidCount(int count);
+
+  /// No description provided for @subscriptionPlanMonthly.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهري'**
+  String get subscriptionPlanMonthly;
+
+  /// No description provided for @subscriptionPlanQuarterly.
+  ///
+  /// In ar, this message translates to:
+  /// **'3 شهور'**
+  String get subscriptionPlanQuarterly;
+
+  /// No description provided for @subscriptionPlanCustom.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدة مخصصة'**
+  String get subscriptionPlanCustom;
+
+  /// No description provided for @subscriptionPlanLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع'**
+  String get subscriptionPlanLabel;
+
+  /// No description provided for @subscriptionEndsOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'بينتهي {date}'**
+  String subscriptionEndsOn(String date);
+
+  /// No description provided for @subscriptionEndedOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهى {date}'**
+  String subscriptionEndedOn(String date);
+
+  /// No description provided for @subscriptionPeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {start} إلى {end}'**
+  String subscriptionPeriod(String start, String end);
+
+  /// No description provided for @subscriptionPaidOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدفوع {paid} من {total}'**
+  String subscriptionPaidOf(String paid, String total);
+
+  /// No description provided for @subscriptionAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة اشتراك'**
+  String get subscriptionAdd;
+
+  /// No description provided for @subscriptionRenew.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجديد'**
+  String get subscriptionRenew;
+
+  /// No description provided for @subscriptionEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل'**
+  String get subscriptionEdit;
+
+  /// No description provided for @subscriptionDeleteConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحذف الاشتراك ده؟'**
+  String get subscriptionDeleteConfirm;
+
+  /// No description provided for @subscriptionStartDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ البداية'**
+  String get subscriptionStartDate;
+
+  /// No description provided for @subscriptionEndDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ النهاية'**
+  String get subscriptionEndDate;
+
+  /// No description provided for @subscriptionAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ (ج.م)'**
+  String get subscriptionAmount;
+
+  /// No description provided for @subscriptionPaidAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدفوع (ج.م)'**
+  String get subscriptionPaidAmount;
+
+  /// No description provided for @subscriptionNotes.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات'**
+  String get subscriptionNotes;
+
+  /// No description provided for @subscriptionHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل الاشتراكات'**
+  String get subscriptionHistory;
+
+  /// No description provided for @subscriptionHistoryEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش اشتراكات لسه.'**
+  String get subscriptionHistoryEmpty;
+
+  /// No description provided for @subscriptionsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش لاعبين هنا.'**
+  String get subscriptionsEmpty;
+
+  /// No description provided for @subscriptionRemindTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فكّر اللاعب بالتجديد'**
+  String get subscriptionRemindTitle;
+
+  /// No description provided for @subscriptionRemindWhatsApp.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير على واتساب'**
+  String get subscriptionRemindWhatsApp;
+
+  /// No description provided for @subscriptionRemindInApp.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكير داخل التطبيق'**
+  String get subscriptionRemindInApp;
+
+  /// No description provided for @subscriptionNoPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللاعب ماسجّلش رقم تليفون.'**
+  String get subscriptionNoPhone;
+
+  /// No description provided for @subscriptionReminderSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتبعت التذكير للاعب.'**
+  String get subscriptionReminderSent;
+
+  /// No description provided for @subscriptionReminderAlreadyToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتبعت تذكير للاعب ده النهارده.'**
+  String get subscriptionReminderAlreadyToday;
+
+  /// No description provided for @subscriptionWhatsAppExpiring.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً {name} 👋 بنفكّرك إن اشتراكك في {club} هينتهي يوم {date}. للتجديد تواصل معانا. شكراً!'**
+  String subscriptionWhatsAppExpiring(String name, String club, String date);
+
+  /// No description provided for @subscriptionWhatsAppExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً {name} 👋 بنفكّرك إن اشتراكك في {club} انتهى يوم {date}. للتجديد تواصل معانا. شكراً!'**
+  String subscriptionWhatsAppExpired(String name, String club, String date);
+
+  /// No description provided for @subscriptionInvalidDates.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ النهاية لازم يكون بعد تاريخ البداية.'**
+  String get subscriptionInvalidDates;
+
+  /// No description provided for @subscriptionInvalidPaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدفوع مينفعش يكون أكبر من المبلغ.'**
+  String get subscriptionInvalidPaid;
+
+  /// No description provided for @mySubscriptionNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش اشتراك متسجّل ليك لسه.'**
+  String get mySubscriptionNone;
+
+  /// No description provided for @mySubscriptionAt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكك في {club}'**
+  String mySubscriptionAt(String club);
+
+  /// No description provided for @notificationSubscriptionExpiringClub.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراك {name} هينتهي يوم {date}.'**
+  String notificationSubscriptionExpiringClub(String name, String date);
+
+  /// No description provided for @notificationSubscriptionExpiredClub.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراك {name} انتهى يوم {date}.'**
+  String notificationSubscriptionExpiredClub(String name, String date);
+
+  /// No description provided for @notificationSubscriptionExpiringPlayer.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكك في {club} هينتهي يوم {date}.'**
+  String notificationSubscriptionExpiringPlayer(String club, String date);
+
+  /// No description provided for @notificationSubscriptionExpiredPlayer.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكك في {club} انتهى يوم {date}.'**
+  String notificationSubscriptionExpiredPlayer(String club, String date);
+
+  /// No description provided for @notificationSubscriptionReminder.
+  ///
+  /// In ar, this message translates to:
+  /// **'{club} بيفكّرك تجدّد اشتراكك.'**
+  String notificationSubscriptionReminder(String club);
 }
 
 class _AppLocalizationsDelegate

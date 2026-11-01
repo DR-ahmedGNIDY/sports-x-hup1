@@ -34,6 +34,20 @@ String notificationText(AppLocalizations l10n, AppNotification notification) {
     NotificationType.invitationRejected =>
       l10n.notificationInvitationRejected(actor),
     NotificationType.eventScheduled => _eventScheduledText(l10n, notification, actor),
+    NotificationType.subscriptionExpiring => _subscriptionText(
+      l10n,
+      notification,
+      actor,
+      expired: false,
+    ),
+    NotificationType.subscriptionExpired => _subscriptionText(
+      l10n,
+      notification,
+      actor,
+      expired: true,
+    ),
+    NotificationType.subscriptionReminder =>
+      l10n.notificationSubscriptionReminder(actor),
     NotificationType.orderPlaced => l10n.notificationOrderPlaced(
       actor,
       notification.order?.number ?? '',
@@ -43,6 +57,26 @@ String notificationText(AppLocalizations l10n, AppNotification notification) {
       ),
     ),
   };
+}
+
+/// The club's copy names the player (the actor is a player); the player's
+/// copy names the club.
+String _subscriptionText(
+  AppLocalizations l10n,
+  AppNotification notification,
+  String actor, {
+  required bool expired,
+}) {
+  final date = (notification.subscription?.endDate ?? '').replaceAll('-', '/');
+  final toClub = notification.actor.role == NotificationActorRole.player;
+  if (toClub) {
+    return expired
+        ? l10n.notificationSubscriptionExpiredClub(actor, date)
+        : l10n.notificationSubscriptionExpiringClub(actor, date);
+  }
+  return expired
+      ? l10n.notificationSubscriptionExpiredPlayer(actor, date)
+      : l10n.notificationSubscriptionExpiringPlayer(actor, date);
 }
 
 String _eventScheduledText(

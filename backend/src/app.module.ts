@@ -24,6 +24,8 @@ import { CalendarEventsModule } from './calendar-events/calendar-events.module';
 import { CoachesModule } from './coaches/coaches.module';
 import { CoachInvitationsModule } from './coach-invitations/coach-invitations.module';
 import { SiteSettingsModule } from './site-settings/site-settings.module';
+import { PlayerSubscriptionsModule } from './player-subscriptions/player-subscriptions.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -44,6 +46,8 @@ import { SiteSettingsModule } from './site-settings/site-settings.module';
     // refresh, forgot-password) additionally apply a much stricter
     // @Throttle() override — see auth.controller.ts.
     ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
+    // Daily jobs (subscription expiries).
+    ScheduleModule.forRoot(),
     HealthModule,
     UsersModule,
     AuthModule,
@@ -54,6 +58,7 @@ import { SiteSettingsModule } from './site-settings/site-settings.module';
     ClubsModule,
     SavedPlayersModule,
     ClubPlayersModule,
+    PlayerSubscriptionsModule,
     InvitationsModule,
     NotificationsModule,
     AdminModule,

@@ -14,7 +14,10 @@ enum NotificationType {
   invitationAccepted('INVITATION_ACCEPTED'),
   invitationRejected('INVITATION_REJECTED'),
   eventScheduled('EVENT_SCHEDULED'),
-  orderPlaced('ORDER_PLACED');
+  orderPlaced('ORDER_PLACED'),
+  subscriptionExpiring('SUBSCRIPTION_EXPIRING'),
+  subscriptionExpired('SUBSCRIPTION_EXPIRED'),
+  subscriptionReminder('SUBSCRIPTION_REMINDER');
 
   const NotificationType(this.wireValue);
 
@@ -35,7 +38,8 @@ enum NotificationEntityType {
   invitation('INVITATION'),
   coachInvitation('COACH_INVITATION'),
   calendarEvent('CALENDAR_EVENT'),
-  storeOrder('STORE_ORDER');
+  storeOrder('STORE_ORDER'),
+  playerSubscription('PLAYER_SUBSCRIPTION');
 
   const NotificationEntityType(this.wireValue);
 
@@ -107,6 +111,16 @@ class NotificationOrderDetails {
   final int? totalMinor;
 }
 
+/// What a subscription notification says: when it ends, and — on the
+/// club's copy — which player, so the tap can open their reminder options.
+class NotificationSubscriptionDetails {
+  const NotificationSubscriptionDetails({this.endDate, this.playerUserId});
+
+  /// 'YYYY-MM-DD'.
+  final String? endDate;
+  final String? playerUserId;
+}
+
 class AppNotification {
   const AppNotification({
     required this.id,
@@ -118,6 +132,7 @@ class AppNotification {
     this.createdAt,
     this.event,
     this.order,
+    this.subscription,
   });
 
   final String id;
@@ -127,6 +142,9 @@ class AppNotification {
 
   /// Store orders only.
   final NotificationOrderDetails? order;
+
+  /// Subscriptions only.
+  final NotificationSubscriptionDetails? subscription;
 
   /// What to open when this is tapped.
   final NotificationEntityType? entityType;

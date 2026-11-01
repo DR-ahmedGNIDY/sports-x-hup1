@@ -3166,4 +3166,168 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get adminStockHint =>
       'How many of each colour and size you have. Zero shows as sold out.';
+
+  @override
+  String get subscriptionsTitle => 'Subscriptions';
+
+  @override
+  String get mySubscriptionTitle => 'My subscription';
+
+  @override
+  String get subscriptionStatusActive => 'Active';
+
+  @override
+  String get subscriptionStatusExpiring => 'Expiring soon';
+
+  @override
+  String get subscriptionStatusExpired => 'Expired';
+
+  @override
+  String get subscriptionStatusNone => 'No subscription';
+
+  @override
+  String get subscriptionsAll => 'All';
+
+  @override
+  String subscriptionsUnpaidCount(int count) {
+    return '$count not fully paid';
+  }
+
+  @override
+  String get subscriptionPlanMonthly => 'Monthly';
+
+  @override
+  String get subscriptionPlanQuarterly => '3 months';
+
+  @override
+  String get subscriptionPlanCustom => 'Custom period';
+
+  @override
+  String get subscriptionPlanLabel => 'Plan';
+
+  @override
+  String subscriptionEndsOn(String date) {
+    return 'Ends $date';
+  }
+
+  @override
+  String subscriptionEndedOn(String date) {
+    return 'Ended $date';
+  }
+
+  @override
+  String subscriptionPeriod(String start, String end) {
+    return '$start to $end';
+  }
+
+  @override
+  String subscriptionPaidOf(String paid, String total) {
+    return 'Paid $paid of $total';
+  }
+
+  @override
+  String get subscriptionAdd => 'Add subscription';
+
+  @override
+  String get subscriptionRenew => 'Renew';
+
+  @override
+  String get subscriptionEdit => 'Edit';
+
+  @override
+  String get subscriptionDeleteConfirm => 'Delete this subscription?';
+
+  @override
+  String get subscriptionStartDate => 'Start date';
+
+  @override
+  String get subscriptionEndDate => 'End date';
+
+  @override
+  String get subscriptionAmount => 'Amount (EGP)';
+
+  @override
+  String get subscriptionPaidAmount => 'Paid (EGP)';
+
+  @override
+  String get subscriptionNotes => 'Notes';
+
+  @override
+  String get subscriptionHistory => 'Subscription history';
+
+  @override
+  String get subscriptionHistoryEmpty => 'No subscriptions yet.';
+
+  @override
+  String get subscriptionsEmpty => 'No players here.';
+
+  @override
+  String get subscriptionRemindTitle => 'Remind the player to renew';
+
+  @override
+  String get subscriptionRemindWhatsApp => 'Remind on WhatsApp';
+
+  @override
+  String get subscriptionRemindInApp => 'Remind in the app';
+
+  @override
+  String get subscriptionNoPhone => 'This player hasn\'t added a phone number.';
+
+  @override
+  String get subscriptionReminderSent => 'Reminder sent to the player.';
+
+  @override
+  String get subscriptionReminderAlreadyToday =>
+      'This player was already reminded today.';
+
+  @override
+  String subscriptionWhatsAppExpiring(String name, String club, String date) {
+    return 'Hi $name 👋 A reminder that your subscription at $club ends on $date. Get in touch with us to renew. Thanks!';
+  }
+
+  @override
+  String subscriptionWhatsAppExpired(String name, String club, String date) {
+    return 'Hi $name 👋 A reminder that your subscription at $club ended on $date. Get in touch with us to renew. Thanks!';
+  }
+
+  @override
+  String get subscriptionInvalidDates =>
+      'The end date must be after the start date.';
+
+  @override
+  String get subscriptionInvalidPaid => 'Paid cannot be more than the amount.';
+
+  @override
+  String get mySubscriptionNone =>
+      'You don\'t have a subscription on record yet.';
+
+  @override
+  String mySubscriptionAt(String club) {
+    return 'Your subscription at $club';
+  }
+
+  @override
+  String notificationSubscriptionExpiringClub(String name, String date) {
+    return '$name\'s subscription ends on $date.';
+  }
+
+  @override
+  String notificationSubscriptionExpiredClub(String name, String date) {
+    return '$name\'s subscription ended on $date.';
+  }
+
+  @override
+  String notificationSubscriptionExpiringPlayer(String club, String date) {
+    return 'Your subscription at $club ends on $date.';
+  }
+
+  @override
+  String notificationSubscriptionExpiredPlayer(String club, String date) {
+    return 'Your subscription at $club ended on $date.';
+  }
+
+  @override
+  String notificationSubscriptionReminder(String club) {
+    return '$club is reminding you to renew your subscription.';
+  }
 }

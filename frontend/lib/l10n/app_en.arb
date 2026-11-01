@@ -1174,5 +1174,125 @@
   "adminSizesField": "One or more sizes (comma-separated)",
   "adminSizesAdd": "Add",
   "adminStockTitle": "Stock",
-  "adminStockHint": "How many of each colour and size you have. Zero shows as sold out."
+  "adminStockHint": "How many of each colour and size you have. Zero shows as sold out.",
+  "subscriptionsTitle": "Subscriptions",
+  "mySubscriptionTitle": "My subscription",
+  "subscriptionStatusActive": "Active",
+  "subscriptionStatusExpiring": "Expiring soon",
+  "subscriptionStatusExpired": "Expired",
+  "subscriptionStatusNone": "No subscription",
+  "subscriptionsAll": "All",
+  "subscriptionsUnpaidCount": "{count} not fully paid",
+  "@subscriptionsUnpaidCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "subscriptionPlanMonthly": "Monthly",
+  "subscriptionPlanQuarterly": "3 months",
+  "subscriptionPlanCustom": "Custom period",
+  "subscriptionPlanLabel": "Plan",
+  "subscriptionEndsOn": "Ends {date}",
+  "@subscriptionEndsOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "subscriptionEndedOn": "Ended {date}",
+  "@subscriptionEndedOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "subscriptionPeriod": "{start} to {end}",
+  "@subscriptionPeriod": {
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
+  "subscriptionPaidOf": "Paid {paid} of {total}",
+  "@subscriptionPaidOf": {
+    "placeholders": {
+      "paid": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "subscriptionAdd": "Add subscription",
+  "subscriptionRenew": "Renew",
+  "subscriptionEdit": "Edit",
+  "subscriptionDeleteConfirm": "Delete this subscription?",
+  "subscriptionStartDate": "Start date",
+  "subscriptionEndDate": "End date",
+  "subscriptionAmount": "Amount (EGP)",
+  "subscriptionPaidAmount": "Paid (EGP)",
+  "subscriptionNotes": "Notes",
+  "subscriptionHistory": "Subscription history",
+  "subscriptionHistoryEmpty": "No subscriptions yet.",
+  "subscriptionsEmpty": "No players here.",
+  "subscriptionRemindTitle": "Remind the player to renew",
+  "subscriptionRemindWhatsApp": "Remind on WhatsApp",
+  "subscriptionRemindInApp": "Remind in the app",
+  "subscriptionNoPhone": "This player hasn't added a phone number.",
+  "subscriptionReminderSent": "Reminder sent to the player.",
+  "subscriptionReminderAlreadyToday": "This player was already reminded today.",
+  "subscriptionWhatsAppExpiring": "Hi {name} 👋 A reminder that your subscription at {club} ends on {date}. Get in touch with us to renew. Thanks!",
+  "@subscriptionWhatsAppExpiring": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "club": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "subscriptionWhatsAppExpired": "Hi {name} 👋 A reminder that your subscription at {club} ended on {date}. Get in touch with us to renew. Thanks!",
+  "@subscriptionWhatsAppExpired": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "club": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "subscriptionInvalidDates": "The end date must be after the start date.",
+  "subscriptionInvalidPaid": "Paid cannot be more than the amount.",
+  "mySubscriptionNone": "You don't have a subscription on record yet.",
+  "mySubscriptionAt": "Your subscription at {club}",
+  "@mySubscriptionAt": {
+    "placeholders": {
+      "club": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionExpiringClub": "{name}'s subscription ends on {date}.",
+  "@notificationSubscriptionExpiringClub": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionExpiredClub": "{name}'s subscription ended on {date}.",
+  "@notificationSubscriptionExpiredClub": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionExpiringPlayer": "Your subscription at {club} ends on {date}.",
+  "@notificationSubscriptionExpiringPlayer": {
+    "placeholders": {
+      "club": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionExpiredPlayer": "Your subscription at {club} ended on {date}.",
+  "@notificationSubscriptionExpiredPlayer": {
+    "placeholders": {
+      "club": { "type": "String" },
+      "date": { "type": "String" }
+    }
+  },
+  "notificationSubscriptionReminder": "{club} is reminding you to renew your subscription.",
+  "@notificationSubscriptionReminder": {
+    "placeholders": {
+      "club": { "type": "String" }
+    }
+  }
 }

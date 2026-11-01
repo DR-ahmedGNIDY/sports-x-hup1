@@ -38,6 +38,12 @@ enum AppBranch {
     icon: Icons.mail_outline,
     selectedIcon: Icons.mail,
   ),
+  // The player's own academy subscription.
+  playerSubscription(
+    rootPath: '/player/subscription',
+    icon: Icons.card_membership_outlined,
+    selectedIcon: Icons.card_membership,
+  ),
   clubProfile(
     rootPath: '/club/preview',
     icon: Icons.shield_outlined,
@@ -52,6 +58,12 @@ enum AppBranch {
     rootPath: '/club/invitations',
     icon: Icons.mail_outline,
     selectedIcon: Icons.mail,
+  ),
+  // Players' academy subscriptions and payments (club account only).
+  clubSubscriptions(
+    rootPath: '/club/subscriptions',
+    icon: Icons.card_membership_outlined,
+    selectedIcon: Icons.card_membership,
   ),
   // A club's coaching staff and their permissions (club account only).
   clubCoaches(
@@ -156,10 +168,12 @@ enum AppBranch {
     playerProfile => l10n.dashboardMyProfile,
     playerSkills => l10n.skillsSectionTitle,
     playerInvitations => l10n.invitationsTitle,
+    playerSubscription => l10n.mySubscriptionTitle,
     clubProfile => l10n.dashboardMyClub,
     clubPlayers => l10n.clubPlayersTitle,
     clubInvitations => l10n.invitationsTitle,
     clubCoaches => l10n.clubCoachesTitle,
+    clubSubscriptions => l10n.subscriptionsTitle,
     coachProfile => l10n.coachMyCvNav,
     coachClubs => l10n.coachMyClubsTitle,
     search => l10n.mobileSearchNavLabel,
@@ -266,6 +280,12 @@ final Map<String, AppRouteMeta> _routeMeta = {
     ownsChrome: true,
   ),
   '/club/coaches': AppRouteMeta(title: (l10n) => l10n.clubCoachesTitle),
+  '/club/subscriptions': AppRouteMeta(
+    title: (l10n) => l10n.subscriptionsTitle,
+  ),
+  '/player/subscription': AppRouteMeta(
+    title: (l10n) => l10n.mySubscriptionTitle,
+  ),
   '/coach/preview': AppRouteMeta(title: (l10n) => l10n.coachMyCvNav),
   '/coach/edit': AppRouteMeta(
     title: (l10n) => l10n.coachEditCv,
@@ -338,6 +358,12 @@ AppRouteMeta? routeMetaFor(String path) {
   }
 
   // The other parameterised routes in the shell.
+  if (path.startsWith('/club/subscriptions/')) {
+    return AppRouteMeta(
+      title: (l10n) => l10n.subscriptionsTitle,
+      parentPath: AppBranch.clubSubscriptions.rootPath,
+    );
+  }
   if (path.startsWith('/club/players/') && path.endsWith('/edit')) {
     return AppRouteMeta(
       title: (l10n) => l10n.clubPlayerEditTitle,
@@ -419,6 +445,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // panel.
     UserRole.club => const [
       AppBranch.search,
+      AppBranch.clubSubscriptions,
       AppBranch.clubCoaches,
       AppBranch.clubInvitations,
       AppBranch.savedPlayers,
@@ -430,6 +457,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // fourth tab displacing Community.
     UserRole.player => const [
       AppBranch.playerInvitations,
+      AppBranch.playerSubscription,
       AppBranch.calendar,
       AppBranch.store,
       AppBranch.settings,

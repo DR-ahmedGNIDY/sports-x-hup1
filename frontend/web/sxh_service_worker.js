@@ -197,6 +197,11 @@ const PUSH_STRINGS = {
     ORDER_PLACED: (name, number, total) =>
       `طلب جديد ${number} من ${name} — ${total} ج.م`,
     fallbackCustomer: 'عميل',
+    SUBSCRIPTION_EXPIRING_CLUB: (name, date) => `اشتراك ${name} هينتهي يوم ${date}.`,
+    SUBSCRIPTION_EXPIRED_CLUB: (name, date) => `اشتراك ${name} انتهى يوم ${date}.`,
+    SUBSCRIPTION_EXPIRING_PLAYER: (club, date) => `اشتراكك في ${club} هينتهي يوم ${date}.`,
+    SUBSCRIPTION_EXPIRED_PLAYER: (club, date) => `اشتراكك في ${club} انتهى يوم ${date}.`,
+    SUBSCRIPTION_REMINDER: (club) => `${club} بيفكّرك تجدّد اشتراكك.`,
     eventMatch: 'مباراة',
     eventTraining: 'تدريب',
     eventOther: 'نشاط',
@@ -214,6 +219,11 @@ const PUSH_STRINGS = {
     ORDER_PLACED: (name, number, total) =>
       `New order ${number} from ${name} — EGP ${total}`,
     fallbackCustomer: 'A customer',
+    SUBSCRIPTION_EXPIRING_CLUB: (name, date) => `${name}'s subscription ends on ${date}.`,
+    SUBSCRIPTION_EXPIRED_CLUB: (name, date) => `${name}'s subscription ended on ${date}.`,
+    SUBSCRIPTION_EXPIRING_PLAYER: (club, date) => `Your subscription at ${club} ends on ${date}.`,
+    SUBSCRIPTION_EXPIRED_PLAYER: (club, date) => `Your subscription at ${club} ended on ${date}.`,
+    SUBSCRIPTION_REMINDER: (club) => `${club} is reminding you to renew your subscription.`,
     eventMatch: 'a match',
     eventTraining: 'a training session',
     eventOther: 'an activity',
@@ -241,6 +251,23 @@ function pushBody(data) {
     return s.ORDER_PLACED(customer, data.orderNumber || '', total);
   }
   const isClub = data.actorRole === 'CLUB';
+  if (data.type && data.type.startsWith('SUBSCRIPTION_')) {
+    const who =
+      (data.actorName && data.actorName.trim()) ||
+      (isClub ? s.fallbackClub : s.fallbackPlayer);
+    const date = (data.subscriptionEndDate || '').replace(/-/g, '/');
+    if (data.type === 'SUBSCRIPTION_REMINDER') return s.SUBSCRIPTION_REMINDER(who);
+    const expired = data.type === 'SUBSCRIPTION_EXPIRED';
+    // The club's copy names a player; the player's copy names the club.
+    if (isClub) {
+      return expired
+        ? s.SUBSCRIPTION_EXPIRED_PLAYER(who, date)
+        : s.SUBSCRIPTION_EXPIRING_PLAYER(who, date);
+    }
+    return expired
+      ? s.SUBSCRIPTION_EXPIRED_CLUB(who, date)
+      : s.SUBSCRIPTION_EXPIRING_CLUB(who, date);
+  }
   const name =
     (data.actorName && data.actorName.trim()) ||
     (isClub ? s.fallbackClub : s.fallbackPlayer);
@@ -271,6 +298,19 @@ function pushBody(data) {
   }
 }
 
+// Where a tap lands. A subscription notice to the club opens that player's
+// page, where the WhatsApp and in-app reminders are.
+function pushPath(data) {
+  if (data.type === 'ORDER_PLACED') return '/admin/store';
+  if (data.type && data.type.startsWith('SUBSCRIPTION_')) {
+    if (data.actorRole === 'CLUB') return '/player/subscription';
+    return data.subscriptionPlayerUserId
+      ? `/club/subscriptions/${data.subscriptionPlayerUserId}`
+      : '/club/subscriptions';
+  }
+  return '/notifications';
+}
+
 self.addEventListener('push', (event) => {
   // A push with no readable payload still shows something. Silently
   // dropping it would be worse: on some platforms a push that shows no
@@ -293,7 +333,7 @@ self.addEventListener('push', (event) => {
       data: {
         notificationId: data.notificationId || null,
         // An admin wants the order queue, not the notification list.
-        path: data.type === 'ORDER_PLACED' ? '/admin/store' : '/notifications',
+        path: pushPath(data),
       },
     }),
   );

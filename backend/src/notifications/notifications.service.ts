@@ -79,6 +79,8 @@ export class NotificationsService {
         eventType: input.params.eventType,
         orderNumber: input.params.orderNumber,
         orderTotalMinor: input.params.orderTotalMinor,
+        subscriptionEndDate: input.params.subscriptionEndDate,
+        subscriptionPlayerUserId: input.params.subscriptionPlayerUserId,
       });
 
       return created;
@@ -99,6 +101,26 @@ export class NotificationsService {
       );
       return null;
     }
+  }
+
+  /**
+   * [emit] for an announcement that is allowed to happen again — a club
+   * reminding a player twice about the same subscription. The dedupe index
+   * would otherwise swallow the second one, so the earlier row is replaced:
+   * the player sees one, unread, at the top.
+   */
+  async emitFresh(input: EmitInput): Promise<NotificationDocument | null> {
+    try {
+      await this.notificationModel.deleteOne({
+        userId: input.userId,
+        entityType: input.entityType,
+        entityId: input.entityId,
+        type: input.type,
+      });
+    } catch {
+      this.logger.error('Failed to clear an earlier notification.');
+    }
+    return this.emit(input);
   }
 
   /**

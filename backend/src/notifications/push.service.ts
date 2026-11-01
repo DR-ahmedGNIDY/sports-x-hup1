@@ -23,6 +23,9 @@ export interface PushPayload {
   /** Store orders only. */
   orderNumber?: string;
   orderTotalMinor?: number;
+  /** Subscriptions only. */
+  subscriptionEndDate?: string;
+  subscriptionPlayerUserId?: string;
 }
 
 /**
