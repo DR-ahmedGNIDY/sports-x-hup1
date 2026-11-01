@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { User, UserRole, UserStatus } from '../users/schemas/user.schema';
 import { PushService } from './push.service';
 import {
   Notification,
@@ -36,6 +37,8 @@ export class NotificationsService {
     @InjectModel(Notification.name)
     private readonly notificationModel: Model<Notification>,
     private readonly push: PushService,
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
   ) {}
 
   /**
@@ -74,6 +77,8 @@ export class NotificationsService {
         actorRole: input.params.actorRole,
         eventName: input.params.eventName,
         eventType: input.params.eventType,
+        orderNumber: input.params.orderNumber,
+        orderTotalMinor: input.params.orderTotalMinor,
       });
 
       return created;
@@ -94,6 +99,26 @@ export class NotificationsService {
       );
       return null;
     }
+  }
+
+  /**
+   * [emit] once for every active admin. **Never throws**, for the same
+   * reason [emit] does: the caller's write (an order) has already happened.
+   */
+  async emitToAdmins(input: Omit<EmitInput, 'userId'>): Promise<void> {
+    let admins: Array<{ _id: Types.ObjectId }>;
+    try {
+      admins = await this.userModel
+        .find({ role: UserRole.ADMIN, status: UserStatus.ACTIVE })
+        .select('_id')
+        .lean();
+    } catch {
+      this.logger.error('Failed to look up admins to notify.');
+      return;
+    }
+    await Promise.all(
+      admins.map((admin) => this.emit({ ...input, userId: admin._id })),
+    );
   }
 
   // `userId` is part of the query, not a check performed after fetching, so

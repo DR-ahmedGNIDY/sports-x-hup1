@@ -194,6 +194,9 @@ const PUSH_STRINGS = {
     INVITATION_ACCEPTED: (name) => `${name} قَبِل دعوتك.`,
     INVITATION_REJECTED: (name) => `${name} رفض دعوتك.`,
     EVENT_SCHEDULED: (name, event) => `${name} سجّلك في ${event}.`,
+    ORDER_PLACED: (name, number, total) =>
+      `طلب جديد ${number} من ${name} — ${total} ج.م`,
+    fallbackCustomer: 'عميل',
     eventMatch: 'مباراة',
     eventTraining: 'تدريب',
     eventOther: 'نشاط',
@@ -208,6 +211,9 @@ const PUSH_STRINGS = {
     INVITATION_ACCEPTED: (name) => `${name} accepted your invitation.`,
     INVITATION_REJECTED: (name) => `${name} declined your invitation.`,
     EVENT_SCHEDULED: (name, event) => `${name} added you to ${event}.`,
+    ORDER_PLACED: (name, number, total) =>
+      `New order ${number} from ${name} — EGP ${total}`,
+    fallbackCustomer: 'A customer',
     eventMatch: 'a match',
     eventTraining: 'a training session',
     eventOther: 'an activity',
@@ -225,6 +231,15 @@ function pushStrings() {
 
 function pushBody(data) {
   const s = pushStrings();
+  if (data.type === 'ORDER_PLACED') {
+    const customer =
+      (data.actorName && data.actorName.trim()) || s.fallbackCustomer;
+    const total =
+      typeof data.orderTotalMinor === 'number'
+        ? (data.orderTotalMinor / 100).toFixed(2)
+        : '—';
+    return s.ORDER_PLACED(customer, data.orderNumber || '', total);
+  }
   const isClub = data.actorRole === 'CLUB';
   const name =
     (data.actorName && data.actorName.trim()) ||
@@ -275,7 +290,11 @@ self.addEventListener('push', (event) => {
       badge: 'icons/Icon-192.png',
       // Collapses repeats for one notification rather than stacking them.
       tag: data.notificationId || 'sxh-notification',
-      data: { notificationId: data.notificationId || null },
+      data: {
+        notificationId: data.notificationId || null,
+        // An admin wants the order queue, not the notification list.
+        path: data.type === 'ORDER_PLACED' ? '/admin/store' : '/notifications',
+      },
     }),
   );
 });
@@ -287,7 +306,10 @@ self.addEventListener('notificationclick', (event) => {
   // who has the app open in a tab wants that tab, not a second copy.
   event.waitUntil(
     (async () => {
-      const target = new URL('/#/notifications', self.location.origin).href;
+      const path =
+        (event.notification.data && event.notification.data.path) ||
+        '/notifications';
+      const target = new URL(`/#${path}`, self.location.origin).href;
       const clientList = await self.clients.matchAll({
         type: 'window',
         includeUncontrolled: true,

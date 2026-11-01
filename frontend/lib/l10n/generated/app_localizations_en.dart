@@ -2498,6 +2498,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String notificationOrderPlaced(String name, String number, String total) {
+    return 'New order $number from $name — $total';
+  }
+
+  @override
+  String get unnamedCustomer => 'A customer';
+
+  @override
   String get calendarEventTypeMatch => 'Match';
 
   @override

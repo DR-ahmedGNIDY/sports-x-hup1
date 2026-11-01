@@ -944,6 +944,15 @@
       "event": { "type": "String" }
     }
   },
+  "notificationOrderPlaced": "New order {number} from {name} — {total}",
+  "@notificationOrderPlaced": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "number": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "unnamedCustomer": "A customer",
   "calendarEventTypeMatch": "Match",
   "calendarEventTypeTraining": "Training",
   "calendarEventTypeOther": "Activity",

@@ -6,6 +6,8 @@ export enum NotificationType {
   INVITATION_ACCEPTED = 'INVITATION_ACCEPTED',
   INVITATION_REJECTED = 'INVITATION_REJECTED',
   EVENT_SCHEDULED = 'EVENT_SCHEDULED',
+  // Sent to every admin when the storefront takes an order.
+  ORDER_PLACED = 'ORDER_PLACED',
 }
 
 // One value today. It exists so the dedupe index and the client's "what do I
@@ -17,6 +19,7 @@ export enum NotificationEntityType {
   // the client opens the coach-invitations screen for it, not the player one.
   COACH_INVITATION = 'COACH_INVITATION',
   CALENDAR_EVENT = 'CALENDAR_EVENT',
+  STORE_ORDER = 'STORE_ORDER',
 }
 
 /** Whose name a notification names. */
@@ -24,6 +27,8 @@ export enum NotificationActorRole {
   CLUB = 'CLUB',
   PLAYER = 'PLAYER',
   COACH = 'COACH',
+  /** The buyer behind a store order — often a guest with no profile. */
+  CUSTOMER = 'CUSTOMER',
 }
 
 export type NotificationDocument = HydratedDocument<Notification>;
@@ -48,6 +53,12 @@ export interface NotificationParams {
   eventDate?: string;
   /** 'HH:mm'. */
   eventStartTime?: string;
+
+  // Store orders only. The number and total are what an admin needs to
+  // decide whether to open it now; the buyer's phone and address stay on
+  // the order, behind the admin endpoints.
+  orderNumber?: string;
+  orderTotalMinor?: number;
 }
 
 @Schema({ timestamps: true, collection: 'notifications' })

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from '../users/schemas/user.schema';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
 import { PushService } from './push.service';
@@ -17,6 +18,8 @@ import {
     MongooseModule.forFeature([
       { name: Notification.name, schema: NotificationSchema },
       { name: PushSubscription.name, schema: PushSubscriptionSchema },
+      // Read-only here: emitToAdmins looks up who the admins are.
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [NotificationsController],

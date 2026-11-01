@@ -944,6 +944,15 @@
       "event": { "type": "String" }
     }
   },
+  "notificationOrderPlaced": "طلب جديد {number} من {name} — {total}",
+  "@notificationOrderPlaced": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "number": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "unnamedCustomer": "عميل",
   "calendarEventTypeMatch": "مباراة",
   "calendarEventTypeTraining": "تدريب",
   "calendarEventTypeOther": "نشاط",

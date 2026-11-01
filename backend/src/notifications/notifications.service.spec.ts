@@ -39,14 +39,25 @@ function buildService(
   // Push is optional infrastructure and never throws at its caller; this
   // stands in for it so these tests are about the record, not the banner.
   const push = { send: jest.fn().mockResolvedValue(undefined) };
+  const admins = jest
+    .fn()
+    .mockResolvedValue([{ _id: 'admin-1' }, { _id: 'admin-2' }]);
+  const userModel = {
+    find: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({ lean: admins }),
+    }),
+  };
 
   return {
     service: new NotificationsService(
       notificationModel as never,
       push as never,
+      userModel as never,
     ),
     notificationModel,
     push,
+    userModel,
+    admins,
   };
 }
 
@@ -59,6 +70,58 @@ const emitInput = {
 };
 
 describe('NotificationsService', () => {
+  describe('emitToAdmins', () => {
+    const orderInput = {
+      type: NotificationType.ORDER_PLACED,
+      entityType: NotificationEntityType.STORE_ORDER,
+      entityId: 'order-1',
+      params: {
+        actorRole: NotificationActorRole.CUSTOMER,
+        actorName: 'Ahmed',
+        orderNumber: 'ORD-000001',
+        orderTotalMinor: 155500,
+      },
+    };
+
+    it('records one notification for every active admin', async () => {
+      const { service, notificationModel, userModel } = buildService();
+
+      await service.emitToAdmins(orderInput);
+
+      expect(userModel.find).toHaveBeenCalledWith({
+        role: 'ADMIN',
+        status: 'ACTIVE',
+      });
+      expect(notificationModel.create).toHaveBeenCalledTimes(2);
+      expect(notificationModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({ userId: 'admin-2', entityId: 'order-1' }),
+      );
+    });
+
+    it('pushes the order number and total', async () => {
+      const { service, push } = buildService();
+
+      await service.emitToAdmins(orderInput);
+
+      expect(push.send).toHaveBeenCalledWith(
+        'admin-1',
+        expect.objectContaining({
+          type: NotificationType.ORDER_PLACED,
+          orderNumber: 'ORD-000001',
+          orderTotalMinor: 155500,
+        }),
+      );
+    });
+
+    it('swallows a failed admin lookup', async () => {
+      const { service, notificationModel, admins } = buildService();
+      admins.mockRejectedValue(new Error('mongo is down'));
+
+      await expect(service.emitToAdmins(orderInput)).resolves.toBeUndefined();
+      expect(notificationModel.create).not.toHaveBeenCalled();
+    });
+  });
+
   describe('emit', () => {
     it('records the notification with its structured params', async () => {
       const { service, notificationModel } = buildService();

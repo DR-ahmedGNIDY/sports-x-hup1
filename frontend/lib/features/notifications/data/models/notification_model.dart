@@ -30,6 +30,10 @@ extension AppNotificationModel on AppNotification {
         date: _dateFrom(params['eventDate']),
         startTime: params['eventStartTime'] as String?,
       ),
+      order: NotificationOrderDetails(
+        number: params['orderNumber'] as String?,
+        totalMinor: (params['orderTotalMinor'] as num?)?.toInt(),
+      ),
     );
   }
 }

@@ -13,7 +13,8 @@ enum NotificationType {
   invitationReceived('INVITATION_RECEIVED'),
   invitationAccepted('INVITATION_ACCEPTED'),
   invitationRejected('INVITATION_REJECTED'),
-  eventScheduled('EVENT_SCHEDULED');
+  eventScheduled('EVENT_SCHEDULED'),
+  orderPlaced('ORDER_PLACED');
 
   const NotificationType(this.wireValue);
 
@@ -33,7 +34,8 @@ enum NotificationType {
 enum NotificationEntityType {
   invitation('INVITATION'),
   coachInvitation('COACH_INVITATION'),
-  calendarEvent('CALENDAR_EVENT');
+  calendarEvent('CALENDAR_EVENT'),
+  storeOrder('STORE_ORDER');
 
   const NotificationEntityType(this.wireValue);
 
@@ -50,7 +52,8 @@ enum NotificationEntityType {
 enum NotificationActorRole {
   club('CLUB'),
   player('PLAYER'),
-  coach('COACH');
+  coach('COACH'),
+  customer('CUSTOMER');
 
   const NotificationActorRole(this.wireValue);
 
@@ -59,6 +62,7 @@ enum NotificationActorRole {
   static NotificationActorRole fromWire(String? value) => switch (value) {
     'CLUB' => club,
     'COACH' => coach,
+    'CUSTOMER' => customer,
     _ => player,
   };
 }
@@ -95,6 +99,14 @@ class NotificationEventDetails {
   final String? startTime;
 }
 
+/// What an order notification tells an admin before they open it.
+class NotificationOrderDetails {
+  const NotificationOrderDetails({this.number, this.totalMinor});
+
+  final String? number;
+  final int? totalMinor;
+}
+
 class AppNotification {
   const AppNotification({
     required this.id,
@@ -105,12 +117,16 @@ class AppNotification {
     required this.read,
     this.createdAt,
     this.event,
+    this.order,
   });
 
   final String id;
   final NotificationType type;
   final NotificationActor actor;
   final NotificationEventDetails? event;
+
+  /// Store orders only.
+  final NotificationOrderDetails? order;
 
   /// What to open when this is tapped.
   final NotificationEntityType? entityType;

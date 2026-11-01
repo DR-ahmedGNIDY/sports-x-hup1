@@ -7,6 +7,12 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
+import { NotificationsService } from '../../notifications/notifications.service';
+import {
+  NotificationActorRole,
+  NotificationEntityType,
+  NotificationType,
+} from '../../notifications/schemas/notification.schema';
 import {
   PublicCodePrefix,
   PublicCodesService,
@@ -49,6 +55,7 @@ export class OrdersService {
     private readonly shipping: ShippingService,
     private readonly publicCodes: PublicCodesService,
     private readonly coupons: CouponsService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   // `userId` is undefined for a guest — the checkout endpoint is reachable
@@ -106,11 +113,12 @@ export class OrdersService {
       throw error;
     }
 
+    let order: StoreOrderDocument;
     try {
       const orderNumber = await this.publicCodes.allocate(
         PublicCodePrefix.ORDER,
       );
-      return await this.orderModel.create({
+      order = await this.orderModel.create({
         orderNumber,
         userId: userId ? new Types.ObjectId(userId) : undefined,
         email: dto.email,
@@ -144,6 +152,22 @@ export class OrdersService {
       if (coupon) await this.coupons.release(coupon.code);
       throw error;
     }
+
+    // Outside the try above: the order is committed by now, so nothing about
+    // telling the admins may undo it. Not awaited, so a slow lookup or push
+    // never holds the customer's checkout open.
+    void this.notifications.emitToAdmins({
+      type: NotificationType.ORDER_PLACED,
+      entityType: NotificationEntityType.STORE_ORDER,
+      entityId: order._id,
+      params: {
+        actorName: order.address.fullName,
+        actorRole: NotificationActorRole.CUSTOMER,
+        orderNumber: order.orderNumber,
+        orderTotalMinor: order.totalMinor,
+      },
+    });
+    return order;
   }
 
   private mergeClaims(dto: CreateOrderDto): StockClaim[] {

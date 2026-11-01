@@ -61,12 +61,16 @@ describe('OrdersService', () => {
         .mockResolvedValue({ code: 'SUMMER10', discountMinor: 7400 }),
       release: jest.fn().mockResolvedValue(undefined),
     };
+    const notifications = {
+      emitToAdmins: jest.fn().mockResolvedValue(undefined),
+    };
     const service = new OrdersService(
       orderModel as never,
       productModel as never,
       shipping as never,
       publicCodes as never,
       coupons as never,
+      notifications as never,
     );
     return {
       service,
@@ -75,6 +79,7 @@ describe('OrdersService', () => {
       shipping,
       publicCodes,
       coupons,
+      notifications,
     };
   }
 
@@ -97,6 +102,34 @@ describe('OrdersService', () => {
       })),
     };
   }
+
+  describe('admin notification', () => {
+    it('tells the admins about a placed order', async () => {
+      const { service, notifications } = buildService();
+
+      await service.create(orderDto([{ quantity: 1 }]));
+
+      expect(notifications.emitToAdmins).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'ORDER_PLACED',
+          entityType: 'STORE_ORDER',
+          params: expect.objectContaining({
+            actorName: 'Ahmed Gnidy',
+            orderNumber: 'ORD-000001',
+            orderTotalMinor: 79500,
+          }),
+        }),
+      );
+    });
+
+    it('says nothing when the order was not saved', async () => {
+      const { service, orderModel, notifications } = buildService();
+      orderModel.create.mockRejectedValue(new Error('mongo is down'));
+
+      await expect(service.create(orderDto([{ quantity: 1 }]))).rejects.toThrow();
+      expect(notifications.emitToAdmins).not.toHaveBeenCalled();
+    });
+  });
 
   describe('pricing', () => {
     it('prices every line from the database, ignoring anything the client sent', async () => {

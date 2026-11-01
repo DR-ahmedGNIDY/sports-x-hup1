@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { NotificationsModule } from '../../notifications/notifications.module';
 import { PublicCodesModule } from '../../public-codes/public-codes.module';
 import { StoreOrder, StoreOrderSchema } from '../schemas/order.schema';
 import { StoreProduct, StoreProductSchema } from '../schemas/product.schema';
@@ -20,6 +21,7 @@ import { OrdersService } from './orders.service';
     ShippingModule,
     PublicCodesModule,
     CouponsModule,
+    NotificationsModule,
   ],
   controllers: [OrdersController, AdminOrdersController],
   providers: [OrdersService],

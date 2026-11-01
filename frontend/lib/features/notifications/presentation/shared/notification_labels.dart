@@ -1,4 +1,5 @@
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../store/presentation/widgets/money.dart';
 import '../../domain/entities/app_notification.dart';
 
 /// Renders a notification's line from its structured parts.
@@ -14,6 +15,7 @@ String notificationText(AppLocalizations l10n, AppNotification notification) {
           NotificationActorRole.club => l10n.unnamedClub,
           NotificationActorRole.coach => l10n.coachUnnamed,
           NotificationActorRole.player => l10n.unnamedPlayer,
+          NotificationActorRole.customer => l10n.unnamedCustomer,
         }
       : name;
 
@@ -23,7 +25,8 @@ String notificationText(AppLocalizations l10n, AppNotification notification) {
     NotificationType.invitationReceived => switch (notification.actor.role) {
       NotificationActorRole.club => l10n.notificationInvitationFromClub(actor),
       NotificationActorRole.coach => l10n.notificationJoinRequestFromCoach(actor),
-      NotificationActorRole.player =>
+      NotificationActorRole.player ||
+      NotificationActorRole.customer =>
         l10n.notificationJoinRequestFromPlayer(actor),
     },
     NotificationType.invitationAccepted =>
@@ -31,6 +34,14 @@ String notificationText(AppLocalizations l10n, AppNotification notification) {
     NotificationType.invitationRejected =>
       l10n.notificationInvitationRejected(actor),
     NotificationType.eventScheduled => _eventScheduledText(l10n, notification, actor),
+    NotificationType.orderPlaced => l10n.notificationOrderPlaced(
+      actor,
+      notification.order?.number ?? '',
+      formatMoney(
+        notification.order?.totalMinor ?? 0,
+        isArabic: l10n.localeName.startsWith('ar'),
+      ),
+    ),
   };
 }
 

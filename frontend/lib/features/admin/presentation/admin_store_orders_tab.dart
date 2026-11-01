@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../notifications/presentation/shared/push_prompt_card.dart';
 import '../../store/domain/entities/store_order.dart';
 import '../../store/presentation/widgets/money.dart';
 import '../application/admin_store_controllers.dart';
@@ -39,6 +40,12 @@ class AdminStoreOrdersTab extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // The order queue is where an admin learns that orders arrive while
+        // they are away — the moment the push permission explains itself.
+        const Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: PushPromptCard(),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Wrap(

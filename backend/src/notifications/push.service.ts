@@ -20,6 +20,9 @@ export interface PushPayload {
   /** Calendar events only — enough for the banner to name the session. */
   eventName?: string;
   eventType?: string;
+  /** Store orders only. */
+  orderNumber?: string;
+  orderTotalMinor?: number;
 }
 
 /**
