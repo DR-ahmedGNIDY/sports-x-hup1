@@ -34,6 +34,9 @@ import '../../features/invitations/presentation/club_invitations_page.dart';
 import '../../features/invitations/presentation/player_invitations_page.dart';
 import '../../features/notifications/presentation/notifications_page.dart';
 import '../../features/subscriptions/presentation/subscriptions_pages.dart';
+import '../../features/tournaments/presentation/club_tournaments_pages.dart';
+import '../../features/tournaments/presentation/player_tournaments_pages.dart';
+import '../../features/tournaments/presentation/tournament_form_page.dart';
 import '../../features/player/presentation/edit_profile_page.dart';
 import '../../features/player/presentation/my_profile_preview_page.dart';
 import '../../features/player/presentation/my_skills_page.dart';
@@ -113,7 +116,9 @@ bool _isAdminRoute(String path) => path.startsWith('/admin/');
 // Club screens a coach may also use, on behalf of their active club (the
 // server checks each action against that coach's permissions).
 bool _isClubRoute(String path) =>
-    path.startsWith('/club/players') || path.startsWith('/club/invitations');
+    path.startsWith('/club/players') ||
+    path.startsWith('/club/invitations') ||
+    path.startsWith('/club/tournaments');
 
 // Managing a club's coaching staff is the club account's alone.
 // So are its players' subscriptions — they are the club's money.
@@ -129,7 +134,8 @@ bool _isCoachRoute(String path) => path.startsWith('/coach/');
 // wandered in would meet a 403 instead of a screen.
 bool _isPlayerRoute(String path) =>
     path.startsWith('/player/invitations') ||
-    path.startsWith('/player/subscription');
+    path.startsWith('/player/subscription') ||
+    path.startsWith('/player/tournaments');
 
 // Where an authenticated session lands after splash/login, or gets bounced
 // back to when it hits a route it doesn't own — a Player's home is their
@@ -407,6 +413,60 @@ StatefulShellBranch _branchFor(AppBranch branch) {
             state: state,
             child: ClubPlayerSubscriptionsPage(
               playerUserId: state.pathParameters['playerUserId']!,
+            ),
+          ),
+        ),
+      ],
+      AppBranch.clubTournaments => [
+        GoRoute(
+          path: '/club/tournaments',
+          pageBuilder: (context, state) => fadePage(
+            state: state,
+            child: const ClubContextGate(child: ClubTournamentsPage()),
+          ),
+        ),
+        GoRoute(
+          path: '/club/tournaments/new',
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: const ClubContextGate(child: TournamentFormPage()),
+          ),
+        ),
+        GoRoute(
+          path: '/club/tournaments/:id',
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: ClubContextGate(
+              child: ClubTournamentDetailPage(
+                tournamentId: state.pathParameters['id']!,
+              ),
+            ),
+          ),
+        ),
+        GoRoute(
+          path: '/club/tournaments/:id/edit',
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: ClubContextGate(
+              child: TournamentFormPage(
+                tournamentId: state.pathParameters['id']!,
+              ),
+            ),
+          ),
+        ),
+      ],
+      AppBranch.playerTournaments => [
+        GoRoute(
+          path: '/player/tournaments',
+          pageBuilder: (context, state) =>
+              fadePage(state: state, child: const MyTournamentsPage()),
+        ),
+        GoRoute(
+          path: '/player/tournaments/:id',
+          pageBuilder: (context, state) => slidePage(
+            state: state,
+            child: MyTournamentDetailPage(
+              tournamentId: state.pathParameters['id']!,
             ),
           ),
         ),

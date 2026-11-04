@@ -30,6 +30,10 @@ extension AppNotificationModel on AppNotification {
         date: _dateFrom(params['eventDate']),
         startTime: params['eventStartTime'] as String?,
       ),
+      tournament: NotificationTournamentDetails(
+        id: params['tournamentId'] as String?,
+        name: params['tournamentName'] as String?,
+      ),
       subscription: NotificationSubscriptionDetails(
         endDate: params['subscriptionEndDate'] as String?,
         playerUserId: params['subscriptionPlayerUserId'] as String?,

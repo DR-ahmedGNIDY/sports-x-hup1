@@ -1294,5 +1294,141 @@
     "placeholders": {
       "club": { "type": "String" }
     }
+  },
+  "tournamentsTitle": "Tournaments",
+  "tournamentNew": "New tournament",
+  "tournamentEdit": "Edit tournament",
+  "tournamentsEmpty": "No tournaments yet.",
+  "myTournamentsEmpty": "Your club has not published any tournaments yet.",
+  "tournamentNoPermission": "You cannot manage this club’s tournaments.",
+  "tournamentName": "Tournament name",
+  "tournamentSport": "Sport",
+  "tournamentNoSport": "No sport",
+  "tournamentAgeGroup": "Age group",
+  "tournamentStartDate": "Start date",
+  "tournamentEndDate": "End date",
+  "tournamentNotes": "Notes",
+  "tournamentSectionBasics": "Basics",
+  "tournamentSectionSystem": "Format and draw",
+  "tournamentSectionScoring": "Scoring",
+  "tournamentSectionLeague": "League rules",
+  "tournamentType": "Participants",
+  "tournamentTypeIndividual": "Individual",
+  "tournamentTypeTeam": "Teams",
+  "tournamentFormat": "Format",
+  "tournamentFormatLeague": "League",
+  "tournamentFormatKnockout": "Knockout",
+  "tournamentFormatGroups": "Groups then knockout",
+  "tournamentDrawMode": "Draw",
+  "tournamentDrawRandom": "Random",
+  "tournamentDrawDirected": "Directed",
+  "tournamentScoringGoals": "Goals / points",
+  "tournamentScoringSets": "Sets",
+  "tournamentBestOf": "Number of sets",
+  "tournamentBestOfValue": "Best of {count}",
+  "@tournamentBestOfValue": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "tournamentPointsPerSet": "Points per set",
+  "tournamentWinByTwo": "Win by two points",
+  "tournamentMaxPoints": "Set cap (optional)",
+  "tournamentDoubleRound": "Home and away",
+  "tournamentAllowDraws": "Draws allowed",
+  "tournamentWinPoints": "Win points",
+  "tournamentDrawPoints": "Draw points",
+  "tournamentLossPoints": "Loss points",
+  "tournamentGroupsCount": "Number of groups",
+  "tournamentQualifiers": "Qualifiers per group",
+  "tournamentPenalties": "Penalties after a knockout draw",
+  "tournamentPenaltiesCount": "Number of penalties",
+  "tournamentVisibleToPlayers": "Show to players once published",
+  "tournamentStatusDraft": "Set-up",
+  "tournamentStatusRunning": "In progress",
+  "tournamentStatusFinished": "Finished",
+  "tournamentParticipantsCount": "{count} participants",
+  "@tournamentParticipantsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "tournamentTabParticipants": "Participants",
+  "tournamentTabFixtures": "Matches",
+  "tournamentTabStandings": "Standings",
+  "tournamentTabBracket": "Bracket",
+  "tournamentAddParticipant": "Add player",
+  "tournamentAddTeam": "Add team",
+  "tournamentEditTeam": "Edit team",
+  "tournamentTeamName": "Team name",
+  "tournamentCaptain": "Captain",
+  "tournamentNoCaptain": "No captain",
+  "tournamentPickPlayers": "Pick players",
+  "tournamentPlayerTaken": "Already entered",
+  "tournamentDirectedHint": "Drag to order the participants — the first is seed 1.",
+  "tournamentGenerate": "Generate and publish the schedule",
+  "tournamentResetSchedule": "Delete the schedule",
+  "tournamentResetConfirm": "Delete the schedule and go back to set-up?",
+  "tournamentDeleteConfirm": "Delete this tournament and all its matches?",
+  "tournamentNeedTwo": "Add at least two participants.",
+  "tournamentRound": "Round {round}",
+  "@tournamentRound": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "tournamentGroup": "Group {name}",
+  "@tournamentGroup": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "tournamentFinal": "Final",
+  "tournamentSemiFinal": "Semi-final",
+  "tournamentQuarterFinal": "Quarter-final",
+  "tournamentRoundOf": "Round of {count}",
+  "@tournamentRoundOf": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "tournamentBye": "Bye",
+  "tournamentTbd": "TBD",
+  "tournamentRecordResult": "Record result",
+  "tournamentClearResult": "Clear result",
+  "tournamentSwapSides": "Swap sides",
+  "tournamentPenaltiesShort": "Penalties",
+  "tournamentSet": "Set {number}",
+  "@tournamentSet": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "tournamentAddSet": "Add set",
+  "tournamentMatchDate": "Date",
+  "tournamentMatchTime": "Time",
+  "tournamentMatchLocation": "Location",
+  "tournamentNoSchedule": "No schedule yet.",
+  "tournamentPlayed": "P",
+  "tournamentWon": "W",
+  "tournamentDrawn": "D",
+  "tournamentLost": "L",
+  "tournamentGoalDiff": "+/-",
+  "tournamentPoints": "Pts",
+  "tournamentYouPlay": "You are playing",
+  "tournamentYourTeam": "Your team",
+  "coachPermManageTournaments": "Manage tournaments",
+  "notificationTournamentScheduled": "{club} published the {tournament} schedule.",
+  "@notificationTournamentScheduled": {
+    "placeholders": {
+      "club": { "type": "String" },
+      "tournament": { "type": "String" }
+    }
+  },
+  "notificationTournamentResult": "A result was recorded for your match in {tournament}.",
+  "@notificationTournamentResult": {
+    "placeholders": {
+      "tournament": { "type": "String" }
+    }
   }
 }

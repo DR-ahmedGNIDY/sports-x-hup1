@@ -17,6 +17,8 @@ export enum CoachPermission {
   MANAGE_CLUB_PLAYERS = 'MANAGE_CLUB_PLAYERS',
   EDIT_CLUB_PROFILE = 'EDIT_CLUB_PROFILE',
   REMOVE_MEMBERS = 'REMOVE_MEMBERS',
+  /** Create and run the club's tournaments: draw, schedule, results. */
+  MANAGE_TOURNAMENTS = 'MANAGE_TOURNAMENTS',
 }
 
 export const ALL_COACH_PERMISSIONS = Object.values(CoachPermission);

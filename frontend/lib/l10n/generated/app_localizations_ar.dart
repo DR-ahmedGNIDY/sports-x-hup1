@@ -3295,4 +3295,306 @@ class AppLocalizationsAr extends AppLocalizations {
   String notificationSubscriptionReminder(String club) {
     return '$club بيفكّرك تجدّد اشتراكك.';
   }
+
+  @override
+  String get tournamentsTitle => 'البطولات';
+
+  @override
+  String get tournamentNew => 'بطولة جديدة';
+
+  @override
+  String get tournamentEdit => 'تعديل البطولة';
+
+  @override
+  String get tournamentsEmpty => 'مفيش بطولات لسه.';
+
+  @override
+  String get myTournamentsEmpty => 'مفيش بطولات منشورة لناديك لسه.';
+
+  @override
+  String get tournamentNoPermission => 'مش مسموحلك تدير بطولات النادي ده.';
+
+  @override
+  String get tournamentName => 'اسم البطولة';
+
+  @override
+  String get tournamentSport => 'الرياضة';
+
+  @override
+  String get tournamentNoSport => 'بدون رياضة';
+
+  @override
+  String get tournamentAgeGroup => 'الفئة العمرية';
+
+  @override
+  String get tournamentStartDate => 'تاريخ البداية';
+
+  @override
+  String get tournamentEndDate => 'تاريخ النهاية';
+
+  @override
+  String get tournamentNotes => 'ملاحظات';
+
+  @override
+  String get tournamentSectionBasics => 'البيانات الأساسية';
+
+  @override
+  String get tournamentSectionSystem => 'النظام والقرعة';
+
+  @override
+  String get tournamentSectionScoring => 'النتيجة';
+
+  @override
+  String get tournamentSectionLeague => 'قواعد الدوري';
+
+  @override
+  String get tournamentType => 'نوع المشاركة';
+
+  @override
+  String get tournamentTypeIndividual => 'فردي';
+
+  @override
+  String get tournamentTypeTeam => 'فرق';
+
+  @override
+  String get tournamentFormat => 'نظام البطولة';
+
+  @override
+  String get tournamentFormatLeague => 'دوري';
+
+  @override
+  String get tournamentFormatKnockout => 'كأس (خروج مغلوب)';
+
+  @override
+  String get tournamentFormatGroups => 'مجموعات ثم كأس';
+
+  @override
+  String get tournamentDrawMode => 'القرعة';
+
+  @override
+  String get tournamentDrawRandom => 'عشوائية';
+
+  @override
+  String get tournamentDrawDirected => 'موجّهة';
+
+  @override
+  String get tournamentScoringGoals => 'أهداف / نقاط';
+
+  @override
+  String get tournamentScoringSets => 'أشواط';
+
+  @override
+  String get tournamentBestOf => 'عدد الأشواط';
+
+  @override
+  String tournamentBestOfValue(int count) {
+    return 'أفضل $count';
+  }
+
+  @override
+  String get tournamentPointsPerSet => 'نقاط الشوط';
+
+  @override
+  String get tournamentWinByTwo => 'الفوز بفارق نقطتين';
+
+  @override
+  String get tournamentMaxPoints => 'حد أقصى للشوط (اختياري)';
+
+  @override
+  String get tournamentDoubleRound => 'ذهاب وعودة';
+
+  @override
+  String get tournamentAllowDraws => 'التعادل مسموح';
+
+  @override
+  String get tournamentWinPoints => 'نقاط الفوز';
+
+  @override
+  String get tournamentDrawPoints => 'نقاط التعادل';
+
+  @override
+  String get tournamentLossPoints => 'نقاط الخسارة';
+
+  @override
+  String get tournamentGroupsCount => 'عدد المجموعات';
+
+  @override
+  String get tournamentQualifiers => 'المتأهلين من كل مجموعة';
+
+  @override
+  String get tournamentPenalties => 'ضربات ترجيح عند التعادل في الكأس';
+
+  @override
+  String get tournamentPenaltiesCount => 'عدد الضربات';
+
+  @override
+  String get tournamentVisibleToPlayers => 'تظهر للاعبين بعد نشر الجدول';
+
+  @override
+  String get tournamentStatusDraft => 'إعداد';
+
+  @override
+  String get tournamentStatusRunning => 'جارية';
+
+  @override
+  String get tournamentStatusFinished => 'انتهت';
+
+  @override
+  String tournamentParticipantsCount(int count) {
+    return '$count مشارك';
+  }
+
+  @override
+  String get tournamentTabParticipants => 'المشاركين';
+
+  @override
+  String get tournamentTabFixtures => 'المباريات';
+
+  @override
+  String get tournamentTabStandings => 'الترتيب';
+
+  @override
+  String get tournamentTabBracket => 'الكأس';
+
+  @override
+  String get tournamentAddParticipant => 'إضافة لاعب';
+
+  @override
+  String get tournamentAddTeam => 'إضافة فريق';
+
+  @override
+  String get tournamentEditTeam => 'تعديل الفريق';
+
+  @override
+  String get tournamentTeamName => 'اسم الفريق';
+
+  @override
+  String get tournamentCaptain => 'الكابتن';
+
+  @override
+  String get tournamentNoCaptain => 'بدون كابتن';
+
+  @override
+  String get tournamentPickPlayers => 'اختار اللاعبين';
+
+  @override
+  String get tournamentPlayerTaken => 'مسجّل في مشارك تاني';
+
+  @override
+  String get tournamentDirectedHint =>
+      'اسحب المشاركين لترتيبهم — الأول هو المصنف رقم 1.';
+
+  @override
+  String get tournamentGenerate => 'توليد الجدول ونشره';
+
+  @override
+  String get tournamentResetSchedule => 'حذف الجدول';
+
+  @override
+  String get tournamentResetConfirm => 'تحذف الجدول وترجع لمرحلة الإعداد؟';
+
+  @override
+  String get tournamentDeleteConfirm => 'تحذف البطولة دي بكل مبارياتها؟';
+
+  @override
+  String get tournamentNeedTwo => 'ضيف مشاركين اتنين على الأقل.';
+
+  @override
+  String tournamentRound(int round) {
+    return 'الجولة $round';
+  }
+
+  @override
+  String tournamentGroup(String name) {
+    return 'المجموعة $name';
+  }
+
+  @override
+  String get tournamentFinal => 'النهائي';
+
+  @override
+  String get tournamentSemiFinal => 'نصف النهائي';
+
+  @override
+  String get tournamentQuarterFinal => 'ربع النهائي';
+
+  @override
+  String tournamentRoundOf(int count) {
+    return 'دور الـ $count';
+  }
+
+  @override
+  String get tournamentBye => 'صعود مباشر';
+
+  @override
+  String get tournamentTbd => 'لم يتحدد';
+
+  @override
+  String get tournamentRecordResult => 'تسجيل النتيجة';
+
+  @override
+  String get tournamentClearResult => 'مسح النتيجة';
+
+  @override
+  String get tournamentSwapSides => 'تبديل الطرفين';
+
+  @override
+  String get tournamentPenaltiesShort => 'ترجيح';
+
+  @override
+  String tournamentSet(int number) {
+    return 'الشوط $number';
+  }
+
+  @override
+  String get tournamentAddSet => 'إضافة شوط';
+
+  @override
+  String get tournamentMatchDate => 'التاريخ';
+
+  @override
+  String get tournamentMatchTime => 'الوقت';
+
+  @override
+  String get tournamentMatchLocation => 'المكان';
+
+  @override
+  String get tournamentNoSchedule => 'الجدول لسه متولّدش.';
+
+  @override
+  String get tournamentPlayed => 'لعب';
+
+  @override
+  String get tournamentWon => 'فاز';
+
+  @override
+  String get tournamentDrawn => 'تعادل';
+
+  @override
+  String get tournamentLost => 'خسر';
+
+  @override
+  String get tournamentGoalDiff => 'فارق';
+
+  @override
+  String get tournamentPoints => 'نقاط';
+
+  @override
+  String get tournamentYouPlay => 'أنت مشارك';
+
+  @override
+  String get tournamentYourTeam => 'فريقك';
+
+  @override
+  String get coachPermManageTournaments => 'إدارة البطولات';
+
+  @override
+  String notificationTournamentScheduled(String club, String tournament) {
+    return '$club نشر جدول $tournament.';
+  }
+
+  @override
+  String notificationTournamentResult(String tournament) {
+    return 'اتسجّلت نتيجة مباراتك في $tournament.';
+  }
 }

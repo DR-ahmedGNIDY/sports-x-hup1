@@ -1295,5 +1295,141 @@
     "placeholders": {
       "club": { "type": "String" }
     }
+  },
+  "tournamentsTitle": "البطولات",
+  "tournamentNew": "بطولة جديدة",
+  "tournamentEdit": "تعديل البطولة",
+  "tournamentsEmpty": "مفيش بطولات لسه.",
+  "myTournamentsEmpty": "مفيش بطولات منشورة لناديك لسه.",
+  "tournamentNoPermission": "مش مسموحلك تدير بطولات النادي ده.",
+  "tournamentName": "اسم البطولة",
+  "tournamentSport": "الرياضة",
+  "tournamentNoSport": "بدون رياضة",
+  "tournamentAgeGroup": "الفئة العمرية",
+  "tournamentStartDate": "تاريخ البداية",
+  "tournamentEndDate": "تاريخ النهاية",
+  "tournamentNotes": "ملاحظات",
+  "tournamentSectionBasics": "البيانات الأساسية",
+  "tournamentSectionSystem": "النظام والقرعة",
+  "tournamentSectionScoring": "النتيجة",
+  "tournamentSectionLeague": "قواعد الدوري",
+  "tournamentType": "نوع المشاركة",
+  "tournamentTypeIndividual": "فردي",
+  "tournamentTypeTeam": "فرق",
+  "tournamentFormat": "نظام البطولة",
+  "tournamentFormatLeague": "دوري",
+  "tournamentFormatKnockout": "كأس (خروج مغلوب)",
+  "tournamentFormatGroups": "مجموعات ثم كأس",
+  "tournamentDrawMode": "القرعة",
+  "tournamentDrawRandom": "عشوائية",
+  "tournamentDrawDirected": "موجّهة",
+  "tournamentScoringGoals": "أهداف / نقاط",
+  "tournamentScoringSets": "أشواط",
+  "tournamentBestOf": "عدد الأشواط",
+  "tournamentBestOfValue": "أفضل {count}",
+  "@tournamentBestOfValue": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "tournamentPointsPerSet": "نقاط الشوط",
+  "tournamentWinByTwo": "الفوز بفارق نقطتين",
+  "tournamentMaxPoints": "حد أقصى للشوط (اختياري)",
+  "tournamentDoubleRound": "ذهاب وعودة",
+  "tournamentAllowDraws": "التعادل مسموح",
+  "tournamentWinPoints": "نقاط الفوز",
+  "tournamentDrawPoints": "نقاط التعادل",
+  "tournamentLossPoints": "نقاط الخسارة",
+  "tournamentGroupsCount": "عدد المجموعات",
+  "tournamentQualifiers": "المتأهلين من كل مجموعة",
+  "tournamentPenalties": "ضربات ترجيح عند التعادل في الكأس",
+  "tournamentPenaltiesCount": "عدد الضربات",
+  "tournamentVisibleToPlayers": "تظهر للاعبين بعد نشر الجدول",
+  "tournamentStatusDraft": "إعداد",
+  "tournamentStatusRunning": "جارية",
+  "tournamentStatusFinished": "انتهت",
+  "tournamentParticipantsCount": "{count} مشارك",
+  "@tournamentParticipantsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "tournamentTabParticipants": "المشاركين",
+  "tournamentTabFixtures": "المباريات",
+  "tournamentTabStandings": "الترتيب",
+  "tournamentTabBracket": "الكأس",
+  "tournamentAddParticipant": "إضافة لاعب",
+  "tournamentAddTeam": "إضافة فريق",
+  "tournamentEditTeam": "تعديل الفريق",
+  "tournamentTeamName": "اسم الفريق",
+  "tournamentCaptain": "الكابتن",
+  "tournamentNoCaptain": "بدون كابتن",
+  "tournamentPickPlayers": "اختار اللاعبين",
+  "tournamentPlayerTaken": "مسجّل في مشارك تاني",
+  "tournamentDirectedHint": "اسحب المشاركين لترتيبهم — الأول هو المصنف رقم 1.",
+  "tournamentGenerate": "توليد الجدول ونشره",
+  "tournamentResetSchedule": "حذف الجدول",
+  "tournamentResetConfirm": "تحذف الجدول وترجع لمرحلة الإعداد؟",
+  "tournamentDeleteConfirm": "تحذف البطولة دي بكل مبارياتها؟",
+  "tournamentNeedTwo": "ضيف مشاركين اتنين على الأقل.",
+  "tournamentRound": "الجولة {round}",
+  "@tournamentRound": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "tournamentGroup": "المجموعة {name}",
+  "@tournamentGroup": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "tournamentFinal": "النهائي",
+  "tournamentSemiFinal": "نصف النهائي",
+  "tournamentQuarterFinal": "ربع النهائي",
+  "tournamentRoundOf": "دور الـ {count}",
+  "@tournamentRoundOf": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "tournamentBye": "صعود مباشر",
+  "tournamentTbd": "لم يتحدد",
+  "tournamentRecordResult": "تسجيل النتيجة",
+  "tournamentClearResult": "مسح النتيجة",
+  "tournamentSwapSides": "تبديل الطرفين",
+  "tournamentPenaltiesShort": "ترجيح",
+  "tournamentSet": "الشوط {number}",
+  "@tournamentSet": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "tournamentAddSet": "إضافة شوط",
+  "tournamentMatchDate": "التاريخ",
+  "tournamentMatchTime": "الوقت",
+  "tournamentMatchLocation": "المكان",
+  "tournamentNoSchedule": "الجدول لسه متولّدش.",
+  "tournamentPlayed": "لعب",
+  "tournamentWon": "فاز",
+  "tournamentDrawn": "تعادل",
+  "tournamentLost": "خسر",
+  "tournamentGoalDiff": "فارق",
+  "tournamentPoints": "نقاط",
+  "tournamentYouPlay": "أنت مشارك",
+  "tournamentYourTeam": "فريقك",
+  "coachPermManageTournaments": "إدارة البطولات",
+  "notificationTournamentScheduled": "{club} نشر جدول {tournament}.",
+  "@notificationTournamentScheduled": {
+    "placeholders": {
+      "club": { "type": "String" },
+      "tournament": { "type": "String" }
+    }
+  },
+  "notificationTournamentResult": "اتسجّلت نتيجة مباراتك في {tournament}.",
+  "@notificationTournamentResult": {
+    "placeholders": {
+      "tournament": { "type": "String" }
+    }
   }
 }

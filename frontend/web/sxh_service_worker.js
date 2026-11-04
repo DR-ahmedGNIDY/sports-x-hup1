@@ -202,6 +202,8 @@ const PUSH_STRINGS = {
     SUBSCRIPTION_EXPIRING_PLAYER: (club, date) => `اشتراكك في ${club} هينتهي يوم ${date}.`,
     SUBSCRIPTION_EXPIRED_PLAYER: (club, date) => `اشتراكك في ${club} انتهى يوم ${date}.`,
     SUBSCRIPTION_REMINDER: (club) => `${club} بيفكّرك تجدّد اشتراكك.`,
+    TOURNAMENT_SCHEDULED: (club, name) => `${club} نشر جدول ${name}.`,
+    TOURNAMENT_RESULT: (name) => `اتسجّلت نتيجة مباراتك في ${name}.`,
     eventMatch: 'مباراة',
     eventTraining: 'تدريب',
     eventOther: 'نشاط',
@@ -224,6 +226,8 @@ const PUSH_STRINGS = {
     SUBSCRIPTION_EXPIRING_PLAYER: (club, date) => `Your subscription at ${club} ends on ${date}.`,
     SUBSCRIPTION_EXPIRED_PLAYER: (club, date) => `Your subscription at ${club} ended on ${date}.`,
     SUBSCRIPTION_REMINDER: (club) => `${club} is reminding you to renew your subscription.`,
+    TOURNAMENT_SCHEDULED: (club, name) => `${club} published the ${name} schedule.`,
+    TOURNAMENT_RESULT: (name) => `A result was recorded for your match in ${name}.`,
     eventMatch: 'a match',
     eventTraining: 'a training session',
     eventOther: 'an activity',
@@ -251,6 +255,15 @@ function pushBody(data) {
     return s.ORDER_PLACED(customer, data.orderNumber || '', total);
   }
   const isClub = data.actorRole === 'CLUB';
+  if (data.type === 'TOURNAMENT_SCHEDULED') {
+    return s.TOURNAMENT_SCHEDULED(
+      (data.actorName && data.actorName.trim()) || s.fallbackClub,
+      data.tournamentName || '',
+    );
+  }
+  if (data.type === 'TOURNAMENT_RESULT') {
+    return s.TOURNAMENT_RESULT(data.tournamentName || '');
+  }
   if (data.type && data.type.startsWith('SUBSCRIPTION_')) {
     const who =
       (data.actorName && data.actorName.trim()) ||
@@ -302,6 +315,11 @@ function pushBody(data) {
 // page, where the WhatsApp and in-app reminders are.
 function pushPath(data) {
   if (data.type === 'ORDER_PLACED') return '/admin/store';
+  if (data.type && data.type.startsWith('TOURNAMENT_')) {
+    return data.tournamentId
+      ? `/player/tournaments/${data.tournamentId}`
+      : '/player/tournaments';
+  }
   if (data.type && data.type.startsWith('SUBSCRIPTION_')) {
     if (data.actorRole === 'CLUB') return '/player/subscription';
     return data.subscriptionPlayerUserId

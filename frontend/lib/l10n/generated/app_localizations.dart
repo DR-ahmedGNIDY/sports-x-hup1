@@ -6131,6 +6131,576 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{club} بيفكّرك تجدّد اشتراكك.'**
   String notificationSubscriptionReminder(String club);
+
+  /// No description provided for @tournamentsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'البطولات'**
+  String get tournamentsTitle;
+
+  /// No description provided for @tournamentNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'بطولة جديدة'**
+  String get tournamentNew;
+
+  /// No description provided for @tournamentEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل البطولة'**
+  String get tournamentEdit;
+
+  /// No description provided for @tournamentsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش بطولات لسه.'**
+  String get tournamentsEmpty;
+
+  /// No description provided for @myTournamentsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش بطولات منشورة لناديك لسه.'**
+  String get myTournamentsEmpty;
+
+  /// No description provided for @tournamentNoPermission.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش مسموحلك تدير بطولات النادي ده.'**
+  String get tournamentNoPermission;
+
+  /// No description provided for @tournamentName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم البطولة'**
+  String get tournamentName;
+
+  /// No description provided for @tournamentSport.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرياضة'**
+  String get tournamentSport;
+
+  /// No description provided for @tournamentNoSport.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون رياضة'**
+  String get tournamentNoSport;
+
+  /// No description provided for @tournamentAgeGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفئة العمرية'**
+  String get tournamentAgeGroup;
+
+  /// No description provided for @tournamentStartDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ البداية'**
+  String get tournamentStartDate;
+
+  /// No description provided for @tournamentEndDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ النهاية'**
+  String get tournamentEndDate;
+
+  /// No description provided for @tournamentNotes.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات'**
+  String get tournamentNotes;
+
+  /// No description provided for @tournamentSectionBasics.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات الأساسية'**
+  String get tournamentSectionBasics;
+
+  /// No description provided for @tournamentSectionSystem.
+  ///
+  /// In ar, this message translates to:
+  /// **'النظام والقرعة'**
+  String get tournamentSectionSystem;
+
+  /// No description provided for @tournamentSectionScoring.
+  ///
+  /// In ar, this message translates to:
+  /// **'النتيجة'**
+  String get tournamentSectionScoring;
+
+  /// No description provided for @tournamentSectionLeague.
+  ///
+  /// In ar, this message translates to:
+  /// **'قواعد الدوري'**
+  String get tournamentSectionLeague;
+
+  /// No description provided for @tournamentType.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المشاركة'**
+  String get tournamentType;
+
+  /// No description provided for @tournamentTypeIndividual.
+  ///
+  /// In ar, this message translates to:
+  /// **'فردي'**
+  String get tournamentTypeIndividual;
+
+  /// No description provided for @tournamentTypeTeam.
+  ///
+  /// In ar, this message translates to:
+  /// **'فرق'**
+  String get tournamentTypeTeam;
+
+  /// No description provided for @tournamentFormat.
+  ///
+  /// In ar, this message translates to:
+  /// **'نظام البطولة'**
+  String get tournamentFormat;
+
+  /// No description provided for @tournamentFormatLeague.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوري'**
+  String get tournamentFormatLeague;
+
+  /// No description provided for @tournamentFormatKnockout.
+  ///
+  /// In ar, this message translates to:
+  /// **'كأس (خروج مغلوب)'**
+  String get tournamentFormatKnockout;
+
+  /// No description provided for @tournamentFormatGroups.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجموعات ثم كأس'**
+  String get tournamentFormatGroups;
+
+  /// No description provided for @tournamentDrawMode.
+  ///
+  /// In ar, this message translates to:
+  /// **'القرعة'**
+  String get tournamentDrawMode;
+
+  /// No description provided for @tournamentDrawRandom.
+  ///
+  /// In ar, this message translates to:
+  /// **'عشوائية'**
+  String get tournamentDrawRandom;
+
+  /// No description provided for @tournamentDrawDirected.
+  ///
+  /// In ar, this message translates to:
+  /// **'موجّهة'**
+  String get tournamentDrawDirected;
+
+  /// No description provided for @tournamentScoringGoals.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهداف / نقاط'**
+  String get tournamentScoringGoals;
+
+  /// No description provided for @tournamentScoringSets.
+  ///
+  /// In ar, this message translates to:
+  /// **'أشواط'**
+  String get tournamentScoringSets;
+
+  /// No description provided for @tournamentBestOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الأشواط'**
+  String get tournamentBestOf;
+
+  /// No description provided for @tournamentBestOfValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'أفضل {count}'**
+  String tournamentBestOfValue(int count);
+
+  /// No description provided for @tournamentPointsPerSet.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط الشوط'**
+  String get tournamentPointsPerSet;
+
+  /// No description provided for @tournamentWinByTwo.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفوز بفارق نقطتين'**
+  String get tournamentWinByTwo;
+
+  /// No description provided for @tournamentMaxPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'حد أقصى للشوط (اختياري)'**
+  String get tournamentMaxPoints;
+
+  /// No description provided for @tournamentDoubleRound.
+  ///
+  /// In ar, this message translates to:
+  /// **'ذهاب وعودة'**
+  String get tournamentDoubleRound;
+
+  /// No description provided for @tournamentAllowDraws.
+  ///
+  /// In ar, this message translates to:
+  /// **'التعادل مسموح'**
+  String get tournamentAllowDraws;
+
+  /// No description provided for @tournamentWinPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط الفوز'**
+  String get tournamentWinPoints;
+
+  /// No description provided for @tournamentDrawPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط التعادل'**
+  String get tournamentDrawPoints;
+
+  /// No description provided for @tournamentLossPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط الخسارة'**
+  String get tournamentLossPoints;
+
+  /// No description provided for @tournamentGroupsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد المجموعات'**
+  String get tournamentGroupsCount;
+
+  /// No description provided for @tournamentQualifiers.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتأهلين من كل مجموعة'**
+  String get tournamentQualifiers;
+
+  /// No description provided for @tournamentPenalties.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضربات ترجيح عند التعادل في الكأس'**
+  String get tournamentPenalties;
+
+  /// No description provided for @tournamentPenaltiesCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الضربات'**
+  String get tournamentPenaltiesCount;
+
+  /// No description provided for @tournamentVisibleToPlayers.
+  ///
+  /// In ar, this message translates to:
+  /// **'تظهر للاعبين بعد نشر الجدول'**
+  String get tournamentVisibleToPlayers;
+
+  /// No description provided for @tournamentStatusDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعداد'**
+  String get tournamentStatusDraft;
+
+  /// No description provided for @tournamentStatusRunning.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارية'**
+  String get tournamentStatusRunning;
+
+  /// No description provided for @tournamentStatusFinished.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهت'**
+  String get tournamentStatusFinished;
+
+  /// No description provided for @tournamentParticipantsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مشارك'**
+  String tournamentParticipantsCount(int count);
+
+  /// No description provided for @tournamentTabParticipants.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشاركين'**
+  String get tournamentTabParticipants;
+
+  /// No description provided for @tournamentTabFixtures.
+  ///
+  /// In ar, this message translates to:
+  /// **'المباريات'**
+  String get tournamentTabFixtures;
+
+  /// No description provided for @tournamentTabStandings.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترتيب'**
+  String get tournamentTabStandings;
+
+  /// No description provided for @tournamentTabBracket.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكأس'**
+  String get tournamentTabBracket;
+
+  /// No description provided for @tournamentAddParticipant.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة لاعب'**
+  String get tournamentAddParticipant;
+
+  /// No description provided for @tournamentAddTeam.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة فريق'**
+  String get tournamentAddTeam;
+
+  /// No description provided for @tournamentEditTeam.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الفريق'**
+  String get tournamentEditTeam;
+
+  /// No description provided for @tournamentTeamName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الفريق'**
+  String get tournamentTeamName;
+
+  /// No description provided for @tournamentCaptain.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكابتن'**
+  String get tournamentCaptain;
+
+  /// No description provided for @tournamentNoCaptain.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون كابتن'**
+  String get tournamentNoCaptain;
+
+  /// No description provided for @tournamentPickPlayers.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار اللاعبين'**
+  String get tournamentPickPlayers;
+
+  /// No description provided for @tournamentPlayerTaken.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسجّل في مشارك تاني'**
+  String get tournamentPlayerTaken;
+
+  /// No description provided for @tournamentDirectedHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب المشاركين لترتيبهم — الأول هو المصنف رقم 1.'**
+  String get tournamentDirectedHint;
+
+  /// No description provided for @tournamentGenerate.
+  ///
+  /// In ar, this message translates to:
+  /// **'توليد الجدول ونشره'**
+  String get tournamentGenerate;
+
+  /// No description provided for @tournamentResetSchedule.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف الجدول'**
+  String get tournamentResetSchedule;
+
+  /// No description provided for @tournamentResetConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحذف الجدول وترجع لمرحلة الإعداد؟'**
+  String get tournamentResetConfirm;
+
+  /// No description provided for @tournamentDeleteConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحذف البطولة دي بكل مبارياتها؟'**
+  String get tournamentDeleteConfirm;
+
+  /// No description provided for @tournamentNeedTwo.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف مشاركين اتنين على الأقل.'**
+  String get tournamentNeedTwo;
+
+  /// No description provided for @tournamentRound.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجولة {round}'**
+  String tournamentRound(int round);
+
+  /// No description provided for @tournamentGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموعة {name}'**
+  String tournamentGroup(String name);
+
+  /// No description provided for @tournamentFinal.
+  ///
+  /// In ar, this message translates to:
+  /// **'النهائي'**
+  String get tournamentFinal;
+
+  /// No description provided for @tournamentSemiFinal.
+  ///
+  /// In ar, this message translates to:
+  /// **'نصف النهائي'**
+  String get tournamentSemiFinal;
+
+  /// No description provided for @tournamentQuarterFinal.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربع النهائي'**
+  String get tournamentQuarterFinal;
+
+  /// No description provided for @tournamentRoundOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'دور الـ {count}'**
+  String tournamentRoundOf(int count);
+
+  /// No description provided for @tournamentBye.
+  ///
+  /// In ar, this message translates to:
+  /// **'صعود مباشر'**
+  String get tournamentBye;
+
+  /// No description provided for @tournamentTbd.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يتحدد'**
+  String get tournamentTbd;
+
+  /// No description provided for @tournamentRecordResult.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل النتيجة'**
+  String get tournamentRecordResult;
+
+  /// No description provided for @tournamentClearResult.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح النتيجة'**
+  String get tournamentClearResult;
+
+  /// No description provided for @tournamentSwapSides.
+  ///
+  /// In ar, this message translates to:
+  /// **'تبديل الطرفين'**
+  String get tournamentSwapSides;
+
+  /// No description provided for @tournamentPenaltiesShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترجيح'**
+  String get tournamentPenaltiesShort;
+
+  /// No description provided for @tournamentSet.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشوط {number}'**
+  String tournamentSet(int number);
+
+  /// No description provided for @tournamentAddSet.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة شوط'**
+  String get tournamentAddSet;
+
+  /// No description provided for @tournamentMatchDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'التاريخ'**
+  String get tournamentMatchDate;
+
+  /// No description provided for @tournamentMatchTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت'**
+  String get tournamentMatchTime;
+
+  /// No description provided for @tournamentMatchLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'المكان'**
+  String get tournamentMatchLocation;
+
+  /// No description provided for @tournamentNoSchedule.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجدول لسه متولّدش.'**
+  String get tournamentNoSchedule;
+
+  /// No description provided for @tournamentPlayed.
+  ///
+  /// In ar, this message translates to:
+  /// **'لعب'**
+  String get tournamentPlayed;
+
+  /// No description provided for @tournamentWon.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاز'**
+  String get tournamentWon;
+
+  /// No description provided for @tournamentDrawn.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعادل'**
+  String get tournamentDrawn;
+
+  /// No description provided for @tournamentLost.
+  ///
+  /// In ar, this message translates to:
+  /// **'خسر'**
+  String get tournamentLost;
+
+  /// No description provided for @tournamentGoalDiff.
+  ///
+  /// In ar, this message translates to:
+  /// **'فارق'**
+  String get tournamentGoalDiff;
+
+  /// No description provided for @tournamentPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط'**
+  String get tournamentPoints;
+
+  /// No description provided for @tournamentYouPlay.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت مشارك'**
+  String get tournamentYouPlay;
+
+  /// No description provided for @tournamentYourTeam.
+  ///
+  /// In ar, this message translates to:
+  /// **'فريقك'**
+  String get tournamentYourTeam;
+
+  /// No description provided for @coachPermManageTournaments.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة البطولات'**
+  String get coachPermManageTournaments;
+
+  /// No description provided for @notificationTournamentScheduled.
+  ///
+  /// In ar, this message translates to:
+  /// **'{club} نشر جدول {tournament}.'**
+  String notificationTournamentScheduled(String club, String tournament);
+
+  /// No description provided for @notificationTournamentResult.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتسجّلت نتيجة مباراتك في {tournament}.'**
+  String notificationTournamentResult(String tournament);
 }
 
 class _AppLocalizationsDelegate

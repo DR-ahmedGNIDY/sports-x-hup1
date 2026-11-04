@@ -22,6 +22,7 @@ String coachPermissionLabel(AppLocalizations l10n, CoachPermission p) =>
       CoachPermission.manageClubPlayers => l10n.coachPermManagePlayers,
       CoachPermission.editClubProfile => l10n.coachPermEditClubProfile,
       CoachPermission.removeMembers => l10n.coachPermRemoveMembers,
+      CoachPermission.manageTournaments => l10n.coachPermManageTournaments,
     };
 
 /// A round photo with a person/club glyph when there is none.

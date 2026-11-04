@@ -26,6 +26,9 @@ export interface PushPayload {
   /** Subscriptions only. */
   subscriptionEndDate?: string;
   subscriptionPlayerUserId?: string;
+  /** Tournaments only. */
+  tournamentName?: string;
+  tournamentId?: string;
 }
 
 /**

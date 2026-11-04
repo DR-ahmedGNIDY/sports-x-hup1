@@ -16,7 +16,8 @@ enum CoachPermission {
   createPlayers('CREATE_PLAYERS'),
   manageClubPlayers('MANAGE_CLUB_PLAYERS'),
   editClubProfile('EDIT_CLUB_PROFILE'),
-  removeMembers('REMOVE_MEMBERS');
+  removeMembers('REMOVE_MEMBERS'),
+  manageTournaments('MANAGE_TOURNAMENTS');
 
   const CoachPermission(this.wireValue);
 

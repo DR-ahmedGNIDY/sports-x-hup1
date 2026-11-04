@@ -38,6 +38,12 @@ enum AppBranch {
     icon: Icons.mail_outline,
     selectedIcon: Icons.mail,
   ),
+  // The club's published tournaments, read-only.
+  playerTournaments(
+    rootPath: '/player/tournaments',
+    icon: Icons.emoji_events_outlined,
+    selectedIcon: Icons.emoji_events,
+  ),
   // The player's own academy subscription.
   playerSubscription(
     rootPath: '/player/subscription',
@@ -58,6 +64,12 @@ enum AppBranch {
     rootPath: '/club/invitations',
     icon: Icons.mail_outline,
     selectedIcon: Icons.mail,
+  ),
+  // The club's tournaments (the club, and coaches it lets manage them).
+  clubTournaments(
+    rootPath: '/club/tournaments',
+    icon: Icons.emoji_events_outlined,
+    selectedIcon: Icons.emoji_events,
   ),
   // Players' academy subscriptions and payments (club account only).
   clubSubscriptions(
@@ -169,6 +181,8 @@ enum AppBranch {
     playerSkills => l10n.skillsSectionTitle,
     playerInvitations => l10n.invitationsTitle,
     playerSubscription => l10n.mySubscriptionTitle,
+    playerTournaments => l10n.tournamentsTitle,
+    clubTournaments => l10n.tournamentsTitle,
     clubProfile => l10n.dashboardMyClub,
     clubPlayers => l10n.clubPlayersTitle,
     clubInvitations => l10n.invitationsTitle,
@@ -280,6 +294,12 @@ final Map<String, AppRouteMeta> _routeMeta = {
     ownsChrome: true,
   ),
   '/club/coaches': AppRouteMeta(title: (l10n) => l10n.clubCoachesTitle),
+  '/club/tournaments': AppRouteMeta(title: (l10n) => l10n.tournamentsTitle),
+  '/club/tournaments/new': AppRouteMeta(
+    title: (l10n) => l10n.tournamentNew,
+    parentPath: AppBranch.clubTournaments.rootPath,
+  ),
+  '/player/tournaments': AppRouteMeta(title: (l10n) => l10n.tournamentsTitle),
   '/club/subscriptions': AppRouteMeta(
     title: (l10n) => l10n.subscriptionsTitle,
   ),
@@ -358,6 +378,21 @@ AppRouteMeta? routeMetaFor(String path) {
   }
 
   // The other parameterised routes in the shell.
+  if (path.startsWith('/club/tournaments/')) {
+    final editing = path.endsWith('/edit');
+    return AppRouteMeta(
+      title: (l10n) => editing ? l10n.tournamentEdit : l10n.tournamentsTitle,
+      parentPath: editing
+          ? path.substring(0, path.length - 5)
+          : AppBranch.clubTournaments.rootPath,
+    );
+  }
+  if (path.startsWith('/player/tournaments/')) {
+    return AppRouteMeta(
+      title: (l10n) => l10n.tournamentsTitle,
+      parentPath: AppBranch.playerTournaments.rootPath,
+    );
+  }
   if (path.startsWith('/club/subscriptions/')) {
     return AppRouteMeta(
       title: (l10n) => l10n.subscriptionsTitle,
@@ -445,6 +480,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // panel.
     UserRole.club => const [
       AppBranch.search,
+      AppBranch.clubTournaments,
       AppBranch.clubSubscriptions,
       AppBranch.clubCoaches,
       AppBranch.clubInvitations,
@@ -457,6 +493,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     // fourth tab displacing Community.
     UserRole.player => const [
       AppBranch.playerInvitations,
+      AppBranch.playerTournaments,
       AppBranch.playerSubscription,
       AppBranch.calendar,
       AppBranch.store,
@@ -464,6 +501,7 @@ List<AppBranch> overflowBranchesFor(UserRole? role) {
     ],
     UserRole.coach => const [
       AppBranch.clubPlayers,
+      AppBranch.clubTournaments,
       AppBranch.clubInvitations,
       AppBranch.clubProfile,
       AppBranch.search,

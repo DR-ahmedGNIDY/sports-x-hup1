@@ -13,6 +13,10 @@ export enum NotificationType {
   SUBSCRIPTION_EXPIRED = 'SUBSCRIPTION_EXPIRED',
   // The club asking a player to renew. Repeatable — see emitFresh.
   SUBSCRIPTION_REMINDER = 'SUBSCRIPTION_REMINDER',
+  // A club tournament: its schedule went out, or one of your matches has a
+  // result.
+  TOURNAMENT_SCHEDULED = 'TOURNAMENT_SCHEDULED',
+  TOURNAMENT_RESULT = 'TOURNAMENT_RESULT',
 }
 
 // One value today. It exists so the dedupe index and the client's "what do I
@@ -26,6 +30,8 @@ export enum NotificationEntityType {
   CALENDAR_EVENT = 'CALENDAR_EVENT',
   STORE_ORDER = 'STORE_ORDER',
   PLAYER_SUBSCRIPTION = 'PLAYER_SUBSCRIPTION',
+  TOURNAMENT = 'TOURNAMENT',
+  TOURNAMENT_FIXTURE = 'TOURNAMENT_FIXTURE',
 }
 
 /** Whose name a notification names. */
@@ -70,6 +76,11 @@ export interface NotificationParams {
   // for, so the club's tap can open that player's reminder options.
   subscriptionEndDate?: string;
   subscriptionPlayerUserId?: string;
+
+  // Tournaments only: its name, and the id the tap opens (the entity of a
+  // result is the match, not the tournament).
+  tournamentName?: string;
+  tournamentId?: string;
 }
 
 @Schema({ timestamps: true, collection: 'notifications' })

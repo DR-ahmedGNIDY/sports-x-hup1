@@ -3330,4 +3330,310 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationSubscriptionReminder(String club) {
     return '$club is reminding you to renew your subscription.';
   }
+
+  @override
+  String get tournamentsTitle => 'Tournaments';
+
+  @override
+  String get tournamentNew => 'New tournament';
+
+  @override
+  String get tournamentEdit => 'Edit tournament';
+
+  @override
+  String get tournamentsEmpty => 'No tournaments yet.';
+
+  @override
+  String get myTournamentsEmpty =>
+      'Your club has not published any tournaments yet.';
+
+  @override
+  String get tournamentNoPermission =>
+      'You cannot manage this club’s tournaments.';
+
+  @override
+  String get tournamentName => 'Tournament name';
+
+  @override
+  String get tournamentSport => 'Sport';
+
+  @override
+  String get tournamentNoSport => 'No sport';
+
+  @override
+  String get tournamentAgeGroup => 'Age group';
+
+  @override
+  String get tournamentStartDate => 'Start date';
+
+  @override
+  String get tournamentEndDate => 'End date';
+
+  @override
+  String get tournamentNotes => 'Notes';
+
+  @override
+  String get tournamentSectionBasics => 'Basics';
+
+  @override
+  String get tournamentSectionSystem => 'Format and draw';
+
+  @override
+  String get tournamentSectionScoring => 'Scoring';
+
+  @override
+  String get tournamentSectionLeague => 'League rules';
+
+  @override
+  String get tournamentType => 'Participants';
+
+  @override
+  String get tournamentTypeIndividual => 'Individual';
+
+  @override
+  String get tournamentTypeTeam => 'Teams';
+
+  @override
+  String get tournamentFormat => 'Format';
+
+  @override
+  String get tournamentFormatLeague => 'League';
+
+  @override
+  String get tournamentFormatKnockout => 'Knockout';
+
+  @override
+  String get tournamentFormatGroups => 'Groups then knockout';
+
+  @override
+  String get tournamentDrawMode => 'Draw';
+
+  @override
+  String get tournamentDrawRandom => 'Random';
+
+  @override
+  String get tournamentDrawDirected => 'Directed';
+
+  @override
+  String get tournamentScoringGoals => 'Goals / points';
+
+  @override
+  String get tournamentScoringSets => 'Sets';
+
+  @override
+  String get tournamentBestOf => 'Number of sets';
+
+  @override
+  String tournamentBestOfValue(int count) {
+    return 'Best of $count';
+  }
+
+  @override
+  String get tournamentPointsPerSet => 'Points per set';
+
+  @override
+  String get tournamentWinByTwo => 'Win by two points';
+
+  @override
+  String get tournamentMaxPoints => 'Set cap (optional)';
+
+  @override
+  String get tournamentDoubleRound => 'Home and away';
+
+  @override
+  String get tournamentAllowDraws => 'Draws allowed';
+
+  @override
+  String get tournamentWinPoints => 'Win points';
+
+  @override
+  String get tournamentDrawPoints => 'Draw points';
+
+  @override
+  String get tournamentLossPoints => 'Loss points';
+
+  @override
+  String get tournamentGroupsCount => 'Number of groups';
+
+  @override
+  String get tournamentQualifiers => 'Qualifiers per group';
+
+  @override
+  String get tournamentPenalties => 'Penalties after a knockout draw';
+
+  @override
+  String get tournamentPenaltiesCount => 'Number of penalties';
+
+  @override
+  String get tournamentVisibleToPlayers => 'Show to players once published';
+
+  @override
+  String get tournamentStatusDraft => 'Set-up';
+
+  @override
+  String get tournamentStatusRunning => 'In progress';
+
+  @override
+  String get tournamentStatusFinished => 'Finished';
+
+  @override
+  String tournamentParticipantsCount(int count) {
+    return '$count participants';
+  }
+
+  @override
+  String get tournamentTabParticipants => 'Participants';
+
+  @override
+  String get tournamentTabFixtures => 'Matches';
+
+  @override
+  String get tournamentTabStandings => 'Standings';
+
+  @override
+  String get tournamentTabBracket => 'Bracket';
+
+  @override
+  String get tournamentAddParticipant => 'Add player';
+
+  @override
+  String get tournamentAddTeam => 'Add team';
+
+  @override
+  String get tournamentEditTeam => 'Edit team';
+
+  @override
+  String get tournamentTeamName => 'Team name';
+
+  @override
+  String get tournamentCaptain => 'Captain';
+
+  @override
+  String get tournamentNoCaptain => 'No captain';
+
+  @override
+  String get tournamentPickPlayers => 'Pick players';
+
+  @override
+  String get tournamentPlayerTaken => 'Already entered';
+
+  @override
+  String get tournamentDirectedHint =>
+      'Drag to order the participants — the first is seed 1.';
+
+  @override
+  String get tournamentGenerate => 'Generate and publish the schedule';
+
+  @override
+  String get tournamentResetSchedule => 'Delete the schedule';
+
+  @override
+  String get tournamentResetConfirm =>
+      'Delete the schedule and go back to set-up?';
+
+  @override
+  String get tournamentDeleteConfirm =>
+      'Delete this tournament and all its matches?';
+
+  @override
+  String get tournamentNeedTwo => 'Add at least two participants.';
+
+  @override
+  String tournamentRound(int round) {
+    return 'Round $round';
+  }
+
+  @override
+  String tournamentGroup(String name) {
+    return 'Group $name';
+  }
+
+  @override
+  String get tournamentFinal => 'Final';
+
+  @override
+  String get tournamentSemiFinal => 'Semi-final';
+
+  @override
+  String get tournamentQuarterFinal => 'Quarter-final';
+
+  @override
+  String tournamentRoundOf(int count) {
+    return 'Round of $count';
+  }
+
+  @override
+  String get tournamentBye => 'Bye';
+
+  @override
+  String get tournamentTbd => 'TBD';
+
+  @override
+  String get tournamentRecordResult => 'Record result';
+
+  @override
+  String get tournamentClearResult => 'Clear result';
+
+  @override
+  String get tournamentSwapSides => 'Swap sides';
+
+  @override
+  String get tournamentPenaltiesShort => 'Penalties';
+
+  @override
+  String tournamentSet(int number) {
+    return 'Set $number';
+  }
+
+  @override
+  String get tournamentAddSet => 'Add set';
+
+  @override
+  String get tournamentMatchDate => 'Date';
+
+  @override
+  String get tournamentMatchTime => 'Time';
+
+  @override
+  String get tournamentMatchLocation => 'Location';
+
+  @override
+  String get tournamentNoSchedule => 'No schedule yet.';
+
+  @override
+  String get tournamentPlayed => 'P';
+
+  @override
+  String get tournamentWon => 'W';
+
+  @override
+  String get tournamentDrawn => 'D';
+
+  @override
+  String get tournamentLost => 'L';
+
+  @override
+  String get tournamentGoalDiff => '+/-';
+
+  @override
+  String get tournamentPoints => 'Pts';
+
+  @override
+  String get tournamentYouPlay => 'You are playing';
+
+  @override
+  String get tournamentYourTeam => 'Your team';
+
+  @override
+  String get coachPermManageTournaments => 'Manage tournaments';
+
+  @override
+  String notificationTournamentScheduled(String club, String tournament) {
+    return '$club published the $tournament schedule.';
+  }
+
+  @override
+  String notificationTournamentResult(String tournament) {
+    return 'A result was recorded for your match in $tournament.';
+  }
 }

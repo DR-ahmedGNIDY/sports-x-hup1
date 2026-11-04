@@ -192,6 +192,22 @@ export class ClubPlayersService {
     return (await this.rosterForClub(clubId)).userIds;
   }
 
+  /** Every club [userId] is on the roster of — created by it or joined. */
+  async clubIdsForPlayer(userId: string): Promise<string[]> {
+    const [ownerships, memberships] = await Promise.all([
+      this.clubManagedPlayerModel.find({ userId }).select('clubId'),
+      this.membershipModel
+        .find({ playerUserId: userId, status: MembershipStatus.ACTIVE })
+        .select('clubUserId'),
+    ]);
+    return [
+      ...new Set([
+        ...ownerships.map((o) => o.clubId.toString()),
+        ...memberships.map((m) => m.clubUserId.toString()),
+      ]),
+    ];
+  }
+
   /** The dial code a club-created player was registered with, if any. */
   async dialCodeFor(clubId: string, userId: string): Promise<string | undefined> {
     const ownership = await this.clubManagedPlayerModel

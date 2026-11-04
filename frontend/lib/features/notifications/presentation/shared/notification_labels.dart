@@ -48,6 +48,14 @@ String notificationText(AppLocalizations l10n, AppNotification notification) {
     ),
     NotificationType.subscriptionReminder =>
       l10n.notificationSubscriptionReminder(actor),
+    NotificationType.tournamentScheduled =>
+      l10n.notificationTournamentScheduled(
+        actor,
+        notification.tournament?.name ?? '',
+      ),
+    NotificationType.tournamentResult => l10n.notificationTournamentResult(
+      notification.tournament?.name ?? '',
+    ),
     NotificationType.orderPlaced => l10n.notificationOrderPlaced(
       actor,
       notification.order?.number ?? '',

@@ -17,7 +17,9 @@ enum NotificationType {
   orderPlaced('ORDER_PLACED'),
   subscriptionExpiring('SUBSCRIPTION_EXPIRING'),
   subscriptionExpired('SUBSCRIPTION_EXPIRED'),
-  subscriptionReminder('SUBSCRIPTION_REMINDER');
+  subscriptionReminder('SUBSCRIPTION_REMINDER'),
+  tournamentScheduled('TOURNAMENT_SCHEDULED'),
+  tournamentResult('TOURNAMENT_RESULT');
 
   const NotificationType(this.wireValue);
 
@@ -39,7 +41,9 @@ enum NotificationEntityType {
   coachInvitation('COACH_INVITATION'),
   calendarEvent('CALENDAR_EVENT'),
   storeOrder('STORE_ORDER'),
-  playerSubscription('PLAYER_SUBSCRIPTION');
+  playerSubscription('PLAYER_SUBSCRIPTION'),
+  tournament('TOURNAMENT'),
+  tournamentFixture('TOURNAMENT_FIXTURE');
 
   const NotificationEntityType(this.wireValue);
 
@@ -121,6 +125,14 @@ class NotificationSubscriptionDetails {
   final String? playerUserId;
 }
 
+/// Which tournament a schedule or result notice is about.
+class NotificationTournamentDetails {
+  const NotificationTournamentDetails({this.id, this.name});
+
+  final String? id;
+  final String? name;
+}
+
 class AppNotification {
   const AppNotification({
     required this.id,
@@ -133,6 +145,7 @@ class AppNotification {
     this.event,
     this.order,
     this.subscription,
+    this.tournament,
   });
 
   final String id;
@@ -145,6 +158,9 @@ class AppNotification {
 
   /// Subscriptions only.
   final NotificationSubscriptionDetails? subscription;
+
+  /// Tournaments only.
+  final NotificationTournamentDetails? tournament;
 
   /// What to open when this is tapped.
   final NotificationEntityType? entityType;

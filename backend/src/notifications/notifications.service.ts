@@ -81,6 +81,8 @@ export class NotificationsService {
         orderTotalMinor: input.params.orderTotalMinor,
         subscriptionEndDate: input.params.subscriptionEndDate,
         subscriptionPlayerUserId: input.params.subscriptionPlayerUserId,
+        tournamentName: input.params.tournamentName,
+        tournamentId: input.params.tournamentId,
       });
 
       return created;

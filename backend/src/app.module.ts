@@ -26,6 +26,7 @@ import { CoachInvitationsModule } from './coach-invitations/coach-invitations.mo
 import { SiteSettingsModule } from './site-settings/site-settings.module';
 import { PlayerSubscriptionsModule } from './player-subscriptions/player-subscriptions.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { TournamentsModule } from './tournaments/tournaments.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     SavedPlayersModule,
     ClubPlayersModule,
     PlayerSubscriptionsModule,
+    TournamentsModule,
     InvitationsModule,
     NotificationsModule,
     AdminModule,
