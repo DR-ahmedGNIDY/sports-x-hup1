@@ -199,7 +199,10 @@ void main() {
           for (var i = 0; i < 4; i++) {
             await tester.tap(tabs.at(i));
             await tester.pumpAndSettle();
-            expect(tester.takeException(), isNull);
+            final error = tester.takeException();
+            // The whole diagnostic, so a layout overflow names its widget.
+            if (error is FlutterError) debugPrint(error.toStringDeep());
+            expect(error, isNull, reason: 'tab $i');
           }
         });
 

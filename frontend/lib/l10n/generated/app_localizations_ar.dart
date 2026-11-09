@@ -3597,4 +3597,82 @@ class AppLocalizationsAr extends AppLocalizations {
   String notificationTournamentResult(String tournament) {
     return 'اتسجّلت نتيجة مباراتك في $tournament.';
   }
+
+  @override
+  String get tournamentProgress => 'تقدّم البطولة';
+
+  @override
+  String tournamentMatchesPlayed(int played, int total) {
+    return '$played من $total مباراة';
+  }
+
+  @override
+  String get tournamentNextMatch => 'المباراة الجاية';
+
+  @override
+  String get tournamentYourNextMatch => 'مباراتك الجاية';
+
+  @override
+  String get tournamentFilterAll => 'الكل';
+
+  @override
+  String get tournamentFilterUpcoming => 'القادمة';
+
+  @override
+  String get tournamentFilterFinished => 'المنتهية';
+
+  @override
+  String get tournamentFilterMine => 'مبارياتي';
+
+  @override
+  String get tournamentMatchUpcoming => 'قادمة';
+
+  @override
+  String get tournamentMatchPlayed => 'انتهت';
+
+  @override
+  String get tournamentNoMatchesHere => 'مفيش مباريات هنا.';
+
+  @override
+  String get tournamentQualifies => 'يتأهل للأدوار الإقصائية';
+
+  @override
+  String get tournamentTieBreakNote =>
+      'الترتيب حسب النقاط، ثم الفارق، ثم المسجّل، ثم المواجهة المباشرة.';
+
+  @override
+  String get tournamentScoredFor => 'له';
+
+  @override
+  String get tournamentScoredAgainst => 'عليه';
+
+  @override
+  String get tournamentFormWin => 'ف';
+
+  @override
+  String get tournamentFormDraw => 'ت';
+
+  @override
+  String get tournamentFormLoss => 'خ';
+
+  @override
+  String get tournamentChampion => 'البطل';
+
+  @override
+  String get tournamentChampionTbd => 'يتحدد في النهائي';
+
+  @override
+  String tournamentPathOf(String name) {
+    return 'طريق $name';
+  }
+
+  @override
+  String get tournamentNotPlayedYet => 'لم تُلعب بعد';
+
+  @override
+  String get tournamentPanHint =>
+      'اسحب وكبّر بإصبعين، واضغط على فريق لتلوين طريقه';
+
+  @override
+  String get tournamentTeamColumn => 'الفريق';
 }

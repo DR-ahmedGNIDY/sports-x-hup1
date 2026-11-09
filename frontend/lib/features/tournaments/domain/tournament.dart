@@ -9,8 +9,7 @@ enum ParticipantType {
   const ParticipantType(this.wireValue);
   final String wireValue;
 
-  static ParticipantType fromWire(String? v) =>
-      v == 'team' ? team : individual;
+  static ParticipantType fromWire(String? v) => v == 'team' ? team : individual;
 }
 
 enum TournamentFormat {
@@ -21,10 +20,8 @@ enum TournamentFormat {
   const TournamentFormat(this.wireValue);
   final String wireValue;
 
-  static TournamentFormat fromWire(String? v) => values.firstWhere(
-    (f) => f.wireValue == v,
-    orElse: () => league,
-  );
+  static TournamentFormat fromWire(String? v) =>
+      values.firstWhere((f) => f.wireValue == v, orElse: () => league);
 }
 
 enum TournamentStatus {
@@ -35,10 +32,8 @@ enum TournamentStatus {
   const TournamentStatus(this.wireValue);
   final String wireValue;
 
-  static TournamentStatus fromWire(String? v) => values.firstWhere(
-    (s) => s.wireValue == v,
-    orElse: () => draft,
-  );
+  static TournamentStatus fromWire(String? v) =>
+      values.firstWhere((s) => s.wireValue == v, orElse: () => draft);
 }
 
 int _int(Object? v, int fallback) => (v as num?)?.toInt() ?? fallback;
@@ -176,7 +171,9 @@ class Tournament {
       startDate: j['startDate'] as String?,
       endDate: j['endDate'] as String?,
       notes: j['notes'] as String? ?? '',
-      participantType: ParticipantType.fromWire(j['participantType'] as String?),
+      participantType: ParticipantType.fromWire(
+        j['participantType'] as String?,
+      ),
       format: TournamentFormat.fromWire(j['format'] as String?),
       drawMode: j['drawMode'] as String? ?? 'random',
       scoring: ScoringSettings.fromJson(j['scoring'] as Map<String, dynamic>?),
@@ -236,10 +233,10 @@ class TournamentPlayer {
   final String? lastName;
   final String? photoUrl;
 
-  String get name => [firstName, lastName]
-      .whereType<String>()
-      .where((p) => p.trim().isNotEmpty)
-      .join(' ');
+  String get name => [
+    firstName,
+    lastName,
+  ].whereType<String>().where((p) => p.trim().isNotEmpty).join(' ');
 
   static TournamentPlayer fromJson(Map<String, dynamic> j) => TournamentPlayer(
     userId: j['userId'] as String,
@@ -276,6 +273,7 @@ class Fixture {
     this.date,
     this.time,
     this.location = '',
+    this.nextMatchNo,
   });
 
   final String id;
@@ -300,6 +298,9 @@ class Fixture {
   final String? time;
   final String location;
 
+  /// Knockout: the match in the next round this one's winner goes to.
+  final int? nextMatchNo;
+
   bool get isPlayed => status == 'played';
   bool get isBye => status == 'bye';
   bool get isKnockout => stage == 'knockout';
@@ -318,10 +319,7 @@ class Fixture {
     scoreB: (j['scoreB'] as num?)?.toInt(),
     sets: [
       for (final s in j['sets'] as List<dynamic>? ?? const [])
-        SetScore(
-          _int((s as Map<String, dynamic>)['a'], 0),
-          _int(s['b'], 0),
-        ),
+        SetScore(_int((s as Map<String, dynamic>)['a'], 0), _int(s['b'], 0)),
     ],
     penaltiesA: (j['penaltiesA'] as num?)?.toInt(),
     penaltiesB: (j['penaltiesB'] as num?)?.toInt(),
@@ -330,6 +328,7 @@ class Fixture {
     date: j['date'] as String?,
     time: j['time'] as String?,
     location: j['location'] as String? ?? '',
+    nextMatchNo: (j['nextMatchNo'] as num?)?.toInt(),
   );
 }
 
@@ -343,6 +342,8 @@ class StandingRow {
     required this.lost,
     required this.diff,
     required this.points,
+    this.scored = 0,
+    this.conceded = 0,
   });
 
   final String id;
@@ -354,6 +355,10 @@ class StandingRow {
   final int diff;
   final int points;
 
+  /// Goals (or sets) for and against.
+  final int scored;
+  final int conceded;
+
   static StandingRow fromJson(Map<String, dynamic> j) => StandingRow(
     id: j['id'] as String,
     position: _int(j['position'], 0),
@@ -363,6 +368,8 @@ class StandingRow {
     lost: _int(j['lost'], 0),
     diff: _int(j['diff'], 0),
     points: _int(j['points'], 0),
+    scored: _int(j['for'], 0),
+    conceded: _int(j['against'], 0),
   );
 }
 

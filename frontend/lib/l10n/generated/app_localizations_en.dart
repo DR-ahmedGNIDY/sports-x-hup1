@@ -3636,4 +3636,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationTournamentResult(String tournament) {
     return 'A result was recorded for your match in $tournament.';
   }
+
+  @override
+  String get tournamentProgress => 'Progress';
+
+  @override
+  String tournamentMatchesPlayed(int played, int total) {
+    return '$played of $total matches';
+  }
+
+  @override
+  String get tournamentNextMatch => 'Next match';
+
+  @override
+  String get tournamentYourNextMatch => 'Your next match';
+
+  @override
+  String get tournamentFilterAll => 'All';
+
+  @override
+  String get tournamentFilterUpcoming => 'Upcoming';
+
+  @override
+  String get tournamentFilterFinished => 'Finished';
+
+  @override
+  String get tournamentFilterMine => 'My matches';
+
+  @override
+  String get tournamentMatchUpcoming => 'Upcoming';
+
+  @override
+  String get tournamentMatchPlayed => 'Full time';
+
+  @override
+  String get tournamentNoMatchesHere => 'No matches here.';
+
+  @override
+  String get tournamentQualifies => 'Qualifies for the knockout stage';
+
+  @override
+  String get tournamentTieBreakNote =>
+      'Ranked by points, then difference, then scored, then head-to-head.';
+
+  @override
+  String get tournamentScoredFor => 'For';
+
+  @override
+  String get tournamentScoredAgainst => 'Against';
+
+  @override
+  String get tournamentFormWin => 'W';
+
+  @override
+  String get tournamentFormDraw => 'D';
+
+  @override
+  String get tournamentFormLoss => 'L';
+
+  @override
+  String get tournamentChampion => 'Champion';
+
+  @override
+  String get tournamentChampionTbd => 'Decided in the final';
+
+  @override
+  String tournamentPathOf(String name) {
+    return 'Path of $name';
+  }
+
+  @override
+  String get tournamentNotPlayedYet => 'Not played yet';
+
+  @override
+  String get tournamentPanHint =>
+      'Drag and pinch to zoom; tap a team to trace its path';
+
+  @override
+  String get tournamentTeamColumn => 'Team';
 }

@@ -4,13 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/errors/app_exception.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../data/tournaments_repository.dart';
 import '../domain/tournament.dart';
 import 'tournament_widgets.dart';
 
-void _snack(BuildContext context, String message) =>
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+void _snack(BuildContext context, String message) => ScaffoldMessenger.of(
+  context,
+).showSnackBar(SnackBar(content: Text(message)));
 
 Future<bool> _confirm(BuildContext context, String message) async {
   final l10n = AppLocalizations.of(context)!;
@@ -60,8 +62,7 @@ class ClubTournamentsPage extends ConsumerWidget {
                   itemCount: items.length,
                   itemBuilder: (context, i) => TournamentListTile(
                     tournament: items[i],
-                    onTap: () =>
-                        context.go('/club/tournaments/${items[i].id}'),
+                    onTap: () => context.go('/club/tournaments/${items[i].id}'),
                   ),
                 ),
               ),
@@ -143,10 +144,13 @@ class ClubTournamentDetailPage extends ConsumerWidget {
         final tabs = <(String, Widget)>[
           (
             l10n.tournamentTabParticipants,
-            _ParticipantsTab(detail: detail, onChanged: () {
-              ref.invalidate(tournamentDetailProvider(tournamentId));
-              ref.invalidate(clubTournamentsProvider);
-            }),
+            _ParticipantsTab(
+              detail: detail,
+              onChanged: () {
+                ref.invalidate(tournamentDetailProvider(tournamentId));
+                ref.invalidate(clubTournamentsProvider);
+              },
+            ),
           ),
           if (!t.isDraft)
             (
@@ -172,76 +176,65 @@ class ClubTournamentDetailPage extends ConsumerWidget {
           length: tabs.length,
           child: Column(
             children: [
-              ListTile(
-                title: Text(
-                  t.name,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                subtitle: Text(
-                  '${tournamentFormatLabel(l10n, t.format)} · '
-                  '${participantTypeLabel(l10n, t.participantType)}',
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TournamentStatusChip(status: t.status),
-                    PopupMenuButton<String>(
-                      onSelected: (v) async {
-                        switch (v) {
-                          case 'edit':
-                            context.go('/club/tournaments/${t.id}/edit');
-                          case 'reset':
-                            if (await _confirm(
-                              context,
-                              l10n.tournamentResetConfirm,
-                            )) {
-                              if (!context.mounted) return;
-                              await _run(
-                                context,
-                                ref,
-                                () => repo().resetSchedule(t.id),
-                              );
-                            }
-                          case 'delete':
-                            if (await _confirm(
-                              context,
-                              l10n.tournamentDeleteConfirm,
-                            )) {
-                              if (!context.mounted) return;
-                              try {
-                                await repo().delete(t.id);
-                                ref.invalidate(clubTournamentsProvider);
-                                if (context.mounted) {
-                                  context.go('/club/tournaments');
-                                }
-                              } on AppException catch (e) {
-                                if (context.mounted) _snack(context, e.message);
-                              }
-                            }
+              TournamentHeader(
+                detail: detail,
+                sportName: sportName(ref, t.sportId),
+                trailing: PopupMenuButton<String>(
+                  iconColor: AppColors.white,
+                  onSelected: (v) async {
+                    switch (v) {
+                      case 'edit':
+                        context.go('/club/tournaments/${t.id}/edit');
+                      case 'reset':
+                        if (await _confirm(
+                          context,
+                          l10n.tournamentResetConfirm,
+                        )) {
+                          if (!context.mounted) return;
+                          await _run(
+                            context,
+                            ref,
+                            () => repo().resetSchedule(t.id),
+                          );
                         }
-                      },
-                      itemBuilder: (_) => [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Text(l10n.tournamentEdit),
-                        ),
-                        if (!t.isDraft && !detail.anyPlayed)
-                          PopupMenuItem(
-                            value: 'reset',
-                            child: Text(l10n.tournamentResetSchedule),
-                          ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Text(l10n.deleteLabel),
-                        ),
-                      ],
+                      case 'delete':
+                        if (await _confirm(
+                          context,
+                          l10n.tournamentDeleteConfirm,
+                        )) {
+                          if (!context.mounted) return;
+                          try {
+                            await repo().delete(t.id);
+                            ref.invalidate(clubTournamentsProvider);
+                            if (context.mounted) {
+                              context.go('/club/tournaments');
+                            }
+                          } on AppException catch (e) {
+                            if (context.mounted) _snack(context, e.message);
+                          }
+                        }
+                    }
+                  },
+                  itemBuilder: (_) => [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Text(l10n.tournamentEdit),
+                    ),
+                    if (!t.isDraft && !detail.anyPlayed)
+                      PopupMenuItem(
+                        value: 'reset',
+                        child: Text(l10n.tournamentResetSchedule),
+                      ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Text(l10n.deleteLabel),
                     ),
                   ],
                 ),
               ),
               if (t.isDraft)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                   child: SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
@@ -249,19 +242,13 @@ class ClubTournamentDetailPage extends ConsumerWidget {
                       label: Text(l10n.tournamentGenerate),
                       onPressed: detail.participants.length < 2
                           ? null
-                          : () => _run(
-                              context,
-                              ref,
-                              () => repo().generate(t.id),
-                            ),
+                          : () =>
+                                _run(context, ref, () => repo().generate(t.id)),
                     ),
                   ),
                 ),
               if (tabs.length > 1)
-                TabBar(
-                  isScrollable: true,
-                  tabs: [for (final tab in tabs) Tab(text: tab.$1)],
-                ),
+                TournamentTabBar(labels: [for (final tab in tabs) tab.$1]),
               Expanded(
                 child: tabs.length > 1
                     ? TabBarView(children: [for (final tab in tabs) tab.$2])
@@ -319,12 +306,10 @@ class _ParticipantsTabState extends ConsumerState<_ParticipantsTab> {
     next.insert(to, next.removeAt(from));
     setState(() => _order = next);
     try {
-      await ref
-          .read(tournamentsRepositoryProvider)
-          .orderParticipants(
-            widget.detail.tournament.id,
-            [for (final p in next) p.id],
-          );
+      await ref.read(tournamentsRepositoryProvider).orderParticipants(
+        widget.detail.tournament.id,
+        [for (final p in next) p.id],
+      );
     } on AppException catch (e) {
       if (mounted) _snack(context, e.message);
     }
@@ -651,16 +636,19 @@ class _FixtureSheetState extends ConsumerState<FixtureSheet> {
   late final _location = TextEditingController(text: f.location);
   late final _scoreA = TextEditingController(text: f.scoreA?.toString() ?? '');
   late final _scoreB = TextEditingController(text: f.scoreB?.toString() ?? '');
-  late final _penA = TextEditingController(text: f.penaltiesA?.toString() ?? '');
-  late final _penB = TextEditingController(text: f.penaltiesB?.toString() ?? '');
+  late final _penA = TextEditingController(
+    text: f.penaltiesA?.toString() ?? '',
+  );
+  late final _penB = TextEditingController(
+    text: f.penaltiesB?.toString() ?? '',
+  );
   late final List<(TextEditingController, TextEditingController)> _sets = [
     for (final s in f.sets)
       (
         TextEditingController(text: '${s.a}'),
         TextEditingController(text: '${s.b}'),
       ),
-    if (f.sets.isEmpty)
-      (TextEditingController(), TextEditingController()),
+    if (f.sets.isEmpty) (TextEditingController(), TextEditingController()),
   ];
   late String? _date = f.date;
   late String? _time = f.time;
@@ -857,7 +845,10 @@ class _FixtureSheetState extends ConsumerState<FixtureSheet> {
             ),
             if (_bothSides) ...[
               const Divider(height: 32),
-              Text(l10n.tournamentRecordResult, style: theme.textTheme.titleSmall),
+              Text(
+                l10n.tournamentRecordResult,
+                style: theme.textTheme.titleSmall,
+              ),
               const SizedBox(height: 8),
               if (t.scoring.bySets) ...[
                 for (var i = 0; i < _sets.length; i++)
@@ -879,9 +870,10 @@ class _FixtureSheetState extends ConsumerState<FixtureSheet> {
                       icon: const Icon(Icons.add),
                       label: Text(l10n.tournamentAddSet),
                       onPressed: () => setState(
-                        () => _sets.add(
-                          (TextEditingController(), TextEditingController()),
-                        ),
+                        () => _sets.add((
+                          TextEditingController(),
+                          TextEditingController(),
+                        )),
                       ),
                     ),
                   ),

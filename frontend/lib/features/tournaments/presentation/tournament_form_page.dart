@@ -342,7 +342,9 @@ class _TournamentFormPageState extends ConsumerState<TournamentFormPage> {
               if (_format == TournamentFormat.groupsKnockout)
                 Row(
                   children: [
-                    Expanded(child: number(_groups, l10n.tournamentGroupsCount)),
+                    Expanded(
+                      child: number(_groups, l10n.tournamentGroupsCount),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: number(_qualifiers, l10n.tournamentQualifiers),
@@ -378,7 +380,9 @@ class _TournamentFormPageState extends ConsumerState<TournamentFormPage> {
                       child: number(_pointsPerSet, l10n.tournamentPointsPerSet),
                     ),
                     const SizedBox(width: 12),
-                    Expanded(child: number(_maxPoints, l10n.tournamentMaxPoints)),
+                    Expanded(
+                      child: number(_maxPoints, l10n.tournamentMaxPoints),
+                    ),
                   ],
                 ),
                 SwitchListTile(

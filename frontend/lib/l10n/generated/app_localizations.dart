@@ -6701,6 +6701,150 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اتسجّلت نتيجة مباراتك في {tournament}.'**
   String notificationTournamentResult(String tournament);
+
+  /// No description provided for @tournamentProgress.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدّم البطولة'**
+  String get tournamentProgress;
+
+  /// No description provided for @tournamentMatchesPlayed.
+  ///
+  /// In ar, this message translates to:
+  /// **'{played} من {total} مباراة'**
+  String tournamentMatchesPlayed(int played, int total);
+
+  /// No description provided for @tournamentNextMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'المباراة الجاية'**
+  String get tournamentNextMatch;
+
+  /// No description provided for @tournamentYourNextMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'مباراتك الجاية'**
+  String get tournamentYourNextMatch;
+
+  /// No description provided for @tournamentFilterAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get tournamentFilterAll;
+
+  /// No description provided for @tournamentFilterUpcoming.
+  ///
+  /// In ar, this message translates to:
+  /// **'القادمة'**
+  String get tournamentFilterUpcoming;
+
+  /// No description provided for @tournamentFilterFinished.
+  ///
+  /// In ar, this message translates to:
+  /// **'المنتهية'**
+  String get tournamentFilterFinished;
+
+  /// No description provided for @tournamentFilterMine.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبارياتي'**
+  String get tournamentFilterMine;
+
+  /// No description provided for @tournamentMatchUpcoming.
+  ///
+  /// In ar, this message translates to:
+  /// **'قادمة'**
+  String get tournamentMatchUpcoming;
+
+  /// No description provided for @tournamentMatchPlayed.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهت'**
+  String get tournamentMatchPlayed;
+
+  /// No description provided for @tournamentNoMatchesHere.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش مباريات هنا.'**
+  String get tournamentNoMatchesHere;
+
+  /// No description provided for @tournamentQualifies.
+  ///
+  /// In ar, this message translates to:
+  /// **'يتأهل للأدوار الإقصائية'**
+  String get tournamentQualifies;
+
+  /// No description provided for @tournamentTieBreakNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترتيب حسب النقاط، ثم الفارق، ثم المسجّل، ثم المواجهة المباشرة.'**
+  String get tournamentTieBreakNote;
+
+  /// No description provided for @tournamentScoredFor.
+  ///
+  /// In ar, this message translates to:
+  /// **'له'**
+  String get tournamentScoredFor;
+
+  /// No description provided for @tournamentScoredAgainst.
+  ///
+  /// In ar, this message translates to:
+  /// **'عليه'**
+  String get tournamentScoredAgainst;
+
+  /// No description provided for @tournamentFormWin.
+  ///
+  /// In ar, this message translates to:
+  /// **'ف'**
+  String get tournamentFormWin;
+
+  /// No description provided for @tournamentFormDraw.
+  ///
+  /// In ar, this message translates to:
+  /// **'ت'**
+  String get tournamentFormDraw;
+
+  /// No description provided for @tournamentFormLoss.
+  ///
+  /// In ar, this message translates to:
+  /// **'خ'**
+  String get tournamentFormLoss;
+
+  /// No description provided for @tournamentChampion.
+  ///
+  /// In ar, this message translates to:
+  /// **'البطل'**
+  String get tournamentChampion;
+
+  /// No description provided for @tournamentChampionTbd.
+  ///
+  /// In ar, this message translates to:
+  /// **'يتحدد في النهائي'**
+  String get tournamentChampionTbd;
+
+  /// No description provided for @tournamentPathOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريق {name}'**
+  String tournamentPathOf(String name);
+
+  /// No description provided for @tournamentNotPlayedYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُلعب بعد'**
+  String get tournamentNotPlayedYet;
+
+  /// No description provided for @tournamentPanHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب وكبّر بإصبعين، واضغط على فريق لتلوين طريقه'**
+  String get tournamentPanHint;
+
+  /// No description provided for @tournamentTeamColumn.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفريق'**
+  String get tournamentTeamColumn;
 }
 
 class _AppLocalizationsDelegate

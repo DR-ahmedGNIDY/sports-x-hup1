@@ -77,27 +77,17 @@ class MyTournamentDetailPage extends ConsumerWidget {
           length: tabs.length,
           child: Column(
             children: [
-              ListTile(
-                title: Text(
-                  t.name,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                subtitle: Text(
-                  [
-                    tournamentFormatLabel(l10n, t.format),
-                    if (team != null &&
-                        t.participantType == ParticipantType.team)
-                      '${l10n.tournamentYourTeam}: ${team.name}'
-                    else if (team != null)
-                      l10n.tournamentYouPlay,
-                  ].join(' · '),
-                ),
-                trailing: TournamentStatusChip(status: t.status),
+              TournamentHeader(
+                detail: detail,
+                sportName: [
+                  ?sportName(ref, t.sportId),
+                  if (team != null && t.participantType == ParticipantType.team)
+                    '${l10n.tournamentYourTeam}: ${team.name}'
+                  else if (team != null)
+                    l10n.tournamentYouPlay,
+                ].join(' · '),
               ),
-              TabBar(
-                isScrollable: true,
-                tabs: [for (final tab in tabs) Tab(text: tab.$1)],
-              ),
+              TournamentTabBar(labels: [for (final tab in tabs) tab.$1]),
               Expanded(
                 child: TabBarView(children: [for (final tab in tabs) tab.$2]),
               ),

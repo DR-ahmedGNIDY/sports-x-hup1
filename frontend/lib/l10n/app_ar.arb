@@ -1431,5 +1431,40 @@
     "placeholders": {
       "tournament": { "type": "String" }
     }
-  }
+  },
+  "tournamentProgress": "تقدّم البطولة",
+  "tournamentMatchesPlayed": "{played} من {total} مباراة",
+  "@tournamentMatchesPlayed": {
+    "placeholders": {
+      "played": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "tournamentNextMatch": "المباراة الجاية",
+  "tournamentYourNextMatch": "مباراتك الجاية",
+  "tournamentFilterAll": "الكل",
+  "tournamentFilterUpcoming": "القادمة",
+  "tournamentFilterFinished": "المنتهية",
+  "tournamentFilterMine": "مبارياتي",
+  "tournamentMatchUpcoming": "قادمة",
+  "tournamentMatchPlayed": "انتهت",
+  "tournamentNoMatchesHere": "مفيش مباريات هنا.",
+  "tournamentQualifies": "يتأهل للأدوار الإقصائية",
+  "tournamentTieBreakNote": "الترتيب حسب النقاط، ثم الفارق، ثم المسجّل، ثم المواجهة المباشرة.",
+  "tournamentScoredFor": "له",
+  "tournamentScoredAgainst": "عليه",
+  "tournamentFormWin": "ف",
+  "tournamentFormDraw": "ت",
+  "tournamentFormLoss": "خ",
+  "tournamentChampion": "البطل",
+  "tournamentChampionTbd": "يتحدد في النهائي",
+  "tournamentPathOf": "طريق {name}",
+  "@tournamentPathOf": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "tournamentNotPlayedYet": "لم تُلعب بعد",
+  "tournamentPanHint": "اسحب وكبّر بإصبعين، واضغط على فريق لتلوين طريقه",
+  "tournamentTeamColumn": "الفريق"
 }

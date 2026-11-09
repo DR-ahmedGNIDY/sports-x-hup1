@@ -1430,5 +1430,40 @@
     "placeholders": {
       "tournament": { "type": "String" }
     }
-  }
+  },
+  "tournamentProgress": "Progress",
+  "tournamentMatchesPlayed": "{played} of {total} matches",
+  "@tournamentMatchesPlayed": {
+    "placeholders": {
+      "played": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "tournamentNextMatch": "Next match",
+  "tournamentYourNextMatch": "Your next match",
+  "tournamentFilterAll": "All",
+  "tournamentFilterUpcoming": "Upcoming",
+  "tournamentFilterFinished": "Finished",
+  "tournamentFilterMine": "My matches",
+  "tournamentMatchUpcoming": "Upcoming",
+  "tournamentMatchPlayed": "Full time",
+  "tournamentNoMatchesHere": "No matches here.",
+  "tournamentQualifies": "Qualifies for the knockout stage",
+  "tournamentTieBreakNote": "Ranked by points, then difference, then scored, then head-to-head.",
+  "tournamentScoredFor": "For",
+  "tournamentScoredAgainst": "Against",
+  "tournamentFormWin": "W",
+  "tournamentFormDraw": "D",
+  "tournamentFormLoss": "L",
+  "tournamentChampion": "Champion",
+  "tournamentChampionTbd": "Decided in the final",
+  "tournamentPathOf": "Path of {name}",
+  "@tournamentPathOf": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "tournamentNotPlayedYet": "Not played yet",
+  "tournamentPanHint": "Drag and pinch to zoom; tap a team to trace its path",
+  "tournamentTeamColumn": "Team"
 }
