@@ -56,6 +56,7 @@ import {
   toStatsView,
 } from './players.mapper';
 import { PlayersService } from './players.service';
+import { resolveProfileViewer } from './profile-viewer';
 
 @Controller('players')
 export class PlayersController {
@@ -269,18 +270,10 @@ export class PlayersController {
     @OptionalCurrentUser() user: JwtPayload | undefined,
     @Headers(CLUB_CONTEXT_HEADER) clubHeader: string | undefined,
   ) {
-    let clubUserId: string | undefined;
-    if (user?.role === UserRole.CLUB || user?.role === UserRole.COACH) {
-      // A coach not on that club's staff simply gets the public view.
-      clubUserId = await this.clubAccess
-        .resolve(user, clubHeader)
-        .then((actor) => actor.clubUserId)
-        .catch(() => undefined);
-    }
-    const profile = await this.playersService.findViewableByIdOrThrow(id, {
-      userId: user?.sub,
-      clubUserId,
-    });
+    const profile = await this.playersService.findViewableByIdOrThrow(
+      id,
+      await resolveProfileViewer(this.clubAccess, user, clubHeader),
+    );
     return toPublicView(profile);
   }
 }

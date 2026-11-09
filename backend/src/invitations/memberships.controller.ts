@@ -1,8 +1,25 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { OptionalCurrentUser } from '../auth/decorators/optional-current-user.decorator';
+import { JwtPayload } from '../auth/decorators/current-user.decorator';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
+import { ClubAccessService } from '../club-access/club-access.service';
+import { CLUB_CONTEXT_HEADER } from '../club-access/club-actor.guard';
 import { ClubsService } from '../clubs/clubs.service';
 import { PlayersService } from '../players/players.service';
+import { resolveProfileViewer } from '../players/profile-viewer';
 import { ListMembersDto } from './dto/list-members.dto';
-import { toClubMemberView, toPlayerClubView } from './memberships.mapper';
+import {
+  toClubMemberView,
+  toOwnedPlayerClubView,
+  toPlayerClubView,
+} from './memberships.mapper';
 import { MembershipsService } from './memberships.service';
 
 // The read side of memberships, addressed by *profile* id because that is
@@ -22,6 +39,7 @@ export class MembershipsController {
     private readonly memberships: MembershipsService,
     private readonly playersService: PlayersService,
     private readonly clubsService: ClubsService,
+    private readonly clubAccess: ClubAccessService,
   ) {}
 
   // A club's current players. PUBLIC profiles only — belonging to a club is
@@ -67,18 +85,36 @@ export class MembershipsController {
   // The player itself must be public: a private profile has no public page
   // for this to appear on, and answering here would confirm the account
   // exists.
+  //
+  // Same visibility rule as GET /players/:id (optional sign-in, so a club
+  // sees its own PRIVATE squad), and a player the club created counts too —
+  // they are on its squad without ever holding a membership row.
   @Get('players/:playerId/club')
-  async playerClub(@Param('playerId') playerId: string) {
-    const playerProfile =
-      await this.playersService.findPublicByIdOrThrow(playerId);
-    const membership = await this.memberships.findActiveForPlayer(
-      playerProfile.userId.toString(),
+  @UseGuards(OptionalJwtAuthGuard)
+  async playerClub(
+    @Param('playerId') playerId: string,
+    @OptionalCurrentUser() user?: JwtPayload,
+    @Headers(CLUB_CONTEXT_HEADER) clubHeader?: string,
+  ) {
+    const playerProfile = await this.playersService.findViewableByIdOrThrow(
+      playerId,
+      await resolveProfileViewer(this.clubAccess, user, clubHeader),
     );
-    if (!membership) return { membership: null };
+    const playerUserId = playerProfile.userId.toString();
+    const membership =
+      await this.memberships.findActiveForPlayer(playerUserId);
+    if (membership) {
+      const clubProfile = await this.clubsService.findByUserId(
+        membership.clubUserId.toString(),
+      );
+      return { membership: toPlayerClubView(membership, clubProfile) };
+    }
 
-    const clubProfile = await this.clubsService.findByUserId(
-      membership.clubUserId.toString(),
-    );
-    return { membership: toPlayerClubView(membership, clubProfile) };
+    const owner = await this.playersService.findOwningClub(playerUserId);
+    if (!owner) return { membership: null };
+    const clubProfile = await this.clubsService.findByUserId(owner.clubUserId);
+    return {
+      membership: toOwnedPlayerClubView(owner.id, owner.since, clubProfile),
+    };
   }
 }

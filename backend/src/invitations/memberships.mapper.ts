@@ -19,6 +19,16 @@ export function toPlayerClubView(
   };
 }
 
+// A player the club created themselves: no membership row, so the
+// ownership row stands in, with its creation date as "joined".
+export function toOwnedPlayerClubView(
+  id: string,
+  since: Date,
+  clubProfile: ClubProfileDocument | null,
+) {
+  return { id, joinedAt: since, club: clubSummary(clubProfile) };
+}
+
 // The roster row is keyed by the *profile*, not the membership: the page is
 // built by querying player profiles (so the total is honest under the
 // PUBLIC-only filter), and a membership row without a visible profile never

@@ -163,6 +163,23 @@ export class PlayersService {
   // PRIVATE one only to its owner and to a club that has the player on its
   // roster (created by it, or joined by invitation) — a club has to be able
   // to open its own squad. Everyone else gets the same 404 as a missing id.
+  // The club that created this player's account, if any. Such a player is
+  // on that club's squad without ever holding a membership row.
+  async findOwningClub(
+    playerUserId: string,
+  ): Promise<{ id: string; clubUserId: string; since: Date } | null> {
+    const row = await this.clubManagedPlayerModel
+      .findOne({ userId: playerUserId })
+      .select('clubId createdAt')
+      .lean<{ _id: Types.ObjectId; clubId: Types.ObjectId; createdAt: Date }>();
+    if (!row) return null;
+    return {
+      id: row._id.toString(),
+      clubUserId: row.clubId.toString(),
+      since: row.createdAt,
+    };
+  }
+
   async findViewableByIdOrThrow(
     id: string,
     viewer?: { userId?: string; clubUserId?: string },

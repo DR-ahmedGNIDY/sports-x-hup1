@@ -163,6 +163,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (session.status == SessionStatus.authenticated) {
         final inShell = _inShellProfilePath(path);
         if (inShell != null) return inShell;
+        // The public listings are the guest view (sign-in bar, no shell).
+        // A member gets the same search inside the app instead.
+        if (_marketingRoutes.contains(path) &&
+            session.user?.role != UserRole.admin) {
+          return '/search';
+        }
       }
 
       // The public marketing site and public profile/listing deep links are

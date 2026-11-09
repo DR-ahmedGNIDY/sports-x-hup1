@@ -48,7 +48,8 @@ function build(
     findManyPublicByUserIds: jest
       .fn()
       .mockResolvedValue({ items: [], page: 1, pageSize: 20, total: 0 }),
-    findPublicByIdOrThrow: jest.fn().mockResolvedValue(playerProfile()),
+    findViewableByIdOrThrow: jest.fn().mockResolvedValue(playerProfile()),
+    findOwningClub: jest.fn().mockResolvedValue(null),
     ...overrides.players,
   };
   const clubs = {
@@ -61,6 +62,7 @@ function build(
       memberships as never,
       players as never,
       clubs as never,
+      { resolve: jest.fn() } as never,
     ),
     memberships,
     players,
@@ -213,7 +215,7 @@ describe('MembershipsController', () => {
     it('is scoped to public players, so a code cannot bypass visibility', async () => {
       const { controller, memberships } = build({
         players: {
-          findPublicByIdOrThrow: jest
+          findViewableByIdOrThrow: jest
             .fn()
             .mockRejectedValue(new NotFoundException('Player not found.')),
         },
