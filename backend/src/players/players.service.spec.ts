@@ -70,6 +70,8 @@ describe('PlayersService', () => {
       cloudinary,
       videosService,
       publicCodes,
+      { exists: jest.fn().mockResolvedValue(null) } as never,
+      { exists: jest.fn().mockResolvedValue(null) } as never,
     );
     return {
       service,

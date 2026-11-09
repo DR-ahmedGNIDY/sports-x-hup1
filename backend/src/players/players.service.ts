@@ -12,6 +12,11 @@ import {
   PublicCodesService,
 } from '../public-codes/public-codes.service';
 import { SavedPlayer } from '../saved-players/schemas/saved-player.schema';
+import { ClubManagedPlayer } from '../club-players/schemas/club-managed-player.schema';
+import {
+  ClubMembership,
+  MembershipStatus,
+} from '../invitations/schemas/club-membership.schema';
 import { VideosService } from '../videos/videos.service';
 import {
   CreateAchievementDto,
@@ -73,6 +78,13 @@ export class PlayersService {
     private readonly cloudinary: CloudinaryService,
     private readonly videosService: VideosService,
     private readonly publicCodes: PublicCodesService,
+    // Read-only, to let a club open the profiles of its own squad even when
+    // they are PRIVATE. Registered in PlayersModule directly, as SavedPlayer
+    // is, so this adds no module cycle.
+    @InjectModel(ClubMembership.name)
+    private readonly membershipModel: Model<ClubMembership>,
+    @InjectModel(ClubManagedPlayer.name)
+    private readonly clubManagedPlayerModel: Model<ClubManagedPlayer>,
   ) {}
 
   // Atomic upsert, not findOne-then-create: the Dashboard and Edit Profile
@@ -145,6 +157,38 @@ export class PlayersService {
       throw new NotFoundException('Player not found.');
     }
     return profile;
+  }
+
+  // The profile page's lookup. PUBLIC profiles are open to anyone; a
+  // PRIVATE one only to its owner and to a club that has the player on its
+  // roster (created by it, or joined by invitation) — a club has to be able
+  // to open its own squad. Everyone else gets the same 404 as a missing id.
+  async findViewableByIdOrThrow(
+    id: string,
+    viewer?: { userId?: string; clubUserId?: string },
+  ): Promise<PlayerProfileDocument> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Player not found.');
+    }
+    const profile = await this.playerProfileModel.findById(id);
+    if (!profile) throw new NotFoundException('Player not found.');
+    if (profile.visibility === ProfileVisibility.PUBLIC) return profile;
+
+    const playerUserId = profile.userId.toString();
+    if (viewer?.userId && viewer.userId === playerUserId) return profile;
+    if (viewer?.clubUserId && Types.ObjectId.isValid(viewer.clubUserId)) {
+      const clubId = viewer.clubUserId;
+      const [owned, member] = await Promise.all([
+        this.clubManagedPlayerModel.exists({ clubId, userId: playerUserId }),
+        this.membershipModel.exists({
+          clubUserId: clubId,
+          playerUserId,
+          status: MembershipStatus.ACTIVE,
+        }),
+      ]);
+      if (owned || member) return profile;
+    }
+    throw new NotFoundException('Player not found.');
   }
 
   async search(dto: SearchPlayersDto): Promise<PlayerSearchResult> {

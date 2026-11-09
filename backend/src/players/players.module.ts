@@ -8,6 +8,14 @@ import {
   SavedPlayerSchema,
 } from '../saved-players/schemas/saved-player.schema';
 import { VideosModule } from '../videos/videos.module';
+import {
+  ClubManagedPlayer,
+  ClubManagedPlayerSchema,
+} from '../club-players/schemas/club-managed-player.schema';
+import {
+  ClubMembership,
+  ClubMembershipSchema,
+} from '../invitations/schemas/club-membership.schema';
 import { PlayersController } from './players.controller';
 import { PlayersService } from './players.service';
 import {
@@ -23,6 +31,11 @@ import {
       // depends on PlayersModule) purely to read the saved-by-clubs count
       // for GET /players/me/stats — avoids a circular module dependency.
       { name: SavedPlayer.name, schema: SavedPlayerSchema },
+      // Read-only, so a club can open its own squad's PRIVATE profiles
+      // (findViewableByIdOrThrow) without importing the modules that
+      // already depend on this one.
+      { name: ClubMembership.name, schema: ClubMembershipSchema },
+      { name: ClubManagedPlayer.name, schema: ClubManagedPlayerSchema },
     ]),
     CloudinaryModule,
     PublicCodesModule,

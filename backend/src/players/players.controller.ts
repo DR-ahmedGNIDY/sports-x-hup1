@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   Patch,
   Post,
@@ -25,7 +26,11 @@ import {
   imageUploadOptions,
   mediaUploadOptions,
 } from '../common/upload.config';
+import { OptionalCurrentUser } from '../auth/decorators/optional-current-user.decorator';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
+import { ClubAccessService } from '../club-access/club-access.service';
 import {
+  CLUB_CONTEXT_HEADER,
   ClubActorGuard,
   ClubPermission,
 } from '../club-access/club-actor.guard';
@@ -54,7 +59,10 @@ import { PlayersService } from './players.service';
 
 @Controller('players')
 export class PlayersController {
-  constructor(private readonly playersService: PlayersService) {}
+  constructor(
+    private readonly playersService: PlayersService,
+    private readonly clubAccess: ClubAccessService,
+  ) {}
 
   @Get()
   async search(@Query() dto: SearchPlayersDto) {
@@ -252,9 +260,27 @@ export class PlayersController {
     return profile.contact;
   }
 
+  // Open to guests. A signed-in club — or a coach acting for one via the
+  // X-Club-Id header — can also open its own squad's PRIVATE profiles.
   @Get(':id')
-  async findPublic(@Param('id') id: string) {
-    const profile = await this.playersService.findPublicByIdOrThrow(id);
+  @UseGuards(OptionalJwtAuthGuard)
+  async findPublic(
+    @Param('id') id: string,
+    @OptionalCurrentUser() user: JwtPayload | undefined,
+    @Headers(CLUB_CONTEXT_HEADER) clubHeader: string | undefined,
+  ) {
+    let clubUserId: string | undefined;
+    if (user?.role === UserRole.CLUB || user?.role === UserRole.COACH) {
+      // A coach not on that club's staff simply gets the public view.
+      clubUserId = await this.clubAccess
+        .resolve(user, clubHeader)
+        .then((actor) => actor.clubUserId)
+        .catch(() => undefined);
+    }
+    const profile = await this.playersService.findViewableByIdOrThrow(id, {
+      userId: user?.sub,
+      clubUserId,
+    });
     return toPublicView(profile);
   }
 }

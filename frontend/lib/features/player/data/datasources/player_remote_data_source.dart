@@ -191,8 +191,14 @@ class PlayerRemoteDataSource {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> getPublicProfile(String id) async {
-    final response = await _client.get('/players/$id');
+  Future<Map<String, dynamic>> getPublicProfile(
+    String id, {
+    String? accessToken,
+  }) async {
+    final response = await _client.get(
+      '/players/$id',
+      headers: accessToken == null ? null : _bearer(accessToken),
+    );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
     return jsonDecode(response.body) as Map<String, dynamic>;
   }

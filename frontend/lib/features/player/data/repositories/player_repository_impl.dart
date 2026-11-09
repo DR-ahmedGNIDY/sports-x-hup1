@@ -203,7 +203,10 @@ class PlayerRepositoryImpl implements PlayerRepository {
 
   @override
   Future<PlayerProfile> getPublicProfile(String id) async {
-    final json = await _remote.getPublicProfile(id);
+    // Optional sign-in: guests still get PUBLIC profiles, while a signed-in
+    // club (or its coach) can also open its own squad's PRIVATE ones.
+    final token = await _storage.accessToken;
+    final json = await _remote.getPublicProfile(id, accessToken: token);
     return PlayerProfileModel.fromJson(json);
   }
 
