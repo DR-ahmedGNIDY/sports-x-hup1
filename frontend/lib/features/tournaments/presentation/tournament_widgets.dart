@@ -308,6 +308,10 @@ TeamBadge badgeFor(
 
 // ----------------------------------------------------------------- header
 
+/// The accent on the always-dark header, tabs and next-match card — the
+/// app's light blue, legible on black in both themes.
+const _onDarkAccent = AppColors.brandBlueLight;
+
 /// The app's name for [sportId], once the sports list has loaded.
 String? sportName(WidgetRef ref, String? sportId) {
   if (sportId == null) return null;
@@ -326,15 +330,16 @@ class TournamentTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    // Fixed colours, not the theme's primary: the band is always dark, and
+    // primary is black in the light theme.
     return Material(
       color: AppColors.black,
       child: TabBar(
         isScrollable: true,
         tabAlignment: TabAlignment.start,
-        labelColor: scheme.primary,
+        labelColor: _onDarkAccent,
         unselectedLabelColor: const Color(0xFF98A1B3),
-        indicatorColor: scheme.primary,
+        indicatorColor: _onDarkAccent,
         indicatorWeight: 3,
         dividerColor: Colors.transparent,
         labelStyle: const TextStyle(fontWeight: FontWeight.w700),
@@ -452,7 +457,7 @@ class TournamentHeader extends StatelessWidget {
                   value: played / real.length,
                   minHeight: 6,
                   backgroundColor: const Color(0xFF26302E),
-                  color: theme.colorScheme.primary,
+                  color: _onDarkAccent,
                 ),
               ),
             ),
@@ -519,7 +524,7 @@ class NextMatchCard extends StatelessWidget {
                       ? l10n.tournamentYourNextMatch
                       : l10n.tournamentNextMatch,
                   style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.primary,
+                    color: _onDarkAccent,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -1128,9 +1133,7 @@ class _StandingsViewState extends State<StandingsView> {
                 ),
               ),
               const SizedBox(width: 8),
-              Expanded(
-                child: Text(l10n.tournamentQualifies, style: headStyle),
-              ),
+              Expanded(child: Text(l10n.tournamentQualifies, style: headStyle)),
             ],
           ),
         const SizedBox(height: 6),
@@ -1169,6 +1172,14 @@ class BracketView extends StatefulWidget {
 
 class _BracketViewState extends State<BracketView> {
   late String? _traced = widget.highlightParticipantId;
+  final _viewer = TransformationController();
+  bool _placed = false;
+
+  @override
+  void dispose() {
+    _viewer.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1186,13 +1197,18 @@ class _BracketViewState extends State<BracketView> {
         _top + slot * math.pow(2, round - 1) * (matchNo - 0.5);
     double startX(int round) => (round - 1) * (_cardW + _colGap);
     final width = (rounds + 1) * (_cardW + _colGap);
-    final height = math.max(_top + slot * firstRound + 12, _top + 160);
-
     final finalMatch = ko.where((f) => f.round == rounds).firstOrNull;
     final champion = finalMatch != null && finalMatch.isPlayed
         ? finalMatch.winnerId
         : null;
     final finalY = centerY(rounds, 1);
+    // Never above the column headings: with a single round the final sits
+    // so high that a centred champion card covered its own heading.
+    final championTop = math.max(finalY - 70, _top - 4);
+    final height = math.max(
+      _top + slot * firstRound + 12,
+      championTop + 140 + 12,
+    );
 
     final links = <_Link>[
       for (final f in ko)
@@ -1271,7 +1287,7 @@ class _BracketViewState extends State<BracketView> {
             ),
           PositionedDirectional(
             start: startX(rounds + 1),
-            top: finalY - 70,
+            top: championTop,
             width: _cardW,
             height: 140,
             child: _ChampionCard(detail: detail, championId: champion),
@@ -1284,12 +1300,28 @@ class _BracketViewState extends State<BracketView> {
     return Column(
       children: [
         Expanded(
-          child: InteractiveViewer(
-            constrained: false,
-            minScale: 0.5,
-            maxScale: 2,
-            boundaryMargin: const EdgeInsets.all(48),
-            child: Padding(padding: const EdgeInsets.all(16), child: tree),
+          child: LayoutBuilder(
+            builder: (context, box) {
+              // The tree reads from the start edge — the right, in Arabic —
+              // but a viewer opens at its left. Open it at the first round.
+              const padded = 32.0;
+              final overflow = width + padded - box.maxWidth;
+              if (!_placed && box.hasBoundedWidth) {
+                _placed = true;
+                if (Directionality.of(context) == TextDirection.rtl &&
+                    overflow > 0) {
+                  _viewer.value = Matrix4.translationValues(-overflow, 0, 0);
+                }
+              }
+              return InteractiveViewer(
+                transformationController: _viewer,
+                constrained: false,
+                minScale: 0.5,
+                maxScale: 2,
+                boundaryMargin: const EdgeInsets.all(48),
+                child: Padding(padding: const EdgeInsets.all(16), child: tree),
+              );
+            },
           ),
         ),
         Padding(
@@ -1451,6 +1483,9 @@ class _ChampionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.black,
         borderRadius: BorderRadius.circular(AppRadius.lg),
+        // Gold edge: on the dark theme's black page a borderless black card
+        // had no outline at all.
+        border: Border.all(color: AppColors.profileGold, width: 1.5),
       ),
       padding: const EdgeInsets.all(12),
       child: Column(

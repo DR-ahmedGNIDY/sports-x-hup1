@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/application/session_controller.dart';
+import '../../auth/domain/entities/user_role.dart';
 import '../../player/application/lookup_providers.dart';
 import '../../player/application/player_profile_controller.dart';
 import '../data/repositories/feed_repository_impl.dart';
@@ -34,11 +36,15 @@ class HomeFeedController extends AsyncNotifier<HomeFeedState> {
     if (_sport == null) {
       final sports = await ref.read(sportsProvider.future);
       String? mySport;
-      try {
-        final profile = await ref.read(playerProfileControllerProvider.future);
-        mySport = profile.sport;
-      } catch (_) {
-        mySport = null;
+      // Only a player has a player profile; asking for it as a club or a
+      // coach is a 403 on every visit to Home.
+      if (ref.read(sessionControllerProvider).user?.role == UserRole.player) {
+        try {
+          final profile = await ref.read(playerProfileControllerProvider.future);
+          mySport = profile.sport;
+        } catch (_) {
+          mySport = null;
+        }
       }
       _sport = (mySport != null && sports.any((s) => s.name == mySport))
           ? mySport

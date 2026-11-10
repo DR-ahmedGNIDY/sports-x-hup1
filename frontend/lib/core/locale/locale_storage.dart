@@ -16,5 +16,15 @@ class LocaleStorage {
     return code == null ? null : Locale(code);
   }
 
-  Future<void> setLocale(Locale locale) => _prefs.setString(_localeKey, locale.languageCode);
+  Future<void> setLocale(Locale locale) =>
+      _prefs.setString(_localeKey, locale.languageCode);
+
+  // The light/dark choice lives beside the language: both are display
+  // preferences that must survive a reload.
+  static const _themeKey = 'sxh_theme_mode';
+
+  /// 'light' or 'dark'; null until the person has chosen.
+  String? get themeMode => _prefs.getString(_themeKey);
+
+  Future<void> setThemeMode(String mode) => _prefs.setString(_themeKey, mode);
 }

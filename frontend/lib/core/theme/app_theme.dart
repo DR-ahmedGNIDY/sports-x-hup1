@@ -89,7 +89,9 @@ abstract final class AppTheme {
       onSurface: isDark ? const Color(0xFFFAFAFA) : AppColors.black,
       onSurfaceVariant: isDark ? AppColors.greyLight : AppColors.grey,
       surfaceContainerLowest: isDark ? AppColors.black : AppColors.white,
-      surfaceContainerLow: isDark ? const Color(0xFF111111) : AppColors.offWhite,
+      surfaceContainerLow: isDark
+          ? const Color(0xFF111111)
+          : AppColors.offWhite,
       surfaceContainer: isDark ? AppColors.charcoal : AppColors.mist,
       surfaceContainerHigh: isDark ? AppColors.slate : AppColors.mist,
       surfaceContainerHighest: isDark ? AppColors.graphite : AppColors.silver,
@@ -137,9 +139,7 @@ abstract final class AppTheme {
         headlineSmall: AppTextStyles.headline.copyWith(
           color: colorScheme.onSurface,
         ),
-        titleMedium: AppTextStyles.title.copyWith(
-          color: colorScheme.onSurface,
-        ),
+        titleMedium: AppTextStyles.title.copyWith(color: colorScheme.onSurface),
         bodyMedium: AppTextStyles.body.copyWith(color: colorScheme.onSurface),
         bodyLarge: AppTextStyles.bodyStrong.copyWith(
           color: colorScheme.onSurface,
@@ -187,6 +187,15 @@ abstract final class AppTheme {
         backgroundColor: colorScheme.surface,
         selectedColor: colorScheme.primary,
         checkmarkColor: colorScheme.onPrimary,
+        // The label must flip with the fill: a selected chip is filled with
+        // primary, and primary-coloured text on it disappeared entirely.
+        labelStyle: WidgetStateTextStyle.resolveWith(
+          (states) => TextStyle(
+            color: states.contains(WidgetState.selected)
+                ? colorScheme.onPrimary
+                : colorScheme.onSurface,
+          ),
+        ),
         side: BorderSide(color: border),
         shape: const StadiumBorder(),
       ),
