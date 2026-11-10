@@ -94,6 +94,26 @@ class NotificationsRemoteDataSource {
     );
     if (response.statusCode != 200) throw apiExceptionFromResponse(response);
   }
+
+  /// The Android app's FCM token. Same idea as a browser subscription, but
+  /// a token is all Firebase needs to reach the device.
+  Future<void> registerDevice(String accessToken, String token) async {
+    final response = await _client.post(
+      '/notifications/push/device',
+      body: {'token': token, 'platform': 'android'},
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+  }
+
+  Future<void> unregisterDevice(String accessToken, String token) async {
+    final response = await _client.post(
+      '/notifications/push/device/remove',
+      body: {'token': token},
+      headers: _bearer(accessToken),
+    );
+    if (response.statusCode != 200) throw apiExceptionFromResponse(response);
+  }
 }
 
 final notificationsRemoteDataSourceProvider =

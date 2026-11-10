@@ -48,3 +48,16 @@ export class PushSubscriptionQueryDto {
   @MaxLength(512)
   userAgent?: string;
 }
+
+/** The Android app's FCM registration token. */
+export class DeviceTokenDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(4096)
+  token: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(32)
+  platform?: string;
+}

@@ -24,4 +24,9 @@ abstract class NotificationsRepository {
   Future<void> subscribePush(Map<String, dynamic> subscription);
 
   Future<void> unsubscribePush(String endpoint);
+
+  /// Android app only: registers / drops this phone's FCM token.
+  Future<void> registerDevice(String fcmToken);
+
+  Future<void> unregisterDevice(String fcmToken);
 }

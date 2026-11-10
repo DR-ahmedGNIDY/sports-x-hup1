@@ -74,6 +74,12 @@ class _FakeRepository implements NotificationsRepository {
 
   @override
   Future<void> unsubscribePush(String endpoint) async {}
+
+  @override
+  Future<void> registerDevice(String fcmToken) async {}
+
+  @override
+  Future<void> unregisterDevice(String fcmToken) async {}
 }
 
 class _StubSession extends SessionController {

@@ -16,11 +16,14 @@ import 'core/utils/app_scroll_behavior.dart';
 import 'core/utils/breakpoints.dart';
 import 'core/utils/safe_area_insets.dart';
 import 'features/auth/application/session_controller.dart';
+import 'features/auth/application/session_state.dart';
+import 'features/notifications/application/native_push.dart';
 import 'l10n/generated/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Env.load();
+  await NativePush.initialize();
   final prefs = await SharedPreferences.getInstance();
 
   final sessionStorage = SessionStorage(const FlutterSecureStorage());
@@ -82,6 +85,13 @@ class _SportXHubAppState extends ConsumerState<SportXHubApp> {
     final themeMode = ref.watch(themeModeProvider);
     final router = ref.watch(appRouterProvider);
     final locale = ref.watch(localeProvider);
+
+    // Android app: once someone is signed in, register this phone for FCM.
+    ref.listen(sessionControllerProvider.select((s) => s.status), (_, status) {
+      if (status == SessionStatus.authenticated) {
+        ref.read(nativePushProvider).start(router);
+      }
+    });
 
     return MaterialApp.router(
       title: 'Sport X Hub',

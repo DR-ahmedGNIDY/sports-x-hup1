@@ -32,6 +32,12 @@ class _Repository implements NotificationsRepository {
   Future<void> unsubscribePush(String endpoint) async {}
 
   @override
+  Future<void> registerDevice(String fcmToken) async {}
+
+  @override
+  Future<void> unregisterDevice(String fcmToken) async {}
+
+  @override
   Future<NotificationsPage> list({int page = 1, bool unreadOnly = false}) async =>
       NotificationsPage.empty;
 

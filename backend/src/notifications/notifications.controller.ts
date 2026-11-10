@@ -20,7 +20,9 @@ import { ListNotificationsDto } from './dto/list-notifications.dto';
 import {
   CreatePushSubscriptionDto,
   DeletePushSubscriptionDto,
+  DeviceTokenDto,
 } from './dto/push-subscription.dto';
+import { FcmService } from './fcm.service';
 import { toNotificationView } from './notifications.mapper';
 import { NotificationsService } from './notifications.service';
 import { PushService } from './push.service';
@@ -34,6 +36,7 @@ export class NotificationsController {
   constructor(
     private readonly notifications: NotificationsService,
     private readonly push: PushService,
+    private readonly fcm: FcmService,
     private readonly config: ConfigService,
   ) {}
 
@@ -95,6 +98,27 @@ export class NotificationsController {
       userAgent,
     });
     return { subscribed: true };
+  }
+
+  /// The Android app's FCM token for this phone.
+  @Post('push/device')
+  @HttpCode(HttpStatus.OK)
+  async registerDevice(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: DeviceTokenDto,
+  ) {
+    await this.fcm.register(user.sub, dto.token, dto.platform ?? 'android');
+    return { registered: true };
+  }
+
+  @Post('push/device/remove')
+  @HttpCode(HttpStatus.OK)
+  async removeDevice(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: DeviceTokenDto,
+  ) {
+    await this.fcm.unregister(user.sub, dto.token);
+    return { registered: false };
   }
 
   @Post('push/unsubscribe')

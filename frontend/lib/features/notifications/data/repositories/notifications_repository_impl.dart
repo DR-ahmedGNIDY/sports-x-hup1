@@ -53,6 +53,14 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   @override
   Future<void> unsubscribePush(String endpoint) =>
       _authorized((token) => _remote.unsubscribePush(token, endpoint));
+
+  @override
+  Future<void> registerDevice(String fcmToken) =>
+      _authorized((token) => _remote.registerDevice(token, fcmToken));
+
+  @override
+  Future<void> unregisterDevice(String fcmToken) =>
+      _authorized((token) => _remote.unregisterDevice(token, fcmToken));
 }
 
 final notificationsRepositoryProvider = Provider<NotificationsRepository>(

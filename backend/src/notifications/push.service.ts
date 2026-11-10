@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
+import { FcmService } from './fcm.service';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -53,6 +54,9 @@ export class PushService {
     @InjectModel(PushSubscription.name)
     private readonly subscriptionModel: Model<PushSubscription>,
     config: ConfigService,
+    // The Android app's channel. Optional so a bare PushService (tests)
+    // still constructs; in the app module it is always provided.
+    @Optional() private readonly fcm?: FcmService,
   ) {
     const publicKey = config.get<string>('VAPID_PUBLIC_KEY');
     const privateKey = config.get<string>('VAPID_PRIVATE_KEY');
@@ -124,6 +128,7 @@ export class PushService {
   /** Account deletion: every browser this user ever registered. */
   async unsubscribeAll(userId: string): Promise<void> {
     await this.subscriptionModel.deleteMany({ userId });
+    await this.fcm?.unregisterAll(userId);
   }
 
   /**
@@ -138,6 +143,9 @@ export class PushService {
     userId: Types.ObjectId | string,
     payload: PushPayload,
   ): Promise<void> {
+    // The Android app first: it has its own credentials and does not depend
+    // on the VAPID keys below.
+    await this.fcm?.send(userId.toString(), payload);
     if (!this.enabled) return;
 
     let subscriptions: PushSubscriptionDocument[];

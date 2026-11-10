@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "18018608591",
+    "project_id": "sport-x-hub",
+    "storage_bucket": "sport-x-hub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18018608591:android:ceb4b0713596f523ff5eba",
+        "android_client_info": {
+          "package_name": "com.sportxhub.sport_x_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaZ1ie-yHnRxX9aLc-ak8WGz-jRfmEvRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../notifications/application/native_push.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/locale/locale_provider.dart';
 import '../../../l10n/generated/app_localizations.dart';
@@ -96,6 +97,7 @@ class SessionController extends Notifier<SessionState> {
   }
 
   Future<void> logout() async {
+    await ref.read(nativePushProvider).stop();
     await ref.read(authRepositoryProvider).logout();
     state = const SessionState(status: SessionStatus.unauthenticated);
   }
